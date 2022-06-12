@@ -14,7 +14,7 @@ Installation
 ---
 To install, clone the github repo
 
-```git clone https://github.com/CEO-Chair/DotnetPatcher.git```
+```git clone https://github.com/CEO-Chair/DotnetPatcher.git --recursive```
 
 To quickstart as x64, run `fast_start_64.bat`, and as x86 `fast_start_86.bat`
 
