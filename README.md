@@ -12,7 +12,11 @@ Installation
 </h2>
 
 ---
-To install, clone the github repo and run `fast_start_64.bat`.
+To install, clone the github repo
+
+```git clone https://github.com/CEO-Chair/DotnetPatcher.git```
+
+To quickstart as x64, run `fast_start_64.bat`, and as x86 `fast_start_86.bat`
 
 Or, manually build `TerraAngelSetup` and run `TerraAngelSetup.exe -auto` or `TerraAngelSetup.exe -decompile -patch` and build TerraAngel, and then run `TerraAngelSetup.exe -prebuild`
 
