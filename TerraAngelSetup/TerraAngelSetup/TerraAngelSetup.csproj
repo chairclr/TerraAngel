@@ -14,15 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="CodeChicken.DiffPatch">
-      <HintPath>DotnetPatcher\lib\CodeChicken.DiffPatch.dll</HintPath>
-    </Reference>
-    <Reference Include="DotnetPatcher">
-      <HintPath>lib\DotnetPatcher.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.Decompiler">
-      <HintPath>DotnetPatcher\lib\ICSharpCode.Decompiler.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\DotnetPatcher\DotnetPatcher\DotnetPatcher.csproj" />
   </ItemGroup>
 
 </Project>

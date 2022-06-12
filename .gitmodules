@@ -1,0 +1,3 @@
+[submodule "TerraAngelSetup/DotnetPatcher"]
+	path = TerraAngelSetup/DotnetPatcher
+	url = https://github.com/CEO-Chair/DotnetPatcher.git
