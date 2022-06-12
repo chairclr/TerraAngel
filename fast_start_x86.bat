@@ -1,7 +1,7 @@
 @echo off
 
 echo Building TerraAngelSetup
-git submodule update > NUL
+git submodule update --remote --recursive > NUL
 dotnet build TerraAngelSetup\TerraAngelSetup\TerraAngelSetup.csproj -c=Release > NUL
 
 echo Running TerraAngelSetup
