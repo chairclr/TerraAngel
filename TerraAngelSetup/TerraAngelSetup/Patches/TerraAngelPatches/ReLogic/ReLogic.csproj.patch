@@ -1,10 +1,11 @@
 --- src/Terraria/ReLogic/ReLogic.csproj
 +++ src/TerraAngel/ReLogic/ReLogic.csproj
-@@ -7,20 +_,16 @@
+@@ -7,20 +_,18 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © Re-Logic 2017</Company>
      <RootNamespace>ReLogic</RootNamespace>
 +    <TargetFramework>net6.0</TargetFramework>
++    <Platforms>x64;x86</Platforms>
    </PropertyGroup>
    <ItemGroup>
 -    <Reference Include="Ionic.Zip.CF" />
@@ -17,13 +18,14 @@
 -    <Reference Include="System.Core" />
 -    <Reference Include="System.Drawing" />
 -    <Reference Include="System.Windows.Forms" />
-+    <Reference Include="..\Terraria/Libraries/DotNetZip/**" />
-+    <Reference Include="..\Terraria/Libraries/JSON.NET/**" />
-+    <Reference Include="..\Terraria/Libraries/SteelSeriesEngineWrapper" />
-+    <Reference Include="..\Terraria/Libraries/FNA/FNA.dll" />
++    <Reference Include="../Terraria/Libraries/DotNetZip/**" />
++    <Reference Include="../Terraria/Libraries/JSON.NET/**" />
++    <Reference Include="../Terraria/LibNew/$(Platform)/FNA/FNA.dll" />
    </ItemGroup>
    <ItemGroup>
      <EmbeddedResource Include="Microsoft/**" />
-+    <EmbeddedResource Include="Libraries/FNA/**" />
++    <EmbeddedResource Include="../Terraria/LibNew/$(Platform)/FNA/FNA.dll" />
++
++
    </ItemGroup>
  </Project>

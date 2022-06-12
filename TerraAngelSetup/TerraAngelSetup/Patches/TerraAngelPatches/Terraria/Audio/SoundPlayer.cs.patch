@@ -1,0 +1,24 @@
+--- src/Terraria/Terraria/Audio/SoundPlayer.cs
++++ src/TerraAngel/Terraria/Audio/SoundPlayer.cs
+@@ -1,4 +_,5 @@
+ using System.Collections.Generic;
++using System.Threading;
+ using Microsoft.Xna.Framework;
+ using ReLogic.Utilities;
+ 
+@@ -77,6 +_,7 @@
+ 
+         public void Update()
+         {
++            Monitor.Enter(SoundEngine.AudioLock);
+             foreach (SlotVector<ActiveSound>.ItemPair item in (IEnumerable<SlotVector<ActiveSound>.ItemPair>)_trackedSounds)
+             {
+                 try
+@@ -92,6 +_,7 @@
+                     _trackedSounds.Remove(item.Id);
+                 }
+             }
++            Monitor.Exit(SoundEngine.AudioLock);
+         }
+ 
+         public ActiveSound FindActiveSound(SoundStyle style)

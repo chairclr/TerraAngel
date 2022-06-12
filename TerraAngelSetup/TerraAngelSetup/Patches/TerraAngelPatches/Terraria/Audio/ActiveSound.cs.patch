@@ -1,0 +1,23 @@
+--- src/Terraria/Terraria/Audio/ActiveSound.cs
++++ src/TerraAngel/Terraria/Audio/ActiveSound.cs
+@@ -1,5 +_,6 @@
+ using Microsoft.Xna.Framework;
+ using Microsoft.Xna.Framework.Audio;
++using System.Threading;
+ 
+ namespace Terraria.Audio
+ {
+@@ -15,11 +_,13 @@
+         public bool IsPlaying => Sound.State == SoundState.Playing;
+         public ActiveSound(SoundStyle style, Vector2 position)
+         {
++            Monitor.Enter(SoundEngine.AudioLock);
+             Position = position;
+             Volume = 1f;
+             IsGlobal = false;
+             Style = style;
+             Play();
++            Monitor.Exit(SoundEngine.AudioLock);
+         }
+ 
+         public ActiveSound(SoundStyle style)

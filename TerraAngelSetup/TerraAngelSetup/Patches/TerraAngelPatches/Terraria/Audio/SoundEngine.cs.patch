@@ -1,0 +1,31 @@
+--- src/Terraria/Terraria/Audio/SoundEngine.cs
++++ src/TerraAngel/Terraria/Audio/SoundEngine.cs
+@@ -1,5 +_,6 @@
+ using System;
+ using System.IO;
++using System.Threading;
+ using Microsoft.Xna.Framework;
+ using Microsoft.Xna.Framework.Audio;
+ using ReLogic.Utilities;
+@@ -8,6 +_,8 @@
+ {
+     public static class SoundEngine
+     {
++        public static readonly object AudioLock = new object();
++
+         public static LegacySoundPlayer LegacySoundPlayer;
+         public static SoundPlayer SoundPlayer;
+         public static bool AreSoundsPaused;
+@@ -94,8 +_,10 @@
+             {
+                 return null;
+             }
+-
+-            return LegacySoundPlayer.PlaySound(type, x, y, Style, volumeScale, pitchOffset);
++            Monitor.Enter(AudioLock);
++            SoundEffectInstance instance = LegacySoundPlayer.PlaySound(type, x, y, Style, volumeScale, pitchOffset);
++            Monitor.Exit(AudioLock);
++            return instance;
+         }
+ 
+         public static ActiveSound GetActiveSound(SlotId id)

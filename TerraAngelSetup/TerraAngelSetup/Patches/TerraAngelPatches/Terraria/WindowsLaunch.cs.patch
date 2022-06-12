@@ -1,0 +1,10 @@
+--- src/Terraria/Terraria/WindowsLaunch.cs
++++ src/TerraAngel/Terraria/WindowsLaunch.cs
+@@ -66,6 +_,7 @@
+                 stream.Read(array, 0, array.Length);
+                 return Assembly.Load(array);
+             };
++
+             Program.LaunchGame(args);
+         }
+     }
