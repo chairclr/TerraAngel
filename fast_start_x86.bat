@@ -13,5 +13,4 @@ dotnet build src\TerraAngel\Terraria\Terraria.csproj -p:Configuration=Release;Pl
 echo Running TerraAngelSetup
 TerraAngelSetup\TerraAngelSetup\bin\Release\net6.0\TerraAngelSetup.exe -prebuild -patchinput TerraAngelSetup\TerraAngelSetup\Patches\TerraAngelPatches -compileroutput src\TerraAngel\Terraria\bin\x86\Release\net6.0
 
-echo Copying 
-xcopy  src\TerraAngel\Terraria\bin\x86\Release\net6.0 Build\ /E > NUL
+echo Finished building! Your build should be in src\TerraAngel\Terraria\bin\x86\Release\net6.0
