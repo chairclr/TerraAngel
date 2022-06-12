@@ -141,12 +141,7 @@ public class Program
             {
                 DiffTerraria();
             }
-            if (AutoStart)
-            {
-                Console.WriteLine($@"Building {PatchedPath}\Terraria\Terraria.csproj");
-                RunDotNET($@"build {Path.GetFullPath(PatchedPath)}\Terraria\Terraria.csproj -c=Release").WaitForExit();
-            }
-            if (Prebuild || AutoStart)
+            if (Prebuild)
             {
                 CopyTerrariaThings();
             }
@@ -222,12 +217,6 @@ public class Program
         CopyDirectory(Path.GetFullPath(dirName), Path.GetFullPath(CompiledPath) + "\\Content", true);
 
         Console.WriteLine($"Copyed {Path.GetFullPath(dirName)} into {Path.GetFullPath(CompiledPath)}");
-    }
-    public static Process RunDotNET(string cmd)
-    {
-        ProcessStartInfo cmdsi = new ProcessStartInfo("dotnet");
-        cmdsi.Arguments = cmd;
-        return Process.Start(cmdsi);
     }
     public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
     {

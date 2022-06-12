@@ -1,10 +1,11 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -7,28 +_,25 @@
+@@ -7,28 +_,20 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © 2022 Re-Logic</Company>
      <RootNamespace>Terraria</RootNamespace>
 +    <TargetFramework>net6.0</TargetFramework>
++    <Platforms>AnyCPU;x86;x64</Platforms>
 +  </PropertyGroup>
 +  <PropertyGroup>
 +    <ApplicationIcon>app.ico</ApplicationIcon>
@@ -26,7 +27,8 @@
 +    <Reference Include="Libraries/MP3Sharp/**" />
 +    <Reference Include="Libraries/NVorbis/**" />
      <ProjectReference Include="../ReLogic/ReLogic.csproj" />
-     <EmbeddedResource Include="../ReLogic/bin/$(Configuration)/$(TargetFramework)/ReLogic.dll" />
+-    <EmbeddedResource Include="../ReLogic/bin/$(Configuration)/$(TargetFramework)/ReLogic.dll" />
++    <EmbeddedResource Include="../ReLogic/bin/$(Platform)/$(Configuration)/$(TargetFramework)/ReLogic.dll" />
 -    <Reference Include="Steamworks.NET" />
 -    <Reference Include="SteelSeriesEngineWrapper" />
 -    <Reference Include="System" />
@@ -35,33 +37,36 @@
 -    <Reference Include="System.Runtime.Serialization" />
 -    <Reference Include="System.Windows.Forms" />
 -    <Reference Include="WindowsBase" />
-+    <Reference Include="FNA">
-+      <HintPath>LibNew\FNA\FNA.dll</HintPath>
-+    </Reference>
-+    <Reference Include="Steamworks.NET">
-+      <HintPath>LibNew\Steamworks.NET.dll</HintPath>
-+    </Reference>
    </ItemGroup>
    <ItemGroup>
      <EmbeddedResource Include="GameContent/Creative/Content/*" />
-@@ -38,5 +_,20 @@
-     <EmbeddedResource Include="Libraries/**" />
+@@ -39,4 +_,29 @@
      <EmbeddedResource Include="Localization/Content/**" />
      <EmbeddedResource Include="Microsoft/**" />
-+  </ItemGroup>
+   </ItemGroup>
++	
++  <!-- New libraries added -->
 +  <ItemGroup>
-+    <None Remove="Libraries\FNA\FNA3D.dll" />
-+    <None Remove="Libraries\FNA\SDL2.dll" />
-+    <None Remove="Libraries\FNA\SDL2_image.dll" />
++    <Reference Include="LibNew/$(Platform)/FNA/FNA.dll" />
++    <Reference Include="LibNew/$(Platform)/Steamworks.NET.dll" />
 +  </ItemGroup>
-+  <Target Name="CopyFNA" AfterTargets="AfterBuild">
-+    <Copy SourceFiles="LibNew/FNA/FAudio.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/FNA/FNA3D.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/FNA/SDL2.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/FNA/SDL2_image.dll" DestinationFolder="$(OutDir)" />
++
++  <!-- Copy some steam stuff -->
++  <Target Name="CopySteam" AfterTargets="AfterBuild">
++    <Copy SourceFiles="LibNew/$(Platform)/steam_api.dll" DestinationFolder="$(OutDir)" />
 +  </Target>
++
++  <!-- Copy some FNA stuff -->
++  <Target Name="CopyFNA" AfterTargets="AfterBuild">
++    <Copy SourceFiles="LibNew/$(Platform)/FNA/FAudio.dll" DestinationFolder="$(OutDir)" />
++    <Copy SourceFiles="LibNew/$(Platform)/FNA/FNA3D.dll" DestinationFolder="$(OutDir)" />
++    <Copy SourceFiles="LibNew/$(Platform)/FNA/SDL2.dll" DestinationFolder="$(OutDir)" />
++    <Copy SourceFiles="LibNew/$(Platform)/FNA/libtheorafile.dll" DestinationFolder="$(OutDir)" />
++  </Target>
++
 +  <ItemGroup>
 +    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-   </ItemGroup>
++  </ItemGroup>
++
  </Project>
