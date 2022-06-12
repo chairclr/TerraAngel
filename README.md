@@ -3,7 +3,7 @@
 TerraAngel
 </h1>
 <p align="center">
-TerraAngel is a futuristic and heavily features utility client for Terraria.
+TerraAngel is a futuristic and heavily featured utility client for Terraria.
 </p>
 <br>
 
