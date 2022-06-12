@@ -1,0 +1,18 @@
+--- src/Terraria/Terraria/UI/FancyErrorPrinter.cs
++++ src/TerraAngel/Terraria/UI/FancyErrorPrinter.cs
+@@ -2,7 +_,6 @@
+ using System.Collections.Generic;
+ using System.IO;
+ using System.Text;
+-using System.Windows.Forms;
+ using ReLogic.Content;
+ 
+ namespace Terraria.UI
+@@ -140,7 +_,6 @@
+ 
+         private static void ShowTheBox(string preparedMessage)
+         {
+-            MessageBox.Show(preparedMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+         }
+     }
+ }

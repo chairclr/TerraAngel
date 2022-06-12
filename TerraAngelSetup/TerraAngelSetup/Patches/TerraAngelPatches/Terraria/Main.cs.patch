@@ -1,0 +1,321 @@
+--- src/Terraria/Terraria/Main.cs
++++ src/TerraAngel/Terraria/Main.cs
+@@ -12,7 +_,6 @@
+ using System.Text.RegularExpressions;
+ using System.Threading;
+ using System.Threading.Tasks;
+-using System.Windows.Forms;
+ using Microsoft.Win32;
+ using Microsoft.Xna.Framework;
+ using Microsoft.Xna.Framework.Content;
+@@ -23,7 +_,6 @@
+ using ReLogic.Graphics;
+ using ReLogic.Localization.IME;
+ using ReLogic.OS;
+-using ReLogic.Peripherals.RGB;
+ using ReLogic.Utilities;
+ using Terraria.Achievements;
+ using Terraria.Audio;
+@@ -204,8 +_,6 @@
+         public static bool CaptureModeDisabled = false;
+         public bool unityMouseOver;
+         public static Main instance;
+-        public static ChromaEngine Chroma;
+-        public static ChromaHotkeyPainter ChromaPainter;
+         public static Camera Camera = new Camera();
+         public static IPlayerRenderer PlayerRenderer = new LegacyPlayerRenderer();
+         public static IPlayerRenderer PotionOfReturnRenderer = new ReturnGatePlayerRenderer();
+@@ -2579,22 +_,17 @@
+ 
+             PendingBorderlessState = screenBorderless;
+             screenBorderlessPendingResizes = (screenBorderless ? 6 : 0);
+-            Form form = (Form)Control.FromHandle(instance.Window.Handle);
+-            if (screenBorderless)
+-            {
+-                SetBorderlessFormStyle(form);
+-            }
+-            else if (screenMaximized)
+-            {
+-                form.FormBorderStyle = FormBorderStyle.Sizable;
+-                form.WindowState = FormWindowState.Maximized;
+-            }
+-            else
+-            {
+-                form.FormBorderStyle = FormBorderStyle.Sizable;
+-            }
+-
+-            form.BringToFront();
++            // REAL WINFORMS CODE FIX LATER
++            //Form form = (Form)Control.FromHandle(instance.Window.Handle);
++            //if (screenBorderless) {
++            //	SetBorderlessFormStyle(form);
++            //} else if (screenMaximized) {
++            //	form.FormBorderStyle = FormBorderStyle.Sizable;
++            //	form.WindowState = FormWindowState.Maximized;
++            //} else {
++            //	form.FormBorderStyle = FormBorderStyle.Sizable;
++            //}
++            //form.BringToFront();
+             int currentValue2 = graphics.PreferredBackBufferWidth;
+             int currentValue3 = graphics.PreferredBackBufferHeight;
+             Configuration.Get("DisplayWidth", ref currentValue2);
+@@ -2983,7 +_,7 @@
+ 
+                     if (num >= 91 && binaryReader.ReadBoolean())
+                     {
+-                        ((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
++                        //((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
+                     }
+ 
+                     if (num >= 4)
+@@ -8047,9 +_,6 @@
+             _achievementAdvisor = new AchievementAdvisor();
+             OpenRecent();
+             UILinksInitializer.Load();
+-            Chroma = new ChromaEngine();
+-            ChromaPainter = new ChromaHotkeyPainter();
+-            ChromaPainter.CollectBoundKeys();
+             CacheSupportedDisplaySizes();
+             if (autoJoin)
+             {
+@@ -8138,7 +_,6 @@
+ 
+             AssetSourceController.UseResourcePacks(AssetInitializer.CreateResourcePackList(base.Services));
+             AssetInitializer.LoadSplashAssets(asyncLoadForSounds: true);
+-            ChromaInitializer.Load();
+             _gameContentLoadProcess = LoadContent_Deferred();
+         }
+ 
+@@ -13877,8 +_,6 @@
+             {
+                 UpdateAudio();
+                 GlobalTimeWrappedHourly = (float)(gameTime.TotalGameTime.TotalSeconds % 3600.0);
+-                ChromaInitializer.UpdateEvents();
+-                Chroma.Update(GlobalTimeWrappedHourly);
+                 return;
+             }
+ 
+@@ -14012,8 +_,6 @@
+             DoUpdate_AutoSave();
+             if (!dedServ)
+             {
+-                ChromaInitializer.UpdateEvents();
+-                Chroma.Update(GlobalTimeWrappedHourly);
+                 if (superFast)
+                 {
+                     base.IsFixedTimeStep = false;
+@@ -14223,15 +_,14 @@
+ 
+                 UpdateOldNPCShop();
+                 hasFocus = base.IsActive;
+-                Form form = Control.FromHandle(base.Window.Handle) as Form;
+-                bool num2 = form.WindowState == FormWindowState.Minimized;
+-                bool flag = Form.ActiveForm == form;
+-                hasFocus |= flag;
+-                if (num2)
+-                {
+-                    hasFocus = false;
+-                }
+-
++                // REAL WINFORMS CODE FIX LATER
++                //Form form = Control.FromHandle(base.Window.Handle) as Form;
++                //bool num2 = form.WindowState == FormWindowState.Minimized;
++                //bool flag = Form.ActiveForm == form;
++                //hasFocus |= flag;
++                //if (num2) {
++                //	hasFocus = false;
++                //}
+                 if (!hasFocus && netMode == 0)
+                 {
+                     if (!Platform.IsOSX)
+@@ -14392,11 +_,6 @@
+             {
+                 DoUpdateInWorld(_worldUpdateTimeTester);
+             }
+-
+-            if (netMode != 2)
+-            {
+-                ChromaPainter.Update();
+-            }
+         }
+ 
+         private static void TryPlayingCreditsRoll()
+@@ -43833,7 +_,6 @@
+ 
+         private static void TryDisposingEverything()
+         {
+-            ChromaInitializer.DisableAllDeviceGroups();
+             CaptureManager.Instance.Dispose();
+             audioSystem.Dispose();
+         }
+@@ -48403,35 +_,33 @@
+             return true;
+         }
+ 
+-        private static void SetDisplayModeAsBorderless(ref int width, ref int height, Form form)
++        private static void SetDisplayModeAsBorderless(ref int width, ref int height)
+         {
+-            if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0)
++            //if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0) {
+-            {
++            //	screenBorderlessPendingResizes--;
+-                screenBorderlessPendingResizes--;
+-                System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
++            //	System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
+-                width = bounds.Width;
++            //	width = bounds.Width;
+-                height = bounds.Height;
++            //	height = bounds.Height;
+-                TryPickingDefaultUIScale(height);
++            //	TryPickingDefaultUIScale(height);
+-            }
++            //}
+         }
+ 
+-        private static void ApplyBorderlessResolution(Form form)
++        private static void ApplyBorderlessResolution()
+         {
+-            if (screenBorderlessPendingResizes > 0)
++            //if (screenBorderlessPendingResizes > 0) {
+-            {
++            //	screenBorderlessPendingResizes--;
+-                screenBorderlessPendingResizes--;
+-                System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
++            //	System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
+-                form.Location = new System.Drawing.Point(bounds.X, bounds.Y);
++            //	form.Location = new System.Drawing.Point(bounds.X, bounds.Y);
+-                form.FormBorderStyle = FormBorderStyle.None;
++            //	form.FormBorderStyle = FormBorderStyle.None;
+-                form.Width = bounds.Width;
++            //	form.Width = bounds.Width;
+-                form.Height = bounds.Height;
++            //	form.Height = bounds.Height;
+-            }
++            //}
+         }
+ 
+-        private static void SetBorderlessFormStyle(Form form)
++        private static void SetBorderlessFormStyle()
+         {
+-            form.Location = new System.Drawing.Point(0, 0);
++            //form.Location = new System.Drawing.Point(0, 0);
+-            form.FormBorderStyle = FormBorderStyle.None;
++            //form.FormBorderStyle = FormBorderStyle.None;
+         }
+ 
+         public static void OpenCharacterSelectUI()
+@@ -62935,18 +_,19 @@
+             SetDisplayMode(width, height, graphics.IsFullScreen);
+         }
+ 
++        // REAL WINFORMS CODE FIX LATER
+         public static void SetDisplayMode(int width, int height, bool fullscreen)
+         {
+             bool flag = false;
+-            Form form = (Form)Control.FromHandle(instance.Window.Handle);
+-            screenMaximized = form.WindowState == FormWindowState.Maximized;
+-            if (screenBorderless && screenMaximized && !graphics.IsFullScreen)
+-            {
+-                screenMaximized = false;
+-                form.WindowState = FormWindowState.Normal;
+-            }
+-
+-            flag = form.FormBorderStyle == FormBorderStyle.None;
++            //Form form = (Form)Control.FromHandle(instance.Window.Handle);
++            //screenMaximized = form.WindowState == FormWindowState.Maximized;
++            //if (screenBorderless && screenMaximized && !graphics.IsFullScreen) {
++            //	screenMaximized = false;
++            //	form.WindowState = FormWindowState.Normal;
++            //}
++            //flag = form.FormBorderStyle == FormBorderStyle.None;
++            screenMaximized = false;
++            flag = false;
+             bool flag2 = false;
+             int num3;
+             int num4;
+@@ -62964,12 +_,10 @@
+                     }
+                 }
+ 
+-                form.MinimumSize = new Size(0, 0);
+-                if (!fullscreen && !flag3)
+-                {
+-                    SetDisplayModeAsBorderless(ref width, ref height, form);
+-                }
+-
++                //form.MinimumSize = new Size(0, 0);
++                //if (!fullscreen && !flag3) {
++                //	SetDisplayModeAsBorderless(ref width, ref height, form);
++                //}
+                 if (width > maxScreenW)
+                 {
+                     float num = (float)height / (float)width;
+@@ -63003,7 +_,7 @@
+             else
+             {
+                 PlayerInput.RawMouseScale = Vector2.One;
+-                form.MinimumSize = new Size(minScreenW, minScreenH);
++                //form.MinimumSize = new Size(minScreenW, minScreenH);
+                 if (flag)
+                 {
+                     width = displayWidth[0];
+@@ -63019,17 +_,14 @@
+ 
+             if (!fullscreen && !flag2)
+             {
+-                if (form.ClientSize.Width < graphics.PreferredBackBufferWidth)
+-                {
+-                    width = form.ClientSize.Width;
+-                    flag2 = true;
+-                }
+-
+-                if (form.ClientSize.Height < graphics.PreferredBackBufferHeight)
+-                {
+-                    height = form.ClientSize.Height;
+-                    flag2 = true;
+-                }
++                //if (form.ClientSize.Width < graphics.PreferredBackBufferWidth) {
++                //	width = form.ClientSize.Width;
++                //	flag2 = true;
++                //}
++                //if (form.ClientSize.Height < graphics.PreferredBackBufferHeight) {
++                //	height = form.ClientSize.Height;
++                //	flag2 = true;
++                //}
+             }
+ 
+             width &= 0x7FFFFFFE;
+@@ -63067,22 +_,17 @@
+                 PendingResolutionWidth = screenWidth;
+                 PendingResolutionHeight = screenHeight;
+                 PlayerInput.CacheOriginalScreenDimensions();
+-                if (!fullscreen)
+-                {
+-                    if (screenBorderless)
+-                    {
+-                        ApplyBorderlessResolution(form);
+-                        form.FormBorderStyle = FormBorderStyle.None;
+-                    }
+-                    else
+-                    {
+-                        form.FormBorderStyle = FormBorderStyle.Sizable;
+-                    }
+-
+-                    form.SendToBack();
+-                    form.BringToFront();
+-                }
+-
++                // WINFORMS CODE REAL FAKE FIX LATER
++                // if (!fullscreen) {
++                // 	if (screenBorderless) {
++                // 		ApplyBorderlessResolution(form);
++                // 		form.FormBorderStyle = FormBorderStyle.None;
++                // 	} else {
++                // 		form.FormBorderStyle = FormBorderStyle.Sizable;
++                // 	}
++                // 	form.SendToBack();
++                // 	form.BringToFront();
++                // }
+                 Lighting.Initialize();
+                 if (!drawToScreen && !_isResizingAndRemakingTargets)
+                 {

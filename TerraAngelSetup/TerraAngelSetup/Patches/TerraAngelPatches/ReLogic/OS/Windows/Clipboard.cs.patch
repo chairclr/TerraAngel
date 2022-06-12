@@ -1,0 +1,47 @@
+--- src/Terraria/ReLogic/OS/Windows/Clipboard.cs
++++ src/TerraAngel/ReLogic/OS/Windows/Clipboard.cs
+@@ -1,6 +_,5 @@
+ using System;
+ using System.Threading;
+-using System.Windows.Forms;
+ using ReLogic.OS.Base;
+ 
+ namespace ReLogic.OS.Windows
+@@ -14,36 +_,11 @@
+ 
+         protected override void SetClipboard(string text)
+         {
+-            if (string.IsNullOrEmpty(text))
+-            {
+-                return;
+-            }
+-
+-            try
+-            {
+-                InvokeInStaThread(delegate
+-                {
+-                    System.Windows.Forms.Clipboard.SetText(text);
+-                });
+-            }
+-            catch
+-            {
+-                Console.WriteLine("Failed to set clipboard contents!");
+-            }
+         }
+ 
+         private string TryToGetClipboardText()
+         {
+-            try
+-            {
+-                return InvokeInStaThread(() => System.Windows.Forms.Clipboard.GetText());
+-            }
+-            catch
+-            {
+-                string result = "";
+-                Console.WriteLine("Failed to get clipboard contents!");
+-                return result;
+-            }
++            return "";
+         }
+ 
+         private static T InvokeInStaThread<T>(Func<T> callback)

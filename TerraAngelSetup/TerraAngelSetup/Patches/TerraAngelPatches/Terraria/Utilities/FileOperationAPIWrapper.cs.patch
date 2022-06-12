@@ -1,0 +1,13 @@
+--- src/Terraria/Terraria/Utilities/FileOperationAPIWrapper.cs
++++ src/TerraAngel/Terraria/Utilities/FileOperationAPIWrapper.cs
+@@ -66,7 +_,9 @@
+ 
+         public static bool MoveToRecycleBin(string path)
+         {
+-            return Send(path, FileOperationFlags.FOF_SILENT | FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI);
++            //return Send(path, FileOperationFlags.FOF_SILENT | FileOperationFlags.FOF_NOCONFIRMATION | FileOperationFlags.FOF_NOERRORUI);
++            System.IO.File.Delete(path);
++            return true;
+         }
+ 
+         private static bool DeleteFile(string path, FileOperationFlags flags)

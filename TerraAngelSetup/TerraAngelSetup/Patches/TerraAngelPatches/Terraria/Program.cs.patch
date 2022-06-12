@@ -1,0 +1,51 @@
+--- src/Terraria/Terraria/Program.cs
++++ src/TerraAngel/Terraria/Program.cs
+@@ -6,7 +_,6 @@
+ using System.Runtime.CompilerServices;
+ using System.Text;
+ using System.Threading;
+-using System.Windows.Forms;
+ using ReLogic.IO;
+ using ReLogic.OS;
+ using Terraria.Initializers;
+@@ -187,18 +_,18 @@
+             SetupLogging();
+             Platform.Get<IWindowService>().SetQuickEditEnabled(enabled: false);
+             using Main main = new Main();
+-            try
+-            {
+-                Lang.InitializeLegacyLocalization();
+-                SocialAPI.Initialize();
+-                LaunchInitializer.LoadParameters(main);
+-                Main.OnEnginePreload += StartForceLoad;
+-                main.Run();
+-            }
+-            catch (Exception e)
+-            {
+-                DisplayException(e);
+-            }
++            //try
++            //{
++            Lang.InitializeLegacyLocalization();
++            //SocialAPI.Initialize();
++            LaunchInitializer.LoadParameters(main);
++            Main.OnEnginePreload += StartForceLoad;
++            main.Run();
++            //}
++            //catch (Exception e)
++            //{
++            //    DisplayException(e);
++            //}
+         }
+ 
+         private static void TrySettingFNAToOpenGL(string[] args)
+@@ -241,8 +_,7 @@
+                     streamWriter.WriteLine(text);
+                     streamWriter.WriteLine("");
+                 }
+-
+-                MessageBox.Show(text, "Terraria: Error");
++                // MessageBox.Show(text, "Terraria: Error");
+             }
+             catch
+             {

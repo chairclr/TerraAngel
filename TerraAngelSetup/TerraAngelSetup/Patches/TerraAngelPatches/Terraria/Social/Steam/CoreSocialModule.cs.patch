@@ -1,0 +1,18 @@
+--- src/Terraria/Terraria/Social/Steam/CoreSocialModule.cs
++++ src/TerraAngel/Terraria/Social/Steam/CoreSocialModule.cs
+@@ -1,6 +_,5 @@
+ using System;
+ using System.Threading;
+-using System.Windows.Forms;
+ using ReLogic.OS;
+ using Steamworks;
+ using Terraria.Localization;
+@@ -32,7 +_,7 @@
+ 
+             if (!SteamAPI.Init())
+             {
+-                MessageBox.Show(Language.GetTextValue("Error.LaunchFromSteam"), Language.GetTextValue("Error.Error"));
++                //MessageBox.Show(Language.GetTextValue("Error.LaunchFromSteam"), Language.GetTextValue("Error.Error"));
+                 Environment.Exit(1);
+             }
+ 

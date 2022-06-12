@@ -1,0 +1,19 @@
+--- src/Terraria/Terraria/NPC.cs
++++ src/TerraAngel/Terraria/NPC.cs
+@@ -13,7 +_,6 @@
+ using Terraria.GameContent.Drawing;
+ using Terraria.GameContent.Events;
+ using Terraria.GameContent.ItemDropRules;
+-using Terraria.GameContent.RGB;
+ using Terraria.GameContent.Tile_Entities;
+ using Terraria.GameContent.UI;
+ using Terraria.Graphics.CameraModifiers;
+@@ -884,8 +_,6 @@
+             {
+                 highestTierBossOrEvent = 398;
+             }
+-
+-            CommonConditions.Boss.HighestTierBossOrEvent = highestTierBossOrEvent;
+         }
+ 
+         public void SpawnWithHigherTime(int timeMult)
