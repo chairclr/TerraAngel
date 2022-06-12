@@ -368,3 +368,6 @@ src/
 Build/
 
 TerraAngel.sln
+
+!TerraAngelSetup/TerraAngelSetup/Patches/TerraAngelPatches/Terraria/LibNew/x64
+!TerraAngelSetup/TerraAngelSetup/Patches/TerraAngelPatches/Terraria/LibNew/x86
