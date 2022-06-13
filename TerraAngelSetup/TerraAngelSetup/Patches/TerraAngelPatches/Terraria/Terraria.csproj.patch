@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -7,29 +_,30 @@
+@@ -7,29 +_,31 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © 2022 Re-Logic</Company>
      <RootNamespace>Terraria</RootNamespace>
@@ -46,12 +46,13 @@
 +  <ItemGroup>
 +    <Reference Include="LibNew/$(Platform)/FNA/FNA.dll" />
 +    <Reference Include="LibNew/$(Platform)/Steamworks.NET.dll" />
++    <Reference Include="LibNew/$(Platform)/ImGui/ImGui.NET.dll" />
 +  </ItemGroup>
 +
    <ItemGroup>
      <EmbeddedResource Include="GameContent/Creative/Content/*" />
      <EmbeddedResource Include="GameContent/Metadata/MaterialData/*" />
-@@ -38,5 +_,29 @@
+@@ -38,5 +_,32 @@
      <EmbeddedResource Include="Libraries/**" />
      <EmbeddedResource Include="Localization/Content/**" />
      <EmbeddedResource Include="Microsoft/**" />
@@ -59,13 +60,11 @@
 +    <EmbeddedResource Include="LibNew/$(Platform)/Steamworks.NET.dll" />
    </ItemGroup>
 +	
-+  
-+
-+
 +  <!-- Copy some steam stuff -->
 +  <Target Name="CopySteam" AfterTargets="AfterBuild">
 +    <Copy SourceFiles="LibNew/$(Platform)/steam_api.dll" DestinationFolder="$(OutDir)" />
 +  </Target>
++  
 +
 +  <!-- Copy some FNA stuff -->
 +  <Target Name="CopyFNA" AfterTargets="AfterBuild">
@@ -73,6 +72,11 @@
 +    <Copy SourceFiles="LibNew/$(Platform)/FNA/FNA3D.dll" DestinationFolder="$(OutDir)" />
 +    <Copy SourceFiles="LibNew/$(Platform)/FNA/SDL2.dll" DestinationFolder="$(OutDir)" />
 +    <Copy SourceFiles="LibNew/$(Platform)/FNA/libtheorafile.dll" DestinationFolder="$(OutDir)" />
++  </Target>
++
++  <!-- Copy some ImGui stuff -->
++  <Target Name="CopyImGui" AfterTargets="AfterBuild">
++    <Copy SourceFiles="LibNew/$(Platform)/ImGui/cimgui.dll" DestinationFolder="$(OutDir)" />
 +  </Target>
 +
 +  <ItemGroup>

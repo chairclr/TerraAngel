@@ -68,6 +68,14 @@
                      }
  
                      if (num >= 4)
+@@ -4751,6 +_,7 @@
+             SoundID.FillAccessMap();
+             Star.SpawnStars();
+             ItemSorting.SetupWhiteLists();
++            TerraAngel.ClientLoader.Test_Setup_Late(this);
+         }
+ 
+         private void Initialize_Entities()
 @@ -8047,9 +_,6 @@
              _achievementAdvisor = new AchievementAdvisor();
              OpenRecent();
@@ -204,6 +212,14 @@
          }
  
          public static void OpenCharacterSelectUI()
+@@ -58159,6 +_,7 @@
+                 _isDrawingOrUpdating = true;
+                 EnsureRenderTargetContent();
+                 DoDraw(gameTime);
++                TerraAngel.ClientLoader.Test_DrawUI(gameTime);
+                 if (Main.OnPostDraw != null)
+                 {
+                     Main.OnPostDraw(gameTime);
 @@ -62935,18 +_,19 @@
              SetDisplayMode(width, height, graphics.IsFullScreen);
          }
