@@ -1,0 +1,37 @@
+--- src/Terraria/ReLogic/OS/Windows/WindowsPlatform.cs
++++ src/TerraAngel/ReLogic/OS/Windows/WindowsPlatform.cs
+@@ -5,7 +_,7 @@
+ {
+     internal class WindowsPlatform : Platform
+     {
+-        private WindowsMessageHook _wndProcHook;
++        //private WindowsMessageHook _wndProcHook;
+         private bool _disposedValue;
+         public WindowsPlatform() : base(PlatformType.Windows)
+         {
+@@ -17,23 +_,14 @@
+ 
+         public override void InitializeClientServices(IntPtr windowHandle)
+         {
+-            if (_wndProcHook == null)
+-            {
+-                _wndProcHook = new WindowsMessageHook(windowHandle);
+-            }
+-
+-            RegisterService((IImeService)new WindowsIme(_wndProcHook, windowHandle));
++            //RegisterService((IImeService)new WindowsIme(_wndProcHook, windowHandle));
++            RegisterService((IImeService)new TerraAngel.Input.RealFNAIme());
+         }
+ 
+         protected override void Dispose(bool disposing)
+         {
+             if (!_disposedValue)
+             {
+-                if (disposing && _wndProcHook != null)
+-                {
+-                    _wndProcHook.Dispose();
+-                    _wndProcHook = null;
+-                }
+ 
+                 _disposedValue = true;
+                 base.Dispose(disposing);

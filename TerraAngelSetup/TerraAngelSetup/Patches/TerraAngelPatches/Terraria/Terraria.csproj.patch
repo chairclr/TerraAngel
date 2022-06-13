@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -7,29 +_,31 @@
+@@ -7,29 +_,34 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © 2022 Re-Logic</Company>
      <RootNamespace>Terraria</RootNamespace>
@@ -47,6 +47,9 @@
 +    <Reference Include="LibNew/$(Platform)/FNA/FNA.dll" />
 +    <Reference Include="LibNew/$(Platform)/Steamworks.NET.dll" />
 +    <Reference Include="LibNew/$(Platform)/ImGui/ImGui.NET.dll" />
++    <Reference Include="LibNew/AnyCpu/MonoMod/Mono.Cecil.dll" />
++    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
++    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
 +  </ItemGroup>
 +
    <ItemGroup>

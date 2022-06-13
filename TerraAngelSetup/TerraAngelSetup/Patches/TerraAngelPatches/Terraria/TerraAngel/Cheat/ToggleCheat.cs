@@ -2,10 +2,11 @@ using ImGuiNET;
 
 namespace TerraAngel
 {
-    public class ToggleCheat
+    public abstract class ToggleCheat
     {
         public bool IsEnabled { get; set; }
-        public virtual string Name { get; }
+        public virtual string Name => GetType().Name;
+        public virtual string Description => "";
 
         public virtual void Load()
         {

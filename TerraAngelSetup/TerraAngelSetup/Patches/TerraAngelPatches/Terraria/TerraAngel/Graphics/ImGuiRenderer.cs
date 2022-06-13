@@ -16,61 +16,46 @@ using System.Reflection;
 
 namespace TerraAngel.Graphics
 {
-    public class TerraRenderer
-    {
+    //public class TerraRenderer
+    //{
 
-        public static TerraImGuiRenderer renderer;
-        public static void Init(Game game)
-        {
-            renderer = new TerraImGuiRenderer(game);
-            renderer.RebuildFontAtlas();
+    //    public static TerraImGuiRenderer ImGuiRenderer;
+    //    public static void Init(Game game)
+    //    {
+    //        ImGuiRenderer = new TerraImGuiRenderer(game);
+    //        ImGuiRenderer.RebuildFontAtlas();
 
-            unsafe
-            {
-                TextInputEXT.TextInput += c =>
-                {
-                    ImGuiIOPtr io = ImGui.GetIO();
-                    if (io.NativePtr != (ImGuiIO*)IntPtr.Zero)
-                    {
-                        io.AddInputCharacter(c);
-                    }
+    //        unsafe
+    //        {
+    //            TextInputEXT.TextInput += (c) =>
+    //            {
+    //                ImGuiIOPtr io = ImGui.GetIO();
+    //                if (io.NativePtr != (ImGuiIO*)IntPtr.Zero)
+    //                {
+    //                    io.AddInputCharacter(c);
+    //                }
+    //            };
+    //        }
+    //    }
 
-                    if (!io.WantCaptureKeyboard)
-                    {
-                        //if (c != '\n' && c != '\r' && c != '\t' && c != '\b')
-                        //{
-                        //    Main.currentChar = (char)c;
-                        //}
-                        //else
-                        //{
-                        //    Main.currentChar = '\0';
-                        //}
-                    }
-                };
-            }
-        }
+    //    private static Queue<Action> actionQueue = new Queue<Action>();
+    //    public static void QueueTaskForNextPredraw(Action fun)
+    //    {
+    //        actionQueue.Enqueue(fun);
+    //    }
 
-        private static Queue<Action> actionQueue = new Queue<Action>();
-        public static void QueueTaskForNextPredraw(Action fun)
-        {
-            actionQueue.Enqueue(fun);
-        }
+    //    public static void Draw(GameTime gameTime)
+    //    {
+    //        while (actionQueue.Count > 0)
+    //            actionQueue.Dequeue()?.Invoke();
 
-        public static void Draw(GameTime gameTime)
-        {
-            while (actionQueue.Count > 0)
-                actionQueue.Dequeue()?.Invoke();
+    //        ImGuiRenderer.BeforeLayout(gameTime);
 
-            renderer.BeforeLayout(gameTime);
 
-            // Draw our UI
-            // TerraAngelLoader.Client.DrawImGui();
-            ClientLoader.Test_Draw_Real();
 
-            // Call AfterLayout now to finish up and draw all the things
-            renderer.AfterLayout();
-        }
-    }
+    //        ImGuiRenderer.AfterLayout();
+    //    }
+    //}
     public static class DrawVertDeclaration
     {
         public static readonly VertexDeclaration Declaration;
@@ -102,7 +87,6 @@ namespace TerraAngel.Graphics
         // Graphics
         public GraphicsDevice GraphicsDevice;
 
-        // public TerraImGuiEffect ImGuiShader;
         public BasicEffect ImGuiShader;
         private RasterizerState RasterizerState;
 
@@ -116,30 +100,36 @@ namespace TerraAngel.Graphics
 
         // Textures
         public Dictionary<IntPtr, Texture2D> LoadedTextures;
-        public Dictionary<IntPtr, bool[]> SpecialEffects;
 
         private long TextureId;
         public IntPtr? FontTextureId;
 
         // Input
         private int ScrollWheelValue;
+        private List<int> keyRemappings = new List<int>();
 
-
-        private List<int> keyBinds = new List<int>();
-
+        // DeltaTime
+        private DateTime lastTime = DateTime.UtcNow;
 
         public TerraImGuiRenderer(Game game)
         {
+            SetupContext();
+            SetupGraphics(game);
+            SetupInput();
+        }
+
+        protected virtual void SetupContext()
+        {
             IntPtr context = ImGui.CreateContext();
             ImGui.SetCurrentContext(context);
-
+        }
+        protected virtual void SetupGraphics(Game game)
+        {
             _game = game ?? throw new ArgumentNullException(nameof(game));
             GraphicsDevice = game.GraphicsDevice;
 
             LoadedTextures = new Dictionary<IntPtr, Texture2D>();
-            SpecialEffects = new Dictionary<IntPtr, bool[]>();
 
-            // texture 0 reserved for "null"
             LoadedTextures.Add(IntPtr.Zero, null);
             TextureId = 1;
 
@@ -153,109 +143,32 @@ namespace TerraAngel.Graphics
                 SlopeScaleDepthBias = 0
             };
 
-            // TerraFXCompiler.CleanupDir();
-            // TerraFXCompiler.GenerateFXFiles();
-            // TerraFXCompiler.CompileShadersToEffects();
-            // ImGuiShader = new TerraImGuiEffect(game.Content.ReadAsset<Effect>(TerraAngel.CWD + "\\ImGuiShader", null));
-            // ImGuiShader.Name = "ImGuiShader";
             ImGuiShader = new BasicEffect(GraphicsDevice);
-            SetupInput();
         }
-
-        public virtual unsafe void RebuildFontAtlas()
-        {
-            // Get font texture from ImGui
-            ImGuiIOPtr io = ImGui.GetIO();
-            io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
-
-            // Copy the data to a managed array
-            byte[] pixels = new byte[width * height * bytesPerPixel];
-            unsafe { Marshal.Copy(new IntPtr(pixelData), pixels, 0, pixels.Length); }
-
-            // Create and register the texture as an XNA texture
-            Texture2D tex2d = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
-            tex2d.SetData(pixels);
-
-            // Should a texture already have been build previously, unbind it first so it can be deallocated
-            if (FontTextureId.HasValue) UnbindTexture(FontTextureId.Value);
-
-            // Bind the new texture to an ImGui-friendly id
-            FontTextureId = BindTexture(tex2d);
-
-            // Let ImGui know where to find the texture
-            io.Fonts.SetTexID(FontTextureId.Value);
-            io.Fonts.ClearTexData(); // Clears CPU side texture data
-        }
-
-        public virtual IntPtr BindTexture(Texture2D texture)
-        {
-            IntPtr id = new IntPtr(TextureId++);
-
-            LoadedTextures.Add(id, texture);
-
-            return id;
-        }
-
-        public virtual void UnbindTexture(IntPtr textureId)
-        {
-            LoadedTextures.Remove(textureId);
-        }
-
-        public virtual IntPtr BindPass(IntPtr id, bool[] effects)
-        {
-            SpecialEffects.Add(id, effects);
-
-            return id;
-        }
-
-        public virtual void UnbindPass(IntPtr id)
-        {
-            SpecialEffects.Remove(id);
-        }
-
-        public virtual void BeforeLayout(GameTime gameTime)
-        {
-            ImGui.GetIO().DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            UpdateInput(gameTime);
-
-            ImGui.NewFrame();
-            // ImGui.PushFont(TerraAngelLoader.Client.Assets.GetTerrariaFont(16f));
-        }
-
-        public virtual void AfterLayout()
-        {
-            // ImGui.PopFont();
-            ImGui.Render();
-
-            unsafe { RenderDrawData(ImGui.GetDrawData()); }
-
-        }
-
         protected virtual void SetupInput()
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Tab] = (int)Microsoft.Xna.Framework.Input.Keys.Tab);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Left);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Right);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Up);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Down);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.PageUp] = (int)Microsoft.Xna.Framework.Input.Keys.PageUp);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.PageDown] = (int)Microsoft.Xna.Framework.Input.Keys.PageDown);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Home] = (int)Microsoft.Xna.Framework.Input.Keys.Home);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.End] = (int)Microsoft.Xna.Framework.Input.Keys.End);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Delete] = (int)Microsoft.Xna.Framework.Input.Keys.Delete);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Backspace] = (int)Microsoft.Xna.Framework.Input.Keys.Back);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Enter] = (int)Microsoft.Xna.Framework.Input.Keys.Enter);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Escape] = (int)Microsoft.Xna.Framework.Input.Keys.Escape);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Space] = (int)Microsoft.Xna.Framework.Input.Keys.Space);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.A] = (int)Microsoft.Xna.Framework.Input.Keys.A);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.C] = (int)Microsoft.Xna.Framework.Input.Keys.C);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.V] = (int)Microsoft.Xna.Framework.Input.Keys.V);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.X] = (int)Microsoft.Xna.Framework.Input.Keys.X);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Y] = (int)Microsoft.Xna.Framework.Input.Keys.Y);
-            keyBinds.Add(io.KeyMap[(int)ImGuiKey.Z] = (int)Microsoft.Xna.Framework.Input.Keys.Z);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Tab] = (int)Microsoft.Xna.Framework.Input.Keys.Tab);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Left);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Right);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Up);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Down);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageUp] = (int)Microsoft.Xna.Framework.Input.Keys.PageUp);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageDown] = (int)Microsoft.Xna.Framework.Input.Keys.PageDown);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Home] = (int)Microsoft.Xna.Framework.Input.Keys.Home);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.End] = (int)Microsoft.Xna.Framework.Input.Keys.End);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Delete] = (int)Microsoft.Xna.Framework.Input.Keys.Delete);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Backspace] = (int)Microsoft.Xna.Framework.Input.Keys.Back);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Enter] = (int)Microsoft.Xna.Framework.Input.Keys.Enter);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Escape] = (int)Microsoft.Xna.Framework.Input.Keys.Escape);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Space] = (int)Microsoft.Xna.Framework.Input.Keys.Space);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.A] = (int)Microsoft.Xna.Framework.Input.Keys.A);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.C] = (int)Microsoft.Xna.Framework.Input.Keys.C);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.V] = (int)Microsoft.Xna.Framework.Input.Keys.V);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.X] = (int)Microsoft.Xna.Framework.Input.Keys.X);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Y] = (int)Microsoft.Xna.Framework.Input.Keys.Y);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Z] = (int)Microsoft.Xna.Framework.Input.Keys.Z);
 
             io.Fonts.AddFontDefault();
             // TerraAngelLoader.Client.Assets.LoadFonts(io);
@@ -319,6 +232,56 @@ namespace TerraAngel.Graphics
             colors[(int)ImGuiCol.ModalWindowDimBg] = new System.Numerics.Vector4(1.00f, 0.00f, 0.00f, 0.35f);
         }
 
+        public virtual IntPtr BindTexture(Texture2D texture)
+        {
+            IntPtr id = new IntPtr(TextureId++);
+
+            LoadedTextures.Add(id, texture);
+
+            return id;
+        }
+        public virtual void UnbindTexture(IntPtr textureId)
+        {
+            LoadedTextures.Remove(textureId);
+        }
+
+        public virtual void BeforeLayout(GameTime gameTime)
+        {
+            ImGui.GetIO().DeltaTime = (float)(DateTime.UtcNow - lastTime).TotalSeconds;
+            lastTime = DateTime.UtcNow;
+            UpdateInput(gameTime);
+            ImGui.NewFrame();
+        }
+        public virtual void AfterLayout()
+        {
+            ImGui.Render();
+            unsafe { RenderDrawData(ImGui.GetDrawData()); }
+        }
+
+        public virtual unsafe void RebuildFontAtlas()
+        {
+            // Get font texture from ImGui
+            ImGuiIOPtr io = ImGui.GetIO();
+            io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
+
+            // Copy the data to a managed array
+            byte[] pixels = new byte[width * height * bytesPerPixel];
+            unsafe { Marshal.Copy(new IntPtr(pixelData), pixels, 0, pixels.Length); }
+
+            // Create and register the texture as an XNA texture
+            Texture2D tex2d = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
+            tex2d.SetData(pixels);
+
+            // Should a texture already have been build previously, unbind it first so it can be deallocated
+            if (FontTextureId.HasValue) UnbindTexture(FontTextureId.Value);
+
+            // Bind the new texture to an ImGui-friendly id
+            FontTextureId = BindTexture(tex2d);
+
+            // Let ImGui know where to find the texture
+            io.Fonts.SetTexID(FontTextureId.Value);
+            io.Fonts.ClearTexData(); // Clears CPU side texture data
+        }
         protected virtual BasicEffect UpdateEffect(Texture2D texture, IntPtr specialEffect)
         {
             ImGuiIOPtr io = ImGui.GetIO();
@@ -332,7 +295,6 @@ namespace TerraAngel.Graphics
 
             return ImGuiShader;
         }
-
         protected virtual void UpdateInput(GameTime gameTime)
         {
             ImGuiIOPtr io = ImGui.GetIO();
@@ -345,9 +307,9 @@ namespace TerraAngel.Graphics
                 io.KeysDown[i] = keyboard.IsKeyDown((Keys)i);
             }
 
-            for (int i = 0; i < keyBinds.Count; i++)
+            for (int i = 0; i < keyRemappings.Count; i++)
             {
-                io.KeysDown[keyBinds[i]] = keyboard.IsKeyDown((Keys)keyBinds[i]);
+                io.KeysDown[keyRemappings[i]] = keyboard.IsKeyDown((Keys)keyRemappings[i]);
             }
 
 
@@ -369,15 +331,7 @@ namespace TerraAngel.Graphics
             int scrollDelta = mouse.ScrollWheelValue - ScrollWheelValue;
             io.MouseWheel = scrollDelta > 0 ? 1 : scrollDelta < 0 ? -1 : 0;
             ScrollWheelValue = mouse.ScrollWheelValue;
-
-
-            if (io.WantCaptureKeyboard || io.WantCaptureMouse)
-            {
-                PlayerInput.ScrollWheelDelta = 0;
-                PlayerInput.ScrollWheelDeltaForUI = 0;
-            }
         }
-
 
         private void RenderDrawData(ImDrawDataPtr drawData)
         {
@@ -387,6 +341,7 @@ namespace TerraAngel.Graphics
 
             GraphicsDevice.BlendFactor = Color.White;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
             GraphicsDevice.RasterizerState = RasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
 
@@ -404,7 +359,6 @@ namespace TerraAngel.Graphics
             GraphicsDevice.Viewport = lastViewport;
             GraphicsDevice.ScissorRectangle = lastScissorBox;
         }
-
         private unsafe void UpdateBuffers(ImDrawDataPtr drawData)
         {
             if (drawData.TotalVtxCount == 0)
@@ -454,7 +408,6 @@ namespace TerraAngel.Graphics
             VertexBuffer.SetData(VertexData, 0, drawData.TotalVtxCount * DrawVertDeclaration.Size);
             IndexBuffer.SetData(IndexData, 0, drawData.TotalIdxCount * sizeof(ushort));
         }
-
         private unsafe void RenderCommandLists(ImDrawDataPtr drawData)
         {
             GraphicsDevice.SetVertexBuffer(VertexBuffer);
@@ -471,9 +424,16 @@ namespace TerraAngel.Graphics
                 {
                     ImDrawCmdPtr drawCmd = cmdList.CmdBuffer[cmdi];
 
-                    if (!LoadedTextures.ContainsKey(drawCmd.TextureId))
+
+                    // Use LoadedTextures.TryGetValue? Why don't you try get some bitches.
+                    Texture2D cmdTexture = GraphicsUtility.MissingTexture;
+                    if (LoadedTextures.ContainsKey(drawCmd.TextureId))
                     {
-                        throw new InvalidOperationException($"Could not find a texture with id '{drawCmd.TextureId}', please check your bindings");
+                        cmdTexture = LoadedTextures[drawCmd.TextureId];
+                    }
+                    else
+                    {
+                        GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                     }
 
                     GraphicsDevice.ScissorRectangle = new Rectangle(
@@ -483,7 +443,7 @@ namespace TerraAngel.Graphics
                         (int)(drawCmd.ClipRect.W - drawCmd.ClipRect.Y)
                     );
 
-                    Effect effect = UpdateEffect(LoadedTextures[drawCmd.TextureId], drawCmd.TextureId);
+                    Effect effect = UpdateEffect(cmdTexture, drawCmd.TextureId);
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
@@ -508,5 +468,4 @@ namespace TerraAngel.Graphics
             }
         }
     }
-
 }

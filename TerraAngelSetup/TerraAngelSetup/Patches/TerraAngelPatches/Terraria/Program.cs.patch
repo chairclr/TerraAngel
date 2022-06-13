@@ -8,6 +8,14 @@
  using ReLogic.IO;
  using ReLogic.OS;
  using Terraria.Initializers;
+@@ -166,6 +_,7 @@
+ 
+         public static void LaunchGame(string[] args, bool monoArgs = false)
+         {
++            TerraAngel.Loader.ClientLoader.Hookgen_Early();
+             Thread.CurrentThread.Name = "Main Thread";
+             if (monoArgs)
+             {
 @@ -187,18 +_,18 @@
              SetupLogging();
              Platform.Get<IWindowService>().SetQuickEditEnabled(enabled: false);

@@ -1,6 +1,6 @@
 --- src/Terraria/ReLogic/Localization/IME/WindowsIme.cs
 +++ src/TerraAngel/ReLogic/Localization/IME/WindowsIme.cs
-@@ -1,122 +_,84 @@
+@@ -1,123 +_,85 @@
  using System;
  using System.Runtime.InteropServices;
 -using System.Windows.Forms;
@@ -150,7 +150,7 @@
 +				case 642:
 +					return true;
 +				case 258:
-+					OnKeyPress((char)message.WParam.ToInt32());
++					
 +					break;
 +				case 256:
 +					if (!ReLogic.Localization.IME.Windows.NativeMethods.ImeUi_ShouldIgnoreHotKey(ref message)) {
@@ -173,6 +173,8 @@
 -                ReLogic.Localization.IME.Windows.NativeMethods.ImeUi_Uninitialize();
 -                _disposedValue = true;
 -            }
-         }
+-        }
++		}
  
          ~WindowsIme()
+         {

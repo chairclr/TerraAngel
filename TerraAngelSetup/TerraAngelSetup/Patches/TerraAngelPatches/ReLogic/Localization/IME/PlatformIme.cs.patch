@@ -1,0 +1,11 @@
+--- src/Terraria/ReLogic/Localization/IME/PlatformIme.cs
++++ src/TerraAngel/ReLogic/Localization/IME/PlatformIme.cs
+@@ -5,7 +_,7 @@
+ {
+     public abstract class PlatformIme : IImeService, IDisposable
+     {
+-        private readonly List<Action<char>> _keyPressCallbacks = new List<Action<char>>();
++        public readonly List<Action<char>> _keyPressCallbacks = new List<Action<char>>();
+         private bool _disposedValue;
+         public abstract string CompositionString { get; }
+ 
