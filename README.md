@@ -24,7 +24,6 @@ Or, manually build `TerraAngelSetup` and run `TerraAngelSetup.exe -auto` or `Ter
 Development
 </h2>
 
----
 
 To develop the client itself, after cloning the github repo
 run  `fast_start_x64.bat` or `fast_start_x86.bat`
@@ -43,7 +42,6 @@ You can then push a new commit or make a pull request to contribute to the repos
 Main features
 </h2>
 
----
 
 - Supports building x64 and x86
 - There is currently no other features or additions to this game.
@@ -52,7 +50,6 @@ Main features
 Planned features
 </h2>
 
----
 
 - Literally a client lmao
 
@@ -60,7 +57,7 @@ Planned features
 Contributing
 </h2>
 
----
+--
 
 To contribute, open a pull request and I will review it and accept the PR if it suitable.
 
@@ -68,6 +65,5 @@ To contribute, open a pull request and I will review it and accept the PR if it 
 Questions?
 </h2>
 
----
 
 Open an issue!
