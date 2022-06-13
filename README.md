@@ -57,7 +57,6 @@ Planned features
 Contributing
 </h2>
 
---
 
 To contribute, open a pull request and I will review it and accept the PR if it suitable.
 
