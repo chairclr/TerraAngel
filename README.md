@@ -11,7 +11,6 @@ TerraAngel is a futuristic and heavily featured utility client for Terraria.
 Installation
 </h2>
 
----
 To install, clone the github repo
 
 ```git clone https://github.com/CEO-Chair/DotnetPatcher.git --recursive```
