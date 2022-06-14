@@ -1,0 +1,21 @@
+--- src/Terraria/Terraria/GameContent/UI/Elements/UIScrollbar.cs
++++ src/TerraAngel/Terraria/GameContent/UI/Elements/UIScrollbar.cs
+@@ -16,6 +_,7 @@
+         private float _dragYOffset;
+         private Asset<Texture2D> _texture;
+         private Asset<Texture2D> _innerTexture;
++        public Color BarColor = Color.White;
+         public float ViewPosition
+         {
+             get
+@@ -96,8 +_,8 @@
+                 SoundEngine.PlaySound(12);
+             }
+ 
+-            DrawBar(spriteBatch, _texture.Value, dimensions.ToRectangle(), Color.White);
++            DrawBar(spriteBatch, _texture.Value, dimensions.ToRectangle(), BarColor);
+-            DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, Color.White * ((_isDragging || _isHoveringOverHandle) ? 1f : 0.85f));
++            DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, BarColor * ((_isDragging || _isHoveringOverHandle) ? 1f : 0.85f));
+         }
+ 
+         public override void MouseDown(UIMouseEvent evt)

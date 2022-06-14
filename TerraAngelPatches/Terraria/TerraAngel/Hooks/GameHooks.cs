@@ -5,6 +5,7 @@ using MonoMod.RuntimeDetour;
 using Terraria;
 using TerraAngel.Loader;
 using ImGuiNET;
+using ReLogic.OS;
 
 namespace TerraAngel.Hooks
 {
@@ -17,6 +18,9 @@ namespace TerraAngel.Hooks
             HookUtil.HookGen(Main.DrawCursor, DrawCursorHook);
             HookUtil.HookGen(Main.DrawThickCursor, DrawThickCursorHook);
             HookUtil.HookGen<Main>("DoUpdate_Enter_ToggleChat", OpenChatHook);
+            HookUtil.HookGen<Main>("SetTitle", SetTitleHook);
+            //HookUtil.HookGen(typeof(SDL2.SDL).Assembly.GetType("Microsoft.Xna.Framework.SDL2_FNAPlatform"), "OnIsMouseVisibleChanged", OnIsMouseVisibleChangedHook);
+            HookUtil.HookGen<Game>("set_IsMouseVisible", set_IsMouseVisibleHook);
         }
 
         public static void InitHook(Action<Main> orig, Main self)
@@ -59,6 +63,26 @@ namespace TerraAngel.Hooks
                 return;
             }
             orig();
+        }
+        public static void SetTitleHook(Action<Main> orig, Main self)
+        {
+            SDL2.SDL.SDL_SetWindowTitle(self.Window.Handle, "TerraAngel");
+            //orig(self);
+        }
+        //public static void OnIsMouseVisibleChangedHook(Action<bool> orig, bool visible)
+        //{
+        //    if (ClientLoader.SetupRenderer && ImGui.GetIO().WantCaptureMouse)
+        //    {
+        //        Main.instance.IsMouseVisible
+        //        visible = true;
+        //    }
+        //    orig(visible);
+        //}
+        public static void set_IsMouseVisibleHook(Action<Game, bool> orig, Game self, bool visible)
+        {
+            if (ClientLoader.SetupRenderer && ImGui.GetIO().WantCaptureMouse)
+                visible = true;
+            orig(self, visible);
         }
     }
 }

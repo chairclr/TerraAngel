@@ -35,5 +35,16 @@ namespace TerraAngel.Hooks
             IDetour detour = new Hook(GetMethod(typeof(T), from, parameterTypes), to);
             detour.Apply();
         }
+
+        public static void HookGen(Type fromType, string from, Delegate to)
+        {
+            IDetour detour = new Hook(GetMethod(fromType, from), to);
+            detour.Apply();
+        }
+        public static void HookGen(Type fromType, string from, Delegate to, params Type[] parameterTypes)
+        {
+            IDetour detour = new Hook(GetMethod(fromType, from, parameterTypes), to);
+            detour.Apply();
+        }
     }
 }

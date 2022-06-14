@@ -171,7 +171,7 @@ namespace TerraAngel.Graphics
             keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Z] = (int)Microsoft.Xna.Framework.Input.Keys.Z);
 
             io.Fonts.AddFontDefault();
-            // TerraAngelLoader.Client.Assets.LoadFonts(io);
+            Client.ClientAssets.LoadFonts(ImGui.GetIO());
             ImGuiStylePtr style = ImGui.GetStyle();
             RangeAccessor<System.Numerics.Vector4> colors = style.Colors;
 

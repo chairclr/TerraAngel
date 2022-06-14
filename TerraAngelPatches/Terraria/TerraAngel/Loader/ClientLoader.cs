@@ -2,8 +2,8 @@
 using TerraAngel.Hooks;
 using TerraAngel.Graphics;
 using TerraAngel.Input;
-using TerraAngel.Cheat;
 using TerraAngel.Client;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Loader
 {
@@ -12,6 +12,8 @@ namespace TerraAngel.Loader
         public static ClientRenderer MainRenderer;
 
         public static bool SetupRenderer = false;
+
+        public static ConfigUI ConfigUI = new ConfigUI();
 
         public static void Hookgen_Early()
         {

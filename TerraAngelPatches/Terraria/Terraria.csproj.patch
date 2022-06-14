@@ -55,7 +55,7 @@
    <ItemGroup>
      <EmbeddedResource Include="GameContent/Creative/Content/*" />
      <EmbeddedResource Include="GameContent/Metadata/MaterialData/*" />
-@@ -38,5 +_,32 @@
+@@ -38,5 +_,52 @@
      <EmbeddedResource Include="Libraries/**" />
      <EmbeddedResource Include="Localization/Content/**" />
      <EmbeddedResource Include="Microsoft/**" />
@@ -81,6 +81,26 @@
 +  <Target Name="CopyImGui" AfterTargets="AfterBuild">
 +    <Copy SourceFiles="LibNew/$(Platform)/ImGui/cimgui.dll" DestinationFolder="$(OutDir)" />
 +  </Target>
++
++  <!-- Copy some Font stuff -->
++  <Target Name="CopyAssets" AfterTargets="AfterBuild">
++    <Copy SourceFiles="Assets/IconFont.ttf" DestinationFolder="$(OutDir)" />
++    <Copy SourceFiles="Assets/MonoFont.ttf" DestinationFolder="$(OutDir)" />
++    <Copy SourceFiles="Assets/TerrariaFont.ttf" DestinationFolder="$(OutDir)" />
++  </Target>
++
++  <Target Name="EditBin" AfterTargets="Build">
++    <PropertyGroup>
++      <EditBinOpts>/largeaddressaware</EditBinOpts>
++      <DumpBin>/headers</DumpBin>
++    </PropertyGroup>
++
++    <Message Text="Applying editbin $(EditBinOpts)" Importance="high" />
++    <Exec Command="..\largeaddresstool\editbin $(EditBinOpts) &quot;$(TargetPath)&quot;" />
++    <Message Text="Checking headers with dumpbin." Importance="high" />
++    <Exec Command="..\largeaddresstool\dumpbin $(DumpBin) &quot;$(TargetPath)&quot; | findstr &quot;large&quot;" />
++  </Target>
++
 +
 +  <ItemGroup>
 +    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />

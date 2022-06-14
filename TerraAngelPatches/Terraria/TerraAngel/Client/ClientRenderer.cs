@@ -2,7 +2,6 @@
 using TerraAngel.Hooks;
 using TerraAngel.Graphics;
 using TerraAngel.Input;
-using TerraAngel.Cheat;
 using TerraAngel.Client;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
@@ -19,18 +18,20 @@ namespace TerraAngel.Client
         public TerraInput InputSystem = new TerraInput();
         public List<ClientWindow> ClientWindows = new List<ClientWindow>();
 
+        public bool GlobalUIState = true;
+
+
         public ClientRenderer(Game game) : base(game)
         {
-            base.SetupContext();
-            base.SetupGraphics(game);
-            base.SetupInput();
             this.Init();
         }
 
         public void Init()
         {
             base.RebuildFontAtlas();
-            ClientWindows.Add(new MainWindow());
+            AddWindow(new MainWindow());
+            ConsoleSetup.SetConsoleInitialCommands((ConsoleWindow)AddWindow(new ConsoleWindow()));
+            AddWindow(new StatsWindow());
 
             unsafe
             {
@@ -48,17 +49,10 @@ namespace TerraAngel.Client
         public void Render(GameTime time)
         {
             base.BeforeLayout(time);
-
             PreDraw();
-
             Draw();
-
             PostDraw();
-
             base.AfterLayout();
-            //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.UIScaleMatrix);
-            //Main.DrawCursor(Main.DrawThickCursor());
-            //Main.spriteBatch.End();
             
         }
 
@@ -71,10 +65,6 @@ namespace TerraAngel.Client
         {
             InputSystem.EndUpdateInput();
 
-            if (ImGui.GetIO().WantCaptureMouse && !Main.instance.IsMouseVisible)
-            {
-                Main.instance.IsMouseVisible = true;
-            }
             if (ImGui.GetIO().WantCaptureKeyboard)
             {
                 Main.ClosePlayerChat();
@@ -85,18 +75,34 @@ namespace TerraAngel.Client
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
+            if (InputSystem.IsKeyPressed(Keys.OemTilde))
+                GlobalUIState = !GlobalUIState;
+
             foreach (ClientWindow window in ClientWindows)
             {
-                if (window.IsEnabled)
+                if ((!window.IsToggleable || GlobalUIState) && window.IsEnabled)
                 {
                     window.Draw(io);
                 }
 
-                if (InputSystem.IsKeyPressed(window.ToggleKey))
+                if (window.IsToggleable && InputSystem.IsKeyPressed(window.ToggleKey))
                 {
                     window.IsEnabled = !window.IsEnabled;
+
+                    if (window.IsEnabled)
+                        window.OnEnable();
+                    else
+                        window.OnDisable();
                 }
             }
+        }
+
+        public ClientWindow AddWindow(ClientWindow window)
+        {
+            ClientWindows.Add(window);
+            window.Init();
+            window.IsEnabled = window.DefaultEnabled;
+            return window;
         }
     }
 }
