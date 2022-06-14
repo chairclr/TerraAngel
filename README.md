@@ -13,7 +13,7 @@ Installation
 
 To install, clone the github repo
 
-```git clone https://github.com/CEO-Chair/DotnetPatcher.git --recursive```
+```git clone https://github.com/CEO-Chair/TerraAngel.git --recursive```
 
 To quickstart as x64, run `fast_start_x64.bat`, and as x86 `fast_start_x86.bat`
 
