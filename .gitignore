@@ -369,6 +369,8 @@ Build/
 
 *.sln
 
+!TerraAngelPatches/Terraria/Terraria.sln
+
 build_log_*.txt
 
 !TerraAngelPatches/Terraria/LibNew/x64

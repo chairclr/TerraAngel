@@ -27,13 +27,9 @@ public class Program
     public const string PatchesOutputName = "-po";
     public const string PatchesOutputNameLong = "-patchoutput";
 
-    public const string CompilerOutputName = "-co";
-    public const string CompilerOutputNameLong = "-compileroutput";
-
     public const string DecompileName = "-decompile";
     public const string PatchName = "-patch";
     public const string DiffName = "-diff";
-    public const string PrebuildName = "-prebuild";
     public const string AutoStartName = "-auto";
     public const string BuildDebugName = "-debug";
 
@@ -41,12 +37,10 @@ public class Program
     public static string DecompilerOutputPath = @"src\Terraria";
     public static string PatchesPath = @"..\..\..\Patches\TerraAngelPatches";
     public static string PatchedPath = @"src\TerraAngel";
-    public static string CompiledPath = @"src\TerraAngel\Terraria\bin\Release\net6.0";
 
     public static bool Decomp = false;
     public static bool Patch = false;
     public static bool Diff = false;
-    public static bool Prebuild = false;
     public static bool AutoStart = false;
     public static bool BuildDebug = false;
 
@@ -92,13 +86,6 @@ public class Program
                         PatchedPath = args[i + 1];
                     }
                     break;
-                case CompilerOutputName:
-                case CompilerOutputNameLong:
-                    if (moreArgs)
-                    {
-                        CompiledPath = args[i + 1];
-                    }
-                    break;
 
                 case DecompileName:
                     Decomp = true;
@@ -109,9 +96,6 @@ public class Program
                 case DiffName:
                     Diff = true;
                     break;
-                case PrebuildName:
-                    Prebuild = true;
-                    break;
                 case AutoStartName:
                     AutoStart = true;
                     break;
@@ -121,10 +105,6 @@ public class Program
             }
         }
 
-        if (BuildDebug)
-        {
-            CompiledPath.Replace("Release", "Debug");
-        }
 
         try
         {
@@ -140,10 +120,6 @@ public class Program
             if (Diff)
             {
                 DiffTerraria();
-            }
-            if (Prebuild)
-            {
-                CopyTerrariaThings();
             }
         }
         catch (Exception ex)
@@ -202,47 +178,6 @@ public class Program
         terrariaDiffer.Diff();
 
         Console.WriteLine($"Diffed {PatchedPath} with {DecompilerOutputPath} into {PatchesPath}");
-    }
-    public static void CopyTerrariaThings()
-    {
-        string dirName = Path.GetDirectoryName(TerrariaPath) + "\\Content";
-        if (!Directory.Exists(dirName))
-            throw new DirectoryNotFoundException($"Directory '{TerrariaPath}' not found");
-
-        if (!Directory.Exists(CompiledPath))
-            throw new DirectoryNotFoundException($"Directory '{CompiledPath}' not found");
-
-        Console.WriteLine($"Copying {Path.GetFullPath(dirName)} into {Path.GetFullPath(CompiledPath)}");
-
-        CopyDirectory(Path.GetFullPath(dirName), Path.GetFullPath(CompiledPath) + "\\Content", true);
-
-        Console.WriteLine($"Copyed {Path.GetFullPath(dirName)} into {Path.GetFullPath(CompiledPath)}");
-    }
-    public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
-    {
-        DirectoryInfo dir = new DirectoryInfo(sourceDir);
-
-        if (!dir.Exists)
-            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
-
-        DirectoryInfo[] dirs = dir.GetDirectories();
-
-        Directory.CreateDirectory(destinationDir);
-
-        foreach (FileInfo file in dir.GetFiles())
-        {
-            string targetFilePath = Path.Combine(destinationDir, file.Name);
-            file.CopyTo(targetFilePath);
-        }
-
-        if (recursive)
-        {
-            foreach (DirectoryInfo subDir in dirs)
-            {
-                string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-                CopyDirectory(subDir.FullName, newDestinationDir, true);
-            }
-        }
     }
     public static void FormatDir(string dir)
     {
