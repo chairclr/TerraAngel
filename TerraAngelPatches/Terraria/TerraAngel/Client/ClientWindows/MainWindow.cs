@@ -11,6 +11,8 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using TerraAngel.Cheat;
+using TerraAngel.Graphics;
+using TerraAngel.WorldEdits;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -26,7 +28,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override void Draw(ImGuiIOPtr io)
         {
-            ImGui.PushFont(ClientAssets.GetMonospaceFont(18));
+            ImGui.PushFont(ClientAssets.GetMonospaceFont(16));
 
             NVector2 windowSize = io.DisplaySize / new NVector2(3f, 2f);
             
@@ -65,6 +67,7 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         ImGui.TextUnformatted("Speed"); ImGui.SameLine();
                         ImGui.SliderFloat("##Speed", ref GlobalCheatManager.NoClipSpeed, 1f, 128f);
+
                         ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
                         ImGui.SliderInt("##SyncTime", ref GlobalCheatManager.NoClipPlayerSyncTime, 1, 60);
                     }
@@ -82,14 +85,98 @@ namespace TerraAngel.Client.ClientWindows
                             GlobalCheatManager.FullBrightBrightness = tmp / 100f;
                         }
                     }
+                    ImGui.Checkbox("ESP Boxes", ref GlobalCheatManager.ESPBoxes);
+                    ImGui.Checkbox("ESP Tracers", ref GlobalCheatManager.ESPTracers);
+                    if (ImGui.CollapsingHeader("ESP Settings"))
+                    {
+                        ImGuiUtil.ColorEdit4("Local player box color", ref GlobalCheatManager.ESPBoxColorLocalPlayer);
+                        ImGuiUtil.ColorEdit4("Other player box color", ref GlobalCheatManager.ESPBoxColorOthers);
+                        ImGuiUtil.ColorEdit4("Tracer color", ref GlobalCheatManager.ESPTracerColor);
+                    }
+                    ImGui.Checkbox("Show Tile Sections", ref GlobalCheatManager.ShowTileSectionBorders);
+                    ImGui.EndTabItem();
+                }
+                if (ImGui.BeginTabItem("World Edit"))
+                {
+                    if (ImGui.BeginTabBar("WorldEditBar"))
+                    {
+                        for (int i = 0; i < Loader.ClientLoader.MainRenderer.WorldEdits.Count; i++)
+                        {
+                            WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.WorldEdits[i];
+                            if (worldEdit.DrawUITab(io))
+                            {
+                                Loader.ClientLoader.MainRenderer.CurrentWorldEditIndex = i;
+                            }
+                        }
+                        ImGui.EndTabBar();
+                    }
+                    ImGui.EndTabItem();
+                }
+                else
+                {
+                    Loader.ClientLoader.MainRenderer.CurrentWorldEditIndex = -1;
+                }
+                if (ImGui.BeginTabItem("Misc"))
+                {
+                    if (ImGui.Button("Reveal Map"))
+                    {
+                        int xlen = Main.Map.MaxWidth;
+                        int ylen = Main.Map.MaxHeight;
+                        Task.Run(async () =>
+                        {
+                            ConsoleWindow.Instance.WriteLine("Revealing map");
+                            lock (Main.tile)
+                            {
+                                for (int x = 0; x < xlen; x++)
+                                {
+                                    for (int y = 0; y < ylen; y++)
+                                    {
+                                        if (Main.tile[x, y] != null && (x - 1 < 0 || Main.tile[x - 1, y] != null) && (x + 1 > xlen || Main.tile[x + 1, y] != null) && (y - 1 < 0 || Main.tile[x, y - 1] != null) && (y + 1 > ylen || Main.tile[x, y + 1] != null))
+                                        {
+                                            Main.Map.Update(x, y, 255);
+                                        }
+                                    }
+                                    if (x % Main.maxTilesX == Main.maxTilesX / 2)
+                                    {
+                                        ConsoleWindow.Instance.WriteLine("50% revealed");
+                                    }
+                                }
+                            }
+                            ConsoleWindow.Instance.WriteLine("Map Revealed");
+                            Main.refreshMap = true;
+                        });
+                    }
+
                     ImGui.EndTabItem();
                 }
             }
         }
 
+        private int framesToShowUUIDFor = 0;
         public void DrawInMenu(ImGuiIOPtr io)
         {
+            if (ImGui.BeginTabBar("##MainTabBar"))
+            {
+                if (ImGui.BeginTabItem("Cheats"))
+                {
+                    ImGui.Button($"{ClientAssets.IconFont.Refresh} Client UUID"); ImGui.SameLine();
+                    if (ImGui.Button("Click to reveal"))
+                    {
+                        framesToShowUUIDFor = 600;
+                    } ImGui.SameLine();
+                    if (ImGui.Button("Click to copy"))
+                    {
+                        ImGui.SetClipboardText(Main.clientUUID);
+                    }
 
+                    if (framesToShowUUIDFor > 0)
+                    {
+                        framesToShowUUIDFor--;
+                        ImGui.Text(Main.clientUUID);
+                    }
+                    ImGui.EndTabItem();
+                }
+            }
         }
     }
 }

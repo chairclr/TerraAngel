@@ -21,6 +21,14 @@ namespace TerraAngel.Client.ClientWindows
 
         public override string Title => "Console";
 
+        public static ConsoleWindow Instance;
+
+        public ConsoleWindow()
+        {
+            if (Instance == null)
+                Instance = this;
+        }
+
         private object ConsoleLock = new object();
 
         internal Dictionary<string, ConsoleCommand> ConsoleCommands = new Dictionary<string, ConsoleCommand>();

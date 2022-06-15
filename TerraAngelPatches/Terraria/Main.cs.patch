@@ -106,6 +106,15 @@
              _gameContentLoadProcess = LoadContent_Deferred();
          }
  
+@@ -9839,7 +_,7 @@
+             {
+                 newMusic = (dayTime ? 42 : 15);
+             }
+-            else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
++            else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] != null && tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
+             {
+                 newMusic = 26;
+             }
 @@ -13877,8 +_,6 @@
              {
                  UpdateAudio();

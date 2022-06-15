@@ -40,29 +40,37 @@ namespace TerraAngel.Client.Config
         public bool DefaultAntiHurt = true;
         public bool DefaultInfiniteMana = true;
         public bool DefaultInfiniteMinions = true;
+        public bool TeleportSendRODPacket = true;
+        public bool RightClickOnMapToTeleport = true;
         public Keys ToggleUIVisibility = Keys.OemTilde;
         public Keys ToggleStatsWindowMovability = Keys.NumPad5;
         public Keys ToggleNoclip = Keys.F2;
         public Keys ToggleFreecam = Keys.F3;
         public Keys ToggleFullbright = Keys.F4;
+        public Keys TeleportToCursor = Keys.Z;
 
         public static List<UIElement> GetUITexts()
         {
             return new List<UIElement>() 
             { 
-                new UITextCheckbox("Show Stats Window",         () => Instance.ShowStatsWindow,               (v) => Instance.ShowStatsWindow             = v), 
-                new UITextCheckbox("Show Console Window",       () => Instance.ShowConsoleWindow,             (v) => Instance.ShowConsoleWindow           = v),
+                new UITextCheckbox("Show Stats Window",                     () => Instance.ShowStatsWindow,               (v) => Instance.ShowStatsWindow             = v), 
+                new UITextCheckbox("Show Console Window",                   () => Instance.ShowConsoleWindow,             (v) => Instance.ShowConsoleWindow           = v),
 
-                new UITextCheckbox("Default Anti-Hurt",         () => Instance.DefaultAntiHurt,               (v) => Instance.DefaultAntiHurt             = v),
-                new UITextCheckbox("Default Infinite Mana",     () => Instance.DefaultInfiniteMana,           (v) => Instance.DefaultInfiniteMana         = v),
-                new UITextCheckbox("Default Infinite Minions",  () => Instance.DefaultInfiniteMinions,        (v) => Instance.DefaultInfiniteMinions      = v),
+                new UITextCheckbox("Default Anti-Hurt",                     () => Instance.DefaultAntiHurt,               (v) => Instance.DefaultAntiHurt             = v),
+                new UITextCheckbox("Default Infinite Mana",                 () => Instance.DefaultInfiniteMana,           (v) => Instance.DefaultInfiniteMana         = v),
+                new UITextCheckbox("Default Infinite Minions",              () => Instance.DefaultInfiniteMinions,        (v) => Instance.DefaultInfiniteMinions      = v),
 
-                new UIKeySelect(   "Toggle UI",                 () => Instance.ToggleUIVisibility,            (v) => Instance.ToggleUIVisibility          = v),
-                new UIKeySelect(   "Move Stats window",         () => Instance.ToggleStatsWindowMovability,   (v) => Instance.ToggleStatsWindowMovability = v),
+                new UITextCheckbox("Right Click on Map for Teleport",       () => Instance.RightClickOnMapToTeleport,     (v) => Instance.RightClickOnMapToTeleport   = v),
+                new UITextCheckbox("Send Teleport Packet",                  () => Instance.TeleportSendRODPacket,         (v) => Instance.TeleportSendRODPacket       = v),
 
-                new UIKeySelect(   "Toggle Noclip",             () => Instance.ToggleNoclip,                  (v) => Instance.ToggleNoclip                = v),
-                new UIKeySelect(   "Toggle Freecam",            () => Instance.ToggleFreecam,                 (v) => Instance.ToggleFreecam               = v),
-                new UIKeySelect(   "Toggle Fullbright",         () => Instance.ToggleFullbright,              (v) => Instance.ToggleFullbright            = v),
+                new UIKeySelect(   "Toggle UI",                             () => Instance.ToggleUIVisibility,            (v) => Instance.ToggleUIVisibility          = v),
+                new UIKeySelect(   "Move Stats window",                     () => Instance.ToggleStatsWindowMovability,   (v) => Instance.ToggleStatsWindowMovability = v),
+
+                new UIKeySelect(   "Teleport to Cursor",                    () => Instance.TeleportToCursor,              (v) => Instance.TeleportToCursor            = v),
+
+                new UIKeySelect(   "Toggle Noclip",                         () => Instance.ToggleNoclip,                  (v) => Instance.ToggleNoclip                = v),
+                new UIKeySelect(   "Toggle Freecam",                        () => Instance.ToggleFreecam,                 (v) => Instance.ToggleFreecam               = v),
+                new UIKeySelect(   "Toggle Fullbright",                     () => Instance.ToggleFullbright,              (v) => Instance.ToggleFullbright            = v),
             };
     }
 

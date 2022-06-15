@@ -1,0 +1,10 @@
+--- src/Terraria/Terraria/MessageBuffer.cs
++++ src/TerraAngel/Terraria/MessageBuffer.cs
+@@ -707,7 +_,6 @@
+                         Main.checkHalloween();
+                         Main.checkXMas();
+                     }
+-
+                     break;
+                 case 8:
+                     {

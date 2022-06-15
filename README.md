@@ -3,7 +3,7 @@
 TerraAngel
 </h1>
 <p align="center">
-TerraAngel is a futuristic and heavily featured utility client for Terraria.
+TerraAngel is a modern and heavily featured utility client for Terraria.
 </p>
 <br>
 
@@ -43,14 +43,25 @@ Main features
 
 
 - Supports building x64 and x86
-- There is currently no other features or additions to this game.
+- Anti-Hurt/Godmode
+- Fullbright
+- Noclip
+- ESP
+- Revealing the map
+- Actually good looking and customizable UI
+- World Edit 
+  - Tile Brush
+    - Placing & Replacing Tiles
+    - Breaking Tiles
+
 
 <h2>
 Planned features
 </h2>
 
 
-- Literally a client lmao
+- More world edit features
+- More customization options
 
 <h2>
 Contributing

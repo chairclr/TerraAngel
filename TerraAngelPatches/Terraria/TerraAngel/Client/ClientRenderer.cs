@@ -11,12 +11,29 @@ using Terraria;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using TerraAngel.Client.Config;
+using TerraAngel.WorldEdits;
+using TerraAngel.Cheat;
 
 namespace TerraAngel.Client
 {
     public class ClientRenderer : TerraImGuiRenderer
     {
         public List<ClientWindow> ClientWindows = new List<ClientWindow>();
+        public List<WorldEdit> WorldEdits = new List<WorldEdit>() { new WorldEditBrush() };
+
+        public int CurrentWorldEditIndex = -1;
+
+        public WorldEdit CurrentWorldEdit
+        {
+            get
+            {
+                if (CurrentWorldEditIndex == -1)
+                    return null;
+                else
+                    return WorldEdits[CurrentWorldEditIndex];
+            }
+        }
+
         public static int updateCount = 0;
 
         public bool GlobalUIState = true;
@@ -30,6 +47,7 @@ namespace TerraAngel.Client
         public void Init()
         {
             base.RebuildFontAtlas();
+            AddWindow(new DrawWindow());
             AddWindow(new MainWindow());
             ConsoleSetup.SetConsoleInitialCommands((ConsoleWindow)AddWindow(new ConsoleWindow()));
             AddWindow(new StatsWindow());
@@ -74,6 +92,12 @@ namespace TerraAngel.Client
             if (updateCount % 600 == 0)
             {
                 ClientConfig.Instance.WriteToFile();
+            }
+
+
+            if (Netplay.Connection.State <= 3 && GlobalCheatManager.LoadedTileSections != null)
+            {
+                GlobalCheatManager.LoadedTileSections = null;
             }
         }
 

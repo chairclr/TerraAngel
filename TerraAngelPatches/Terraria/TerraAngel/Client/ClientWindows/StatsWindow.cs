@@ -13,11 +13,13 @@ using TerraAngel.UI;
 using Terraria;
 using TerraAngel.Utility;
 using Microsoft.Xna.Framework;
+using System.Reflection;
 
 namespace TerraAngel.Client.ClientWindows
 {
     public class StatsWindow : ClientWindow
     {
+
         public override Keys ToggleKey => Keys.None;
 
         public override bool IsToggleable => false;
@@ -91,6 +93,9 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.SetNextWindowPos(new System.Numerics.Vector2(0, io.DisplaySize.Y / 2.2f - 32f), ImGuiCond.FirstUseEver);
             ImGui.Begin("##StatWindow", flags);
             ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
+
+            ImGui.TextUnformatted($"{ClientAssets.IconFont.Circle} TerraAngel v2.0");
+
             ImGui.TextUnformatted($"FPS {io.Framerate:F1}");
 
             string packetsUpString = $"{PacketsUpLastSecond}";
@@ -104,7 +109,7 @@ namespace TerraAngel.Client.ClientWindows
 
             ImGuiUtil.TextColored($"Packets \t{ClientAssets.IconFont.ArrowUp}{packetsUpString,7} / {ClientAssets.IconFont.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
 
-            ImGuiUtil.TextColored($"Bytes   \t{ClientAssets.IconFont.ArrowUp}{kilobytesUpString,7} / {ClientAssets.IconFont.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
+            ImGuiUtil.TextColored($"Bytes   \t{ClientAssets.IconFont.ArrowUp}{kilobytesUpString,7} / {ClientAssets.IconFont.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);    
 
 
             ImGui.PopFont();

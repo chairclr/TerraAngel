@@ -10,6 +10,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using TerraAngel.Cheat;
 using TerraAngel.Hooks;
+using System.IO;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -23,6 +24,7 @@ namespace TerraAngel.Hooks.Hooks
             //HookUtil.HookGen(Collision.EmptyTile, EmptyTileHook);
             //HookUtil.HookGen(Collision.TileCollision, TileCollisionHook);
             //HookUtil.HookGen<Terraria.UI.Gamepad.UILinkPointNavigator>("Update", UILinkPointNavigatorUpdateHook);
+            HookUtil.HookGen(NetMessage.DecompressTileBlock_Inner, DecompressTileBlock_InnerHook);
         }
         public static void set_IsMouseVisibleHook(Action<Game, bool> orig, Game self, bool visible)
         {
@@ -40,6 +42,18 @@ namespace TerraAngel.Hooks.Hooks
         public static void UILinkPointNavigatorUpdateHook(Action orig)
         {
             //orig();
+        }
+        public static void DecompressTileBlock_InnerHook(Action<BinaryReader, int, int, int, int> orig, BinaryReader reader, int xStart, int yStart, int width, int height)
+        {
+            if (GlobalCheatManager.LoadedTileSections == null)
+                GlobalCheatManager.LoadedTileSections = new bool[Main.maxSectionsX, Main.maxSectionsY];
+
+            if (xStart % Main.sectionWidth == 0 && yStart % Main.sectionHeight == 0 && width == Main.sectionWidth && height == Main.sectionHeight)
+            {
+                GlobalCheatManager.LoadedTileSections[xStart / Main.sectionWidth, yStart / Main.sectionHeight] = true;
+            }
+
+            orig(reader, xStart, yStart, width, height);
         }
         //public static Vector2 TileCollisionHook(Func<Vector2, Vector2, int, int, bool, bool, int, Vector2> orig, Vector2 Position, Vector2 Velocity, int Width, int Height, bool fallThrough = false, bool fall2 = false, int gravDir = 1)
         //{
