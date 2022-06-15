@@ -10,65 +10,19 @@ using NVector2 = System.Numerics.Vector2;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using TerraAngel.Cheat;
 
 namespace TerraAngel.Client.ClientWindows
 {
     public class MainWindow : ClientWindow
     {
-        public override Keys ToggleKey => Keys.OemTilde;
+        public override Keys ToggleKey => Config.ClientConfig.Instance.ToggleUIVisibility;
 
         public override bool DefaultEnabled => true;
 
         public override bool IsToggleable => true;
 
         public override string Title => "Main Window";
-
-        private bool antiHurt = false;
-        
-        private static bool initHooks = false;
-
-        public override void Init()
-        {
-            if (!initHooks)
-            {
-                initHooks = true;
-                HookUtil.HookGen<Player>("Hurt", PlayerHurtHook);
-                HookUtil.HookGen<Player>("KillMe", PlayerKillHook);
-                HookUtil.HookGen<Player>("ResetEffects", PlayerResetEffectsHook);
-            }
-        }
-
-        private double PlayerHurtHook(Func<Player, PlayerDeathReason, int, int, bool, bool, bool, int, double> orig, Player self, PlayerDeathReason damageSource, int Damage, int hitDirection, bool pvp, bool quiet, bool Crit, int cooldownCounter)
-        {
-            if (self.whoAmI == Main.myPlayer && antiHurt)
-            {
-                NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, self.whoAmI);
-                return 0.0d;
-            }
-
-            return orig(self, damageSource, Damage, hitDirection, pvp, quiet, Crit, cooldownCounter);
-        }
-        private void PlayerKillHook(Action<Player, PlayerDeathReason, double, int, bool> orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
-        {
-            if (self.whoAmI == Main.myPlayer && antiHurt)
-            {
-                NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, self.whoAmI);
-                return;
-            }
-            orig(self, damageSource, dmg, hitDirection, pvp);
-        }
-        private void PlayerResetEffectsHook(Action<Player> orig, Player self)
-        {
-            orig(self);
-
-            if (self.whoAmI == Main.myPlayer)
-            {
-                if (antiHurt)
-                {
-                    self.statLife = self.statLifeMax2;
-                }
-            }
-        }
 
         public override void Draw(ImGuiIOPtr io)
         {
@@ -98,7 +52,39 @@ namespace TerraAngel.Client.ClientWindows
 
         public void DrawInGameWorld(ImGuiIOPtr io)
         {
-            ImGui.Checkbox("Anti-Hurt", ref antiHurt);
+            if (ImGui.BeginTabBar("##MainTabBar"))
+            {
+                if (ImGui.BeginTabItem("Cheats"))
+                {
+                    ImGui.Checkbox("Anti-Hurt/Godmode", ref GlobalCheatManager.AntiHurt);
+                    ImGui.Checkbox("Infinite Minions", ref GlobalCheatManager.InfiniteMinions);
+                    ImGui.Checkbox("Infinite Mana", ref GlobalCheatManager.InfiniteMana);
+                    ImGui.Checkbox("Freecam", ref GlobalCheatManager.Freecam);
+                    ImGui.Checkbox("Noclip", ref GlobalCheatManager.NoClip);
+                    if (ImGui.CollapsingHeader("Noclip Settings"))
+                    {
+                        ImGui.TextUnformatted("Speed"); ImGui.SameLine();
+                        ImGui.SliderFloat("##Speed", ref GlobalCheatManager.NoClipSpeed, 1f, 128f);
+                        ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
+                        ImGui.SliderInt("##SyncTime", ref GlobalCheatManager.NoClipPlayerSyncTime, 1, 60);
+                    }
+                    ImGui.EndTabItem();
+                }
+                if (ImGui.BeginTabItem("Visuals"))
+                {
+                    ImGui.Checkbox("Fullbright", ref GlobalCheatManager.FullBright);
+                    if (ImGui.CollapsingHeader("Fullbright Settings"))
+                    {
+                        ImGui.TextUnformatted("Brightness"); ImGui.SameLine();
+                        float tmp = GlobalCheatManager.FullBrightBrightness * 100f;
+                        if (ImGui.SliderFloat("##Brightness", ref tmp, 1f, 100f))
+                        {
+                            GlobalCheatManager.FullBrightBrightness = tmp / 100f;
+                        }
+                    }
+                    ImGui.EndTabItem();
+                }
+            }
         }
 
         public void DrawInMenu(ImGuiIOPtr io)

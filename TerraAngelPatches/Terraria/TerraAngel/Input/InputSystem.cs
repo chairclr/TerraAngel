@@ -19,109 +19,109 @@ using System.Threading.Tasks;
 
 namespace TerraAngel.Input
 {
-    public class TerraInput
+    public class InputSystem
     {
         public static KeyboardState keyboardState;
         public static KeyboardState lastKeyboardState;
         public static MouseState mouseState;
         public static MouseState lastMouseState;
 
-        public void UpdateInput()
+        public static void UpdateInput()
         {
             mouseState = Mouse.GetState();
             keyboardState = Keyboard.GetState();
         }
-        public void EndUpdateInput()
+        public static void EndUpdateInput()
         {
             lastMouseState = mouseState;
             lastKeyboardState = keyboardState;
         }
 
         /// <returns>Whether or not a key is currently down</returns>
-        public bool IsKeyDown(Keys key)
+        public static bool IsKeyDown(Keys key)
         {
             return keyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key is currently up</returns>
-        public bool IsKeyUp(Keys key)
+        public static bool IsKeyUp(Keys key)
         {
             return !keyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key was pressed this frame</returns>
-        public bool IsKeyPressed(Keys key)
+        public static bool IsKeyPressed(Keys key)
         {
             return keyboardState.IsKeyDown(key) && !lastKeyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key was released this frame</returns>
-        public bool IsKeyReleased(Keys key)
+        public static bool IsKeyReleased(Keys key)
         {
             return !keyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyDown(key);
         }
 
-        public Vector2 MousePosition
+        public static Vector2 MousePosition
         {
             get
             {
                 return new Vector2(mouseState.X, mouseState.Y);
             }
         }
-        public bool LeftMouseDown
+        public static bool LeftMouseDown
         {
             get
             {
                 return mouseState.LeftButton == ButtonState.Pressed;
             }
         }
-        public bool LeftMousePressed
+        public static bool LeftMousePressed
         {
             get
             {
                 return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released;
             }
         }
-        public bool LeftMouseReleased
+        public static bool LeftMouseReleased
         {
             get
             {
                 return mouseState.LeftButton == ButtonState.Released && lastMouseState.LeftButton == ButtonState.Pressed;
             }
         }
-        public bool RightMouseDown
+        public static bool RightMouseDown
         {
             get
             {
                 return mouseState.RightButton == ButtonState.Pressed;
             }
         }
-        public bool RightMousePressed
+        public static bool RightMousePressed
         {
             get
             {
                 return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
             }
         }
-        public bool RightMouseReleased
+        public static bool RightMouseReleased
         {
             get
             {
                 return mouseState.RightButton == ButtonState.Released && lastMouseState.RightButton == ButtonState.Pressed;
             }
         }
-        public bool MiddleMouseDown
+        public static bool MiddleMouseDown
         {
             get
             {
                 return mouseState.MiddleButton == ButtonState.Pressed;
             }
         }
-        public bool MiddleMousePressed
+        public static bool MiddleMousePressed
         {
             get
             {
                 return mouseState.MiddleButton == ButtonState.Pressed && lastMouseState.MiddleButton == ButtonState.Released;
             }
         }
-        public bool MiddleMouseReleased
+        public static bool MiddleMouseReleased
         {
             get
             {
@@ -129,7 +129,7 @@ namespace TerraAngel.Input
             }
         }
 
-        public int ScrollDelta
+        public static int ScrollDelta
         {
             get
             {
@@ -140,7 +140,7 @@ namespace TerraAngel.Input
                 return 0;
             }
         }
-        public int ScrollDeltaXNA
+        public static int ScrollDeltaXNA
         {
             get
             {
@@ -153,7 +153,7 @@ namespace TerraAngel.Input
                 return 0;
             }
         }
-        public int ScrollDeltaImGui
+        public static int ScrollDeltaImGui
         {
             get
             {

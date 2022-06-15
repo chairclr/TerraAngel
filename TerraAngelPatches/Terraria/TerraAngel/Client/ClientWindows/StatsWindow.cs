@@ -24,6 +24,8 @@ namespace TerraAngel.Client.ClientWindows
 
         public override bool DefaultEnabled => true;
 
+        public override bool IsEnabled { get => Config.ClientConfig.Instance.ShowStatsWindow; }
+
         public override string Title => "Stat Window";
 
         private static bool HooksGenerated = false;
@@ -70,7 +72,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override void Draw(ImGuiIOPtr io)
         {
-            if (ClientLoader.MainRenderer.InputSystem.IsKeyPressed(Keys.NumPad5))
+            if (InputSystem.IsKeyPressed(Config.ClientConfig.Instance.ToggleStatsWindowMovability))
                 moveStatWindow = !moveStatWindow;
 
             ImGuiWindowFlags flags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.AlwaysAutoResize;

@@ -17,6 +17,7 @@ namespace TerraAngel.UI
     public static class UIUtil
     {
 		public static Color BGColor = new Color(0.10f, 0.10f, 0.10f);
+		public static Color BGColor2 = Color.Lerp(Color.Black, BGColor, 0.52f);
 		public static Color ButtonColor = Color.Lerp(new Color(0.19f, 0.19f, 0.19f), BGColor, 0.54f);
 		public static Color ButtonHoveredColor = Color.Lerp(new Color(0.5f, 0.5f, 0.5f), BGColor, 0.54f);
 		public static Color ButtonPressedColor = new Color(0.20f, 0.22f, 0.23f);

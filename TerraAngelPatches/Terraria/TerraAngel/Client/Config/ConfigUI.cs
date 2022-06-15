@@ -11,6 +11,7 @@ using TerraAngel.UI;
 using Terraria.Localization;
 using Terraria.Audio;
 using Terraria.ID;
+using TerraAngel.Input;
 
 namespace TerraAngel.Client.Config
 {
@@ -50,8 +51,8 @@ namespace TerraAngel.Client.Config
 			settingsList = new UIList
 			{
 				Width = { Pixels = -25, Percent = 1f },
-				Height = { Pixels = -50, Percent = 1f },
-				Top = { Pixels = 50 },
+				Height = { Percent = 1f },
+				Top = { Pixels = 8 },
 				ListPadding = 5f
 			};
 
@@ -59,8 +60,8 @@ namespace TerraAngel.Client.Config
 
 			UIScrollbar settingsScrollbar = new UIScrollbar
 			{
-				Height = { Pixels = -50, Percent = 1f },
-				Top = { Pixels = 50 },
+				Height = { Pixels = -12f, Percent = 1f },
+				Top = { Pixels = 12 },
 				HAlign = 1f,
 				BarColor = UIUtil.ScrollbarColor,
 			}.WithView(100f, 1000f);
@@ -73,7 +74,7 @@ namespace TerraAngel.Client.Config
 
 			backButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("UI.Back"))
 			{
-				Width = new StyleDimension(-10f, 1f),
+				Width = new StyleDimension(0f, 1f),
 				Height = { Pixels = 40 },
 				Top = { Pixels = -65 },
 				BackgroundColor = UIUtil.ButtonColor * 0.98f,
@@ -104,7 +105,10 @@ namespace TerraAngel.Client.Config
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-        }
+
+			if (InputSystem.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
+				((IHaveBackButtonCommand)this).HandleBackButtonUsage();
+		}
 
         public override void Update(GameTime gameTime)
         {

@@ -18,6 +18,8 @@ namespace TerraAngel.Loader
         public static void Hookgen_Early()
         {
             GameHooks.Generate();
+
+            ClientConfig.Instance = new ClientConfig();
         }
 
         public static void SetupImGuiRenderer(Game main)
