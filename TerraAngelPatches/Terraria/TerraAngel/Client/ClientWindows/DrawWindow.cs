@@ -25,143 +25,103 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.PushClipRect(System.Numerics.Vector2.Zero, io.DisplaySize, false);
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
 
-            if (!Main.mapFullscreen)
+            if (!Main.gameMenu)
             {
-                if (GlobalCheatManager.ESPBoxes || GlobalCheatManager.ESPTracers)
+                if (!Main.mapFullscreen)
                 {
-                    Vector2 localPlayerCenter = Util.WorldToScreen(Main.LocalPlayer.Center);
-                    for (int i = 0; i < 255; i++)
+                    if (GlobalCheatManager.ESPBoxes || GlobalCheatManager.ESPTracers)
                     {
-                        if (Main.player[i].active)
+                        Vector2 localPlayerCenter = Util.WorldToScreen(Main.LocalPlayer.Center);
+                        for (int i = 0; i < 255; i++)
                         {
-                            Player currentPlayer = Main.player[i];
-                            if (GlobalCheatManager.ESPBoxes)
+                            if (Main.player[i].active)
                             {
-                                Vector2 minScreenPos = Util.WorldToScreen(currentPlayer.TopLeft);
-                                Vector2 maxScreenPos = Util.WorldToScreen(currentPlayer.BottomRight);
-                                if (currentPlayer.whoAmI == Main.myPlayer)
+                                Player currentPlayer = Main.player[i];
+                                if (GlobalCheatManager.ESPBoxes)
                                 {
-                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), GlobalCheatManager.ESPBoxColorLocalPlayer.PackedValue);
+                                    Vector2 minScreenPos = Util.WorldToScreen(currentPlayer.TopLeft);
+                                    Vector2 maxScreenPos = Util.WorldToScreen(currentPlayer.BottomRight);
+                                    if (currentPlayer.whoAmI == Main.myPlayer)
+                                    {
+                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), GlobalCheatManager.ESPBoxColorLocalPlayer.PackedValue);
+                                    }
+                                    else
+                                    {
+                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), GlobalCheatManager.ESPBoxColorOthers.PackedValue);
+                                    }
                                 }
-                                else
+
+                                if (currentPlayer.whoAmI != Main.myPlayer)
                                 {
-                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), GlobalCheatManager.ESPBoxColorOthers.PackedValue);
+                                    Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
+
+                                    drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), GlobalCheatManager.ESPTracerColor.PackedValue);
                                 }
-                            }
-
-                            if (currentPlayer.whoAmI != Main.myPlayer)
-                            {
-                                Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
-
-                                drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), GlobalCheatManager.ESPTracerColor.PackedValue);
                             }
                         }
                     }
+
+                    WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
+                    worldEdit?.DrawPreviewInWorld(io, drawList);
+                }
+                else
+                {
+                    WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
+                    worldEdit?.DrawPreviewInMap(io, drawList);
+
+                    
                 }
 
-                WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
-                worldEdit?.DrawPreviewInWorld(io, drawList);
-
-                if (Input.InputSystem.IsKeyPressed(Config.ClientConfig.Instance.TeleportToCursor) && !Main.drawingPlayerChat && !io.WantTextInput)
                 {
-                    Main.LocalPlayer.velocity = Vector2.Zero;
-                    Main.LocalPlayer.Teleport(Util.ScreenToWorld(Main.MouseScreen) + new Vector2((float)(Main.LocalPlayer.width / 2), (float)Main.LocalPlayer.height));
-
-                    NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-
-                    if (Config.ClientConfig.Instance.TeleportSendRODPacket)
+                    WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
+                    if (worldEdit != null)
                     {
-                        NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
-                            0,
-                            Main.LocalPlayer.whoAmI,
-                            Main.LocalPlayer.position.X,
-                            Main.LocalPlayer.position.Y,
-                            TeleportationStyleID.RodOfDiscord);
-                    }
-                }
+                        Vector2 mousePos = Util.ScreenToWorld(Input.InputSystem.MousePosition) / 16f;
 
-               
-            }
-            else
-            {
-                WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
-                worldEdit?.DrawPreviewInMap(io, drawList);
+                        if (Main.mapFullscreen)
+                            mousePos = Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition) / 16f;
 
-                if (Config.ClientConfig.Instance.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
-                {
-                    Main.LocalPlayer.velocity = Vector2.Zero;
-                    if (io.KeyCtrl)
-                        Main.LocalPlayer.Bottom = Util.ScreenToWorldFullscreenMap(Main.MouseScreen);
-                    else
-                        Main.LocalPlayer.Teleport(Util.ScreenToWorldFullscreenMap(Main.MouseScreen) + new Vector2((float)(Main.LocalPlayer.width / 2), (float)Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
+                        mousePos = new Vector2(MathF.Floor(mousePos.X), MathF.Floor(mousePos.Y));
 
-                    if (!io.KeyCtrl)
-                        if (Config.ClientConfig.Instance.TeleportSendRODPacket)
+                        if (worldEdit.RunEveryFrame)
                         {
-                            NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
-                                0,
-                                Main.LocalPlayer.whoAmI,
-                                Main.LocalPlayer.position.X,
-                                Main.LocalPlayer.position.Y,
-                                TeleportationStyleID.RodOfDiscord);
+                            if (Input.InputSystem.MiddleMouseDown)
+                            {
+                                worldEdit.Edit(mousePos);
+                            }
                         }
-
-                    NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-
-                    if (!io.KeyCtrl)
-                        Main.mapFullscreen = false;
-                }
-            }
-
-            {
-                WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
-                if (worldEdit != null)
-                {
-                    Vector2 mousePos = Util.ScreenToWorld(Input.InputSystem.MousePosition) / 16f;
-
-                    if (Main.mapFullscreen)
-                        mousePos = Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition) / 16f;
-
-                    mousePos = new Vector2(MathF.Floor(mousePos.X), MathF.Floor(mousePos.Y));
-
-                    if (worldEdit.RunEveryFrame)
-                    {
-                        if (Input.InputSystem.MiddleMouseDown)
+                        else if (Input.InputSystem.MiddleMousePressed)
                         {
                             worldEdit.Edit(mousePos);
                         }
                     }
-                    else if (Input.InputSystem.MiddleMousePressed)
-                    {
-                        worldEdit.Edit(mousePos);
-                    }
                 }
-            }
 
-            if (GlobalCheatManager.ShowTileSectionBorders)
-            {
-                if (GlobalCheatManager.LoadedTileSections != null)
+                if (GlobalCheatManager.ShowTileSectionBorders)
                 {
-                    for (int xs = 0; xs < Main.maxSectionsX; xs++)
+                    if (GlobalCheatManager.LoadedTileSections != null)
                     {
-                        for (int ys = 0; ys < Main.maxSectionsY; ys++)
+                        for (int xs = 0; xs < Main.maxSectionsX; xs++)
                         {
-                            Color col = new Color(1f, 1, 0f);
-                            if (!GlobalCheatManager.LoadedTileSections[xs, ys])
+                            for (int ys = 0; ys < Main.maxSectionsY; ys++)
                             {
-                                col = new Color(1f, 0f, 0f);
-                            }
+                                Color col = new Color(1f, 1, 0f);
+                                if (!GlobalCheatManager.LoadedTileSections[xs, ys])
+                                {
+                                    col = new Color(1f, 0f, 0f);
+                                }
 
-                            Vector2 worldCoords = new Vector2(xs * 200 * 16, ys * 150 * 16);
-                            Vector2 worldCoords2 = new Vector2((xs + 1) * 200 * 16, (ys + 1) * 150 * 16);
+                                Vector2 worldCoords = new Vector2(xs * 200 * 16, ys * 150 * 16);
+                                Vector2 worldCoords2 = new Vector2((xs + 1) * 200 * 16, (ys + 1) * 150 * 16);
 
-                            if (Main.mapFullscreen)
-                            {
-                                drawList.AddRect(Util.WorldToScreenFullscreenMap(worldCoords).ToNumerics(), Util.WorldToScreenFullscreenMap(worldCoords2).ToNumerics(), col.PackedValue);
-                            }
-                            else
-                            {
-                                drawList.AddRect(Util.WorldToScreen(worldCoords).ToNumerics(), Util.WorldToScreen(worldCoords2).ToNumerics(), col.PackedValue);
+                                if (Main.mapFullscreen)
+                                {
+                                    drawList.AddRect(Util.WorldToScreenFullscreenMap(worldCoords).ToNumerics(), Util.WorldToScreenFullscreenMap(worldCoords2).ToNumerics(), col.PackedValue);
+                                }
+                                else
+                                {
+                                    drawList.AddRect(Util.WorldToScreen(worldCoords).ToNumerics(), Util.WorldToScreen(worldCoords2).ToNumerics(), col.PackedValue);
+                                }
                             }
                         }
                     }

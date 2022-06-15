@@ -53,6 +53,8 @@ namespace TerraAngel.Hooks.Hooks
 
             if (self.whoAmI == Main.myPlayer)
             {
+                ImGuiIOPtr io = ImGui.GetIO();
+
                 if (GlobalCheatManager.AntiHurt)
                 {
                     self.statLife = self.statLifeMax2;
@@ -76,7 +78,6 @@ namespace TerraAngel.Hooks.Hooks
 
                 if (GlobalCheatManager.NoClip)
                 {
-                    ImGuiIOPtr io = ImGui.GetIO();
                     if (io.KeysDown[(int)Keys.W])
                     {
                         self.position.Y -= GlobalCheatManager.NoClipSpeed;
@@ -98,6 +99,55 @@ namespace TerraAngel.Hooks.Hooks
                     {
                         //NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, self.whoAmI);
                         SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
+                    }
+                }
+
+                if (Main.mapFullscreen)
+                {
+
+                    if (ClientConfig.Instance.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
+                    {
+                        Main.LocalPlayer.velocity = Vector2.Zero;
+                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorldFullscreenMap(Main.MouseScreen);
+                        if (!io.KeyCtrl)
+                            Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
+
+                        if (!io.KeyCtrl)
+                            if (ClientConfig.Instance.TeleportSendRODPacket)
+                            {
+                                NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
+                                    0,
+                                    Main.LocalPlayer.whoAmI,
+                                    Main.LocalPlayer.position.X,
+                                    Main.LocalPlayer.position.Y,
+                                    TeleportationStyleID.RodOfDiscord);
+                            }
+
+                        NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
+
+                        if (!io.KeyCtrl)
+                            Main.mapFullscreen = false;
+                    }
+                }
+                else
+                {
+                    if (Input.InputSystem.IsKeyPressed(ClientConfig.Instance.TeleportToCursor) && !Main.drawingPlayerChat && !io.WantTextInput)
+                    {
+                        Main.LocalPlayer.velocity = Vector2.Zero;
+                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorld(Main.MouseScreen);
+                        Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
+
+                        NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
+
+                        if (ClientConfig.Instance.TeleportSendRODPacket)
+                        {
+                            NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
+                                0,
+                                Main.LocalPlayer.whoAmI,
+                                Main.LocalPlayer.position.X,
+                                Main.LocalPlayer.position.Y,
+                                TeleportationStyleID.RodOfDiscord);
+                        }
                     }
                 }
             }

@@ -21,13 +21,13 @@ namespace TerraAngel.UI
         private Func<bool> valueGet;
         private Action<bool> valueSet;
 
-        public UITextCheckbox(string name, Func<bool> valueGet, Action<bool> valueSet, float textScale = 1.2f) 
+        public UITextCheckbox(string name, Func<bool> valueGet, Action<bool> valueSet, float textScale = .9f) 
         {
             this.valueGet = valueGet;
             this.valueSet = valueSet;
 
             this.Width = new StyleDimension(0, 1f);
-            this.Height = new StyleDimension(50, 0f);
+            this.Height = new StyleDimension(40, 0f);
 
             backgroundPanel = new UIPanel()
             {

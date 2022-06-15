@@ -58,7 +58,6 @@ namespace TerraAngel.Client.ClientWindows
             if (!ImGui.Begin("Console"))
             {
                 ImGui.End();
-                ImGui.PopStyleColor(2);
                 return;
             }
 
