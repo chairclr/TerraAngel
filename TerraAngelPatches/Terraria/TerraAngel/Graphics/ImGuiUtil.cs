@@ -14,6 +14,7 @@ using System.Threading;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using TerraAngel.Utility;
+using Terraria.GameContent.UI;
 
 namespace TerraAngel.Graphics
 {
@@ -155,7 +156,9 @@ namespace TerraAngel.Graphics
                         if (ImGui.IsMouseHoveringRect(min, max))
                         {
                             ImGui.BeginTooltip();
-                            ImGui.TextUnformatted(Lang.GetItemName(id).ToString());
+                            Item i = new Item();
+                            i.SetDefaults(id);
+                            ImGuiUtil.TextColored(Lang.GetItemName(id).ToString(), ItemRarity.GetColor(i.rare));
                             ImGui.EndTooltip();
                         }
                     }

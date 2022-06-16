@@ -1,0 +1,11 @@
+--- src/Terraria/Terraria/Collision.cs
++++ src/TerraAngel/Terraria/Collision.cs
+@@ -3604,6 +_,8 @@
+             bool flag = false;
+             for (int num4 = 2; num4 >= 0; num4--)
+             {
++                if (tile == null)
++                    return 0f;
+                 if (tile.active())
+                 {
+                     if (Main.tileSolid[tile.type])

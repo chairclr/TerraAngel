@@ -54,6 +54,7 @@ namespace TerraAngel.Client
             AddWindow(new StatsWindow());
 
             Task.Run(() => ImGuiUtil.ItemLoaderThread(this));
+            ItemBrowser.Init();
 
             unsafe
             {
