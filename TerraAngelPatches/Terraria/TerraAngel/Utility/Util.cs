@@ -74,6 +74,14 @@ namespace TerraAngel.Utility
             return Regex.Replace(str, "[a-z][A-Z]", m => $"{m.Value[0]} {char.ToLower(m.Value[1])}");
         }
 
+        public static string[] EnumFancyNames(Type type)
+        {
+            return Enum.GetNames(type).Select((x) => Util.ToSentenceCase(x)).ToArray();
+        }
+        public static string[] EnumFancyNames<TEnum>() 
+        {
+            return Enum.GetNames(typeof(TEnum)).Select((x) => Util.ToSentenceCase(x)).ToArray();
+        } 
     }
     public static class VectorHelper
     {

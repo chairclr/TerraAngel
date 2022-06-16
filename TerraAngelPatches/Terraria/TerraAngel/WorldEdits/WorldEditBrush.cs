@@ -28,7 +28,7 @@ namespace TerraAngel.WorldEdits
             Place,
             Replace,
         }
-        private static string[] actionNames = Enum.GetNames(typeof(WorldEditActions)).Select((x) => Util.ToSentenceCase(x)).ToArray();
+        private static string[] actionNames = Util.EnumFancyNames<WorldEditActions>();
 
         private bool sqaureFrame = true;
         private bool drawDetailedPreview = true;

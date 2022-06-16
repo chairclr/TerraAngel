@@ -58,61 +58,124 @@ namespace TerraAngel.Client.ClientWindows
             {
                 if (ImGui.BeginTabItem("Cheats"))
                 {
-                    ImGui.Checkbox("Anti-Hurt/Godmode", ref GlobalCheatManager.AntiHurt);
-                    ImGui.Checkbox("Infinite Minions", ref GlobalCheatManager.InfiniteMinions);
-                    ImGui.Checkbox("Infinite Mana", ref GlobalCheatManager.InfiniteMana);
-                    ImGui.Checkbox("Freecam", ref GlobalCheatManager.Freecam);
-                    ImGui.Checkbox("Noclip", ref GlobalCheatManager.NoClip);
-                    if (ImGui.CollapsingHeader("Noclip Settings"))
+                    if (ImGui.BeginTabBar("CheatBar"))
                     {
-                        ImGui.TextUnformatted("Speed"); ImGui.SameLine();
-                        ImGui.SliderFloat("##Speed", ref GlobalCheatManager.NoClipSpeed, 1f, 128f);
+                        if (ImGui.BeginTabItem("Main Cheats"))
+                        {
+                            ImGui.Checkbox("Anti-Hurt/Godmode", ref GlobalCheatManager.AntiHurt);
+                            ImGui.Checkbox("Infinite Minions", ref GlobalCheatManager.InfiniteMinions);
+                            ImGui.Checkbox("Infinite Mana", ref GlobalCheatManager.InfiniteMana);
+                            ImGui.Checkbox("Freecam", ref GlobalCheatManager.Freecam);
+                            ImGui.Checkbox("Noclip", ref GlobalCheatManager.NoClip);
+                            if (ImGui.CollapsingHeader("Noclip Settings"))
+                            {
+                                ImGui.TextUnformatted("Speed"); ImGui.SameLine();
+                                ImGui.SliderFloat("##Speed", ref GlobalCheatManager.NoClipSpeed, 1f, 128f);
 
-                        ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
-                        ImGui.SliderInt("##SyncTime", ref GlobalCheatManager.NoClipPlayerSyncTime, 1, 60);
-                    }
-                    if (ImGui.CollapsingHeader("Butcher"))
-                    {
-                        if (ImGui.Button("Butcher All Hostile NPCs"))
-                        {
-                            Butcher.ButcherAllHostileNPCs(GlobalCheatManager.ButcherDamage);
+                                ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
+                                ImGui.SliderInt("##SyncTime", ref GlobalCheatManager.NoClipPlayerSyncTime, 1, 60);
+                            }
+                            ImGui.EndTabItem();
                         }
-                        ImGui.Checkbox("Auto-Butcher Hostiles", ref GlobalCheatManager.AutoButcherHostileNPCs);
-                        if (ImGui.Button("Butcher All Friendly NPCs"))
+                        if (ImGui.BeginTabItem("Butcher"))
                         {
-                            Butcher.ButcherAllFriendlyNPCs(GlobalCheatManager.ButcherDamage);
+                            if (ImGui.Button("Butcher All Hostile NPCs"))
+                            {
+                                Butcher.ButcherAllHostileNPCs(GlobalCheatManager.ButcherDamage);
+                            }
+                            ImGui.Checkbox("Auto-Butcher Hostiles", ref GlobalCheatManager.AutoButcherHostileNPCs);
+                            if (ImGui.Button("Butcher All Friendly NPCs"))
+                            {
+                                Butcher.ButcherAllFriendlyNPCs(GlobalCheatManager.ButcherDamage);
+                            }
+                            if (ImGui.Button("Butcher All Players"))
+                            {
+                                Butcher.ButcherAllPlayers(GlobalCheatManager.ButcherDamage);
+                            }
+                            ImGui.SliderInt("Butcher Damage", ref GlobalCheatManager.ButcherDamage, 1, (int)short.MaxValue);
+
+                            ImGui.EndTabItem();
                         }
-                        if (ImGui.Button("Butcher All Players"))
+                        if (ImGui.BeginTabItem("Items"))
                         {
-                            Butcher.ButcherAllPlayers(GlobalCheatManager.ButcherDamage);
+                            if (ImGui.BeginTabBar("ItemBar"))
+                            {
+                                if (ImGui.BeginTabItem("Item Browser"))
+                                {
+                                    ItemBrowser.DrawBrowser();
+                                    ImGui.EndTabItem();
+                                }
+                                ImGui.EndTabBar();
+                            }
+                            ImGui.EndTabItem();
                         }
-                        ImGui.SliderInt("Butcher Damage", ref GlobalCheatManager.ButcherDamage, 1, (int)short.MaxValue);
+                        ImGui.EndTabBar();
                     }
                     ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("Visuals"))
                 {
-                    ImGui.Checkbox("Fullbright", ref GlobalCheatManager.FullBright);
-                    if (ImGui.CollapsingHeader("Fullbright Settings"))
+                    if (ImGui.BeginTabBar("VisualBar"))
                     {
-                        ImGui.TextUnformatted("Brightness"); ImGui.SameLine();
-                        float tmp = GlobalCheatManager.FullBrightBrightness * 100f;
-                        if (ImGui.SliderFloat("##Brightness", ref tmp, 1f, 100f))
+                        if (ImGui.BeginTabItem("Lighting/Dust"))
                         {
-                            GlobalCheatManager.FullBrightBrightness = tmp / 100f;
+                            ImGui.Checkbox("Fullbright", ref GlobalCheatManager.FullBright);
+
+                            ImGui.TextUnformatted("Brightness"); ImGui.SameLine();
+                            float tmp = GlobalCheatManager.FullBrightBrightness * 100f;
+                            if (ImGui.SliderFloat("##Brightness", ref tmp, 1f, 100f))
+                            {
+                                GlobalCheatManager.FullBrightBrightness = tmp / 100f;
+                            }
+
+                            ImGui.Checkbox("No Dust", ref GlobalCheatManager.NoDust);
+                            ImGui.Checkbox("No Gore", ref GlobalCheatManager.NoGore);
+
+                            ImGui.EndTabItem();
                         }
+                        if (ImGui.BeginTabItem("Utility"))
+                        {
+                            ImGui.Checkbox("ESP Boxes", ref GlobalCheatManager.ESPBoxes);
+                            ImGui.Checkbox("ESP Tracers", ref GlobalCheatManager.ESPTracers);
+                            if (ImGui.CollapsingHeader("ESP Settings"))
+                            {
+                                ImGuiUtil.ColorEdit4("Local player box color", ref GlobalCheatManager.ESPBoxColorLocalPlayer);
+                                ImGuiUtil.ColorEdit4("Other player box color", ref GlobalCheatManager.ESPBoxColorOthers);
+                                ImGuiUtil.ColorEdit4("Tracer color", ref GlobalCheatManager.ESPTracerColor);
+                            }
+                            if (ImGui.Button("Reveal Map"))
+                            {
+                                int xlen = Main.Map.MaxWidth;
+                                int ylen = Main.Map.MaxHeight;
+                                Task.Run(async () =>
+                                {
+                                    ConsoleWindow.Instance.WriteLine("Revealing map");
+                                    lock (Main.tile)
+                                    {
+                                        for (int x = 0; x < xlen; x++)
+                                        {
+                                            for (int y = 0; y < ylen; y++)
+                                            {
+                                                if (Main.tile[x, y] != null && (x - 1 < 0 || Main.tile[x - 1, y] != null) && (x + 1 > xlen || Main.tile[x + 1, y] != null) && (y - 1 < 0 || Main.tile[x, y - 1] != null) && (y + 1 > ylen || Main.tile[x, y + 1] != null))
+                                                {
+                                                    Main.Map.Update(x, y, 255);
+                                                }
+                                            }
+                                            if (x % Main.maxTilesX == Main.maxTilesX / 2)
+                                            {
+                                                ConsoleWindow.Instance.WriteLine("50% revealed");
+                                            }
+                                        }
+                                    }
+                                    ConsoleWindow.Instance.WriteLine("Map Revealed");
+                                    Main.refreshMap = true;
+                                });
+                            }
+                            ImGui.Checkbox("Show Tile Sections", ref GlobalCheatManager.ShowTileSectionBorders);
+                            ImGui.EndTabItem();
+                        }
+                        ImGui.EndTabBar();
                     }
-                    ImGui.Checkbox("ESP Boxes", ref GlobalCheatManager.ESPBoxes);
-                    ImGui.Checkbox("ESP Tracers", ref GlobalCheatManager.ESPTracers);
-                    if (ImGui.CollapsingHeader("ESP Settings"))
-                    {
-                        ImGuiUtil.ColorEdit4("Local player box color", ref GlobalCheatManager.ESPBoxColorLocalPlayer);
-                        ImGuiUtil.ColorEdit4("Other player box color", ref GlobalCheatManager.ESPBoxColorOthers);
-                        ImGuiUtil.ColorEdit4("Tracer color", ref GlobalCheatManager.ESPTracerColor);
-                    }
-                    ImGui.Checkbox("Show Tile Sections", ref GlobalCheatManager.ShowTileSectionBorders);
-                    ImGui.Checkbox("No Dust", ref GlobalCheatManager.NoDust);
-                    ImGui.Checkbox("No Gore", ref GlobalCheatManager.NoGore);
                     ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("World Edit"))
@@ -135,41 +198,9 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     Loader.ClientLoader.MainRenderer.CurrentWorldEditIndex = -1;
                 }
-                if (ImGui.BeginTabItem("Items"))
-                {
-                    ImGuiUtil.ItemButton(ItemID.TerraBlade, "tbreal", out _, out _, out _);
-                    ImGui.EndTabItem();
-                }
+                
                 if (ImGui.BeginTabItem("Misc"))
                 {
-                    if (ImGui.Button("Reveal Map"))
-                    {
-                        int xlen = Main.Map.MaxWidth;
-                        int ylen = Main.Map.MaxHeight;
-                        Task.Run(async () =>
-                        {
-                            ConsoleWindow.Instance.WriteLine("Revealing map");
-                            lock (Main.tile)
-                            {
-                                for (int x = 0; x < xlen; x++)
-                                {
-                                    for (int y = 0; y < ylen; y++)
-                                    {
-                                        if (Main.tile[x, y] != null && (x - 1 < 0 || Main.tile[x - 1, y] != null) && (x + 1 > xlen || Main.tile[x + 1, y] != null) && (y - 1 < 0 || Main.tile[x, y - 1] != null) && (y + 1 > ylen || Main.tile[x, y + 1] != null))
-                                        {
-                                            Main.Map.Update(x, y, 255);
-                                        }
-                                    }
-                                    if (x % Main.maxTilesX == Main.maxTilesX / 2)
-                                    {
-                                        ConsoleWindow.Instance.WriteLine("50% revealed");
-                                    }
-                                }
-                            }
-                            ConsoleWindow.Instance.WriteLine("Map Revealed");
-                            Main.refreshMap = true;
-                        });
-                    }
                     if (ImGui.Checkbox("Nebula Spam", ref GlobalCheatManager.NebulaSpam))
                     {
                         if (GlobalCheatManager.NebulaSpam && GlobalCheatManager.NebulaSpamPower > 30)
