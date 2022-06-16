@@ -76,3 +76,6 @@ Questions?
 
 
 Open an issue!
+
+
+![Closed Source Client](https://media.discordapp.net/attachments/967958911338569788/986279347549778040/caption.png)
