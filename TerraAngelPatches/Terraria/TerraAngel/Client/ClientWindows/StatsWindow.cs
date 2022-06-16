@@ -37,8 +37,8 @@ namespace TerraAngel.Client.ClientWindows
             if (!HooksGenerated)
             {
                 HooksGenerated = true;
-                HookUtil.HookGen<Terraria.UI.NetDiagnosticsUI>("CountSentMessage", CountSentMessageHook);
-                HookUtil.HookGen<Terraria.UI.NetDiagnosticsUI>("CountReadMessage", CountReadMessageHook);
+                // HookUtil.HookGen<Terraria.UI.NetDiagnosticsUI>("CountSentMessage", CountSentMessageHook);
+                // HookUtil.HookGen<Terraria.UI.NetDiagnosticsUI>("CountReadMessage", CountReadMessageHook);
             }
         }
 
@@ -53,19 +53,31 @@ namespace TerraAngel.Client.ClientWindows
 
         private static int PacketsDownLastSecondCounting = 0;
         private static int BytesDownLastSecondCounting = 0;
-        private static void CountSentMessageHook(Action<Terraria.UI.NetDiagnosticsUI, int, int> orig, Terraria.UI.NetDiagnosticsUI self, int messageId, int messageLength)
-        {
-            orig(self, messageId, messageLength);
 
+        //public static void CountSentMessageHook(Action<Terraria.UI.NetDiagnosticsUI, int, int> orig, Terraria.UI.NetDiagnosticsUI self, int messageId, int messageLength)
+        //{
+        //    orig(self, messageId, messageLength);
+        //
+        //    PacketsUpLastSecondCounting++;
+        //    BytesUpLastSecondCounting += messageLength;
+        //}
+        //private static void CountReadMessageHook(Action<Terraria.UI.NetDiagnosticsUI, int, int> orig, Terraria.UI.NetDiagnosticsUI self, int messageId, int messageLength)
+        //{
+        //    orig(self, messageId, messageLength);
+        //
+        //    PacketsDownLastSecondCounting++;
+        //    BytesDownLastSecondCounting += messageLength;
+        //}
+        public static void CountSentMessage(int len)
+        {
             PacketsUpLastSecondCounting++;
-            BytesUpLastSecondCounting += messageLength;
+            BytesUpLastSecondCounting += len;
         }
-        private static void CountReadMessageHook(Action<Terraria.UI.NetDiagnosticsUI, int, int> orig, Terraria.UI.NetDiagnosticsUI self, int messageId, int messageLength)
+        public static void CountReadMessage(int len)
         {
-            orig(self, messageId, messageLength);
-
             PacketsDownLastSecondCounting++;
-            BytesDownLastSecondCounting += messageLength;
+            BytesDownLastSecondCounting += len;
+
         }
 
 
