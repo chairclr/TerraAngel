@@ -9,6 +9,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Formatting;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Options;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using Microsoft.Win32;
 
 public class Program
 {
@@ -32,8 +35,10 @@ public class Program
     public const string DiffName = "-diff";
     public const string AutoStartName = "-auto";
     public const string BuildDebugName = "-debug";
+    public const string Buildx86Name = "-x86";
+    public const string NoCopyName = "-nocopy";
 
-    public static string TerrariaPath = @"C:\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe";
+    public static string TerrariaPath = @"C:\Program Files (x86)\Steam\steamapps\common\Terraria";
     public static string DecompilerOutputPath = @"src\Terraria";
     public static string PatchesPath = @"..\..\..\Patches\TerraAngelPatches";
     public static string PatchedPath = @"src\TerraAngel";
@@ -43,6 +48,8 @@ public class Program
     public static bool Diff = false;
     public static bool AutoStart = false;
     public static bool BuildDebug = false;
+    public static bool Buildx86 = false;
+    public static bool NoCopy = false;
 
     public static void Main(string[] args)
     {
@@ -102,12 +109,26 @@ public class Program
                 case BuildDebugName:
                     BuildDebug = true;
                     break;
+                case Buildx86Name:
+                    Buildx86 = true;
+                    break;
+                case NoCopyName:
+                    NoCopy = true;
+                    break;
             }
         }
 
 
         try
         {
+            if (!Directory.Exists(TerrariaPath))
+            {
+                if (!SteamUtils.TryFindTerrariaDirectory(out TerrariaPath))
+                {
+                    Console.WriteLine("Could not find Terraria path");
+                }
+            }
+
             if (Decomp || AutoStart)
             {
                 DecompileTerraria();
@@ -121,6 +142,65 @@ public class Program
             {
                 DiffTerraria();
             }
+            if (AutoStart)
+            {
+                if (!Buildx86)
+                {
+                    if (BuildDebug)
+                    {
+                        Console.WriteLine("Building TerraAngel as debug x64");
+                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Debug;Platform=x64 > build_log_x64.txt");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Building TerraAngel as release x64");
+                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Release;Platform=x64 > build_log_x64.txt");
+                    }
+                }
+                else
+                {
+                    if (BuildDebug)
+                    {
+                        Console.WriteLine("Building TerraAngel as debug x86");
+                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Debug;Platform=x86 > build_log_x86.txt");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Building TerraAngel as release x86");
+                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Release;Platform=x86 > build_log_x86.txt");
+                    }
+                }
+
+                if (!NoCopy)
+                {
+                    if (Buildx86)
+                    {
+                        if (BuildDebug)
+                        {
+                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x86\\Debug\\net6.0\\Content\\\"");
+                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x86\\Debug\\net6.0\\Content\\\" /E > NUL");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x86\\Release\\net6.0\\Content\\\"");
+                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x86\\Release\\net6.0\\Content\\\" /E > NUL");
+                        }
+                    }
+                    else
+                    {
+                        if (BuildDebug)
+                        {
+                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x64\\Debug\\net6.0\\Content\\\"");
+                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x64\\Debug\\net6.0\\Content\\\" /E > NUL");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x64\\Release\\net6.0\\Content\\\"");
+                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x64\\Release\\net6.0\\Content\\\" /E > NUL");
+                        }
+                    }
+                }
+            }
         }
         catch (Exception ex)
         {
@@ -128,21 +208,20 @@ public class Program
             Console.WriteLine(ex.ToString());
         }
     }
-
     public static void DecompileTerraria()
     {
-        if (!File.Exists(TerrariaPath))
+        if (!Directory.Exists(TerrariaPath))
         {
-            throw new FileNotFoundException($"File '{TerrariaPath}' not found");
+            throw new DirectoryNotFoundException($"Directory '{TerrariaPath}' not found");
         }
 
-        Console.WriteLine($"Decompiling {TerrariaPath} into {DecompilerOutputPath}");
+        Console.WriteLine($"Decompiling {TerrariaPath}\\Terraria.exe into {DecompilerOutputPath}");
 
-        Decompiler terrariaDecompiler = new Decompiler(TerrariaPath, DecompilerOutputPath);
+        Decompiler terrariaDecompiler = new Decompiler(TerrariaPath + "\\Terraria.exe", DecompilerOutputPath);
 
         terrariaDecompiler.Decompile(new string[] { "ReLogic" });
 
-        Console.WriteLine($"Decompiled {TerrariaPath} into {DecompilerOutputPath}");
+        Console.WriteLine($"Decompiled {TerrariaPath}\\Terraria.exe into {DecompilerOutputPath}");
     }
     public static void PatchTerraria()
     {
@@ -208,4 +287,104 @@ public class Program
         WorkTask.ExecuteParallel(tasks);
         Console.WriteLine($"Formatted {dir}");
     }
+    public static void ExecCommand(string cmd)
+    {
+        System.Diagnostics.Process process = new System.Diagnostics.Process();
+        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+        startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+        startInfo.FileName = "cmd.exe";
+        startInfo.Arguments = $"/C {cmd}";
+        process.StartInfo = startInfo;
+        process.Start();
+        process.WaitForExit();
+    }
+    
+	public static class SteamUtils
+	{
+		public const int TerrariaAppId = 105600;
+
+		public readonly static string TerrariaManifestFile = $"appmanifest_{TerrariaAppId}.acf";
+
+		private readonly static Regex SteamLibraryFoldersRegex = new(@"""(\d+)""[^\S\r\n]+""(.+)""", RegexOptions.Compiled);
+		private readonly static Regex SteamManifestInstallDirRegex = new(@"""installdir""[^\S\r\n]+""([^\r\n]+)""", RegexOptions.Compiled);
+
+		public static bool TryFindTerrariaDirectory(out string path) {
+			if (TryGetSteamDirectory(out string steamDirectory) && TryGetTerrariaDirectoryFromSteam(steamDirectory, out path)) {
+				return true;
+			}
+
+			path = null;
+
+			return false;
+		}
+
+		public static bool TryGetTerrariaDirectoryFromSteam(string steamDirectory, out string path) {
+			string steamApps = Path.Combine(steamDirectory, "steamapps");
+
+			var libraries = new List<string>() {
+				steamApps
+			};
+
+			string libraryFoldersFile = Path.Combine(steamApps, "libraryfolders.vdf");
+
+			if (File.Exists(libraryFoldersFile)) {
+				string contents = File.ReadAllText(libraryFoldersFile);
+
+				var matches = SteamLibraryFoldersRegex.Matches(contents);
+
+				foreach (Match match in matches) {
+					string directory = Path.Combine(match.Groups[2].Value.Replace(@"\\", @"\"), "steamapps");
+
+					if (Directory.Exists(directory)) {
+						libraries.Add(directory);
+					}
+				}
+			}
+
+			for (int i = 0; i < libraries.Count; i++) {
+				string directory = libraries[i];
+				string manifestPath = Path.Combine(directory, TerrariaManifestFile);
+
+				if (File.Exists(manifestPath)) {
+					string contents = File.ReadAllText(manifestPath);
+					var match = SteamManifestInstallDirRegex.Match(contents);
+
+					if (match.Success) {
+						path = Path.Combine(directory, "common", match.Groups[1].Value);
+
+						if (Directory.Exists(path)) {
+							return true;
+						}
+					}
+				}
+			}
+
+			path = null;
+
+			return false;
+		}
+
+		public static bool TryGetSteamDirectory(out string path) {
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+				path = GetSteamDirectoryWindows();
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+				path = "~/Library/Application Support/Steam";
+			}
+			else { // Some kind of linux?
+				path = "~/.local/share/Steam";
+			}
+
+			return path != null && Directory.Exists(path);
+		}
+
+		// Isolated to avoid loading Win32 stuff outside Windows.
+		private static string GetSteamDirectoryWindows() {
+			string keyPath = Environment.Is64BitOperatingSystem ? @"SOFTWARE\Wow6432Node\Valve\Steam" : @"SOFTWARE\Valve\Steam";
+
+			using RegistryKey key = Registry.LocalMachine.CreateSubKey(keyPath);
+
+			return key.GetValue("InstallPath") as string;
+		}
+	}
 }
