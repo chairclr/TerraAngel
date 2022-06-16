@@ -250,6 +250,17 @@
          }
  
          public static void OpenCharacterSelectUI()
+@@ -52930,6 +_,10 @@
+ 
+         private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)
+         {
++            if (!WorldGen.InWorld((int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)))
++            {
++                return;
++            }
+             Asset<Texture2D> asset = TextureAssets.MapBGs[0];
+             int num = -1;
+             Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
 @@ -62935,18 +_,19 @@
              SetDisplayMode(width, height, graphics.IsFullScreen);
          }

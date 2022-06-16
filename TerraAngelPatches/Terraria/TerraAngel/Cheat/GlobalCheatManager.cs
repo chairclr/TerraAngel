@@ -28,7 +28,16 @@ namespace TerraAngel.Cheat
         public static Color ESPBoxColorOthers = new Color(1f, 0f, 0f);
         public static Color ESPBoxColorLocalPlayer = new Color(0f, 1f, 0f);
 
+        public static int ButcherDamage = 1000;
+
+        public static bool AutoButcherHostileNPCs = false;
         public static bool ShowTileSectionBorders = false;
+
+        public static bool NoDust = false;
+        public static bool NoGore = false;
+
+        public static bool NebulaSpam = false;
+        public static int NebulaSpamPower = 100;
 
         public static bool[,] LoadedTileSections;
     }

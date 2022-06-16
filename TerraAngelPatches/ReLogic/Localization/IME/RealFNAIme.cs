@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using ReLogic.Localization.IME;
-
 namespace TerraAngel.Input
 {
     public class RealFNAIme : PlatformIme
     {
+        public static bool blocking = false;
         private bool _disposedValue;
         public override uint CandidateCount => 0u;
         public override string CompositionString => string.Empty;
@@ -48,7 +48,8 @@ namespace TerraAngel.Input
 
         private void KeyPressCallback(char c)
         {
-            OnKeyPress(c);
+            if (!blocking)
+                OnKeyPress(c);
         }
 
         ~RealFNAIme()

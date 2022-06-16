@@ -26,6 +26,14 @@ namespace TerraAngel.Hooks.Hooks
 
             HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("GetColor", LightingHook);
             HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("GetColor", LegacyLightingHook);
+
+            HookUtil.HookGen(Dust.NewDust, NewDustHook);
+            HookUtil.HookGen(Dust.UpdateDust, UpdateDustHook);
+            HookUtil.HookGen<Main>("DrawDust", DrawDustHook);
+
+            HookUtil.HookGen(Gore.NewGore, NewGoreHook);
+            HookUtil.HookGen<Main>("DrawGore", DrawGoreHook);
+            HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
         }
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
@@ -91,7 +99,6 @@ namespace TerraAngel.Hooks.Hooks
             }
             return orig(self, x, y);
         }
-
         private static Vector3 LegacyLightingHook(Func<Terraria.Graphics.Light.LegacyLighting, int, int, Vector3> orig, Terraria.Graphics.Light.LegacyLighting self, int x, int y)
         {
             if (GlobalCheatManager.FullBright)
@@ -99,6 +106,45 @@ namespace TerraAngel.Hooks.Hooks
                 return Vector3.One * GlobalCheatManager.FullBrightBrightness;
             }
             return orig(self, x, y);
+        }
+
+        
+        public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
+        {
+            if (GlobalCheatManager.NoDust)
+                return 6000;
+            return orig( Position,  Width,  Height,  Type,  SpeedX,  SpeedY,  Alpha,  newColor,  Scale);
+        }
+        public static void UpdateDustHook(Action orig)
+        {
+            if (GlobalCheatManager.NoDust)
+                return;
+            orig();
+        }
+        public static void DrawDustHook(Action<Main> orig, Main self)
+        {
+            if (GlobalCheatManager.NoDust)
+                return;
+            orig(self);
+        }
+
+        public static int NewGoreHook(Func<Vector2, Vector2, int, float, int> orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+        {
+            if (GlobalCheatManager.NoGore)
+                return 600;
+            return orig(Position, Velocity, Type, Scale);
+        }
+        public static void DrawGoreHook(Action<Main> orig, Main self)
+        {
+            if (GlobalCheatManager.NoGore)
+                return;
+            orig(self);
+        }
+        public static void DrawGoreBehindHook(Action<Main> orig, Main self)
+        {
+            if (GlobalCheatManager.NoGore)
+                return;
+            orig(self);
         }
     }
 }

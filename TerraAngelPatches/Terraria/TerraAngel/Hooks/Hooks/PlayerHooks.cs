@@ -78,21 +78,24 @@ namespace TerraAngel.Hooks.Hooks
 
                 if (GlobalCheatManager.NoClip)
                 {
-                    if (io.KeysDown[(int)Keys.W])
+                    if (!io.WantCaptureKeyboard && !io.WantTextInput && !Main.drawingPlayerChat)
                     {
-                        self.position.Y -= GlobalCheatManager.NoClipSpeed;
-                    }
-                    if (io.KeysDown[(int)Keys.S])
-                    {
-                        self.position.Y += GlobalCheatManager.NoClipSpeed;
-                    }
-                    if (io.KeysDown[(int)Keys.A])
-                    {
-                        self.position.X -= GlobalCheatManager.NoClipSpeed;
-                    }
-                    if (io.KeysDown[(int)Keys.D])
-                    {
-                        self.position.X += GlobalCheatManager.NoClipSpeed;
+                        if (io.KeysDown[(int)Keys.W])
+                        {
+                            self.position.Y -= GlobalCheatManager.NoClipSpeed;
+                        }
+                        if (io.KeysDown[(int)Keys.S])
+                        {
+                            self.position.Y += GlobalCheatManager.NoClipSpeed;
+                        }
+                        if (io.KeysDown[(int)Keys.A])
+                        {
+                            self.position.X -= GlobalCheatManager.NoClipSpeed;
+                        }
+                        if (io.KeysDown[(int)Keys.D])
+                        {
+                            self.position.X += GlobalCheatManager.NoClipSpeed;
+                        }
                     }
 
                     if (Main.GameUpdateCount % GlobalCheatManager.NoClipPlayerSyncTime == 0)
@@ -148,6 +151,19 @@ namespace TerraAngel.Hooks.Hooks
                                 Main.LocalPlayer.position.Y,
                                 TeleportationStyleID.RodOfDiscord);
                         }
+                    }
+                }
+
+                if (GlobalCheatManager.AutoButcherHostileNPCs)
+                {
+                    Butcher.ButcherAllHostileNPCs(GlobalCheatManager.ButcherDamage);
+                }
+
+                if (GlobalCheatManager.NebulaSpam)
+                {
+                    for (int i = 0; i < GlobalCheatManager.NebulaSpamPower; i++)
+                    {
+                        NetMessage.SendData(102, -1, -1, null, Main.myPlayer, 173, Main.LocalPlayer.position.X, Main.LocalPlayer.position.Y);
                     }
                 }
             }

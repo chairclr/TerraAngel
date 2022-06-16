@@ -71,6 +71,23 @@ namespace TerraAngel.Client.ClientWindows
                         ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
                         ImGui.SliderInt("##SyncTime", ref GlobalCheatManager.NoClipPlayerSyncTime, 1, 60);
                     }
+                    if (ImGui.CollapsingHeader("Butcher"))
+                    {
+                        if (ImGui.Button("Butcher All Hostile NPCs"))
+                        {
+                            Butcher.ButcherAllHostileNPCs(GlobalCheatManager.ButcherDamage);
+                        }
+                        ImGui.Checkbox("Auto-Butcher Hostiles", ref GlobalCheatManager.AutoButcherHostileNPCs);
+                        if (ImGui.Button("Butcher All Friendly NPCs"))
+                        {
+                            Butcher.ButcherAllFriendlyNPCs(GlobalCheatManager.ButcherDamage);
+                        }
+                        if (ImGui.Button("Butcher All Players"))
+                        {
+                            Butcher.ButcherAllPlayers(GlobalCheatManager.ButcherDamage);
+                        }
+                        ImGui.SliderInt("Butcher Damage", ref GlobalCheatManager.ButcherDamage, 1, (int)short.MaxValue);
+                    }
                     ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("Visuals"))
@@ -94,6 +111,8 @@ namespace TerraAngel.Client.ClientWindows
                         ImGuiUtil.ColorEdit4("Tracer color", ref GlobalCheatManager.ESPTracerColor);
                     }
                     ImGui.Checkbox("Show Tile Sections", ref GlobalCheatManager.ShowTileSectionBorders);
+                    ImGui.Checkbox("No Dust", ref GlobalCheatManager.NoDust);
+                    ImGui.Checkbox("No Gore", ref GlobalCheatManager.NoGore);
                     ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("World Edit"))
@@ -115,6 +134,11 @@ namespace TerraAngel.Client.ClientWindows
                 else
                 {
                     Loader.ClientLoader.MainRenderer.CurrentWorldEditIndex = -1;
+                }
+                if (ImGui.BeginTabItem("Items"))
+                {
+                    ImGuiUtil.ItemButton(ItemID.TerraBlade, "tbreal", out _, out _, out _);
+                    ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("Misc"))
                 {
@@ -146,7 +170,23 @@ namespace TerraAngel.Client.ClientWindows
                             Main.refreshMap = true;
                         });
                     }
-
+                    if (ImGui.Checkbox("Nebula Spam", ref GlobalCheatManager.NebulaSpam))
+                    {
+                        if (GlobalCheatManager.NebulaSpam && GlobalCheatManager.NebulaSpamPower > 30)
+                        {
+                            GlobalCheatManager.NoDust = true;
+                        }
+                    }
+                    if (ImGui.CollapsingHeader("Nebula Settings"))
+                    {
+                        if (ImGui.SliderInt("Nebula Spam Power", ref GlobalCheatManager.NebulaSpamPower, 1, 500))
+                        {
+                            if (GlobalCheatManager.NebulaSpam && GlobalCheatManager.NebulaSpamPower > 30)
+                            {
+                                GlobalCheatManager.NoDust = true;
+                            }
+                        }
+                    }
                     ImGui.EndTabItem();
                 }
             }

@@ -13,6 +13,7 @@ using Terraria.GameContent;
 using TerraAngel.Client.Config;
 using TerraAngel.WorldEdits;
 using TerraAngel.Cheat;
+using System.Threading.Tasks;
 
 namespace TerraAngel.Client
 {
@@ -51,6 +52,8 @@ namespace TerraAngel.Client
             AddWindow(new MainWindow());
             ConsoleSetup.SetConsoleInitialCommands((ConsoleWindow)AddWindow(new ConsoleWindow()));
             AddWindow(new StatsWindow());
+
+            Task.Run(() => ImGuiUtil.ItemLoaderThread(this));
 
             unsafe
             {
@@ -94,6 +97,7 @@ namespace TerraAngel.Client
                 ClientConfig.Instance.WriteToFile();
             }
 
+            RealFNAIme.blocking = ImGui.GetIO().WantCaptureKeyboard || ImGui.GetIO().WantTextInput;
 
             if (Netplay.Connection.State <= 3 && GlobalCheatManager.LoadedTileSections != null)
             {
