@@ -1,21 +1,30 @@
 --- src/Terraria/Terraria/Player.cs
 +++ src/TerraAngel/Terraria/Player.cs
-@@ -26481,7 +_,9 @@
+@@ -26481,224 +_,228 @@
                  gfxOffY = -32f;
              }
  
-+            if (!TerraAngel.Cheat.GlobalCheatManager.NoClip)
++            if (!TerraAngel.Cheat.GlobalCheatManager.NoClip || i != Main.myPlayer)
 +            {
 -            if (Main.myPlayer == i)
 +                if (Main.myPlayer == i)
-             {
-                 if (!iceSkate)
-                 {
-@@ -26491,214 +_,216 @@
-                 CheckCrackedBrickBreak();
-             }
+-            {
++                {
+-                if (!iceSkate)
++                    if (!iceSkate)
+-                {
++                    {
+-                    CheckIceBreak();
++                        CheckIceBreak();
+-                }
++                    }
  
-+           
+-                CheckCrackedBrickBreak();
++                    CheckCrackedBrickBreak();
+-            }
++                }
+ 
++
 +
 -            SlopeDownMovement();
 +                SlopeDownMovement();
