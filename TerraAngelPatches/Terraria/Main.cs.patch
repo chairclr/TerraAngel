@@ -250,6 +250,78 @@
          }
  
          public static void OpenCharacterSelectUI()
+@@ -49771,7 +_,7 @@
+                                             switch (num52)
+                                             {
+                                                 case 0:
+-                                                    if (!tile[num50 - 1, num51 - 1].active())
++                                                    if (tile[num50 - 1, num51 - 1] != null && !tile[num50 - 1, num51 - 1].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
+@@ -49780,7 +_,7 @@
+                                                 case 1:
+                                                     width3 = 8;
+                                                     num53 = 4;
+-                                                    if (!tile[num50, num51 - 1].active())
++                                                    if (tile[num50, num51 - 1] != null && !tile[num50, num51 - 1].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
+@@ -49788,7 +_,7 @@
+                                                     break;
+                                                 case 2:
+                                                     num53 = 12;
+-                                                    if (!tile[num50 + 1, num51 - 1].active())
++                                                    if (tile[num50 + 1, num51 - 1] != null && !tile[num50 + 1, num51 - 1].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
+@@ -49797,7 +_,7 @@
+                                                 case 3:
+                                                     height2 = 8;
+                                                     num54 = 4;
+-                                                    if (!tile[num50 - 1, num51].active())
++                                                    if (tile[num50 - 1, num51] != null && !tile[num50 - 1, num51].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
+@@ -49813,7 +_,7 @@
+                                                     num53 = 12;
+                                                     num54 = 4;
+                                                     height2 = 8;
+-                                                    if (!tile[num50 + 1, num51].active())
++                                                    if (tile[num50 + 1, num51] != null && !tile[num50 + 1, num51].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
+@@ -49821,7 +_,7 @@
+                                                     break;
+                                                 case 6:
+                                                     num54 = 12;
+-                                                    if (!tile[num50 - 1, num51 + 1].active())
++                                                    if (tile[num50 - 1, num51 + 1] != null && !tile[num50 - 1, num51 + 1].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
+@@ -49832,7 +_,7 @@
+                                                     height2 = 4;
+                                                     num53 = 4;
+                                                     num54 = 12;
+-                                                    if (!tile[num50, num51 + 1].active())
++                                                    if (tile[num50, num51 + 1] != null && !tile[num50, num51 + 1].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
+@@ -49841,7 +_,7 @@
+                                                 case 8:
+                                                     num53 = 12;
+                                                     num54 = 12;
+-                                                    if (!tile[num50 + 1, num51 + 1].active())
++                                                    if (tile[num50 + 1, num51 + 1] != null && !tile[num50 + 1, num51 + 1].active())
+                                                     {
+                                                         color17 = slices[num52];
+                                                     }
 @@ -52930,6 +_,10 @@
  
          private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)

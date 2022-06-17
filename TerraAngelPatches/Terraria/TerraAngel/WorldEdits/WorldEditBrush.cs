@@ -27,6 +27,9 @@ namespace TerraAngel.WorldEdits
             Break,
             Place,
             Replace,
+            WallBreak,
+            WallPlace,
+            WallReplace,
         }
         private static string[] actionNames = Util.EnumFancyNames<WorldEditActions>();
 
@@ -132,12 +135,14 @@ namespace TerraAngel.WorldEdits
         }
 
         private int currentPlayerCreateTile;
+        private int currentPlayerCreateWall;
         private bool needsResetPlayerPosition = false;
         
         public override void Edit(Vector2 mouseTileCoords)
         {
             lastTeleportPosition = Main.LocalPlayer.position;
             currentPlayerCreateTile = Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem].createTile;
+            currentPlayerCreateWall = Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem].createWall;
             needsResetPlayerPosition = false;
 
             float bd = MathF.Floor(brushDiameter / 16f);
@@ -163,7 +168,14 @@ namespace TerraAngel.WorldEdits
 
         public void Kernel(int x, int y)
         {
+            if (!WorldGen.InWorld(x, y))
+                return;
+
             Tile tile = Main.tile[x, y];
+
+            if (tile == null)
+                return;
+
             switch ((WorldEditActions)currentAction)
             {
                 case WorldEditActions.Break:
@@ -175,10 +187,18 @@ namespace TerraAngel.WorldEdits
                 case WorldEditActions.Replace:
                     PlaceTile(tile, currentPlayerCreateTile, x, y, true);
                     break;
+                case WorldEditActions.WallBreak:
+                    KillWall(tile, x, y);
+                    break;
+                case WorldEditActions.WallPlace:
+                    PlaceWall(tile, currentPlayerCreateWall, x, y, false);
+                    break;
+                case WorldEditActions.WallReplace:
+                    PlaceWall(tile, currentPlayerCreateWall, x, y, true);
+                    break;
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void KillTile(Tile tile, int x, int y)
         {
             if (WorldGen.CanKillTile(x, y))
@@ -192,16 +212,11 @@ namespace TerraAngel.WorldEdits
         }
 
         private Vector2 lastTeleportPosition;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PlaceTile(Tile tile, int otherType, int x, int y, bool replace)
         {
-            if (!((tile != null || x < 0 || y < 0 || x > Main.maxTilesX || y > Main.maxTilesY) || otherType == 0))
-                return;
 
-            if (replace && tile.active() && !WorldGen.CanKillTile(x, y))
-                return;
 
-            if (!tile.active() || replace)
+            if (!tile.active() || (replace && tile.type != otherType))
             {
                 if (MathF.Abs(x * 16f - lastTeleportPosition.X) > 26f * 16f || MathF.Abs(y * 16f - lastTeleportPosition.Y) > 26f * 16f)
                 {
@@ -216,6 +231,42 @@ namespace TerraAngel.WorldEdits
                 NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.PlaceTile, number2: x, number3: y, number4: otherType);
                 if (sqaureFrame)
                     WorldGen.SquareTileFrame(x, y);
+            }
+        }
+
+        public void KillWall(Tile tile, int x, int y)
+        {
+            if (tile.wall != 0)
+            {
+                tile.wall = 0;
+                NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.KillWall, number2: x, number3: y);
+                if (sqaureFrame)
+                    WorldGen.SquareWallFrame(x, y);
+            }
+        }
+
+        public void PlaceWall(Tile tile, int otherType, int x, int y, bool replace)
+        {
+
+
+            if (tile.wall == 0 || (replace && tile.wall != otherType))
+            {
+                if (MathF.Abs(x * 16f - lastTeleportPosition.X) > 26f * 16f || MathF.Abs(y * 16f - lastTeleportPosition.Y) > 26f * 16f)
+                {
+                    needsResetPlayerPosition = true;
+                    lastTeleportPosition = new Vector2(x * 16f, y * 16f);
+                    SpecialNetMessage.SendData(MessageID.PlayerControls, null, Main.myPlayer, x * 16f, y * 16f, (float)Main.LocalPlayer.selectedItem);
+                }
+
+                tile.wall = (ushort)otherType;
+
+                if (replace)
+                    NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.ReplaceWall, number2: x, number3: y, number4: otherType);
+                else
+                    NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.PlaceWall, number2: x, number3: y, number4: otherType);
+
+                if (sqaureFrame)
+                    WorldGen.SquareWallFrame(x, y);
             }
         }
     }
