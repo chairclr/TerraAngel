@@ -1,0 +1,11 @@
+--- src/Terraria/Terraria/GameContent/Drawing/WallDrawing.cs
++++ src/TerraAngel/Terraria/GameContent/Drawing/WallDrawing.cs
+@@ -9,7 +_,7 @@
+     public class WallDrawing
+     {
+         private static VertexColors _glowPaintColors = new VertexColors(Color.White);
+-        private Tile[,] _tileArray;
++        private Tilemap _tileArray;
+         private TilePaintSystemV2 _paintSystem;
+         public WallDrawing(TilePaintSystemV2 paintSystem)
+         {

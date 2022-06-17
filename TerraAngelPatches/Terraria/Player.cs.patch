@@ -1,6 +1,15 @@
 --- src/Terraria/Terraria/Player.cs
 +++ src/TerraAngel/Terraria/Player.cs
-@@ -26481,224 +_,228 @@
+@@ -18173,7 +_,7 @@
+ 
+             int num = (int)(position.X + (float)(width / 2)) / 16;
+             int num2 = (int)(position.Y - 8f) / 16;
+-            if (Main.tile[num, num2] == null || !Main.tile[num, num2].active() || !Main.tileRope[Main.tile[num, num2].type])
++            if (!WorldGen.InWorld(num, num2) || Main.tile[num, num2] == null || !Main.tile[num, num2].active() || !Main.tileRope[Main.tile[num, num2].type])
+             {
+                 return;
+             }
+@@ -26481,226 +_,230 @@
                  gfxOffY = -32f;
              }
  
@@ -407,11 +416,15 @@
 -                Collision.SwitchTiles(position, width, height, oldPosition, 1);
 +                    Collision.SwitchTiles(position, width, height, oldPosition, 1);
 +                }
++                PressurePlateHelper.UpdatePlayerPosition(this);
++                BordersMovement();
              }
 -
-             PressurePlateHelper.UpdatePlayerPosition(this);
-             BordersMovement();
+-            PressurePlateHelper.UpdatePlayerPosition(this);
+-            BordersMovement();
              numMinions = 0;
+             slotsMinions = 0f;
+             if (mount.Type != 8)
 @@ -35870,7 +_,7 @@
                  return 0.0;
              }

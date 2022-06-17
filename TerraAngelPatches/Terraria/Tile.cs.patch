@@ -1,0 +1,27 @@
+--- src/Terraria/Terraria/Tile.cs
++++ src/TerraAngel/Terraria/Tile.cs
+@@ -1,19 +_,21 @@
++using System.Runtime.InteropServices;
+ using Microsoft.Xna.Framework;
+ using Terraria.DataStructures;
+ 
+ namespace Terraria
+ {
++    [StructLayout(LayoutKind.Sequential, Pack = 0)]
+     public class Tile
+     {
+         public ushort type;
+         public ushort wall;
+-        public byte liquid;
++        public short frameX;
++        public short frameY;
+         public short sTileHeader;
++        public byte liquid;
+         public byte bTileHeader;
+         public byte bTileHeader2;
+         public byte bTileHeader3;
+-        public short frameX;
+-        public short frameY;
+         public const int Type_Solid = 0;
+         public const int Type_Halfbrick = 1;
+         public const int Type_SlopeDownRight = 2;
