@@ -13,6 +13,7 @@ using Terraria.IO;
 using Terraria.Localization;
 using Terraria.Social;
 using Terraria;
+using TerraAngel.ID;
 
 namespace TerraAngel.Net
 {
@@ -21,11 +22,11 @@ namespace TerraAngel.Net
         /// <summary>
         /// Sends custom data to the server
         /// </summary>
-        /// <param name="number">13: Player index</param>
-        /// <param name="number2">13: Player X</param>
-        /// <param name="number3">13: Player Y</param>
-        /// <param name="number4">13: Selected item</param>
-        /// <param name="number5"></param>
+        /// <param name="number">13, 5: Player index</param>
+        /// <param name="number2">13: Player X, 5: Slot index</param>
+        /// <param name="number3">13: Player Y, 5: Stack</param>
+        /// <param name="number4">13: Selected item, 5: Prefix</param>
+        /// <param name="number5">5: NetID</param>
         /// <param name="number6"></param>
         /// <param name="number7"></param>
         public static void SendData(int msgType, NetworkText text = null, int number = 0, float number2 = 0f, float number3 = 0f, float number4 = 0f, int number5 = 0, int number6 = 0, int number7 = 0)
@@ -104,6 +105,20 @@ namespace TerraAngel.Net
                             writer.WriteVector2(player6.PotionOfReturnHomePosition.Value);
                         }
                         break;
+                    case 5:
+                    {
+                        // player id
+                        writer.Write((byte)number);
+                        // slot
+                        writer.Write((short)number2);
+                        // stack
+                        writer.Write((short)number3);
+                        // Prefix
+                        writer.Write((byte)number4);
+                        // NetID
+                        writer.Write((byte)number5);
+                    }
+                    break;
                 }
 
                 int packetLength = (int)writer.BaseStream.Position;
@@ -135,6 +150,49 @@ namespace TerraAngel.Net
                         }
                     }
                 }
+            }
+        }
+
+        public static void SendPlayerControl(Vector2 position, int selectedIndex = -1)
+        {
+            int trueSelectedIndex = (selectedIndex == -1) ? Main.LocalPlayer.selectedItem : selectedIndex;
+            SendData(MessageID.PlayerControls, number: Main.myPlayer, number2: position.X, number3: position.Y, number4: trueSelectedIndex);
+        }
+
+        public static void SendInventorySlot(int slot, int itemId, int stack = 1, int prefix = 0)
+        {
+            SendData(MessageID.SyncEquipment, number: Main.myPlayer, number2: slot, number3: stack, number4: prefix, number5: itemId);
+        }
+
+        public static void SendPlaceTile(int x, int y, int tile, int useSlot = 0, bool resetToNormal = true)
+        {
+            int itemId;
+            if (!Utility.TileUtil.TileToItem.TryGetValue(tile, out itemId))
+                itemId = 0;
+            SendPlayerControl(new Vector2(x * 16f, y * 16f), 0);
+            SendInventorySlot(useSlot, itemId);
+            NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.PlaceTile, number2: x, number3: y, number4: tile);
+
+            if (resetToNormal)
+            {
+                NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
+                NetMessage.SendData(MessageID.SyncEquipment, number: Main.myPlayer, number2: Main.LocalPlayer.selectedItem, number3: Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem].prefix);
+            }
+        }
+
+        public static void SendPlaceWall(int x, int y, int wall, int useSlot = 0, bool resetToNormal = true)
+        {
+            int itemId;
+            if (!Utility.TileUtil.WallToItem.TryGetValue(wall, out itemId))
+                itemId = 0;
+            SendPlayerControl(new Vector2(x * 16f, y * 16f), 0);
+            SendInventorySlot(useSlot, itemId);
+            NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.PlaceWall, number2: x, number3: y, number4: wall);
+
+            if (resetToNormal)
+            {
+                NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
+                NetMessage.SendData(MessageID.SyncEquipment, number: Main.myPlayer, number2: Main.LocalPlayer.selectedItem, number3: Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem].prefix);
             }
         }
     }
