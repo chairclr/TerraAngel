@@ -12,10 +12,11 @@ using Terraria.Localization;
 using Terraria.Audio;
 using Terraria.ID;
 using TerraAngel.Input;
+using System.Diagnostics;
 
 namespace TerraAngel.Plugin
 {
-    public class PluginUI : UIState, IHaveBackButtonCommand
+	public class PluginUI : UIState, IHaveBackButtonCommand
 	{
 		private UIElement element;
 		private UIPanel panel;
@@ -95,7 +96,7 @@ namespace TerraAngel.Plugin
 				HAlign = 0.5f
 			}.WithFadedMouseOver();
 
-			//reloadPluginsButton.OnClick += BackButton;
+			reloadPluginsButton.OnClick += ReloadButton;
 
 			openPluginsFolderButton = new UIAutoScaleTextTextPanel<string>("Open Plugins Folder")
 			{
@@ -107,7 +108,7 @@ namespace TerraAngel.Plugin
 				HAlign = 1f
 			}.WithFadedMouseOver();
 
-			//openPluginsFolderButton.OnClick += BackButton;
+			openPluginsFolderButton.OnClick += OpenButton;
 
 
 			element.Append(backButton);
@@ -116,7 +117,6 @@ namespace TerraAngel.Plugin
 
 
 
-			//getPluginsButton.OnClick += ;
 
 
 			Append(element);
@@ -138,34 +138,55 @@ namespace TerraAngel.Plugin
 				((IHaveBackButtonCommand)this).HandleBackButtonUsage();
 		}
 
+		int updateCount = 0;
 		public override void Update(GameTime gameTime)
 		{
-			if (NeedsUpdate)
+			updateCount++;
+
+			if (NeedsUpdate || updateCount % 60 == 0)
 			{
 				NeedsUpdate = false;
 				pluginList.Clear();
 				pluginObjectList.Clear();
-				//pluginObjectList = ClientConfig.GetUITexts();
-				//
-				//foreach (UIElement text in pluginObjectList)
-				//{
-				//	pluginList.Add(text);
-				//}
+
+				pluginObjectList = PluginLoader.GetPluginUIObjects();
+
+				foreach (UIElement text in pluginObjectList)
+				{
+					pluginList.Add(text);
+				}
 			}
 
 			base.Update(gameTime);
 
 		}
 
+
 		void BackButton(UIMouseEvent evt, UIElement listeningElement)
 		{
 			((IHaveBackButtonCommand)this).HandleBackButtonUsage();
 		}
-
 		void IHaveBackButtonCommand.HandleBackButtonUsage()
 		{
 			Terraria.Main.menuMode = 0;
 			SoundEngine.PlaySound(SoundID.MenuClose);
 		}
-	}
+
+		void ReloadButton(UIMouseEvent evt, UIElement listeningElement)
+		{
+			PluginLoader.UnloadPlugins();
+			PluginLoader.LoadPlugins();
+		}
+
+		void OpenButton(UIMouseEvent evt, UIElement listeningElement)
+		{
+			ProcessStartInfo startInfo = new ProcessStartInfo
+			{
+				Arguments = Loader.ClientLoader.PluginsPath,
+				FileName = "explorer.exe",
+			};
+
+			Process.Start(startInfo);
+		}
+}
 }

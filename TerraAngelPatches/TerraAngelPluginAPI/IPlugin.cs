@@ -6,5 +6,10 @@
 
         public void Load();
         public void Unload();
+
+        public virtual void Update()
+        {
+
+        }
     }
 }

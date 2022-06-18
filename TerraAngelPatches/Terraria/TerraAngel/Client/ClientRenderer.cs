@@ -90,7 +90,6 @@ namespace TerraAngel.Client
 
         public void PostDraw()
         {
-
             if (ImGui.GetIO().WantCaptureKeyboard)
             {
                 Main.ClosePlayerChat();
@@ -106,6 +105,11 @@ namespace TerraAngel.Client
             if (Netplay.Connection.State <= 3 && GlobalCheatManager.LoadedTileSections != null)
             {
                 GlobalCheatManager.LoadedTileSections = null;
+            }
+
+            foreach (Plugin.IPlugin plugin in Plugin.PluginLoader.LoadedPlugins)
+            {
+                plugin.Update();
             }
         }
 

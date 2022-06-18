@@ -220,18 +220,6 @@ namespace TerraAngel.Client.ClientWindows
                     }
                     ImGui.EndTabItem();
                 }
-                if (ImGui.BeginTabItem("Plugin DEVTEST"))
-                {
-                    if (ImGui.Button("Load"))
-                    {
-                        ClientLoader.Console.WriteLine("Unloading");
-                        Plugin.PluginLoader.UnloadPlugins();
-                        ClientLoader.Console.WriteLine("Loading");
-                        Plugin.PluginLoader.LoadPlugins();
-                        ClientLoader.Console.WriteLine("Loaded");
-                    }
-                    ImGui.EndTabItem();
-                }
             }
         }
 
@@ -259,18 +247,7 @@ namespace TerraAngel.Client.ClientWindows
                     }
                     ImGui.EndTabItem();
                 }
-                if (ImGui.BeginTabItem("Plugin DEVTEST"))
-                {
-                    if (ImGui.Button("Load"))
-                    {
-                        ClientLoader.Console.WriteLine("Unloading");
-                        Plugin.PluginLoader.UnloadPlugins();
-                        ClientLoader.Console.WriteLine("Loading");
-                        Plugin.PluginLoader.LoadPlugins();
-                        ClientLoader.Console.WriteLine("Loaded");
-                    }
-                    ImGui.EndTabItem();
-                }
+                
             }
         }
     }

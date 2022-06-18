@@ -85,11 +85,6 @@ namespace TerraAngel.Client.Config
 
 			element.Append(backButton);
 
-
-
-			//getPluginsButton.OnClick += ;
-
-
 			Append(element);
 		}
 
