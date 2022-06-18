@@ -214,8 +214,6 @@ namespace TerraAngel.WorldEdits
         private Vector2 lastTeleportPosition;
         public void PlaceTile(Tile tile, int otherType, int x, int y, bool replace)
         {
-
-
             if (!tile.active() || (replace && tile.type != otherType))
             {
                 if (MathF.Abs(x * 16f - lastTeleportPosition.X) > 26f * 16f || MathF.Abs(y * 16f - lastTeleportPosition.Y) > 26f * 16f)
@@ -247,8 +245,6 @@ namespace TerraAngel.WorldEdits
 
         public void PlaceWall(Tile tile, int otherType, int x, int y, bool replace)
         {
-
-
             if (tile.wall == 0 || (replace && tile.wall != otherType))
             {
                 if (MathF.Abs(x * 16f - lastTeleportPosition.X) > 26f * 16f || MathF.Abs(y * 16f - lastTeleportPosition.Y) > 26f * 16f)

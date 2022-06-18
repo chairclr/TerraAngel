@@ -25,15 +25,6 @@
          public static Camera Camera = new Camera();
          public static IPlayerRenderer PlayerRenderer = new LegacyPlayerRenderer();
          public static IPlayerRenderer PotionOfReturnRenderer = new ReturnGatePlayerRenderer();
-@@ -409,7 +_,7 @@
-         private const bool USE_ASYNC_LOAD = true;
-         private static bool _isAsyncLoadComplete;
-         public static bool showSplash = true;
--        public static bool ignoreErrors = true;
-+        public static bool ignoreErrors { get => false; set { } }
-         public static string defaultIP = "";
-         public static int dayRate = 1;
-         public static int desiredWorldTilesUpdateRate = 1;
 @@ -869,7 +_,7 @@
          public static HairstyleUnlocksHelper Hairstyles = new HairstyleUnlocksHelper();
          public static bool tilesLoaded = false;

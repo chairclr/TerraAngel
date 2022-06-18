@@ -37,49 +37,72 @@ namespace TerraAngel.Client.Config
             }
         }
 
+        [AttributeUsage(AttributeTargets.Field, Inherited = false)]
+        public class UIConfigElementAttribute : Attribute
+        {
+            public readonly string Name;
+
+            public UIConfigElementAttribute(string name)
+            {
+                Name = name;
+            }
+        }
+
+        [UIConfigElement("Show Stats Window")]
         public bool ShowStatsWindow = true;
+        [UIConfigElement("Show Console Window")]
         public bool ShowConsoleWindow = true;
+        [UIConfigElement("Default Anti-Hurt")]
         public bool DefaultAntiHurt = true;
+        [UIConfigElement("Default Infinite Mana")]
         public bool DefaultInfiniteMana = true;
+        [UIConfigElement("Default Infinite Minions")]
         public bool DefaultInfiniteMinions = true;
+        [UIConfigElement("Default Tracers")]
         public bool DefaultESPTracers = false;
+        [UIConfigElement("Default Hitboxes")]
         public bool DefaultESPBoxes = true;
+        [UIConfigElement("Send Rod of Discord packet when teleporting")]
         public bool TeleportSendRODPacket = true;
+        [UIConfigElement("Right click on the map to teleport")]
         public bool RightClickOnMapToTeleport = true;
+        [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
+        [UIConfigElement("Toggle stats window being movable")]
         public Keys ToggleStatsWindowMovability = Keys.NumPad5;
+        [UIConfigElement("Toggle Noclip")]
         public Keys ToggleNoclip = Keys.F2;
+        [UIConfigElement("Toggle Freecam")]
         public Keys ToggleFreecam = Keys.F3;
+        [UIConfigElement("Toggle Fullbright")]
         public Keys ToggleFullbright = Keys.F4;
+        [UIConfigElement("Teleport to cursor")]
         public Keys TeleportToCursor = Keys.Z;
 
         public static List<UIElement> GetUITexts()
         {
-            return new List<UIElement>() 
-            { 
-                new UITextCheckbox("Show Stats Window",                     () => Instance.ShowStatsWindow,               (v) => Instance.ShowStatsWindow               = v), 
-                new UITextCheckbox("Show Console Window",                   () => Instance.ShowConsoleWindow,             (v) => Instance.ShowConsoleWindow             = v),
+            List<UIElement> elements = new List<UIElement>();
 
-                new UITextCheckbox("Default Anti-Hurt",                     () => Instance.DefaultAntiHurt,               (v) => Instance.DefaultAntiHurt               = v),
-                new UITextCheckbox("Default Infinite Mana",                 () => Instance.DefaultInfiniteMana,           (v) => Instance.DefaultInfiniteMana           = v),
-                new UITextCheckbox("Default Infinite Minions",              () => Instance.DefaultInfiniteMinions,        (v) => Instance.DefaultInfiniteMinions        = v),
+            foreach (FieldInfo field in typeof(ClientConfig).GetFields(BindingFlags.Public | BindingFlags.Instance))
+            {
+                UIConfigElementAttribute? attribute = field.GetCustomAttribute<UIConfigElementAttribute>();
+                if (attribute != null)
+                {
+                    string name = attribute.Name;
 
-                new UITextCheckbox("Default ESp Boxes",                     () => Instance.DefaultESPBoxes,               (v) => Instance.DefaultESPBoxes               = v),
-                new UITextCheckbox("Default ESp Tracers",                   () => Instance.DefaultESPTracers,             (v) => Instance.DefaultESPTracers             = v),
+                    if (field.FieldType == typeof(bool))
+                    {
+                        elements.Add(new UITextCheckbox(name, () => (bool)field.GetValue(Instance), (x) => field.SetValue(Instance, x)));
+                    }
+                    else if (field.FieldType == typeof(Keys))
+                    {
+                        elements.Add(new UIKeySelect(name, () => (Keys)field.GetValue(Instance), (x) => field.SetValue(Instance, x)));
+                    }
+                }
+            }
 
-                new UITextCheckbox("Right Click on Map for Teleport",       () => Instance.RightClickOnMapToTeleport,     (v) => Instance.RightClickOnMapToTeleport     = v),
-                new UITextCheckbox("Send Teleport Packet",                  () => Instance.TeleportSendRODPacket,         (v) => Instance.TeleportSendRODPacket         = v),
-
-                new UIKeySelect(   "Toggle UI",                             () => Instance.ToggleUIVisibility,            (v) => Instance.ToggleUIVisibility            = v),
-                new UIKeySelect(   "Move Stats window",                     () => Instance.ToggleStatsWindowMovability,   (v) => Instance.ToggleStatsWindowMovability   = v),
-
-                new UIKeySelect(   "Teleport to Cursor",                    () => Instance.TeleportToCursor,              (v) => Instance.TeleportToCursor              = v),
-
-                new UIKeySelect(   "Toggle Noclip",                         () => Instance.ToggleNoclip,                  (v) => Instance.ToggleNoclip                  = v),
-                new UIKeySelect(   "Toggle Freecam",                        () => Instance.ToggleFreecam,                 (v) => Instance.ToggleFreecam                 = v),
-                new UIKeySelect(   "Toggle Fullbright",                     () => Instance.ToggleFullbright,              (v) => Instance.ToggleFullbright              = v),
-            };
-    }
+            return elements;
+        }
 
         private static object FileLock = new object();
         private static string fileName = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\clientConfig.json";
