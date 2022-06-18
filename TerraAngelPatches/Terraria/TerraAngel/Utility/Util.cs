@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -69,6 +70,13 @@ namespace TerraAngel.Utility
         {
             return Vector2.Transform(screenPosition + Main.screenPosition, Matrix.Invert(Main.GameViewMatrix.ZoomMatrix));
         }
+
+        public static void CreateDirectory(string dir)
+        {
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+        }
+        public static void CreateParentDirectory(string path) => CreateDirectory(Path.GetDirectoryName(path));
 
         public static string ToSentenceCase(string str)
         {

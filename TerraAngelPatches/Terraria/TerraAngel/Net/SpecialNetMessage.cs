@@ -135,16 +135,6 @@ namespace TerraAngel.Net
                             Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, packetLength);
                             Netplay.Connection.Socket.AsyncSend(NetMessage.buffer[bufferIndex].writeBuffer, 0, packetLength, Netplay.Connection.ClientWriteCallBack);
                         }
-                        // Really ReShit/NoLogic? (It's a play on words you see.)
-                        // Saying ReShit is a derogatory term that is used to make fun of and mock the company ReLogic, by calling them "shit", which has the same meaning as human fecal matter
-                        // This holds iconic meaning because it says that the company is shit and lacks experience
-                        // Saying NoLogic is similar in function, mainly to mock and make fun of ReLogic, the creators of this game and writers of the code.
-                        // Although it holds the same sentiment as ReShit, it has different meanings and is meant to be used in different contexts
-                        // ReShit is used mainly to make fun of bugs in the game
-                        // NoLogic otherwise is used to make fun of decisions made by the staff and developers there that make no sense
-                        // eg., how they wrote a fairly decent ui library that is used in many places in the game, such as character creation, world creation, creative ui, and most of the settings options
-                        // but yet, they still haven't upgraded the code that draws the main menu when first opening the game to this new ui style, which shows a large lack of miss-management on part of the company
-                        // it also shows that there have been no attempts to fix old and poorly written code from 10 years ago, even though they definetly have the resources and developers to do this
                         catch
                         {
                         }

@@ -186,7 +186,7 @@
              CaptureManager.Instance.Dispose();
              audioSystem.Dispose();
          }
-@@ -44959,6 +_,16 @@
+@@ -44959,6 +_,26 @@
                  }
  
                  num11++;
@@ -197,6 +197,16 @@
 +                    SoundEngine.PlaySound(10);
 +                    menuMode = 888;
 +                    MenuUI.SetState(TerraAngel.Loader.ClientLoader.ConfigUI);
++                }
++
++                num11++;
++                num5++;
++                array9[num11] = "TerraAngel Plugins";
++                if (selectedMenu == num11)
++                {
++                    SoundEngine.PlaySound(10);
++                    menuMode = 888;
++                    MenuUI.SetState(TerraAngel.Loader.ClientLoader.PluginUI);
 +                }
 +
 +                num11++;

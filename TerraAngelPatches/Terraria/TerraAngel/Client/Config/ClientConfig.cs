@@ -105,13 +105,13 @@ namespace TerraAngel.Client.Config
         }
 
         private static object FileLock = new object();
-        private static string fileName = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\clientConfig.json";
         public void WriteToFile()
         {
             lock (FileLock)
             {
                 string s = JsonConvert.SerializeObject(Instance);
-                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate))
+                Utility.Util.CreateParentDirectory(Loader.ClientLoader.ConfigPath);
+                using (FileStream fs = new FileStream(Loader.ClientLoader.ConfigPath, FileMode.OpenOrCreate))
                 {
                     byte[] bytes = Encoding.UTF8.GetBytes(s);
                     fs.SetLength(bytes.Length);
@@ -123,14 +123,14 @@ namespace TerraAngel.Client.Config
 
         public void ReadFromFile()
         {
-            if (!File.Exists(fileName))
+            if (!File.Exists(Loader.ClientLoader.ConfigPath))
             {
                 WriteToFile();
             }
             lock (FileLock)
             {
                 string s = "";
-                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream(Loader.ClientLoader.ConfigPath, FileMode.OpenOrCreate))
                 {
                     byte[] buffer = new byte[fs.Length];
                     fs.Read(buffer);

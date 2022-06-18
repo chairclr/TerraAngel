@@ -18,7 +18,8 @@ namespace TerraAngel.Plugin
 
         public static void LoadPlugins()
         {
-            foreach (string file in Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+            Utility.Util.CreateDirectory(Loader.ClientLoader.PluginsPath);
+            foreach (string file in Directory.GetFiles(Loader.ClientLoader.PluginsPath))
             {
                 if (file.EndsWith(".TAPlugin.dll"))
                 {

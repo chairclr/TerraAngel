@@ -6,6 +6,8 @@ using TerraAngel.Client;
 using TerraAngel.Client.Config;
 using TerraAngel.Client.ClientWindows;
 using System;
+using System.IO;
+using TerraAngel.Plugin;
 
 namespace TerraAngel.Loader
 {
@@ -13,10 +15,14 @@ namespace TerraAngel.Loader
     {
         public static ClientRenderer? MainRenderer;
         public static ConfigUI ConfigUI = new ConfigUI();
+        public static PluginUI PluginUI = new PluginUI();
         internal static ConsoleWindow? ConsoleWindow;
 
         public static bool SetupRenderer = false;
 
+        public static string SavePath => Path.Combine(Terraria.Main.SavePath, "TerraAngel");
+        public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
+        public static string PluginsPath => Path.Combine(SavePath, "Plugins");
 
         public static void Hookgen_Early()
         {
