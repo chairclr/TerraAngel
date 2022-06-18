@@ -22,8 +22,11 @@ namespace TerraAngel.Plugin
             {
                 if (file.EndsWith(".TAPlugin.dll"))
                 {
-                    Assembly assembly = loader.LoadFromAssemblyPath(file);
-                    LoadedPlugins.Add(LoadPluginFromDLL(assembly));
+                    using (FileStream sr = File.Open(file, FileMode.Open))
+                    {
+                        Assembly assembly = loader.LoadFromStream(sr);
+                        LoadedPlugins.Add(LoadPluginFromDLL(assembly));
+                    }
                 }
             }
             InitPlugins();
@@ -43,7 +46,7 @@ namespace TerraAngel.Plugin
         {
             foreach (IPlugin? plugin in LoadedPlugins)
             {
-                plugin?.Load(ClientLoader.MainRenderer);
+                plugin?.Load();
             }
         }
 
@@ -51,7 +54,7 @@ namespace TerraAngel.Plugin
         {
             foreach (IPlugin? plugin in LoadedPlugins)
             {
-                plugin?.Unload(ClientLoader.MainRenderer);
+                plugin?.Unload();
             }
         }
         

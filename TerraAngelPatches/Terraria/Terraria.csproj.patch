@@ -55,18 +55,24 @@
 +    <Reference Include="LibNew/AnyCpu/MonoMod/Mono.Cecil.dll" />
 +    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
 +    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
-+    <Reference Include="LibNew/AnyCpu/Plugin/TerraAngelPluginAPI.dll" />
++    <ProjectReference Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
 +  </ItemGroup>
 +
    <ItemGroup>
      <EmbeddedResource Include="GameContent/Creative/Content/*" />
      <EmbeddedResource Include="GameContent/Metadata/MaterialData/*" />
-@@ -38,5 +_,52 @@
+@@ -38,5 +_,58 @@
      <EmbeddedResource Include="Libraries/**" />
      <EmbeddedResource Include="Localization/Content/**" />
      <EmbeddedResource Include="Microsoft/**" />
 +    <EmbeddedResource Include="LibNew/$(Platform)/FNA/FNA.dll" />
 +    <EmbeddedResource Include="LibNew/$(Platform)/Steamworks.NET.dll" />
++    <EmbeddedResource Include="LibNew/$(Platform)/ImGui/ImGui.NET.dll" />
++    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/Mono.Cecil.dll" />
++    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
++    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
++    <EmbeddedResource Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
++    <EmbeddedResource Include="../TerraAngelPluginAPI/bin/$(Configuration)/$(TargetFramework)/TerraAngelPluginAPI.dll" />
    </ItemGroup>
 +	
 +  <!-- Copy some steam stuff -->

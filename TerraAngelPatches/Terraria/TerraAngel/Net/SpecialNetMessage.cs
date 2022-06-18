@@ -36,19 +36,19 @@ namespace TerraAngel.Net
                 return;
             }
 
-            int num = 256;
+            int bufferIndex = 256;
             if (text == null)
             {
                 text = NetworkText.Empty;
             }
 
-            lock (NetMessage.buffer[num])
+            lock (NetMessage.buffer[bufferIndex])
             {
-                BinaryWriter writer = NetMessage.buffer[num].writer;
+                BinaryWriter writer = NetMessage.buffer[bufferIndex].writer;
                 if (writer == null)
                 {
-                    NetMessage.buffer[num].ResetWriter();
-                    writer = NetMessage.buffer[num].writer;
+                    NetMessage.buffer[bufferIndex].ResetWriter();
+                    writer = NetMessage.buffer[bufferIndex].writer;
                 }
 
                 writer.BaseStream.Position = 0L;
@@ -116,7 +116,7 @@ namespace TerraAngel.Net
                         // Prefix
                         writer.Write((byte)number4);
                         // NetID
-                        writer.Write((byte)number5);
+                        writer.Write((short)number5);
                     }
                     break;
                 }
@@ -131,9 +131,9 @@ namespace TerraAngel.Net
                     {
                         try
                         {
-                            NetMessage.buffer[num].spamCount++;
+                            NetMessage.buffer[bufferIndex].spamCount++;
                             Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, packetLength);
-                            Netplay.Connection.Socket.AsyncSend(NetMessage.buffer[num].writeBuffer, 0, packetLength, Netplay.Connection.ClientWriteCallBack);
+                            Netplay.Connection.Socket.AsyncSend(NetMessage.buffer[bufferIndex].writeBuffer, 0, packetLength, Netplay.Connection.ClientWriteCallBack);
                         }
                         // Really ReShit/NoLogic? (It's a play on words you see.)
                         // Saying ReShit is a derogatory term that is used to make fun of and mock the company ReLogic, by calling them "shit", which has the same meaning as human fecal matter

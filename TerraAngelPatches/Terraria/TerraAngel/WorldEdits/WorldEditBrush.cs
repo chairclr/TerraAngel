@@ -22,21 +22,39 @@ namespace TerraAngel.WorldEdits
 {
     public class WorldEditBrush : WorldEdit
     {
-        public enum WorldEditActions
+        public enum TileEditActions
         {
+            None,
             Break,
             Place,
             Replace,
-            WallBreak,
-            WallPlace,
-            WallReplace,
         }
-        private static string[] actionNames = Util.EnumFancyNames<WorldEditActions>();
+        public enum WallEditActions
+        {
+            None,
+            Break,
+            Place,
+            Replace,
+        }
+        public enum LiquidEditActions
+        {
+            None,
+            Remove,
+            Water,
+            Lava,
+            Honey
+        }
+
+
+        private static string[] tileActionNames = Util.EnumFancyNames<TileEditActions>();
+        private static string[] wallActionNames = Util.EnumFancyNames<WallEditActions>();
+        private static string[] liquidActionNames = Util.EnumFancyNames<LiquidEditActions>();
 
         private bool sqaureFrame = true;
         private bool drawDetailedPreview = true;
         private int brushDiameter = 80;
         private bool teleportToTilesFarAway = true;
+        private bool revealMap = true;
 
         public override bool RunEveryFrame => true;
 
@@ -109,7 +127,9 @@ namespace TerraAngel.WorldEdits
             }
         }
 
-        private int currentAction = 0;
+        private int currentTileAction = 0;
+        private int currentWallAction = 0;
+        private int currentLiquidAction = 0;
 
         public override bool DrawUITab(ImGuiIOPtr io)
         {
@@ -118,6 +138,7 @@ namespace TerraAngel.WorldEdits
                 ImGui.Checkbox("Draw detailed preview", ref drawDetailedPreview);
                 ImGui.Checkbox("Square tile frame", ref sqaureFrame);
                 ImGui.Checkbox("Attempt to bypass TShock", ref teleportToTilesFarAway);
+                ImGui.Checkbox("Reveal Map", ref revealMap);
                 if (ImGui.SliderInt("Brush Diameter", ref brushDiameter, 16, 800))
                 {
                     if (brushDiameter > 600)
@@ -125,8 +146,12 @@ namespace TerraAngel.WorldEdits
                     else
                         drawDetailedPreview = true;
                 }
-                ImGui.Text("Action"); ImGui.SameLine();
-                ImGui.Combo("##WorldEditActions", ref currentAction, actionNames, actionNames.Length);
+                ImGui.Text("Tile"); ImGui.SameLine();
+                ImGui.Combo("##WorldEditTileActions",   ref currentTileAction,   tileActionNames,   tileActionNames.Length);
+                ImGui.Text("Wall"); ImGui.SameLine();
+                ImGui.Combo("##WorldEditWallActions",   ref currentWallAction,   wallActionNames,   wallActionNames.Length);
+                ImGui.Text("Liquid"); ImGui.SameLine();
+                ImGui.Combo("##WorldEditLiquidActions", ref currentLiquidAction, liquidActionNames, liquidActionNames.Length);
 
                 ImGui.EndTabItem();
                 return true;
@@ -166,6 +191,7 @@ namespace TerraAngel.WorldEdits
                 SpecialNetMessage.SendData(MessageID.PlayerControls, null, Main.myPlayer, Main.LocalPlayer.position.X, Main.LocalPlayer.position.Y, (float)Main.LocalPlayer.selectedItem);
         }
 
+        private Vector2 lastTeleportPosition;
         public void Kernel(int x, int y)
         {
             if (!WorldGen.InWorld(x, y))
@@ -176,26 +202,53 @@ namespace TerraAngel.WorldEdits
             if (tile == null)
                 return;
 
-            switch ((WorldEditActions)currentAction)
+
+            switch ((TileEditActions)currentTileAction)
             {
-                case WorldEditActions.Break:
+                case TileEditActions.Break:
                     KillTile(tile, x, y);
                     break;
-                case WorldEditActions.Place:
+                case TileEditActions.Place:
                     PlaceTile(tile, currentPlayerCreateTile, x, y, false);
                     break;
-                case WorldEditActions.Replace:
+                case TileEditActions.Replace:
                     PlaceTile(tile, currentPlayerCreateTile, x, y, true);
                     break;
-                case WorldEditActions.WallBreak:
+            }
+
+            switch ((WallEditActions)currentWallAction)
+            {
+                case WallEditActions.Break:
                     KillWall(tile, x, y);
                     break;
-                case WorldEditActions.WallPlace:
+                case WallEditActions.Place:
                     PlaceWall(tile, currentPlayerCreateWall, x, y, false);
                     break;
-                case WorldEditActions.WallReplace:
+                case WallEditActions.Replace:
                     PlaceWall(tile, currentPlayerCreateWall, x, y, true);
                     break;
+            }
+
+            switch ((LiquidEditActions)currentLiquidAction)
+            {
+                case LiquidEditActions.Remove:
+                    KillLiquid(tile, x, y);
+                    break;
+                case LiquidEditActions.Water:
+                    PlaceLiquid(tile, x, y, Tile.Liquid_Water);
+                    break;
+                case LiquidEditActions.Lava:
+                    PlaceLiquid(tile, x, y, Tile.Liquid_Lava);
+                    break;
+                case LiquidEditActions.Honey:
+                    PlaceLiquid(tile, x, y, Tile.Liquid_Honey);
+                    break;
+            }
+
+            if (revealMap)
+            {
+                Main.Map.Update(x, y, 255);
+                Main.refreshMap = true;
             }
         }
 
@@ -210,23 +263,23 @@ namespace TerraAngel.WorldEdits
                     WorldGen.SquareTileFrame(x, y);
             }
         }
-
-        private Vector2 lastTeleportPosition;
         public void PlaceTile(Tile tile, int otherType, int x, int y, bool replace)
         {
             if (!tile.active() || (replace && tile.type != otherType))
             {
+                if (otherType == -1)
+                    return;
                 if (MathF.Abs(x * 16f - lastTeleportPosition.X) > 26f * 16f || MathF.Abs(y * 16f - lastTeleportPosition.Y) > 26f * 16f)
                 {
                     needsResetPlayerPosition = true;
                     lastTeleportPosition = new Vector2(x * 16f, y * 16f);
                     SpecialNetMessage.SendData(MessageID.PlayerControls, null, Main.myPlayer, x * 16f, y * 16f, (float)Main.LocalPlayer.selectedItem);
                 }
-
                 tile.active(true);
                 tile.type = (ushort)otherType;
 
                 NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.PlaceTile, number2: x, number3: y, number4: otherType);
+
                 if (sqaureFrame)
                     WorldGen.SquareTileFrame(x, y);
             }
@@ -242,7 +295,6 @@ namespace TerraAngel.WorldEdits
                     WorldGen.SquareWallFrame(x, y);
             }
         }
-
         public void PlaceWall(Tile tile, int otherType, int x, int y, bool replace)
         {
             if (tile.wall == 0 || (replace && tile.wall != otherType))
@@ -263,6 +315,55 @@ namespace TerraAngel.WorldEdits
 
                 if (sqaureFrame)
                     WorldGen.SquareWallFrame(x, y);
+            }
+        }
+
+        public void KillLiquid(Tile tile, int x, int y)
+        {
+            if (tile.liquid != 0)
+            {
+                if (tile.liquidType() == Tile.Liquid_Water || tile.liquidType() == Tile.Liquid_Honey)
+                {
+                    SpecialNetMessage.SendInventorySlot(0, ItemID.SuperAbsorbantSponge);
+                }
+                else if (tile.liquidType() == Tile.Liquid_Lava)
+                {
+                    SpecialNetMessage.SendInventorySlot(0, ItemID.LavaAbsorbantSponge);
+                }
+                SpecialNetMessage.SendPlayerControl(new Vector2(x * 16f, y * 16f), 0);
+
+                lastTeleportPosition = new Vector2(x * 16f, y * 16f);
+                needsResetPlayerPosition = true;
+                WorldGen.EmptyLiquid(x, y);
+
+                SpecialNetMessage.SendInventorySlot(0, Main.LocalPlayer.inventory[0].netID, Main.LocalPlayer.inventory[0].stack, Main.LocalPlayer.inventory[0].prefix);
+            }
+        }
+
+        public void PlaceLiquid(Tile tile, int x, int y, int liquid)
+        {
+            if (tile.liquidType() != liquid || tile.liquid != 255)
+            {
+                switch (liquid)
+                {
+                    case Tile.Liquid_Water:
+                        SpecialNetMessage.SendInventorySlot(0, ItemID.WaterBucket);
+                        break;
+                    case Tile.Liquid_Lava:
+                        SpecialNetMessage.SendInventorySlot(0, ItemID.LavaBucket);
+                        break;
+                    case Tile.Liquid_Honey:
+                        SpecialNetMessage.SendInventorySlot(0, ItemID.HoneyBucket);
+                        break;
+                }
+
+                SpecialNetMessage.SendPlayerControl(new Vector2(x * 16f, y * 16f), 0);
+
+                lastTeleportPosition = new Vector2(x * 16f, y * 16f);
+                needsResetPlayerPosition = true;
+                WorldGen.PlaceLiquid(x, y, (byte)liquid, 255);
+
+                SpecialNetMessage.SendInventorySlot(0, Main.LocalPlayer.inventory[0].netID, Main.LocalPlayer.inventory[0].stack, Main.LocalPlayer.inventory[0].prefix);
             }
         }
     }

@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
-@@ -2530,23 +_,26 @@
+@@ -2530,23 +_,35 @@
          {
              lock (buffer[i])
              {
@@ -15,23 +15,29 @@
 +                else
                  {
 -                    if (Main.netMode == 1)
--                    {
--                        Main.menuMode = 15;
--                        Main.statusText = Language.GetTextValue("Error.BadHeaderBufferOverflow");
--                        Netplay.Disconnect = true;
--                    }
--                    else
--                    {
--                        Netplay.Clients[i].PendingTermination = true;
 +                    // Executing goes here when it overflows
 +                    // Maybe log it or something
 +
 +                    // Clear the read buffer up a bit
++                    int before;
++                    int after;
 +                    while (buffer[i].totalData > 200)
+                     {
+-                        Main.menuMode = 15;
+-                        Main.statusText = Language.GetTextValue("Error.BadHeaderBufferOverflow");
+-                        Netplay.Disconnect = true;
++                        before = buffer[i].totalData;
 +                        CheckBytes(i);
++                        after = buffer[i].totalData;
++
++                        if (before == after)
++                            break;
+                     }
+-                    else
 +
 +                    if (buffer[i].totalData + streamLength < buffer[i].readBuffer.Length)
-+                    {
+                     {
+-                        Netplay.Clients[i].PendingTermination = true;
 +                        Buffer.BlockCopy(bytes, 0, buffer[i].readBuffer, buffer[i].totalData, streamLength);
 +                        buffer[i].totalData += streamLength;
 +                        buffer[i].checkBytes = true;

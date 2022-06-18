@@ -335,7 +335,7 @@
  
          private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)
          {
-+            if (!WorldGen.InWorld((int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)))
++            if (!WorldGen.InWorld((int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)) || tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] == null)
 +            {
 +                return;
 +            }

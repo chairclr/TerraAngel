@@ -13,7 +13,7 @@ using Terraria.ID;
 using TerraAngel.Cheat;
 using TerraAngel.Graphics;
 using TerraAngel.WorldEdits;
-
+using TerraAngel.Loader;
 namespace TerraAngel.Client.ClientWindows
 {
     public class MainWindow : ClientWindow
@@ -149,7 +149,7 @@ namespace TerraAngel.Client.ClientWindows
                                 int ylen = Main.Map.MaxHeight;
                                 Task.Run(async () =>
                                 {
-                                    ConsoleWindow.Instance.WriteLine("Revealing map");
+                                    ClientLoader.Console.WriteLine("Revealing map");
                                     lock (Main.tile)
                                     {
                                         for (int x = 0; x < xlen; x++)
@@ -163,11 +163,11 @@ namespace TerraAngel.Client.ClientWindows
                                             }
                                             if (x % Main.maxTilesX == Main.maxTilesX / 2)
                                             {
-                                                ConsoleWindow.Instance.WriteLine("50% revealed");
+                                                ClientLoader.Console.WriteLine("50% revealed");
                                             }
                                         }
                                     }
-                                    ConsoleWindow.Instance.WriteLine("Map Revealed");
+                                    ClientLoader.Console.WriteLine("Map Revealed");
                                     Main.refreshMap = true;
                                 });
                             }
@@ -224,11 +224,11 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     if (ImGui.Button("Load"))
                     {
-                        ConsoleWindow.Instance.WriteLine("Unloading");
+                        ClientLoader.Console.WriteLine("Unloading");
                         Plugin.PluginLoader.UnloadPlugins();
-                        ConsoleWindow.Instance.WriteLine("Loading");
+                        ClientLoader.Console.WriteLine("Loading");
                         Plugin.PluginLoader.LoadPlugins();
-                        ConsoleWindow.Instance.WriteLine("Loaded");
+                        ClientLoader.Console.WriteLine("Loaded");
                     }
                     ImGui.EndTabItem();
                 }
@@ -263,11 +263,11 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     if (ImGui.Button("Load"))
                     {
-                        ConsoleWindow.Instance.WriteLine("Unloading");
+                        ClientLoader.Console.WriteLine("Unloading");
                         Plugin.PluginLoader.UnloadPlugins();
-                        ConsoleWindow.Instance.WriteLine("Loading");
+                        ClientLoader.Console.WriteLine("Loading");
                         Plugin.PluginLoader.LoadPlugins();
-                        ConsoleWindow.Instance.WriteLine("Loaded");
+                        ClientLoader.Console.WriteLine("Loaded");
                     }
                     ImGui.EndTabItem();
                 }

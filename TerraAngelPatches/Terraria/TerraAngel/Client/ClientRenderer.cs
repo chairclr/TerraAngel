@@ -51,7 +51,7 @@ namespace TerraAngel.Client
             base.RebuildFontAtlas();
             AddWindow(new DrawWindow());
             AddWindow(new MainWindow());
-            ConsoleSetup.SetConsoleInitialCommands((ConsoleWindow)AddWindow(new ConsoleWindow()));
+            ConsoleSetup.SetConsoleInitialCommands(Loader.ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow()));
             AddWindow(new StatsWindow());
 
 
