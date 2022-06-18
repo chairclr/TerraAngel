@@ -14,6 +14,7 @@ using TerraAngel.Client.Config;
 using TerraAngel.WorldEdits;
 using TerraAngel.Cheat;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace TerraAngel.Client
 {
@@ -52,6 +53,8 @@ namespace TerraAngel.Client
             AddWindow(new MainWindow());
             ConsoleSetup.SetConsoleInitialCommands((ConsoleWindow)AddWindow(new ConsoleWindow()));
             AddWindow(new StatsWindow());
+
+
 
             Task.Run(() => ImGuiUtil.ItemLoaderThread(this));
             ItemBrowser.Init();
@@ -112,8 +115,9 @@ namespace TerraAngel.Client
 
             if (InputSystem.IsKeyPressed(ClientConfig.Instance.ToggleUIVisibility))
                 GlobalUIState = !GlobalUIState;
-            foreach (ClientWindow window in ClientWindows)
+            for (int i = 0; i < ClientWindows.Count; i++)
             {
+                ClientWindow window = ClientWindows[i];
                 if ((!window.IsToggleable || GlobalUIState) && window.IsEnabled)
                 {
                     window.Draw(io);

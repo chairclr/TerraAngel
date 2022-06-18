@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,33 +_,39 @@
+@@ -3,33 +_,40 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -55,6 +55,7 @@
 +    <Reference Include="LibNew/AnyCpu/MonoMod/Mono.Cecil.dll" />
 +    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
 +    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
++    <Reference Include="LibNew/AnyCpu/Plugin/TerraAngelPluginAPI.dll" />
 +  </ItemGroup>
 +
    <ItemGroup>

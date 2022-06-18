@@ -46,6 +46,10 @@ namespace TerraAngel.Hooks.Hooks
             {
                 ClientLoader.MainRenderer.Render(time);
             }
+            if (ClientLoader.SetupRenderer)
+            {
+                Main.blockInput = ImGui.GetIO().WantCaptureKeyboard;
+            }
         }
         public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
         {
