@@ -72,7 +72,7 @@
 +    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
 +    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
 +    <EmbeddedResource Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
-+    <EmbeddedResource Include="../TerraAngelPluginAPI/bin/$(Configuration)/$(TargetFramework)/TerraAngelPluginAPI.dll" />
++    <EmbeddedResource Include="../TerraAngelPluginAPI/bin/$(Platform)/$(Configuration)/$(TargetFramework)/TerraAngelPluginAPI.dll" />
    </ItemGroup>
 +	
 +  <!-- Copy some steam stuff -->
