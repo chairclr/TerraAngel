@@ -87,9 +87,23 @@ namespace TerraAngel.Utility
         {
             return Enum.GetNames(type).Select((x) => Util.ToSentenceCase(x)).ToArray();
         }
-        public static string[] EnumFancyNames<TEnum>() 
+        public static string[] EnumFancyNames<TEnum>()
         {
             return Enum.GetNames(typeof(TEnum)).Select((x) => Util.ToSentenceCase(x)).ToArray();
+        }
+
+        public static int SqrColorDistance(Color x, Color y)
+        {
+            int difr = x.R - y.R;
+            int difg = x.G - y.G;
+            int difb = x.B - y.B;
+
+            return difr * difr + difg * difg + difb * difb;
+        }
+
+        public static float ColorDistance(Color col1, Color col2)
+        {
+            return MathF.Sqrt(SqrColorDistance(col1, col2));
         }
 
         public class Map<T1, T2> : IEnumerable<KeyValuePair<T1, T2>>
@@ -159,7 +173,7 @@ namespace TerraAngel.Utility
         }
 
     }
-    public static class VectorHelper
+    public static class VectorExtensions
     {
         public static System.Numerics.Vector2 ToNumerics(this Vector2 v)
         {
@@ -186,6 +200,18 @@ namespace TerraAngel.Utility
         public static Vector4 ToXNA(this System.Numerics.Vector4 v)
         {
             return new Vector4(v.X, v.Y, v.Z, v.W);
+        }
+    }
+    public static class ColorExtensions
+    {
+        public static int SqrDistance(this Color x, Color y)
+        {
+            return Util.SqrColorDistance(x, y);
+        }
+
+        public static float Distance(this Color x, Color y)
+        {
+            return Util.ColorDistance(x, y);
         }
     }
 }

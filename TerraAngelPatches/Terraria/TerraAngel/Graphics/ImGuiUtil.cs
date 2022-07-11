@@ -18,7 +18,7 @@ using Terraria.GameContent.UI;
 
 namespace TerraAngel.Graphics
 {
-    public class ImGuiUtil
+    public static class ImGuiUtil
     {
         public static void TextColored(string text, Color color)
         {
@@ -33,6 +33,23 @@ namespace TerraAngel.Graphics
             {
                 color = new Color(v4c.ToXNA());
             }
+        }
+
+        public static void DrawTileRect(this ImDrawListPtr drawList, Vector2 startTile, Vector2 endTile, uint col)
+        {
+            Vector2 min;
+            Vector2 max;
+            if (Main.mapFullscreen)
+            {
+                min = Util.WorldToScreenFullscreenMap(startTile * 16f);
+                max = Util.WorldToScreenFullscreenMap(endTile * 16f);
+            }
+            else
+            {
+                min = Util.WorldToScreen(startTile * 16f);
+                max = Util.WorldToScreen(endTile * 16f);
+            }
+            drawList.AddRectFilled(min.ToNumerics(), max.ToNumerics(), col);
         }
 
         private static int itemPtr = 0;
