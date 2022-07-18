@@ -27,6 +27,9 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("GetColor", LightingHook);
             HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("GetColor", LegacyLightingHook);
 
+            //HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("ProcessArea", LightingProcessAreaHook);
+            //HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("ProcessArea", LegacyLightingProcessAreaHook);
+
             HookUtil.HookGen(Dust.NewDust, NewDustHook);
             HookUtil.HookGen(Dust.UpdateDust, UpdateDustHook);
             HookUtil.HookGen<Main>("DrawDust", DrawDustHook);
@@ -35,21 +38,31 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Main>("DrawGore", DrawGoreHook);
             HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
         }
+
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
             if (ClientLoader.SetupRenderer)
             {
                 Main.blockInput = ImGui.GetIO().WantCaptureKeyboard;
+
+                if (Main.drawingPlayerChat && !Main.blockInput)
+                {
+                    if (ImGui.GetIO().KeyCtrl && Input.InputSystem.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.V))
+                    {
+                        Main.chatText += SDL2.SDL.SDL_GetClipboardText();
+                    }
+                }
             }
             orig(self, time);
             if (ClientLoader.SetupRenderer)
             {
-                ClientLoader.MainRenderer.Render(time);
+                Main.blockInput = ImGui.GetIO().WantCaptureKeyboard;
             }
             if (ClientLoader.SetupRenderer)
             {
-                Main.blockInput = ImGui.GetIO().WantCaptureKeyboard;
+                ClientLoader.MainRenderer.Render(time);
             }
+            
         }
         public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
         {
@@ -111,8 +124,19 @@ namespace TerraAngel.Hooks.Hooks
             }
             return orig(self, x, y);
         }
+        //private static void LightingProcessAreaHook(Action<Terraria.Graphics.Light.LightingEngine, Rectangle> orig, Terraria.Graphics.Light.LightingEngine self, Rectangle area)
+        //{
+        //    if (GlobalCheatManager.FullBright)
+        //        return;
+        //    orig(self, area);
+        //}
+        //private static void LegacyLightingProcessAreaHook(Action<Terraria.Graphics.Light.LegacyLighting, Rectangle> orig, Terraria.Graphics.Light.LegacyLighting self, Rectangle area)
+        //{
+        //    if (GlobalCheatManager.FullBright)
+        //        return;
+        //    orig(self, area);
+        //}
 
-        
         public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
         {
             if (GlobalCheatManager.NoDust)

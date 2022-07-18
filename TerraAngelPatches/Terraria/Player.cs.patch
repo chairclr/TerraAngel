@@ -425,6 +425,17 @@
              numMinions = 0;
              slotsMinions = 0f;
              if (mount.Type != 8)
+@@ -28970,6 +_,10 @@
+ 
+         private void ItemCheckWrapped(int i)
+         {
++            if (TerraAngel.Loader.ClientLoader.SetupRenderer && ImGuiNET.ImGui.GetIO().WantCaptureMouse)
++            {
++                return;
++            }
+             bool num = !controlLeft && !controlRight && !controlUp && !controlDown && PlayerInput.UsingGamepad && Main.SmartCursorIsUsed && PlayerInput.GamepadThumbstickRight.Length() < 0.05f;
+             if (num)
+             {
 @@ -35870,7 +_,7 @@
                  return 0.0;
              }

@@ -80,6 +80,7 @@ namespace TerraAngel.Hooks.Hooks
                 {
                     if (!io.WantCaptureKeyboard && !io.WantTextInput && !Main.drawingPlayerChat)
                     {
+                        self.oldPosition = self.position;
                         if (io.KeysDown[(int)Keys.W])
                         {
                             self.position.Y -= GlobalCheatManager.NoClipSpeed;
@@ -100,7 +101,6 @@ namespace TerraAngel.Hooks.Hooks
 
                     if (Main.GameUpdateCount % GlobalCheatManager.NoClipPlayerSyncTime == 0)
                     {
-                        //NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, self.whoAmI);
                         SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
                     }
                 }
