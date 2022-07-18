@@ -37,6 +37,8 @@ namespace TerraAngel.Plugin
                             Assembly assembly = loader.LoadFromStream(sr);
                             LoadedPlugins.Add(LoadPluginFromDLL(assembly));
                             sr.Close();
+
+                            ClientLoader.Console.WriteLine($"Loading {Path.GetFileName(file)}");
                         }
                     }
                 }

@@ -55,6 +55,8 @@ namespace TerraAngel.UI
                 valueSet(!valueGet());
                 this.otherText.SetText(valueGet() ? "Enabled" : "Disabled");
                 SoundEngine.PlaySound(SoundID.MenuTick);
+
+                Client.Config.ClientConfig.Instance.WriteToFile();
             };
 
             backgroundPanel.Append(nameText);

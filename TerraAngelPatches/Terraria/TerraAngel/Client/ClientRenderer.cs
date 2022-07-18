@@ -70,6 +70,7 @@ namespace TerraAngel.Client
                     }
                 };
             }
+
         }
 
         public void Render(GameTime time)

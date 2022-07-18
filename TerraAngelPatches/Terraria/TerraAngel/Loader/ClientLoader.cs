@@ -28,7 +28,7 @@ namespace TerraAngel.Loader
         {
             GameHooks.Generate();
 
-            ClientConfig.Instance = new ClientConfig();
+            new ClientConfig();
         }
 
         public static void SetupImGuiRenderer(Game main)
@@ -37,6 +37,7 @@ namespace TerraAngel.Loader
             {
                 SetupRenderer = true;
                 MainRenderer = new ClientRenderer(main);
+                ClientConfig.Instance.PluginsToEnable = ClientConfig.Instance.pluginsToEnable;
             }
         }
 

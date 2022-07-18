@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Reflection;
 using TerraAngel.Cheat;
+using System.Runtime.Serialization;
 
 namespace TerraAngel.Client.Config
 {
@@ -79,6 +80,39 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Teleport to cursor")]
         public Keys TeleportToCursor = Keys.Z;
 
+        [JsonIgnore]
+        public List<string> PluginsToEnable
+        {
+            get
+            {
+                List<string> enabled = new List<string>();
+
+                foreach (KeyValuePair<string, bool> availablePlugin in Plugin.PluginLoader.AvailablePlugins)
+                {
+                    if (availablePlugin.Value)
+                        enabled.Add(availablePlugin.Key);
+                }
+
+                return enabled;
+            }
+            set
+            {
+                Plugin.PluginLoader.VerifyEnabled();
+                foreach (string enabledPlugin in value)
+                {
+                    if (Plugin.PluginLoader.AvailablePlugins.ContainsKey(enabledPlugin))
+                    {
+                        Plugin.PluginLoader.AvailablePlugins[enabledPlugin] = true;
+                    }
+                }
+                Plugin.PluginLoader.UnloadPlugins();
+                Plugin.PluginLoader.LoadPlugins();
+            }
+        }
+
+        [JsonProperty("PluginsToEnable")]
+        public List<string> pluginsToEnable;
+
         public static List<UIElement> GetUITexts()
         {
             List<UIElement> elements = new List<UIElement>();
@@ -109,6 +143,8 @@ namespace TerraAngel.Client.Config
         {
             lock (FileLock)
             {
+                pluginsToEnable = PluginsToEnable;
+
                 string s = JsonConvert.SerializeObject(Instance);
                 Utility.Util.CreateParentDirectory(Loader.ClientLoader.ConfigPath);
                 using (FileStream fs = new FileStream(Loader.ClientLoader.ConfigPath, FileMode.OpenOrCreate))
