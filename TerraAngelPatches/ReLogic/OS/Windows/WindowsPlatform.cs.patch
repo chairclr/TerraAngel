@@ -1,6 +1,6 @@
 --- src/Terraria/ReLogic/OS/Windows/WindowsPlatform.cs
 +++ src/TerraAngel/ReLogic/OS/Windows/WindowsPlatform.cs
-@@ -5,7 +_,7 @@
+@@ -5,11 +_,11 @@
  {
      internal class WindowsPlatform : Platform
      {
@@ -9,7 +9,12 @@
          private bool _disposedValue;
          public WindowsPlatform() : base(PlatformType.Windows)
          {
-@@ -17,23 +_,14 @@
+-            RegisterService((IClipboard)new Clipboard());
++            RegisterService((IClipboard)new FNAClipboard());
+             RegisterService((IPathService)new PathService());
+             RegisterService((IWindowService)new WindowService());
+             RegisterService((IImeService)new UnsupportedPlatformIme());
+@@ -17,23 +_,13 @@
  
          public override void InitializeClientServices(IntPtr windowHandle)
          {
@@ -19,7 +24,6 @@
 -            }
 -
 -            RegisterService((IImeService)new WindowsIme(_wndProcHook, windowHandle));
-+            //RegisterService((IImeService)new WindowsIme(_wndProcHook, windowHandle));
 +            RegisterService((IImeService)new TerraAngel.Input.RealFNAIme());
          }
  

@@ -7,7 +7,7 @@
  using ReLogic.OS.Base;
  
  namespace ReLogic.OS.Windows
-@@ -14,36 +_,11 @@
+@@ -14,83 +_,12 @@
  
          protected override void SetClipboard(string text)
          {
@@ -27,6 +27,7 @@
 -            {
 -                Console.WriteLine("Failed to set clipboard contents!");
 -            }
++            SDL2.SDL.SDL_SetClipboardText(text);
          }
  
          private string TryToGetClipboardText()
@@ -41,7 +42,54 @@
 -                Console.WriteLine("Failed to get clipboard contents!");
 -                return result;
 -            }
-+            return "";
+-        }
+-
+-        private static T InvokeInStaThread<T>(Func<T> callback)
+-        {
+-            if (GetApartmentStateSafely() == ApartmentState.STA)
+-            {
+-                return callback();
+-            }
+-
+-            T result = default(T);
+-            Thread thread = new Thread((ThreadStart)delegate
+-            {
+-                result = callback();
+-            });
+-            thread.SetApartmentState(ApartmentState.STA);
+-            thread.Start();
+-            thread.Join();
+-            return result;
+-        }
+-
+-        private static void InvokeInStaThread(Action callback)
+-        {
+-            if (GetApartmentStateSafely() == ApartmentState.STA)
+-            {
+-                callback();
+-                return;
+-            }
+-
+-            Thread thread = new Thread((ThreadStart)delegate
+-            {
+-                callback();
+-            });
+-            thread.SetApartmentState(ApartmentState.STA);
+-            thread.Start();
+-            thread.Join();
+-        }
+-
+-        private static ApartmentState GetApartmentStateSafely()
+-        {
+-            try
+-            {
+-                return Thread.CurrentThread.GetApartmentState();
+-            }
+-            catch
+-            {
+-                return ApartmentState.MTA;
+-            }
++            return SDL2.SDL.SDL_GetClipboardText();
          }
- 
-         private static T InvokeInStaThread<T>(Func<T> callback)
+     }
+ }
