@@ -298,93 +298,107 @@ public class Program
         process.Start();
         process.WaitForExit();
     }
-    
-	public static class SteamUtils
-	{
-		public const int TerrariaAppId = 105600;
 
-		public readonly static string TerrariaManifestFile = $"appmanifest_{TerrariaAppId}.acf";
+    public static class SteamUtils
+    {
+        public const int TerrariaAppId = 105600;
 
-		private readonly static Regex SteamLibraryFoldersRegex = new(@"""(\d+)""[^\S\r\n]+""(.+)""", RegexOptions.Compiled);
-		private readonly static Regex SteamManifestInstallDirRegex = new(@"""installdir""[^\S\r\n]+""([^\r\n]+)""", RegexOptions.Compiled);
+        public readonly static string TerrariaManifestFile = $"appmanifest_{TerrariaAppId}.acf";
 
-		public static bool TryFindTerrariaDirectory(out string path) {
-			if (TryGetSteamDirectory(out string steamDirectory) && TryGetTerrariaDirectoryFromSteam(steamDirectory, out path)) {
-				return true;
-			}
+        private readonly static Regex SteamLibraryFoldersRegex = new(@"""(\d+)""[^\S\r\n]+""(.+)""", RegexOptions.Compiled);
+        private readonly static Regex SteamManifestInstallDirRegex = new(@"""installdir""[^\S\r\n]+""([^\r\n]+)""", RegexOptions.Compiled);
 
-			path = null;
+        public static bool TryFindTerrariaDirectory(out string path)
+        {
+            if (TryGetSteamDirectory(out string steamDirectory) && TryGetTerrariaDirectoryFromSteam(steamDirectory, out path))
+            {
+                return true;
+            }
 
-			return false;
-		}
+            path = null;
 
-		public static bool TryGetTerrariaDirectoryFromSteam(string steamDirectory, out string path) {
-			string steamApps = Path.Combine(steamDirectory, "steamapps");
+            return false;
+        }
 
-			var libraries = new List<string>() {
-				steamApps
-			};
+        public static bool TryGetTerrariaDirectoryFromSteam(string steamDirectory, out string path)
+        {
+            string steamApps = Path.Combine(steamDirectory, "steamapps");
 
-			string libraryFoldersFile = Path.Combine(steamApps, "libraryfolders.vdf");
+            var libraries = new List<string>() {
+                steamApps
+            };
 
-			if (File.Exists(libraryFoldersFile)) {
-				string contents = File.ReadAllText(libraryFoldersFile);
+            string libraryFoldersFile = Path.Combine(steamApps, "libraryfolders.vdf");
 
-				var matches = SteamLibraryFoldersRegex.Matches(contents);
+            if (File.Exists(libraryFoldersFile))
+            {
+                string contents = File.ReadAllText(libraryFoldersFile);
 
-				foreach (Match match in matches) {
-					string directory = Path.Combine(match.Groups[2].Value.Replace(@"\\", @"\"), "steamapps");
+                var matches = SteamLibraryFoldersRegex.Matches(contents);
 
-					if (Directory.Exists(directory)) {
-						libraries.Add(directory);
-					}
-				}
-			}
+                foreach (Match match in matches)
+                {
+                    string directory = Path.Combine(match.Groups[2].Value.Replace(@"\\", @"\"), "steamapps");
 
-			for (int i = 0; i < libraries.Count; i++) {
-				string directory = libraries[i];
-				string manifestPath = Path.Combine(directory, TerrariaManifestFile);
+                    if (Directory.Exists(directory))
+                    {
+                        libraries.Add(directory);
+                    }
+                }
+            }
 
-				if (File.Exists(manifestPath)) {
-					string contents = File.ReadAllText(manifestPath);
-					var match = SteamManifestInstallDirRegex.Match(contents);
+            for (int i = 0; i < libraries.Count; i++)
+            {
+                string directory = libraries[i];
+                string manifestPath = Path.Combine(directory, TerrariaManifestFile);
 
-					if (match.Success) {
-						path = Path.Combine(directory, "common", match.Groups[1].Value);
+                if (File.Exists(manifestPath))
+                {
+                    string contents = File.ReadAllText(manifestPath);
+                    var match = SteamManifestInstallDirRegex.Match(contents);
 
-						if (Directory.Exists(path)) {
-							return true;
-						}
-					}
-				}
-			}
+                    if (match.Success)
+                    {
+                        path = Path.Combine(directory, "common", match.Groups[1].Value);
 
-			path = null;
+                        if (Directory.Exists(path))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
 
-			return false;
-		}
+            path = null;
 
-		public static bool TryGetSteamDirectory(out string path) {
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-				path = GetSteamDirectoryWindows();
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-				path = "~/Library/Application Support/Steam";
-			}
-			else { // Some kind of linux?
-				path = "~/.local/share/Steam";
-			}
+            return false;
+        }
 
-			return path != null && Directory.Exists(path);
-		}
+        public static bool TryGetSteamDirectory(out string path)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                path = GetSteamDirectoryWindows();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                path = "~/Library/Application Support/Steam";
+            }
+            else
+            {
+                path = "~/.local/share/Steam";
+            }
 
-		// Isolated to avoid loading Win32 stuff outside Windows.
-		private static string GetSteamDirectoryWindows() {
-			string keyPath = Environment.Is64BitOperatingSystem ? @"SOFTWARE\Wow6432Node\Valve\Steam" : @"SOFTWARE\Valve\Steam";
+            return path != null && Directory.Exists(path);
+        }
 
-			using RegistryKey key = Registry.LocalMachine.CreateSubKey(keyPath);
+        private static string GetSteamDirectoryWindows()
+        {
+            string keyPath = Environment.Is64BitOperatingSystem ? @"SOFTWARE\Wow6432Node\Valve\Steam" : @"SOFTWARE\Valve\Steam";
 
-			return key.GetValue("InstallPath") as string;
-		}
-	}
+            using RegistryKey key = Registry.LocalMachine.CreateSubKey(keyPath);
+
+            return (string)key.GetValue("InstallPath");
+        }
+    }
 }
