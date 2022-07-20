@@ -94,19 +94,19 @@ namespace TerraAngel.WorldEdits
         }
         public override void DrawPreviewInWorld(ImGuiIOPtr io, ImDrawListPtr drawList)
         {
-            Vector2 mousePos = Util.ScreenToWorld(Input.InputSystem.MousePosition);
+            Vector2 mouseWorld = Util.ScreenToWorld(Input.InputSystem.MousePosition);
 
             if (!drawDetailedPreview)
             {
                 Vector2 screenCoords = Input.InputSystem.MousePosition;
-                Vector2 screenCoords2 = Util.WorldToScreen((mousePos + new Vector2(brushDiameter + 16f, 0f)));
+                Vector2 screenCoords2 = Util.WorldToScreen((mouseWorld + new Vector2(brushDiameter + 16f, 0f)));
                 float dist = screenCoords.Distance(screenCoords2);
                 drawList.AddCircleFilled(screenCoords.ToNumerics(), dist, ImGui.GetColorU32(new System.Numerics.Vector4(1f, 0f, 0f, 0.5f)));
                 return;
             }
 
             float bd = MathF.Floor(brushDiameter / 16f);
-            Vector2 mouseTileCoords = new Vector2(MathF.Floor(mousePos.X / 16f), MathF.Floor(mousePos.Y / 16f));
+            Vector2 mouseTileCoords = new Vector2(MathF.Floor(mouseWorld.X / 16f), MathF.Floor(mouseWorld.Y / 16f));
             for (float x = mouseTileCoords.X - bd; x < mouseTileCoords.X + bd; x++)
             {
                 for (float y = mouseTileCoords.Y - bd; y < mouseTileCoords.Y + bd; y++)

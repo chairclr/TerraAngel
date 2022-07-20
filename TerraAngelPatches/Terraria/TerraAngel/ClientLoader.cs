@@ -8,19 +8,21 @@ using TerraAngel.Client.ClientWindows;
 using System;
 using System.IO;
 using TerraAngel.Plugin;
+using Terraria;
+using TerraAngel.Cheat;
 
-namespace TerraAngel.Loader
+namespace TerraAngel
 {
     public class ClientLoader
     {
+        public static bool SetupRenderer = false;
         public static ClientRenderer? MainRenderer;
+        internal static ConsoleWindow? ConsoleWindow;
         public static ConfigUI ConfigUI = new ConfigUI();
         public static PluginUI PluginUI = new PluginUI();
-        internal static ConsoleWindow? ConsoleWindow;
+        public static ClientConfig Config = new ClientConfig();
 
-        public static bool SetupRenderer = false;
-
-        public static string SavePath => Path.Combine(Terraria.Main.SavePath, "TerraAngel");
+        public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
         public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
         public static string PluginsPath => Path.Combine(SavePath, "Plugins");
 
@@ -28,7 +30,13 @@ namespace TerraAngel.Loader
         {
             GameHooks.Generate();
 
-            new ClientConfig();
+            Config = ClientConfig.ReadFromFile();
+
+            GlobalCheatManager.AntiHurt = Config.DefaultAntiHurt;
+            GlobalCheatManager.ESPTracers = Config.DefaultESPTracers;
+            GlobalCheatManager.ESPBoxes = Config.DefaultESPBoxes;
+            GlobalCheatManager.InfiniteMinions = Config.DefaultInfiniteMinions;
+            GlobalCheatManager.InfiniteMana = Config.DefaultInfiniteMana;
         }
 
         public static void SetupImGuiRenderer(Game main)
@@ -37,7 +45,7 @@ namespace TerraAngel.Loader
             {
                 SetupRenderer = true;
                 MainRenderer = new ClientRenderer(main);
-                ClientConfig.Instance.PluginsToEnable = ClientConfig.Instance.pluginsToEnable;
+                Config.PluginsToEnable = Config.pluginsToEnable;
             }
         }
 

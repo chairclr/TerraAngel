@@ -1,11 +1,27 @@
-﻿namespace TerraAngel.Plugin
-{
-    public interface IPlugin
-    {
-        public string Name { get; }
+﻿using System.Reflection;
 
-        public void Load();
-        public void Unload();
+namespace TerraAngel.Plugin
+{
+    public abstract class Plugin
+    {
+        public abstract string Name { get; }
+
+        public readonly Assembly PluginAssembly;
+
+        public Plugin()
+        {
+            PluginAssembly = GetType().Assembly;
+        }
+
+        public virtual void Load()
+        {
+
+        }
+
+        public virtual void Unload()
+        {
+
+        }
 
         public virtual void Update()
         {

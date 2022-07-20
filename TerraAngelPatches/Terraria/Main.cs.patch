@@ -16,6 +16,14 @@
  using ReLogic.Utilities;
  using Terraria.Achievements;
  using Terraria.Audio;
+@@ -65,6 +_,7 @@
+ using Terraria.Net;
+ using Terraria.ObjectData;
+ using Terraria.Social;
++using TerraAngel;
+ using Terraria.UI;
+ using Terraria.UI.Chat;
+ using Terraria.UI.Gamepad;
 @@ -204,8 +_,6 @@
          public static bool CaptureModeDisabled = false;
          public bool unityMouseOver;
@@ -196,7 +204,7 @@
 +                {
 +                    SoundEngine.PlaySound(10);
 +                    menuMode = 888;
-+                    MenuUI.SetState(TerraAngel.Loader.ClientLoader.ConfigUI);
++                    MenuUI.SetState(ClientLoader.ConfigUI);
 +                }
 +
 +                num11++;
@@ -206,7 +214,7 @@
 +                {
 +                    SoundEngine.PlaySound(10);
 +                    menuMode = 888;
-+                    MenuUI.SetState(TerraAngel.Loader.ClientLoader.PluginUI);
++                    MenuUI.SetState(ClientLoader.PluginUI);
 +                }
 +
 +                num11++;

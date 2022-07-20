@@ -13,12 +13,13 @@ using Terraria.ID;
 using TerraAngel.Cheat;
 using TerraAngel.Graphics;
 using TerraAngel.WorldEdits;
-using TerraAngel.Loader;
+using TerraAngel;
+
 namespace TerraAngel.Client.ClientWindows
 {
     public class MainWindow : ClientWindow
     {
-        public override Keys ToggleKey => Config.ClientConfig.Instance.ToggleUIVisibility;
+        public override Keys ToggleKey => ClientLoader.Config.ToggleUIVisibility;
 
         public override bool DefaultEnabled => true;
 
@@ -182,12 +183,12 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     if (ImGui.BeginTabBar("WorldEditBar"))
                     {
-                        for (int i = 0; i < Loader.ClientLoader.MainRenderer.WorldEdits.Count; i++)
+                        for (int i = 0; i < ClientLoader.MainRenderer.WorldEdits.Count; i++)
                         {
-                            WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.WorldEdits[i];
+                            WorldEdit worldEdit = ClientLoader.MainRenderer.WorldEdits[i];
                             if (worldEdit.DrawUITab(io))
                             {
-                                Loader.ClientLoader.MainRenderer.CurrentWorldEditIndex = i;
+                                ClientLoader.MainRenderer.CurrentWorldEditIndex = i;
                             }
                         }
                         ImGui.EndTabBar();
@@ -196,7 +197,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 else
                 {
-                    Loader.ClientLoader.MainRenderer.CurrentWorldEditIndex = -1;
+                    ClientLoader.MainRenderer.CurrentWorldEditIndex = -1;
                 }
                 
                 if (ImGui.BeginTabItem("Misc"))

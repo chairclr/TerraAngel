@@ -17,25 +17,21 @@ using System.IO;
 using System.Reflection;
 using TerraAngel.Cheat;
 using System.Runtime.Serialization;
+using TerraAngel;
 
 namespace TerraAngel.Client.Config
 {
     public class ClientConfig
     {
-        public static ClientConfig Instance;
         public ClientConfig()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-                Instance.ReadFromFile();
+            //Instance.ReadFromFile();
 
-                GlobalCheatManager.AntiHurt = Instance.DefaultAntiHurt;
-                GlobalCheatManager.InfiniteMana = Instance.DefaultInfiniteMana;
-                GlobalCheatManager.InfiniteMinions = Instance.DefaultInfiniteMinions;
-                GlobalCheatManager.ESPBoxes = Instance.DefaultESPBoxes;
-                GlobalCheatManager.ESPTracers = Instance.DefaultESPTracers;
-            }
+            //GlobalCheatManager.AntiHurt = Instance.DefaultAntiHurt;
+            //GlobalCheatManager.InfiniteMana = Instance.DefaultInfiniteMana;
+            //GlobalCheatManager.InfiniteMinions = Instance.DefaultInfiniteMinions;
+            //GlobalCheatManager.ESPBoxes = Instance.DefaultESPBoxes;
+            //GlobalCheatManager.ESPTracers = Instance.DefaultESPTracers;
         }
 
         [AttributeUsage(AttributeTargets.Field, Inherited = false)]
@@ -113,7 +109,7 @@ namespace TerraAngel.Client.Config
         [JsonProperty("PluginsToEnable")]
         public List<string> pluginsToEnable;
 
-        public static List<UIElement> GetUITexts()
+        public List<UIElement> GetUITexts()
         {
             List<UIElement> elements = new List<UIElement>();
 
@@ -126,11 +122,11 @@ namespace TerraAngel.Client.Config
 
                     if (field.FieldType == typeof(bool))
                     {
-                        elements.Add(new UITextCheckbox(name, () => (bool)field.GetValue(Instance), (x) => field.SetValue(Instance, x)));
+                        elements.Add(new UITextCheckbox(name, () => (bool)field.GetValue(this), (x) => field.SetValue(this, x)));
                     }
                     else if (field.FieldType == typeof(Keys))
                     {
-                        elements.Add(new UIKeySelect(name, () => (Keys)field.GetValue(Instance), (x) => field.SetValue(Instance, x)));
+                        elements.Add(new UIKeySelect(name, () => (Keys)field.GetValue(this), (x) => field.SetValue(this, x)));
                     }
                 }
             }
@@ -139,15 +135,15 @@ namespace TerraAngel.Client.Config
         }
 
         private static object FileLock = new object();
-        public void WriteToFile()
+        public static void WriteToFile(ClientConfig config)
         {
             lock (FileLock)
             {
-                pluginsToEnable = PluginsToEnable;
+                config.pluginsToEnable = config.PluginsToEnable;
 
-                string s = JsonConvert.SerializeObject(Instance);
-                Utility.Util.CreateParentDirectory(Loader.ClientLoader.ConfigPath);
-                using (FileStream fs = new FileStream(Loader.ClientLoader.ConfigPath, FileMode.OpenOrCreate))
+                string s = JsonConvert.SerializeObject(config);
+                Utility.Util.CreateParentDirectory(ClientLoader.ConfigPath);
+                using (FileStream fs = new FileStream(ClientLoader.ConfigPath, FileMode.OpenOrCreate))
                 {
                     byte[] bytes = Encoding.UTF8.GetBytes(s);
                     fs.SetLength(bytes.Length);
@@ -157,23 +153,23 @@ namespace TerraAngel.Client.Config
             }
         }
 
-        public void ReadFromFile()
+        public static ClientConfig ReadFromFile()
         {
-            if (!File.Exists(Loader.ClientLoader.ConfigPath))
+            if (!File.Exists(ClientLoader.ConfigPath))
             {
-                WriteToFile();
+                WriteToFile(new ClientConfig());
             }
             lock (FileLock)
             {
                 string s = "";
-                using (FileStream fs = new FileStream(Loader.ClientLoader.ConfigPath, FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream(ClientLoader.ConfigPath, FileMode.OpenOrCreate))
                 {
                     byte[] buffer = new byte[fs.Length];
                     fs.Read(buffer);
                     s = Encoding.UTF8.GetString(buffer);
                     fs.Close();
                 }
-                Instance = JsonConvert.DeserializeObject<ClientConfig>(s);
+                return JsonConvert.DeserializeObject<ClientConfig>(s);
             }
         }
     }

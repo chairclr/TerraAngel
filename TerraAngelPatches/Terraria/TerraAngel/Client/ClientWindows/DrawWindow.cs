@@ -10,6 +10,7 @@ using Terraria;
 using TerraAngel.Utility;
 using TerraAngel.WorldEdits;
 using Terraria.ID;
+using TerraAngel;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -61,19 +62,19 @@ namespace TerraAngel.Client.ClientWindows
                         }
                     }
 
-                    WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
+                    WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
                     worldEdit?.DrawPreviewInWorld(io, drawList);
                 }
                 else
                 {
-                    WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
+                    WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
                     worldEdit?.DrawPreviewInMap(io, drawList);
 
                     
                 }
 
                 {
-                    WorldEdit worldEdit = Loader.ClientLoader.MainRenderer.CurrentWorldEdit;
+                    WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
                     if (worldEdit != null)
                     {
                         Vector2 mousePos = Util.ScreenToWorld(Input.InputSystem.MousePosition) / 16f;

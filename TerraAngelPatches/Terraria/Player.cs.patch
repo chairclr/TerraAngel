@@ -1,5 +1,13 @@
 --- src/Terraria/Terraria/Player.cs
 +++ src/TerraAngel/Terraria/Player.cs
+@@ -29,6 +_,7 @@
+ using Terraria.Localization;
+ using Terraria.ObjectData;
+ using Terraria.Social;
++using TerraAngel;
+ using Terraria.UI;
+ using Terraria.UI.Chat;
+ using Terraria.UI.Gamepad;
 @@ -18173,7 +_,7 @@
  
              int num = (int)(position.X + (float)(width / 2)) / 16;
@@ -429,7 +437,7 @@
  
          private void ItemCheckWrapped(int i)
          {
-+            if (TerraAngel.Loader.ClientLoader.SetupRenderer && ImGuiNET.ImGui.GetIO().WantCaptureMouse)
++            if (ClientLoader.SetupRenderer && ImGuiNET.ImGui.GetIO().WantCaptureMouse)
 +            {
 +                return;
 +            }

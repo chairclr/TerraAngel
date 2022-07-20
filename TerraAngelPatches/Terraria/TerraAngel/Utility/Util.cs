@@ -68,7 +68,7 @@ namespace TerraAngel.Utility
         }
         public static Vector2 ScreenToWorld(Vector2 screenPosition)
         {
-            return Vector2.Transform(screenPosition, Main.GameViewMatrix.ZoomMatrix) + Main.screenPosition;
+            return Vector2.Transform(screenPosition, Matrix.Invert(Main.GameViewMatrix.ZoomMatrix)) + Main.screenPosition;
         }
 
         public static void CreateDirectory(string dir)

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using TerraAngel.Graphics;
 using TerraAngel.Hooks;
 using TerraAngel.Input;
-using TerraAngel.Loader;
+using TerraAngel;
 using TerraAngel.UI;
 using Terraria;
 using TerraAngel.Utility;
@@ -26,7 +26,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override bool DefaultEnabled => true;
 
-        public override bool IsEnabled { get => Config.ClientConfig.Instance.ShowStatsWindow; }
+        public override bool IsEnabled { get => ClientLoader.Config.ShowStatsWindow; }
 
         public override string Title => "Stat Window";
 
@@ -86,7 +86,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override void Draw(ImGuiIOPtr io)
         {
-            if (InputSystem.IsKeyPressed(Config.ClientConfig.Instance.ToggleStatsWindowMovability))
+            if (InputSystem.IsKeyPressed(ClientLoader.Config.ToggleStatsWindowMovability))
                 moveStatWindow = !moveStatWindow;
 
             ImGuiWindowFlags flags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.AlwaysAutoResize;

@@ -13,10 +13,12 @@ using Terraria.Audio;
 using Terraria.ID;
 using TerraAngel.Input;
 using System.Diagnostics;
+using TerraAngel;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Plugin
 {
-	public class PluginUI : UIState, IHaveBackButtonCommand
+    public class PluginUI : UIState, IHaveBackButtonCommand
 	{
 		private UIElement element;
 		private UIPanel panel;
@@ -174,7 +176,7 @@ namespace TerraAngel.Plugin
 
 		void ReloadButton(UIMouseEvent evt, UIElement listeningElement)
 		{
-			Client.Config.ClientConfig.Instance.WriteToFile();
+			ClientConfig.WriteToFile(ClientLoader.Config);
 			PluginLoader.UnloadPlugins();
 			PluginLoader.LoadPlugins();
 		}
@@ -183,7 +185,7 @@ namespace TerraAngel.Plugin
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo
 			{
-				Arguments = Loader.ClientLoader.PluginsPath,
+				Arguments = ClientLoader.PluginsPath,
 				FileName = "explorer.exe",
 			};
 

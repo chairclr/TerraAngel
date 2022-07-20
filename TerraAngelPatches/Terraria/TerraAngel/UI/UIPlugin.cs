@@ -10,6 +10,7 @@ using Terraria.UI;
 using Terraria.Localization;
 using Terraria.Audio;
 using Terraria.ID;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.UI
 {
@@ -56,7 +57,7 @@ namespace TerraAngel.UI
                 this.otherText.SetText(valueGet() ? "Enabled" : "Disabled");
                 SoundEngine.PlaySound(SoundID.MenuTick);
 
-                Client.Config.ClientConfig.Instance.WriteToFile();
+                ClientConfig.WriteToFile(ClientLoader.Config);
             };
 
             backgroundPanel.Append(nameText);

@@ -5,23 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
-using TerraAngel.Loader;
 using System.Runtime.Loader;
 using Terraria;
 using Terraria.UI;
 using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Elements;
 using TerraAngel.UI;
+using TerraAngel;
 
 namespace TerraAngel.Plugin
 {
     public class PluginLoader
     {
-        private static AssemblyLoadContext loader = new AssemblyLoadContext("PluginLoader", true);
+        private static AssemblyLoadContext pluginLoader = new AssemblyLoadContext("PluginLoader", true);
 
         public static Dictionary<string, bool> AvailablePlugins = new Dictionary<string, bool>();
 
-        public static List<IPlugin> LoadedPlugins = new List<IPlugin>();
+        public static List<Plugin> LoadedPlugins = new List<Plugin>();
 
         public static void LoadPlugins()
         {
@@ -34,7 +34,7 @@ namespace TerraAngel.Plugin
                     {
                         using (FileStream sr = File.Open(file, FileMode.Open))
                         {
-                            Assembly assembly = loader.LoadFromStream(sr);
+                            Assembly assembly = pluginLoader.LoadFromStream(sr);
                             LoadedPlugins.Add(LoadPluginFromDLL(assembly));
                             sr.Close();
 
@@ -47,6 +47,7 @@ namespace TerraAngel.Plugin
                     ClientLoader.Console.WriteError(ex.ToString());
                 }
             }
+
             InitPlugins();
         }
         public static void UnloadPlugins()
@@ -55,8 +56,8 @@ namespace TerraAngel.Plugin
                 return;
             DeinitPlugins();
             LoadedPlugins.Clear();
-            loader.Unload();
-            loader = new AssemblyLoadContext("PluginLoader", true);
+            pluginLoader.Unload();
+            pluginLoader = new AssemblyLoadContext("PluginLoader", true);
             VerifyEnabled();
         }
 
@@ -64,19 +65,7 @@ namespace TerraAngel.Plugin
         {
             Utility.Util.CreateDirectory(ClientLoader.PluginsPath);
 
-            List<string> toRemove = new List<string>();
-            foreach (string file in AvailablePlugins.Keys)
-            {
-                if (!File.Exists(file))
-                {
-                    toRemove.Add(file);
-                }
-            }
-
-            foreach (string file in toRemove)
-            {
-                AvailablePlugins.Remove(file);
-            }
+            AvailablePlugins = AvailablePlugins.Where(x => File.Exists(x.Key)).ToDictionary(x => x.Key, x => x.Value);
 
             foreach (string file in Directory.GetFiles(ClientLoader.PluginsPath))
             {
@@ -107,28 +96,42 @@ namespace TerraAngel.Plugin
 
         private static void InitPlugins()
         {
-            foreach (IPlugin? plugin in LoadedPlugins)
+            foreach (Plugin? plugin in LoadedPlugins)
             {
-                plugin?.Load();
+                try
+                {
+                    plugin?.Load();
+                }
+                catch (Exception ex)
+                {
+                    ClientLoader.Console.WriteError($"Error loading {plugin.Name}/{plugin.PluginAssembly.FullName}: {ex}");
+                }
             }
         }
         private static void DeinitPlugins()
         {
-            foreach (IPlugin? plugin in LoadedPlugins)
+            foreach (Plugin? plugin in LoadedPlugins)
             {
-                plugin?.Unload();
+                try
+                {
+                    plugin?.Unload();
+                }
+                catch (Exception ex)
+                {
+                    ClientLoader.Console.WriteError($"Error unloading {plugin.Name}/{plugin.PluginAssembly.FullName}: {ex}");
+                }
             }
         }
 
 
         
-        private static IPlugin LoadPluginFromDLL(Assembly assembly)
+        private static Plugin LoadPluginFromDLL(Assembly assembly)
         {
             foreach (Type type in assembly.GetTypes())
             {
-                if (typeof(IPlugin).IsAssignableFrom(type) && !type.IsInterface)
+                if (typeof(Plugin).IsAssignableFrom(type) && !type.IsInterface)
                 {
-                    return (IPlugin)Activator.CreateInstance(type);
+                    return (Plugin)Activator.CreateInstance(type);
                 }
             }
 

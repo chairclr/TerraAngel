@@ -15,7 +15,7 @@ namespace TerraAngel.Client.ClientWindows
     {
         public override bool DefaultEnabled => true;
 
-        public override bool IsEnabled => Config.ClientConfig.Instance.ShowConsoleWindow;
+        public override bool IsEnabled => ClientLoader.Config.ShowConsoleWindow;
 
         public override bool IsToggleable => true;
 

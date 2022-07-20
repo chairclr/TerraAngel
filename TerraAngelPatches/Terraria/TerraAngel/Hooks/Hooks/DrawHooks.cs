@@ -3,7 +3,6 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using MonoMod.RuntimeDetour;
 using Terraria;
-using TerraAngel.Loader;
 using ImGuiNET;
 using ReLogic.OS;
 using Terraria.DataStructures;
@@ -12,6 +11,7 @@ using TerraAngel.Cheat;
 using TerraAngel.Hooks;
 using TerraAngel.Utility;
 using TerraAngel.Client.Config;
+using TerraAngel;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -83,11 +83,11 @@ namespace TerraAngel.Hooks.Hooks
         private static Vector2 freecamOriginPoint;
         public static void UpdateCameraHook(Action orig)
         {
-            if (Input.InputSystem.IsKeyPressed(ClientConfig.Instance.ToggleFreecam))
+            if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleFreecam))
             {
                 GlobalCheatManager.Freecam = !GlobalCheatManager.Freecam;
             }
-            if (Input.InputSystem.IsKeyPressed(ClientConfig.Instance.ToggleFullbright))
+            if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleFullbright))
             {
                 GlobalCheatManager.FullBright = !GlobalCheatManager.FullBright;
             }

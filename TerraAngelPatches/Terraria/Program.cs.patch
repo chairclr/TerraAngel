@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Program.cs
 +++ src/TerraAngel/Terraria/Program.cs
-@@ -6,7 +_,6 @@
+@@ -6,12 +_,12 @@
  using System.Runtime.CompilerServices;
  using System.Text;
  using System.Threading;
@@ -8,11 +8,17 @@
  using ReLogic.IO;
  using ReLogic.OS;
  using Terraria.Initializers;
+ using Terraria.Localization;
+ using Terraria.Social;
++using TerraAngel;
+ using Terraria.Utilities;
+ 
+ namespace Terraria
 @@ -166,6 +_,7 @@
  
          public static void LaunchGame(string[] args, bool monoArgs = false)
          {
-+            TerraAngel.Loader.ClientLoader.Hookgen_Early();
++            ClientLoader.Hookgen_Early();
              Thread.CurrentThread.Name = "Main Thread";
              if (monoArgs)
              {

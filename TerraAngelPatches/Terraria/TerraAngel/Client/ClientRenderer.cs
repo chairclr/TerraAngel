@@ -15,6 +15,7 @@ using TerraAngel.WorldEdits;
 using TerraAngel.Cheat;
 using System.Threading.Tasks;
 using System.Linq;
+using TerraAngel;
 
 namespace TerraAngel.Client
 {
@@ -51,7 +52,7 @@ namespace TerraAngel.Client
             base.RebuildFontAtlas();
             AddWindow(new DrawWindow());
             AddWindow(new MainWindow());
-            ConsoleSetup.SetConsoleInitialCommands(Loader.ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow()));
+            ConsoleSetup.SetConsoleInitialCommands(ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow()));
             AddWindow(new StatsWindow());
 
 
@@ -98,7 +99,7 @@ namespace TerraAngel.Client
             updateCount++;
             if (updateCount % 600 == 0)
             {
-                ClientConfig.Instance.WriteToFile();
+                ClientConfig.WriteToFile(ClientLoader.Config);
             }
 
             RealFNAIme.blocking = ImGui.GetIO().WantCaptureKeyboard || ImGui.GetIO().WantTextInput;
@@ -108,7 +109,7 @@ namespace TerraAngel.Client
                 GlobalCheatManager.LoadedTileSections = null;
             }
 
-            foreach (Plugin.IPlugin plugin in Plugin.PluginLoader.LoadedPlugins)
+            foreach (Plugin.Plugin plugin in Plugin.PluginLoader.LoadedPlugins)
             {
                 plugin.Update();
             }
@@ -118,7 +119,7 @@ namespace TerraAngel.Client
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
-            if (InputSystem.IsKeyPressed(ClientConfig.Instance.ToggleUIVisibility))
+            if (InputSystem.IsKeyPressed(ClientLoader.Config.ToggleUIVisibility))
                 GlobalUIState = !GlobalUIState;
             for (int i = 0; i < ClientWindows.Count; i++)
             {

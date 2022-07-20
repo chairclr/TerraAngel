@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using MonoMod.RuntimeDetour;
 using Terraria;
-using TerraAngel.Loader;
+using TerraAngel;
 using ImGuiNET;
 using ReLogic.OS;
 using Terraria.DataStructures;
@@ -71,7 +71,7 @@ namespace TerraAngel.Hooks.Hooks
                     self.manaCost = 0.0f;
                 }
 
-                if (Input.InputSystem.IsKeyPressed(ClientConfig.Instance.ToggleNoclip))
+                if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleNoclip))
                 {
                     GlobalCheatManager.NoClip = !GlobalCheatManager.NoClip;
                 }
@@ -108,7 +108,7 @@ namespace TerraAngel.Hooks.Hooks
                 if (Main.mapFullscreen)
                 {
 
-                    if (ClientConfig.Instance.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
+                    if (ClientLoader.Config.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;
                         Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorldFullscreenMap(Main.MouseScreen);
@@ -116,7 +116,7 @@ namespace TerraAngel.Hooks.Hooks
                             Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
 
                         if (!io.KeyCtrl)
-                            if (ClientConfig.Instance.TeleportSendRODPacket)
+                            if (ClientLoader.Config.TeleportSendRODPacket)
                             {
                                 NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
                                     0,
@@ -134,7 +134,7 @@ namespace TerraAngel.Hooks.Hooks
                 }
                 else
                 {
-                    if (Input.InputSystem.IsKeyPressed(ClientConfig.Instance.TeleportToCursor) && !Main.drawingPlayerChat && !io.WantTextInput)
+                    if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.TeleportToCursor) && !Main.drawingPlayerChat && !io.WantTextInput)
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;
                         Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorld(Main.MouseScreen);
@@ -142,7 +142,7 @@ namespace TerraAngel.Hooks.Hooks
 
                         NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
 
-                        if (ClientConfig.Instance.TeleportSendRODPacket)
+                        if (ClientLoader.Config.TeleportSendRODPacket)
                         {
                             NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
                                 0,
