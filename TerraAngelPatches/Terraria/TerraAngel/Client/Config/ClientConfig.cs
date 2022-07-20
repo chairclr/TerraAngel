@@ -63,6 +63,8 @@ namespace TerraAngel.Client.Config
         public bool TeleportSendRODPacket = true;
         [UIConfigElement("Right click on the map to teleport")]
         public bool RightClickOnMapToTeleport = true;
+        [UIConfigElement("Disable Nebula Packet")]
+        public bool DisableNebulaLagPacket = true;
         [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
         [UIConfigElement("Toggle stats window being movable")]

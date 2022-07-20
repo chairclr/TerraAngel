@@ -8,3 +8,60 @@
                      break;
                  case 8:
                      {
+@@ -3812,28 +_,30 @@
+                     break;
+                 case 102:
+                     {
+-                        int num48 = reader.ReadByte();
+-                        ushort num49 = reader.ReadUInt16();
+-                        Vector2 other = reader.ReadVector2();
+-                        if (Main.netMode == 2)
++                        if (!TerraAngel.ClientLoader.Config.DisableNebulaLagPacket)
+                         {
+-                            num48 = whoAmI;
+-                            NetMessage.TrySendData(102, -1, -1, null, num48, (int)num49, other.X, other.Y);
+-                            break;
+-                        }
++                            int num48 = reader.ReadByte();
++                            ushort num49 = reader.ReadUInt16();
++                            Vector2 other = reader.ReadVector2();
++                            if (Main.netMode == 2)
++                            {
++                                num48 = whoAmI;
++                                NetMessage.TrySendData(102, -1, -1, null, num48, (int)num49, other.X, other.Y);
++                                break;
++                            }
+ 
+-                        Player player3 = Main.player[num48];
++                            Player player3 = Main.player[num48];
+-                        for (int n = 0; n < 255; n++)
++                            for (int n = 0; n < 255; n++)
+-                        {
++                            {
+-                            Player player4 = Main.player[n];
++                                Player player4 = Main.player[n];
+-                            if (!player4.active || player4.dead || (player3.team != 0 && player3.team != player4.team) || !(player4.Distance(other) < 700f))
++                                if (!player4.active || player4.dead || (player3.team != 0 && player3.team != player4.team) || !(player4.Distance(other) < 700f))
+                             {
+                                 continue;
+                             }
+ 
+-                            Vector2 value3 = player3.Center - player4.Center;
++                                Vector2 value3 = player3.Center - player4.Center;
+-                            Vector2 vector3 = Vector2.Normalize(value3);
++                                Vector2 vector3 = Vector2.Normalize(value3);
+-                            if (!vector3.HasNaNs())
++                                if (!vector3.HasNaNs())
+                             {
+                                 int type6 = 90;
+                                 float num50 = 0f;
+@@ -3867,7 +_,8 @@
+                                 }
+                             }
+ 
+-                            player4.NebulaLevelup(num49);
++                                player4.NebulaLevelup(num49);
++                            }
+                         }
+ 
+                         break;

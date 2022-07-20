@@ -52,11 +52,14 @@ namespace TerraAngel.Client.ClientWindows
                                     }
                                 }
 
-                                if (currentPlayer.whoAmI != Main.myPlayer)
+                                if (GlobalCheatManager.ESPTracers)
                                 {
-                                    Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
+                                    if (currentPlayer.whoAmI != Main.myPlayer)
+                                    {
+                                        Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
 
-                                    drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), GlobalCheatManager.ESPTracerColor.PackedValue);
+                                        drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), GlobalCheatManager.ESPTracerColor.PackedValue);
+                                    }
                                 }
                             }
                         }
