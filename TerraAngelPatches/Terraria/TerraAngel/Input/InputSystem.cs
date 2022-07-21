@@ -40,21 +40,29 @@ namespace TerraAngel.Input
         /// <returns>Whether or not a key is currently down</returns>
         public static bool IsKeyDown(Keys key)
         {
+            if (!Main.instance.IsActive)
+                return false;
             return keyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key is currently up</returns>
         public static bool IsKeyUp(Keys key)
         {
+            if (!Main.instance.IsActive)
+                return false;
             return !keyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key was pressed this frame</returns>
         public static bool IsKeyPressed(Keys key)
         {
+            if (!Main.instance.IsActive)
+                return false;
             return keyboardState.IsKeyDown(key) && !lastKeyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key was released this frame</returns>
         public static bool IsKeyReleased(Keys key)
         {
+            if (!Main.instance.IsActive)
+                return false;
             return !keyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyDown(key);
         }
 
@@ -69,6 +77,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.LeftButton == ButtonState.Pressed;
             }
         }
@@ -76,6 +86,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released;
             }
         }
@@ -83,6 +95,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.LeftButton == ButtonState.Released && lastMouseState.LeftButton == ButtonState.Pressed;
             }
         }
@@ -90,6 +104,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.RightButton == ButtonState.Pressed;
             }
         }
@@ -97,6 +113,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
             }
         }
@@ -104,6 +122,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.RightButton == ButtonState.Released && lastMouseState.RightButton == ButtonState.Pressed;
             }
         }
@@ -111,6 +131,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.MiddleButton == ButtonState.Pressed;
             }
         }
@@ -118,6 +140,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.MiddleButton == ButtonState.Pressed && lastMouseState.MiddleButton == ButtonState.Released;
             }
         }
@@ -125,6 +149,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return false;
                 return mouseState.MiddleButton == ButtonState.Released && lastMouseState.MiddleButton == ButtonState.Pressed;
             }
         }
@@ -133,6 +159,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return 0;
                 if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
                     return 1;
                 if (mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
@@ -144,6 +172,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return 0;
                 if (ImGui.GetIO().WantCaptureMouse)
                     return 0;
                 if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
@@ -157,6 +187,8 @@ namespace TerraAngel.Input
         {
             get
             {
+                if (!Main.instance.IsActive)
+                    return 0;
                 if (!ImGui.GetIO().WantCaptureMouse)
                     return 0;
                 if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
