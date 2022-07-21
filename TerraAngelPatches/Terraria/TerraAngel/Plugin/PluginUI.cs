@@ -18,7 +18,7 @@ using TerraAngel.Client.Config;
 
 namespace TerraAngel.Plugin
 {
-    public class PluginUI : UIState, IHaveBackButtonCommand
+	public class PluginUI : UIState, IHaveBackButtonCommand
 	{
 		private UIElement element;
 		private UIPanel panel;
@@ -118,9 +118,6 @@ namespace TerraAngel.Plugin
 			element.Append(openPluginsFolderButton);
 
 
-
-
-
 			Append(element);
 		}
 
@@ -163,7 +160,6 @@ namespace TerraAngel.Plugin
 
 		}
 
-
 		void BackButton(UIMouseEvent evt, UIElement listeningElement)
 		{
 			((IHaveBackButtonCommand)this).HandleBackButtonUsage();
@@ -179,6 +175,7 @@ namespace TerraAngel.Plugin
 			ClientConfig.WriteToFile(ClientLoader.Config);
 			PluginLoader.UnloadPlugins();
 			PluginLoader.LoadPlugins();
+			NeedsUpdate = true;
 		}
 
 		void OpenButton(UIMouseEvent evt, UIElement listeningElement)
@@ -191,5 +188,5 @@ namespace TerraAngel.Plugin
 
 			Process.Start(startInfo);
 		}
-}
+	}
 }

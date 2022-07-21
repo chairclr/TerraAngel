@@ -11,6 +11,9 @@ using Terraria.Localization;
 using Terraria.Audio;
 using Terraria.ID;
 using TerraAngel.Client.Config;
+using ReLogic.Graphics;
+using Terraria.GameContent;
+using TerraAngel.Plugin;
 
 namespace TerraAngel.UI
 {
@@ -18,17 +21,20 @@ namespace TerraAngel.UI
     {
         private UIText nameText;
         private UIText otherText;
+        private UIText reloadRequiredText;
         private UIPanel backgroundPanel;
         private readonly Func<bool> valueGet;
         private readonly Action<bool> valueSet;
+        private readonly string pluginPath;
 
-        public UIPlugin(string name, Func<bool> valueGet, Action<bool> valueSet, float textScale = .9f)
+        public UIPlugin(string name, string path, Func<bool> valueGet, Action<bool> valueSet, float textScale = .9f)
         {
             this.valueGet = valueGet;
             this.valueSet = valueSet;
+            pluginPath = path;
 
-            this.Width = new StyleDimension(0, 1f);
-            this.Height = new StyleDimension(40, 0f);
+            Width = new StyleDimension(0, 1f);
+            Height = new StyleDimension(40, 0f);
 
             backgroundPanel = new UIPanel()
             {
@@ -45,6 +51,22 @@ namespace TerraAngel.UI
                 VAlign = 0.5f
             };
 
+            reloadRequiredText = new UIText("", textScale)
+            {
+                HAlign = 1f,
+                VAlign = 0.5f,
+                PaddingRight = 70f,
+            };
+
+            if (valueGet() != PluginLoader.LoadedPlugins.Any(x => x.PluginPath == pluginPath))
+            {
+                reloadRequiredText.SetText("Reload Required");
+            }
+            else
+            {
+                reloadRequiredText.SetText("");
+            }
+
             otherText = new UIText(valueGet() ? "Enabled" : "Disabled", textScale)
             {
                 HAlign = 1f,
@@ -58,9 +80,19 @@ namespace TerraAngel.UI
                 SoundEngine.PlaySound(SoundID.MenuTick);
 
                 ClientConfig.WriteToFile(ClientLoader.Config);
+
+                if (valueGet() != PluginLoader.LoadedPlugins.Any(x => x.PluginPath == pluginPath))
+                {
+                    reloadRequiredText.SetText("Reload Required");
+                }
+                else
+                {
+                    reloadRequiredText.SetText("");
+                }
             };
 
             backgroundPanel.Append(nameText);
+            backgroundPanel.Append(reloadRequiredText);
             backgroundPanel.Append(otherText);
 
             Append(backgroundPanel);

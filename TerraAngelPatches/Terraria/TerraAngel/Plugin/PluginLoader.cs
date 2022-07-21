@@ -35,7 +35,7 @@ namespace TerraAngel.Plugin
                         using (FileStream sr = File.Open(file, FileMode.Open))
                         {
                             Assembly assembly = pluginLoader.LoadFromStream(sr);
-                            LoadedPlugins.Add(LoadPluginFromDLL(assembly));
+                            LoadedPlugins.Add(LoadPluginFromDLL(assembly, file));
                             sr.Close();
 
                             ClientLoader.Console.WriteLine($"Loading {Path.GetFileName(file)}");
@@ -88,7 +88,7 @@ namespace TerraAngel.Plugin
 
             foreach (string file in AvailablePlugins.Keys)
             {
-                uiObjects.Add(new UIPlugin(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(file)), () => AvailablePlugins[file], (x) => AvailablePlugins[file] = x));
+                uiObjects.Add(new UIPlugin(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(file)), file, () => AvailablePlugins[file], (x) => AvailablePlugins[file] = x));
             }
 
             return uiObjects;
@@ -122,16 +122,14 @@ namespace TerraAngel.Plugin
                 }
             }
         }
-
-
         
-        private static Plugin LoadPluginFromDLL(Assembly assembly)
+        private static Plugin LoadPluginFromDLL(Assembly assembly, string path)
         {
             foreach (Type type in assembly.GetTypes())
             {
-                if (typeof(Plugin).IsAssignableFrom(type) && !type.IsInterface)
+                if (typeof(Plugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
                 {
-                    return (Plugin)Activator.CreateInstance(type);
+                    return (Plugin)Activator.CreateInstance(type, path);
                 }
             }
 

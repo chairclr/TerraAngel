@@ -72,40 +72,7 @@ namespace TerraAngel.Hooks.Hooks
                     self.manaCost = 0.0f;
                 }
 
-                NoClipCringe noClip = CringeManager.GetCringe<NoClipCringe>();
-                if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleNoclip))
-                {
-                    noClip.Enabled = !noClip.Enabled;
-                }
-
-                if (noClip.Enabled)
-                {
-                    if (!io.WantCaptureKeyboard && !io.WantTextInput && !Main.drawingPlayerChat)
-                    {
-                        self.oldPosition = self.position;
-                        if (io.KeysDown[(int)Keys.W])
-                        {
-                            self.position.Y -= noClip.NoClipSpeed;
-                        }
-                        if (io.KeysDown[(int)Keys.S])
-                        {
-                            self.position.Y += noClip.NoClipSpeed;
-                        }
-                        if (io.KeysDown[(int)Keys.A])
-                        {
-                            self.position.X -= noClip.NoClipSpeed;
-                        }
-                        if (io.KeysDown[(int)Keys.D])
-                        {
-                            self.position.X += noClip.NoClipSpeed;
-                        }
-                    }
-
-                    if (Main.GameUpdateCount % noClip.NoClipPlayerSyncTime == 0)
-                    {
-                        SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
-                    }
-                }
+                
 
                 if (Main.mapFullscreen)
                 {
@@ -136,6 +103,42 @@ namespace TerraAngel.Hooks.Hooks
                 }
                 else
                 {
+                    NoClipCringe noClip = CringeManager.GetCringe<NoClipCringe>();
+                    if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleNoclip))
+                    {
+                        noClip.Enabled = !noClip.Enabled;
+                    }
+
+                    if (noClip.Enabled)
+                    {
+                        if (!io.WantCaptureKeyboard && !io.WantTextInput && !Main.drawingPlayerChat)
+                        {
+                            self.oldPosition = self.position;
+                            if (io.KeysDown[(int)Keys.W])
+                            {
+                                self.position.Y -= noClip.NoClipSpeed;
+                            }
+                            if (io.KeysDown[(int)Keys.S])
+                            {
+                                self.position.Y += noClip.NoClipSpeed;
+                            }
+                            if (io.KeysDown[(int)Keys.A])
+                            {
+                                self.position.X -= noClip.NoClipSpeed;
+                            }
+                            if (io.KeysDown[(int)Keys.D])
+                            {
+                                self.position.X += noClip.NoClipSpeed;
+                            }
+                        }
+
+                        if (Main.GameUpdateCount % noClip.NoClipPlayerSyncTime == 0)
+                        {
+                            SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
+                        }
+                    }
+
+
                     if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.TeleportToCursor) && !Main.drawingPlayerChat && !io.WantTextInput)
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;

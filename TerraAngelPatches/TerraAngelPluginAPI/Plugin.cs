@@ -7,10 +7,12 @@ namespace TerraAngel.Plugin
         public abstract string Name { get; }
 
         public readonly Assembly PluginAssembly;
+        public readonly string PluginPath;
 
-        public Plugin()
+        public Plugin(string path)
         {
             PluginAssembly = GetType().Assembly;
+            PluginPath = path;
         }
 
         public virtual void Load()
