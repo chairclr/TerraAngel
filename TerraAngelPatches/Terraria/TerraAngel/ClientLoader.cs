@@ -13,6 +13,7 @@ using TerraAngel.Cheat;
 using TerraAngel.Cheat.Cringes;
 using System.Reflection;
 using System.Linq;
+using TerraAngel.UI;
 
 namespace TerraAngel
 {
@@ -23,6 +24,7 @@ namespace TerraAngel
         internal static ConsoleWindow? ConsoleWindow;
         public static ConfigUI ConfigUI = new ConfigUI();
         public static PluginUI PluginUI = new PluginUI();
+        public static ResolutionUI ResolutionUI = new ResolutionUI();
         public static ClientConfig Config = new ClientConfig();
 
         public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");

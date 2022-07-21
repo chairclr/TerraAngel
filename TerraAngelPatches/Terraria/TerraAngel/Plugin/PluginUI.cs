@@ -134,7 +134,7 @@ namespace TerraAngel.Plugin
 			base.Draw(spriteBatch);
 
 			if (InputSystem.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
-				((IHaveBackButtonCommand)this).HandleBackButtonUsage();
+				HandleBackButtonUsage();
 		}
 
 		int updateCount = 0;
@@ -162,9 +162,9 @@ namespace TerraAngel.Plugin
 
 		void BackButton(UIMouseEvent evt, UIElement listeningElement)
 		{
-			((IHaveBackButtonCommand)this).HandleBackButtonUsage();
+			HandleBackButtonUsage();
 		}
-		void IHaveBackButtonCommand.HandleBackButtonUsage()
+		public void HandleBackButtonUsage()
 		{
 			Terraria.Main.menuMode = 0;
 			SoundEngine.PlaySound(SoundID.MenuClose);
