@@ -132,6 +132,31 @@
                      }
  
                      if (num >= 4)
+@@ -4487,6 +_,7 @@
+             }
+         }
+ 
++        static bool didResize = false;
+         public Main()
+         {
+             instance = this;
+@@ -4495,6 +_,16 @@
+             Configuration.Load();
+             graphics = new GraphicsDeviceManager(this as Game);
+             base.Content.RootDirectory = "Content";
++            base.Window.ClientSizeChanged += (x, y) =>
++            {
++                if (!graphics.IsFullScreen && !screenBorderless)
++                {
++
++                    SDL2.SDL.SDL_GetWindowSize(Window.Handle, out int w, out int h);
++                    SetResolution(w, h);
++                    didResize = true;
++                }
++            };
+         }
+ 
+         private static void SetDisplayMonitor()
 @@ -8047,9 +_,6 @@
              _achievementAdvisor = new AchievementAdvisor();
              OpenRecent();
@@ -494,64 +519,54 @@
                  }
                  else if (menuMode == 1125)
                  {
-@@ -48403,35 +_,34 @@
+@@ -48403,35 +_,40 @@
              return true;
          }
  
 -        private static void SetDisplayModeAsBorderless(ref int width, ref int height, Form form)
--        {
--            if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0)
--            {
--                screenBorderlessPendingResizes--;
++        public static void SetDisplayModeAsBorderless(ref int width, ref int height)
+         {
+             if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0)
+             {
+                 screenBorderlessPendingResizes--;
 -                System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
++                SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
 -                width = bounds.Width;
++                width = bounds.w;
 -                height = bounds.Height;
--                TryPickingDefaultUIScale(height);
--            }
--        }
--
++                height = bounds.h;
++                ApplyBorderlessResolution();
+                 TryPickingDefaultUIScale(height);
+             }
+         }
+ 
 -        private static void ApplyBorderlessResolution(Form form)
--        {
--            if (screenBorderlessPendingResizes > 0)
--            {
--                screenBorderlessPendingResizes--;
++        private static void ApplyBorderlessResolution()
+         {
+             if (screenBorderlessPendingResizes > 0)
+             {
+                 screenBorderlessPendingResizes--;
 -                System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
 -                form.Location = new System.Drawing.Point(bounds.X, bounds.Y);
 -                form.FormBorderStyle = FormBorderStyle.None;
 -                form.Width = bounds.Width;
 -                form.Height = bounds.Height;
--            }
--        }
--
--        private static void SetBorderlessFormStyle(Form form)
--        {
--            form.Location = new System.Drawing.Point(0, 0);
--            form.FormBorderStyle = FormBorderStyle.None;
-+        private static void SetDisplayModeAsBorderless(ref int width, ref int height)
-+        {
-+            if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0) {
-+            	screenBorderlessPendingResizes--;
-+                SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
-+                width = bounds.w;
-+            	height = bounds.h;
-+            	TryPickingDefaultUIScale(height);
-+            }
-+        }
-+
-+        private static void ApplyBorderlessResolution()
-+        {
-+            if (screenBorderlessPendingResizes > 0) {
-+            	screenBorderlessPendingResizes--;
 +
 +                SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
 +                SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
 +                SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, bounds.x, bounds.y);
 +                SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, bounds.w, bounds.h);
-+            }
-+        }
 +
++                Main.screenWidth = bounds.w;
++                Main.screenHeight = bounds.h;
+             }
+         }
+ 
+-        private static void SetBorderlessFormStyle(Form form)
 +        private static void SetBorderlessFormStyle()
-+        {
+         {
+-            form.Location = new System.Drawing.Point(0, 0);
+-            form.FormBorderStyle = FormBorderStyle.None;
 +            SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, 0, 0);
 +            SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
 +            SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
@@ -641,23 +656,18 @@
              Asset<Texture2D> asset = TextureAssets.MapBGs[0];
              int num = -1;
              Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
-@@ -62935,18 +_,23 @@
-             SetDisplayMode(width, height, graphics.IsFullScreen);
-         }
- 
-+        // REAL WINFORMS CODE FIX LATER
+@@ -62938,15 +_,19 @@
          public static void SetDisplayMode(int width, int height, bool fullscreen)
          {
              bool flag = false;
 -            Form form = (Form)Control.FromHandle(instance.Window.Handle);
 -            screenMaximized = form.WindowState == FormWindowState.Maximized;
--            if (screenBorderless && screenMaximized && !graphics.IsFullScreen)
 +            IntPtr window = Main.instance.Window.Handle;
 +            uint flags = SDL2.SDL.SDL_GetWindowFlags(window);
 +
 +            screenMaximized = (flags & (uint)SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_MAXIMIZED) != 0;
 +
-+            if (screenBorderless && !screenMaximized && !graphics.IsFullScreen)
+             if (screenBorderless && screenMaximized && !graphics.IsFullScreen)
              {
                  screenMaximized = false;
 -                form.WindowState = FormWindowState.Normal;
@@ -699,12 +709,12 @@
                  }
  
                  width = Math.Min(width, maxScreenW);
-@@ -63019,16 +_,14 @@
+@@ -63019,21 +_,31 @@
  
              if (!fullscreen && !flag2)
              {
--                if (form.ClientSize.Width < graphics.PreferredBackBufferWidth)
 +                SDL2.SDL.SDL_GetWindowSize(window, out int w, out int h);
+-                if (form.ClientSize.Width < graphics.PreferredBackBufferWidth)
 +                if (w < graphics.PreferredBackBufferWidth)
                  {
 -                    width = form.ClientSize.Width;
@@ -721,6 +731,47 @@
                  }
              }
  
+-            width &= 0x7FFFFFFE;
++            //width &= 0x7FFFFFFE;
+-            height &= 0x7FFFFFFE;
++            //height &= 0x7FFFFFFE;
++
++            if (screenBorderless && !flag)
++            {
++                SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
++                SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
++                SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, bounds.x, bounds.y);
++                SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, bounds.w, bounds.h);
++
++                Main.screenWidth = bounds.w;
++                Main.screenHeight = bounds.h;
++            }
++
+             width = Math.Max(width, minScreenW);
+             height = Math.Max(height, minScreenH);
+             if (graphics.IsFullScreen != fullscreen)
+@@ -63043,7 +_,21 @@
+                 graphics.ApplyChanges();
+                 graphics.ToggleFullScreen();
+             }
++            SDL2.SDL.SDL_GetWindowSize(window, out int ww, out int wh);
+ 
++            if (graphics.PreferredBackBufferWidth != ww)
++            {
++                graphics.PreferredBackBufferWidth = ww;
++            }
++            if (graphics.PreferredBackBufferHeight != wh)
++            {
++                graphics.PreferredBackBufferHeight = wh;
++            }
++
++            if (graphics.GraphicsDevice.Viewport.Width != ww || graphics.GraphicsDevice.Viewport.Height != wh)
++            {
++                graphics.GraphicsDevice.Viewport = new Viewport(0, 0, ww, wh);
++            }
+             if (width != num3 || height != num4 || flag2)
+             {
+                 mapTime = 0;
 @@ -63071,18 +_,15 @@
                  {
                      if (screenBorderless)
@@ -744,21 +795,25 @@
                  Lighting.Initialize();
                  if (!drawToScreen && !_isResizingAndRemakingTargets)
                  {
-@@ -63101,6 +_,17 @@
-             {
+@@ -63102,6 +_,8 @@
                  graphics.SynchronizeWithVerticalRetrace = true;
                  graphics.ApplyChanges();
-+            }
-+
-+            SDL2.SDL.SDL_GetWindowSize(window, out int ww, out int wh);
-+
-+            if (graphics.PreferredBackBufferWidth != ww)
-+            {
-+                graphics.PreferredBackBufferWidth = ww;
-+            }
-+            if (graphics.PreferredBackBufferHeight != wh)
-+            {
-+                graphics.PreferredBackBufferHeight = wh;
              }
++
++            
          }
  
+         public static void FixUIScale()
+@@ -63126,7 +_,11 @@
+                 FullscreenStartup();
+             }
+ 
++            if (!Main.didResize)
++            {
+-            SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
++                SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
++            }
++            Main.didResize = false;
+         }
+ 
+         public static void OpenPlayerSelect(OnPlayerSelected method)
