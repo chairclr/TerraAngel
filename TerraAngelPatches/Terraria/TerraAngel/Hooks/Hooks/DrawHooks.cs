@@ -12,6 +12,7 @@ using TerraAngel.Hooks;
 using TerraAngel.Utility;
 using TerraAngel.Client.Config;
 using TerraAngel;
+using TerraAngel.Cheat.Cringes;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -83,15 +84,18 @@ namespace TerraAngel.Hooks.Hooks
         private static Vector2 freecamOriginPoint;
         public static void UpdateCameraHook(Action orig)
         {
-            if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleFreecam))
-            {
-                GlobalCheatManager.Freecam = !GlobalCheatManager.Freecam;
-            }
+            FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
             if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleFullbright))
             {
-                GlobalCheatManager.FullBright = !GlobalCheatManager.FullBright;
+                fullBright.Enabled = !fullBright.Enabled;
             }
-            if (GlobalCheatManager.Freecam)
+
+            FreecamCringe freecam = CringeManager.GetCringe<FreecamCringe>();
+            if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleFreecam))
+            {
+                freecam.Enabled = !freecam.Enabled;
+            }
+            if (freecam.Enabled)
             {
                 ImGuiIOPtr io = ImGui.GetIO();
                 if (io.MouseClicked[1])
@@ -110,17 +114,19 @@ namespace TerraAngel.Hooks.Hooks
 
         private static Vector3 LightingHook(Func<Terraria.Graphics.Light.LightingEngine, int, int, Vector3> orig, Terraria.Graphics.Light.LightingEngine self, int x, int y)
         {
-            if (GlobalCheatManager.FullBright)
+            FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
+            if (fullBright.Enabled)
             {
-                return Vector3.One * GlobalCheatManager.FullBrightBrightness;
+                return Vector3.One * fullBright.Brightness;
             }
             return orig(self, x, y);
         }
         private static Vector3 LegacyLightingHook(Func<Terraria.Graphics.Light.LegacyLighting, int, int, Vector3> orig, Terraria.Graphics.Light.LegacyLighting self, int x, int y)
         {
-            if (GlobalCheatManager.FullBright)
+            FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
+            if (fullBright.Enabled)
             {
-                return Vector3.One * GlobalCheatManager.FullBrightBrightness;
+                return Vector3.One * fullBright.Brightness;
             }
             return orig(self, x, y);
         }
@@ -139,39 +145,39 @@ namespace TerraAngel.Hooks.Hooks
 
         public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
         {
-            if (GlobalCheatManager.NoDust)
+            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
                 return 6000;
             return orig( Position,  Width,  Height,  Type,  SpeedX,  SpeedY,  Alpha,  newColor,  Scale);
         }
         public static void UpdateDustHook(Action orig)
         {
-            if (GlobalCheatManager.NoDust)
-                return;
+            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
+                    return;
             orig();
         }
         public static void DrawDustHook(Action<Main> orig, Main self)
         {
-            if (GlobalCheatManager.NoDust)
-                return;
+            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
+                    return;
             orig(self);
         }
 
         public static int NewGoreHook(Func<Vector2, Vector2, int, float, int> orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
-            if (GlobalCheatManager.NoGore)
-                return 600;
+            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
+                    return 600;
             return orig(Position, Velocity, Type, Scale);
         }
         public static void DrawGoreHook(Action<Main> orig, Main self)
         {
-            if (GlobalCheatManager.NoGore)
-                return;
+            if (CringeManager.GetCringe<NoGoreCringe>().Enabled)
+                    return;
             orig(self);
         }
         public static void DrawGoreBehindHook(Action<Main> orig, Main self)
         {
-            if (GlobalCheatManager.NoGore)
-                return;
+            if (CringeManager.GetCringe<NoGoreCringe>().Enabled)
+                    return;
             orig(self);
         }
     }

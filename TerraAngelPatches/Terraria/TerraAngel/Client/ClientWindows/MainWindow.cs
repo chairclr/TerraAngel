@@ -63,18 +63,9 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         if (ImGui.BeginTabItem("Main Cheats"))
                         {
-                            ImGui.Checkbox("Anti-Hurt/Godmode", ref GlobalCheatManager.AntiHurt);
-                            ImGui.Checkbox("Infinite Minions", ref GlobalCheatManager.InfiniteMinions);
-                            ImGui.Checkbox("Infinite Mana", ref GlobalCheatManager.InfiniteMana);
-                            ImGui.Checkbox("Freecam", ref GlobalCheatManager.Freecam);
-                            ImGui.Checkbox("Noclip", ref GlobalCheatManager.NoClip);
-                            if (ImGui.CollapsingHeader("Noclip Settings"))
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.MainCheats))
                             {
-                                ImGui.TextUnformatted("Speed"); ImGui.SameLine();
-                                ImGui.SliderFloat("##Speed", ref GlobalCheatManager.NoClipSpeed, 1f, 128f);
-
-                                ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
-                                ImGui.SliderInt("##SyncTime", ref GlobalCheatManager.NoClipPlayerSyncTime, 1, 60);
+                                cringe.DrawUI(io);
                             }
                             ImGui.EndTabItem();
                         }
@@ -82,18 +73,18 @@ namespace TerraAngel.Client.ClientWindows
                         {
                             if (ImGui.Button("Butcher All Hostile NPCs"))
                             {
-                                Butcher.ButcherAllHostileNPCs(GlobalCheatManager.ButcherDamage);
+                                Butcher.ButcherAllHostileNPCs(CringeManager.ButcherDamage);
                             }
-                            ImGui.Checkbox("Auto-Butcher Hostiles", ref GlobalCheatManager.AutoButcherHostileNPCs);
+                            ImGui.Checkbox("Auto-Butcher Hostiles", ref CringeManager.AutoButcherHostileNPCs);
                             if (ImGui.Button("Butcher All Friendly NPCs"))
                             {
-                                Butcher.ButcherAllFriendlyNPCs(GlobalCheatManager.ButcherDamage);
+                                Butcher.ButcherAllFriendlyNPCs(CringeManager.ButcherDamage);
                             }
                             if (ImGui.Button("Butcher All Players"))
                             {
-                                Butcher.ButcherAllPlayers(GlobalCheatManager.ButcherDamage);
+                                Butcher.ButcherAllPlayers(CringeManager.ButcherDamage);
                             }
-                            ImGui.SliderInt("Butcher Damage", ref GlobalCheatManager.ButcherDamage, 1, (int)short.MaxValue);
+                            ImGui.SliderInt("Butcher Damage", ref CringeManager.ButcherDamage, 1, (int)short.MaxValue);
 
                             ImGui.EndTabItem();
                         }
@@ -120,30 +111,19 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         if (ImGui.BeginTabItem("Lighting/Dust"))
                         {
-                            ImGui.Checkbox("Fullbright", ref GlobalCheatManager.FullBright);
-
-                            ImGui.TextUnformatted("Brightness"); ImGui.SameLine();
-                            float tmp = GlobalCheatManager.FullBrightBrightness * 100f;
-                            if (ImGui.SliderFloat("##Brightness", ref tmp, 1f, 100f))
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.LightingCheats))
                             {
-                                GlobalCheatManager.FullBrightBrightness = tmp / 100f;
+                                cringe.DrawUI(io);
                             }
-
-                            ImGui.Checkbox("No Dust", ref GlobalCheatManager.NoDust);
-                            ImGui.Checkbox("No Gore", ref GlobalCheatManager.NoGore);
-
                             ImGui.EndTabItem();
                         }
-                        if (ImGui.BeginTabItem("Utility"))
+                        if (ImGui.BeginTabItem("Utility/ESP"))
                         {
-                            ImGui.Checkbox("ESP Boxes", ref GlobalCheatManager.ESPBoxes);
-                            ImGui.Checkbox("ESP Tracers", ref GlobalCheatManager.ESPTracers);
-                            if (ImGui.CollapsingHeader("ESP Settings"))
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.VisualUtility))
                             {
-                                ImGuiUtil.ColorEdit4("Local player box color", ref GlobalCheatManager.ESPBoxColorLocalPlayer);
-                                ImGuiUtil.ColorEdit4("Other player box color", ref GlobalCheatManager.ESPBoxColorOthers);
-                                ImGuiUtil.ColorEdit4("Tracer color", ref GlobalCheatManager.ESPTracerColor);
+                                cringe.DrawUI(io);
                             }
+                            
                             if (ImGui.Button("Reveal Map"))
                             {
                                 int xlen = Main.Map.MaxWidth;
@@ -172,7 +152,6 @@ namespace TerraAngel.Client.ClientWindows
                                     Main.refreshMap = true;
                                 });
                             }
-                            ImGui.Checkbox("Show Tile Sections", ref GlobalCheatManager.ShowTileSectionBorders);
                             ImGui.EndTabItem();
                         }
                         ImGui.EndTabBar();
@@ -202,20 +181,20 @@ namespace TerraAngel.Client.ClientWindows
                 
                 if (ImGui.BeginTabItem("Misc"))
                 {
-                    if (ImGui.Checkbox("Nebula Spam", ref GlobalCheatManager.NebulaSpam))
+                    if (ImGui.Checkbox("Nebula Spam", ref CringeManager.NebulaSpam))
                     {
-                        if (GlobalCheatManager.NebulaSpam && GlobalCheatManager.NebulaSpamPower > 30)
+                        if (CringeManager.NebulaSpam && CringeManager.NebulaSpamPower > 30)
                         {
-                            GlobalCheatManager.NoDust = true;
+                            CringeManager.GetCringe<Cheat.Cringes.NoDustCringe>().Enabled = true;
                         }
                     }
                     if (ImGui.CollapsingHeader("Nebula Settings"))
                     {
-                        if (ImGui.SliderInt("Nebula Spam Power", ref GlobalCheatManager.NebulaSpamPower, 1, 500))
+                        if (ImGui.SliderInt("Nebula Spam Power", ref CringeManager.NebulaSpamPower, 1, 500))
                         {
-                            if (GlobalCheatManager.NebulaSpam && GlobalCheatManager.NebulaSpamPower > 30)
+                            if (CringeManager.NebulaSpam && CringeManager.NebulaSpamPower > 30)
                             {
-                                GlobalCheatManager.NoDust = true;
+                                CringeManager.GetCringe<Cheat.Cringes.NoDustCringe>().Enabled = true;
                             }
                         }
                     }

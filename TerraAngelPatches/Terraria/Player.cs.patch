@@ -21,7 +21,7 @@
                  gfxOffY = -32f;
              }
  
-+            if (!TerraAngel.Cheat.GlobalCheatManager.NoClip || i != Main.myPlayer)
++            if (!TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.NoClipCringe>().Enabled || i != Main.myPlayer)
 +            {
 -            if (Main.myPlayer == i)
 +                if (Main.myPlayer == i)

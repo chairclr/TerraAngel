@@ -104,9 +104,9 @@ namespace TerraAngel.Client
 
             RealFNAIme.blocking = ImGui.GetIO().WantCaptureKeyboard || ImGui.GetIO().WantTextInput;
 
-            if (Netplay.Connection.State <= 3 && GlobalCheatManager.LoadedTileSections != null)
+            if (Netplay.Connection.State <= 3 && CringeManager.LoadedTileSections != null)
             {
-                GlobalCheatManager.LoadedTileSections = null;
+                CringeManager.LoadedTileSections = null;
             }
 
             foreach (Plugin.Plugin plugin in Plugin.PluginLoader.LoadedPlugins)

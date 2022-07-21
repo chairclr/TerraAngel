@@ -9,6 +9,7 @@ using ReLogic.OS;
 using Terraria.DataStructures;
 using Terraria.ID;
 using TerraAngel.Cheat;
+using TerraAngel.Cheat.Cringes;
 using TerraAngel.Hooks;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Net;
@@ -27,7 +28,7 @@ namespace TerraAngel.Hooks.Hooks
 
         public static double PlayerHurtHook(Func<Player, PlayerDeathReason, int, int, bool, bool, bool, int, double> orig, Player self, PlayerDeathReason damageSource, int Damage, int hitDirection, bool pvp, bool quiet, bool Crit, int cooldownCounter)
         {
-            if (self.whoAmI == Main.myPlayer && GlobalCheatManager.AntiHurt)
+            if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
             {
                 if (Main.GameUpdateCount % 6 == 0)
                 {
@@ -40,7 +41,7 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void PlayerKillHook(Action<Player, PlayerDeathReason, double, int, bool> orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
         {
-            if (self.whoAmI == Main.myPlayer && GlobalCheatManager.AntiHurt)
+            if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
             {
                 NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, self.whoAmI);
                 return;
@@ -55,51 +56,52 @@ namespace TerraAngel.Hooks.Hooks
             {
                 ImGuiIOPtr io = ImGui.GetIO();
 
-                if (GlobalCheatManager.AntiHurt)
+                if (CringeManager.GetCringe<AntiHurtCringe>().Enabled)
                 {
                     self.statLife = self.statLifeMax2;
                 }
 
-                if (GlobalCheatManager.InfiniteMinions)
+                if (CringeManager.GetCringe<InfiniteMinionCringe>().Enabled)
                 {
                     self.maxMinions = int.MaxValue - 100000;
                 }
 
-                if (GlobalCheatManager.InfiniteMana)
+                if (CringeManager.GetCringe<InfiniteManaCringe>().Enabled)
                 {
                     self.statMana = self.statLifeMax2;
                     self.manaCost = 0.0f;
                 }
 
+                NoClipCringe noClip = CringeManager.GetCringe<NoClipCringe>();
                 if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleNoclip))
                 {
-                    GlobalCheatManager.NoClip = !GlobalCheatManager.NoClip;
+                    noClip.Enabled = !noClip.Enabled;
                 }
 
-                if (GlobalCheatManager.NoClip)
+                if (noClip.Enabled)
                 {
                     if (!io.WantCaptureKeyboard && !io.WantTextInput && !Main.drawingPlayerChat)
                     {
                         self.oldPosition = self.position;
                         if (io.KeysDown[(int)Keys.W])
                         {
-                            self.position.Y -= GlobalCheatManager.NoClipSpeed;
+                            self.position.Y -= noClip.NoClipSpeed;
                         }
                         if (io.KeysDown[(int)Keys.S])
                         {
-                            self.position.Y += GlobalCheatManager.NoClipSpeed;
+                            self.position.Y += noClip.NoClipSpeed;
                         }
                         if (io.KeysDown[(int)Keys.A])
                         {
-                            self.position.X -= GlobalCheatManager.NoClipSpeed;
+                            self.position.X -= noClip.NoClipSpeed;
                         }
                         if (io.KeysDown[(int)Keys.D])
                         {
-                            self.position.X += GlobalCheatManager.NoClipSpeed;
+                            self.position.X += noClip.NoClipSpeed;
                         }
                     }
 
-                    if (Main.GameUpdateCount % GlobalCheatManager.NoClipPlayerSyncTime == 0)
+                    if (Main.GameUpdateCount % noClip.NoClipPlayerSyncTime == 0)
                     {
                         SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
                     }
@@ -154,14 +156,14 @@ namespace TerraAngel.Hooks.Hooks
                     }
                 }
 
-                if (GlobalCheatManager.AutoButcherHostileNPCs)
+                if (CringeManager.AutoButcherHostileNPCs)
                 {
-                    Butcher.ButcherAllHostileNPCs(GlobalCheatManager.ButcherDamage);
+                    Butcher.ButcherAllHostileNPCs(CringeManager.ButcherDamage);
                 }
 
-                if (GlobalCheatManager.NebulaSpam)
+                if (CringeManager.NebulaSpam)
                 {
-                    for (int i = 0; i < GlobalCheatManager.NebulaSpamPower; i++)
+                    for (int i = 0; i < CringeManager.NebulaSpamPower; i++)
                     {
                         NetMessage.SendData(102, -1, -1, null, Main.myPlayer, 173, Main.LocalPlayer.position.X, Main.LocalPlayer.position.Y);
                     }

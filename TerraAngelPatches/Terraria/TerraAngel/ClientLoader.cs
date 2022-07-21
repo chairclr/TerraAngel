@@ -10,6 +10,9 @@ using System.IO;
 using TerraAngel.Plugin;
 using Terraria;
 using TerraAngel.Cheat;
+using TerraAngel.Cheat.Cringes;
+using System.Reflection;
+using System.Linq;
 
 namespace TerraAngel
 {
@@ -32,11 +35,23 @@ namespace TerraAngel
 
             Config = ClientConfig.ReadFromFile();
 
-            GlobalCheatManager.AntiHurt = Config.DefaultAntiHurt;
-            GlobalCheatManager.ESPTracers = Config.DefaultESPTracers;
-            GlobalCheatManager.ESPBoxes = Config.DefaultESPBoxes;
-            GlobalCheatManager.InfiniteMinions = Config.DefaultInfiniteMinions;
-            GlobalCheatManager.InfiniteMana = Config.DefaultInfiniteMana;
+            Type[] cringeTypes = typeof(Cringe).Assembly.GetTypes().Where(x =>
+                                                                        !x.IsAbstract &&
+                                                                        x.IsSubclassOf(typeof(Cringe)) &&
+                                                                        x.GetConstructor(Array.Empty<Type>()) != null).ToArray();
+            for (int i = 0; i < cringeTypes.Length; i++)
+            {
+                Type type = cringeTypes[i];
+                CringeManager.AddCringe(type);
+            }
+
+            CringeManager.SortTabs();
+
+            CringeManager.GetCringe<AntiHurtCringe>().Enabled = Config.DefaultAntiHurt;
+            CringeManager.GetCringe<InfiniteManaCringe>().Enabled = Config.DefaultInfiniteMana;
+            CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = Config.DefaultInfiniteMinions;
+            CringeManager.GetCringe<ESPBoxesCringe>().Enabled = Config.DefaultESPBoxes;
+            CringeManager.GetCringe<ESPTracersCringe>().Enabled = Config.DefaultESPTracers;
         }
 
         public static void SetupImGuiRenderer(Game main)

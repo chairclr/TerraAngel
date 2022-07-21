@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using TerraAngel.Cheat;
+using TerraAngel.Cheat.Cringes;
 using Terraria;
 using TerraAngel.Utility;
 using TerraAngel.WorldEdits;
@@ -30,7 +31,9 @@ namespace TerraAngel.Client.ClientWindows
             {
                 if (!Main.mapFullscreen)
                 {
-                    if (GlobalCheatManager.ESPBoxes || GlobalCheatManager.ESPTracers)
+                    ESPBoxesCringe espBoxes = CringeManager.GetCringe<ESPBoxesCringe>();
+                    ESPTracersCringe espTracers = CringeManager.GetCringe<ESPTracersCringe>();
+                    if (espBoxes.Enabled || espTracers.Enabled)
                     {
                         Vector2 localPlayerCenter = Util.WorldToScreen(Main.LocalPlayer.Center);
                         for (int i = 0; i < 255; i++)
@@ -38,27 +41,27 @@ namespace TerraAngel.Client.ClientWindows
                             if (Main.player[i].active)
                             {
                                 Player currentPlayer = Main.player[i];
-                                if (GlobalCheatManager.ESPBoxes)
+                                if (espBoxes.Enabled)
                                 {
                                     Vector2 minScreenPos = Util.WorldToScreen(currentPlayer.TopLeft);
                                     Vector2 maxScreenPos = Util.WorldToScreen(currentPlayer.BottomRight);
                                     if (currentPlayer.whoAmI == Main.myPlayer)
                                     {
-                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), GlobalCheatManager.ESPBoxColorLocalPlayer.PackedValue);
+                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.LocalPlayerColor.PackedValue);
                                     }
                                     else
                                     {
-                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), GlobalCheatManager.ESPBoxColorOthers.PackedValue);
+                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.OtherPlayerColor.PackedValue);
                                     }
                                 }
 
-                                if (GlobalCheatManager.ESPTracers)
+                                if (espTracers.Enabled)
                                 {
                                     if (currentPlayer.whoAmI != Main.myPlayer)
                                     {
                                         Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
 
-                                        drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), GlobalCheatManager.ESPTracerColor.PackedValue);
+                                        drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), espTracers.TracerColor.PackedValue);
                                     }
                                 }
                             }
@@ -101,16 +104,16 @@ namespace TerraAngel.Client.ClientWindows
                     }
                 }
 
-                if (GlobalCheatManager.ShowTileSectionBorders)
+                if (CringeManager.GetCringe<ShowTileSectionsCringe>().Enabled)
                 {
-                    if (GlobalCheatManager.LoadedTileSections != null)
+                    if (CringeManager.LoadedTileSections != null)
                     {
                         for (int xs = 0; xs < Main.maxSectionsX; xs++)
                         {
                             for (int ys = 0; ys < Main.maxSectionsY; ys++)
                             {
                                 Color col = new Color(1f, 1, 0f);
-                                if (!GlobalCheatManager.LoadedTileSections[xs, ys])
+                                if (!CringeManager.LoadedTileSections[xs, ys])
                                 {
                                     col = new Color(1f, 0f, 0f);
                                 }
