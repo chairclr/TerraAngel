@@ -128,6 +128,7 @@ namespace TerraAngel.Client
                 {
                     window.Draw(io);
                 }
+                window.Update();
 
                 if (window.IsToggleable && InputSystem.IsKeyPressed(window.ToggleKey))
                 {

@@ -21,5 +21,6 @@ namespace TerraAngel.Client
         public virtual void OnDisable() { }
 
         public abstract void Draw(ImGuiIOPtr io);
+        public virtual void Update() { }
     }
 }
