@@ -23,17 +23,6 @@ namespace TerraAngel.Client.Config
 {
     public class ClientConfig
     {
-        public ClientConfig()
-        {
-            //Instance.ReadFromFile();
-
-            //GlobalCheatManager.AntiHurt = Instance.DefaultAntiHurt;
-            //GlobalCheatManager.InfiniteMana = Instance.DefaultInfiniteMana;
-            //GlobalCheatManager.InfiniteMinions = Instance.DefaultInfiniteMinions;
-            //GlobalCheatManager.ESPBoxes = Instance.DefaultESPBoxes;
-            //GlobalCheatManager.ESPTracers = Instance.DefaultESPTracers;
-        }
-
         [AttributeUsage(AttributeTargets.Field, Inherited = false)]
         public class UIConfigElementAttribute : Attribute
         {
@@ -69,6 +58,8 @@ namespace TerraAngel.Client.Config
         public Keys ToggleUIVisibility = Keys.OemTilde;
         [UIConfigElement("Toggle stats window being movable")]
         public Keys ToggleStatsWindowMovability = Keys.NumPad5;
+        [UIConfigElement("Toggle Net Message Sender UI")]
+        public Keys ToggleNetMessageSender = Keys.NumPad6;
         [UIConfigElement("Toggle Noclip")]
         public Keys ToggleNoclip = Keys.F2;
         [UIConfigElement("Toggle Freecam")]

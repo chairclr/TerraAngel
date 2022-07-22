@@ -32,7 +32,7 @@ namespace TerraAngel.Hooks.Hooks
             {
                 if (Main.GameUpdateCount % 6 == 0)
                 {
-                    NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, self.whoAmI);
+                    NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, self.whoAmI);
                 }
                 return 0.0d;
             }
@@ -43,7 +43,7 @@ namespace TerraAngel.Hooks.Hooks
         {
             if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
             {
-                NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, self.whoAmI);
+                NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, self.whoAmI);
                 return;
             }
             orig(self, damageSource, dmg, hitDirection, pvp);

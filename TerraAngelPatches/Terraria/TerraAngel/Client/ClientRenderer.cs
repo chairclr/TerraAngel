@@ -54,7 +54,7 @@ namespace TerraAngel.Client
             AddWindow(new MainWindow());
             ConsoleSetup.SetConsoleInitialCommands(ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow()));
             AddWindow(new StatsWindow());
-
+            AddWindow(new NetMessageWindow());
 
 
             Task.Run(() => ImGuiUtil.ItemLoaderThread(this));
