@@ -123,9 +123,21 @@ public class Program
         {
             if (!Directory.Exists(TerrariaPath))
             {
-                if (!SteamUtils.TryFindTerrariaDirectory(out TerrariaPath))
+                TerrariaPath = @"G:\Program Files (x86)\Steam\steamapps\common\Terraria";
+                if (!Directory.Exists(TerrariaPath))
                 {
-                    Console.WriteLine("Could not find Terraria path");
+                    TerrariaPath = @"E:\Program Files (x86)\Steam\steamapps\common\Terraria";
+                    if (!Directory.Exists(TerrariaPath))
+                    {
+                        TerrariaPath = @"D:\Program Files (x86)\Steam\steamapps\common\Terraria";
+                        if (!Directory.Exists(TerrariaPath))
+                        {
+                            if (!SteamUtils.TryFindTerrariaDirectory(out TerrariaPath))
+                            {
+                                Console.WriteLine("Could not find Terraria path");
+                            }
+                        }
+                    }
                 }
             }
 
