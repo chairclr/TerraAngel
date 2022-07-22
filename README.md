@@ -23,19 +23,9 @@ Or, manually build `TerraAngelSetup` and run `TerraAngelSetup.exe -auto` or `Ter
 Development
 </h2>
 
+After installing the client, you can edit the source code of the client in `src/TerraAngel/Terraria`
 
-To develop the client itself, after cloning the github repo
-run  `fast_start_x64.bat` or `fast_start_x86.bat`
-
-This will create a `src` directory
-
-In this directory, there will be some folders, the one we're interested in the `src\TerraAngel`
-
-This folder contains the client code
-
-Making any changes to it and running `fast_diff.bat` will update the patches folder
-
-You can then push a new commit or make a pull request to contribute to the repository
+Run `fast_diff.bat` to create patches based on your changes
 
 <h2>
 Main features
@@ -49,18 +39,23 @@ Main features
 - ESP
 - Revealing the map
 - Actually good looking and customizable UI
-- World Edit 
-  - Tile Brush
-    - Placing & Replacing Tiles
-    - Breaking Tiles
-
+- World edit 
+  - Tile brush
+    - Placing & Replacing tiles
+    - Breaking tiles
+- Interactive C# execution engine (aka [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop))
+- Net message sending
+- Plugin system that supports hot-reloading
+- Item browser
 
 <h2>
 Planned features
 </h2>
 
-
-- More world edit features
+- Re-write of the chat UI
+- Re-write of the multiplayer UI
+- Aimbot/Enemy prediction
+- World edit features for cut-copy-paste
 - More customization options
 
 <h2>
@@ -76,6 +71,3 @@ Questions?
 
 
 Open an issue!
-
-
-![Closed Source Client](https://media.discordapp.net/attachments/967958911338569788/986279347549778040/caption.png)
