@@ -1,0 +1,482 @@
+--- src/Terraria/Terraria/GameInput/TriggersSet.cs
++++ src/TerraAngel/Terraria/GameInput/TriggersSet.cs
+@@ -15,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MouseLeft"];
+             }
+ 
+@@ -28,11 +_,14 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MouseRight"];
+             }
+ 
+             set
+             {
++
+                 KeyStatus["MouseRight"] = value;
+             }
+         }
+@@ -41,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Up"];
+             }
+ 
+@@ -54,11 +_,14 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Down"];
+             }
+ 
+             set
+             {
++
+                 KeyStatus["Down"] = value;
+             }
+         }
+@@ -67,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Left"];
+             }
+ 
+@@ -80,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Right"];
+             }
+ 
+@@ -93,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Jump"];
+             }
+ 
+@@ -106,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Throw"];
+             }
+ 
+@@ -119,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Inventory"];
+             }
+ 
+@@ -132,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Grapple"];
+             }
+ 
+@@ -145,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["SmartSelect"];
+             }
+ 
+@@ -158,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["SmartCursor"];
+             }
+ 
+@@ -171,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["QuickMount"];
+             }
+ 
+@@ -184,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["QuickHeal"];
+             }
+ 
+@@ -197,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["QuickMana"];
+             }
+ 
+@@ -210,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["QuickBuff"];
+             }
+ 
+@@ -223,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MapZoomIn"];
+             }
+ 
+@@ -236,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MapZoomOut"];
+             }
+ 
+@@ -249,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MapAlphaUp"];
+             }
+ 
+@@ -262,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MapAlphaDown"];
+             }
+ 
+@@ -275,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MapFull"];
+             }
+ 
+@@ -288,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MapStyle"];
+             }
+ 
+@@ -301,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar1"];
+             }
+ 
+@@ -314,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar2"];
+             }
+ 
+@@ -327,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar3"];
+             }
+ 
+@@ -340,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar4"];
+             }
+ 
+@@ -353,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar5"];
+             }
+ 
+@@ -366,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar6"];
+             }
+ 
+@@ -379,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar7"];
+             }
+ 
+@@ -392,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar8"];
+             }
+ 
+@@ -405,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar9"];
+             }
+ 
+@@ -418,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["Hotbar10"];
+             }
+ 
+@@ -431,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput || (TerraAngel.ClientLoader.SetupRenderer && ImGuiNET.ImGui.GetIO().WantCaptureMouse))
++                    return false;
+                 return KeyStatus["HotbarMinus"];
+             }
+ 
+@@ -444,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput || (TerraAngel.ClientLoader.SetupRenderer && ImGuiNET.ImGui.GetIO().WantCaptureMouse))
++                    return false;
+                 return KeyStatus["HotbarPlus"];
+             }
+ 
+@@ -457,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadRadial1"];
+             }
+ 
+@@ -470,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadRadial2"];
+             }
+ 
+@@ -483,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadRadial3"];
+             }
+ 
+@@ -496,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadRadial4"];
+             }
+ 
+@@ -509,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput || (TerraAngel.ClientLoader.SetupRenderer && ImGuiNET.ImGui.GetIO().WantCaptureMouse))
++                    return false;
+                 return KeyStatus["RadialHotbar"];
+             }
+ 
+@@ -522,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["RadialQuickbar"];
+             }
+ 
+@@ -535,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadSnap1"];
+             }
+ 
+@@ -548,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadSnap2"];
+             }
+ 
+@@ -561,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadSnap3"];
+             }
+ 
+@@ -574,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["DpadSnap4"];
+             }
+ 
+@@ -587,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MenuUp"];
+             }
+ 
+@@ -600,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MenuDown"];
+             }
+ 
+@@ -613,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MenuLeft"];
+             }
+ 
+@@ -626,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["MenuRight"];
+             }
+ 
+@@ -639,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["LockOn"];
+             }
+ 
+@@ -652,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["ViewZoomIn"];
+             }
+ 
+@@ -665,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["ViewZoomOut"];
+             }
+ 
+@@ -678,6 +_,8 @@
+         {
+             get
+             {
++                if (Main.blockInput)
++                    return false;
+                 return KeyStatus["ToggleCreativeMenu"];
+             }
+ 

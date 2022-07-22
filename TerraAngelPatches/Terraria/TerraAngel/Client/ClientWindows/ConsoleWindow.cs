@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
 using NVector2 = System.Numerics.Vector2;
+using TerraAngel.Utility;
+
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -43,9 +45,7 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.SetNextWindowPos(new NVector2(io.DisplaySize.X - windowSize.X, io.DisplaySize.Y - windowSize.Y), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
 
-            ImGui.SetNextWindowBgAlpha(0.7f);
-            //ImGui.PushStyleColor(ImGuiCol.WindowBg, new System.Numerics.Vector4(0f, 0.2f, 0.45f, 0.9f));
-            //ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0.1f, 0.1f, 0.25f, 0.9f));
+            ImGui.SetNextWindowBgAlpha(0.85f);
 
             if (!ImGui.Begin("Console"))
             {
@@ -53,11 +53,10 @@ namespace TerraAngel.Client.ClientWindows
                 return;
             }
 
-
             float footer_height_to_reserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
-            ImGui.BeginChild("ConsoleScrollingRegion", new System.Numerics.Vector2(0, -footer_height_to_reserve), false, ImGuiWindowFlags.HorizontalScrollbar);
+            ImGui.BeginChild("ConsoleScrollingRegion", new NVector2(0, -footer_height_to_reserve), false, ImGuiWindowFlags.HorizontalScrollbar);
 
-            ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new System.Numerics.Vector2(4, 1)); // Tighten spacing
+            ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1)); // Tighten spacing
             lock (ConsoleLock)
             {
                 for (int i = 0; i < ConsoleItems.Count; i++)
@@ -313,7 +312,18 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     console.WriteLine(x.FullArgs);
                 }, "Echos the input back to the console");
-
+            console.AddCommand(
+                "e",
+                (x) =>
+                {
+                    CSharpREPL.Execute(x.FullArgs);
+                }, "Executes arbitrary c# code");
+            console.AddCommand(
+                "ea",
+                (x) =>
+                {
+                    CSharpREPL.ExecuteAsync(x.FullArgs);
+                }, "Executes arbitrary c# code");
         }
     }
 }

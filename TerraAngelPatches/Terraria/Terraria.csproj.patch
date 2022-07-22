@@ -61,7 +61,7 @@
    <ItemGroup>
      <EmbeddedResource Include="GameContent/Creative/Content/*" />
      <EmbeddedResource Include="GameContent/Metadata/MaterialData/*" />
-@@ -38,5 +_,58 @@
+@@ -38,5 +_,59 @@
      <EmbeddedResource Include="Libraries/**" />
      <EmbeddedResource Include="Localization/Content/**" />
      <EmbeddedResource Include="Microsoft/**" />
@@ -115,6 +115,7 @@
 +
 +
 +  <ItemGroup>
++    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.2.0" />
 +    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 +  </ItemGroup>

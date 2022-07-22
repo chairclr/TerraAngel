@@ -100,12 +100,12 @@ namespace TerraAngel.Client.ClientWindows
                     }
                 }
                 
-                if (ImGui.CollapsingHeader("Network Text"))
-                {
-                    ImGui.InputTextMultiline("##NETstr", ref networkText, short.MaxValue - 100, ImGui.GetContentRegionAvail() / new NVector2(2.5f, 4f));
-                }
                 if (ImGui.CollapsingHeader("Raw Values"))
                 {
+                    if (ImGui.CollapsingHeader("Network Text"))
+                    {
+                        ImGui.InputTextMultiline("##NETstr", ref networkText, short.MaxValue - 100, ImGui.GetContentRegionAvail() / new NVector2(2.5f, 3.5f));
+                    }
                     ImGui.Text("Number 1"); ImGui.SameLine(); ImGui.InputInt("##NUM1",   ref number1);
                     ImGui.Text("Number 2"); ImGui.SameLine(); ImGui.InputFloat("##NUM2", ref number2);
                     ImGui.Text("Number 3"); ImGui.SameLine(); ImGui.InputFloat("##NUM3", ref number3);
