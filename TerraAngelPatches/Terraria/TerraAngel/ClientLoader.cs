@@ -54,6 +54,7 @@ namespace TerraAngel
             CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = Config.DefaultInfiniteMinions;
             CringeManager.GetCringe<ESPBoxesCringe>().Enabled = Config.DefaultESPBoxes;
             CringeManager.GetCringe<ESPTracersCringe>().Enabled = Config.DefaultESPTracers;
+            CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = Config.DefaultShowHeldItem;
         }
 
         public static void SetupImGuiRenderer(Game main)

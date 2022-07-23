@@ -1,5 +1,21 @@
 --- src/Terraria/Terraria/Collision.cs
 +++ src/TerraAngel/Terraria/Collision.cs
+@@ -2451,6 +_,7 @@
+                             num2 -= 8;
+                         }
+ 
++
+                         if (Position.X + (float)Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float)Height > vector.Y && Position.Y < vector.Y + (float)num2)
+                         {
+                             return true;
+@@ -2462,6 +_,7 @@
+             return false;
+         }
+ 
++        
+         public static bool SolidCollision(Vector2 Position, int Width, int Height, bool acceptTopSurfaces)
+         {
+             int value = (int)(Position.X / 16f) - 1;
 @@ -3604,6 +_,8 @@
              bool flag = false;
              for (int num4 = 2; num4 >= 0; num4--)

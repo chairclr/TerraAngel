@@ -48,10 +48,14 @@ namespace TerraAngel.Client.Config
         public bool DefaultESPTracers = false;
         [UIConfigElement("Default Hitboxes")]
         public bool DefaultESPBoxes = true;
+        [UIConfigElement("Default Show Held Item")]
+        public bool DefaultShowHeldItem = false;
         [UIConfigElement("Send Rod of Discord packet when teleporting")]
         public bool TeleportSendRODPacket = true;
         [UIConfigElement("Right click on the map to teleport")]
         public bool RightClickOnMapToTeleport = true;
+        [UIConfigElement("Right click on player to view inventory")]
+        public bool RightClickOnPlayerToInspect = true;
         [UIConfigElement("Disable Nebula Packet")]
         public bool DisableNebulaLagPacket = true;
         [UIConfigElement("Toggle UI")]

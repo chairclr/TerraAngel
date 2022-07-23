@@ -213,5 +213,94 @@ namespace TerraAngel.Graphics
             return clicked;
         }
 
+        public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, int count = 0, float countFontSize = 20f)
+        {
+            Vector2 v = new Vector2(size);
+            DrawItem(drawList, id, center - v / 2f, v, count, countFontSize);
+        }
+
+        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 20f)
+        {
+            if (ItemImages[id] == IntPtr.Zero)
+            {
+                ItemImages[id] = (IntPtr)(-1);
+                lock (ItemsToLoad)
+                {
+                    ItemsToLoad[itemPtr] = id;
+                    itemPtr++;
+                }
+            }
+            if (ItemImages[id] != (IntPtr)(-1))
+            {
+                Texture2D value = TextureAssets.Item[id].Value;
+                if (TextureAssets.Item[id].IsLoaded)
+                {
+                    bool animated = Main.itemAnimations[id] != null;
+
+                    if (!animated)
+                    {
+                        int width = value.Width;
+                        int height = value.Height;
+                        float num = 1f;
+                        if ((float)width > size.X || (float)height > size.Y)
+                        {
+                            num = ((width <= height) ? (size.X / (float)height) : (size.Y / (float)width));
+                        }
+                        Vector2 scaledEnd = (new Vector2(width, height) * num);
+                        drawList.AddImage(ItemImages[id], position.ToNumerics(), (position + scaledEnd).ToNumerics());
+                    }
+                    else
+                    {
+                        Rectangle animationRect = Main.itemAnimations[id].GetFrame(value);
+
+                        int width = animationRect.Width;
+                        int height = animationRect.Height;
+                        float num = 1f;
+                        if ((float)width > size.X || (float)height > size.Y)
+                        {
+                            num = ((width <= height) ? (size.X / (float)height) : (size.Y / (float)width));
+                        }
+                        Vector2 scaledEnd = (new Vector2(width, height) * num);
+                        drawList.AddImage(ItemImages[id], position.ToNumerics(), (position + scaledEnd).ToNumerics());
+
+                        System.Numerics.Vector2 rectStart = new System.Numerics.Vector2(animationRect.X, animationRect.Y);
+                        System.Numerics.Vector2 rectEnd = new System.Numerics.Vector2(animationRect.X + width, animationRect.Y + height);
+
+                        System.Numerics.Vector2 uvMin = rectStart / new System.Numerics.Vector2(value.Width, value.Height);
+                        System.Numerics.Vector2 uvMax = rectEnd / new System.Numerics.Vector2(value.Width, value.Height);
+                        drawList.AddImage(ItemImages[id], position.ToNumerics(), (position + scaledEnd).ToNumerics(), uvMin, uvMax);
+
+                    }
+
+                    if (count != 0)
+                    {
+                        string s = count.ToString();
+                        ImFontPtr font = Client.ClientAssets.GetMonospaceFont(countFontSize);
+                        Vector2 pos = position + size / 2;
+                        ImGui.PushFont(font);
+                        pos.X -= ImGui.CalcTextSize(s).X / 2;
+
+                        // for shadow 
+                        pos.X -= 1;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+
+                        pos.X += 2;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+
+                        pos.X -= 1;
+                        pos.Y -= 1;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+
+                        pos.Y += 2f;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+
+                        pos = position + size / 2;
+                        pos.X -= ImGui.CalcTextSize(s).X / 2;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xffffffff, s);
+                        ImGui.PopFont();
+                    }
+                }
+            }
+        }
     }
 }
