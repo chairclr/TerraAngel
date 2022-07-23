@@ -30,18 +30,14 @@ namespace TerraAngel.Utility
 
         public static Vector2 ScreenToWorldFullscreenMap(Vector2 screenPoint)
         {
-            
-            
             screenPoint.X += Main.mapFullscreenPos.X * Main.mapFullscreenScale;
             screenPoint.Y += Main.mapFullscreenPos.Y * Main.mapFullscreenScale;
             screenPoint.X -= Main.screenWidth / 2;
             screenPoint.Y -= Main.screenHeight / 2;
-
             float xScaled = (screenPoint.X / Main.mapFullscreenScale) * 16;
             float yScaled = (screenPoint.Y / Main.mapFullscreenScale) * 16;
             return new Vector2(xScaled, yScaled);
         }
-
         public static Vector2 WorldToScreenFullscreenMap(Vector2 worldPoint)
         {
             float xScaled = (worldPoint.X * Main.mapFullscreenScale) / 16;
