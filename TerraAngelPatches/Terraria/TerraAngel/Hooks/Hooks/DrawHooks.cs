@@ -100,11 +100,11 @@ namespace TerraAngel.Hooks.Hooks
                 ImGuiIOPtr io = ImGui.GetIO();
                 if (io.MouseClicked[1])
                 {
-                    freecamOriginPoint = Util.ScreenToWorld(Main.MouseScreen);
+                    freecamOriginPoint = Util.ScreenToWorld(Input.InputSystem.MousePosition);
                 }
                 if (io.MouseDown[1])
                 {
-                    Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(Main.MouseScreen);
+                    Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(Input.InputSystem.MousePosition);
                     Main.screenPosition = Main.screenPosition + diff;
                 }
                 return;

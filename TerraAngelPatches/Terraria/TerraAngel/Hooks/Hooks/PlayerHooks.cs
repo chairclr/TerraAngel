@@ -80,7 +80,7 @@ namespace TerraAngel.Hooks.Hooks
                     if (ClientLoader.Config.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;
-                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorldFullscreenMap(Main.MouseScreen);
+                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition);
                         if (!io.KeyCtrl)
                             Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
 
@@ -142,7 +142,7 @@ namespace TerraAngel.Hooks.Hooks
                     if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.TeleportToCursor) && !Main.drawingPlayerChat && !io.WantTextInput)
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;
-                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorld(Main.MouseScreen);
+                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorld(Input.InputSystem.MousePosition);
                         Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
 
                         NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);

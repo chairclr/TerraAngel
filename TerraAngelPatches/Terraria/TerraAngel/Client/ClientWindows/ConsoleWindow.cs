@@ -23,19 +23,18 @@ namespace TerraAngel.Client.ClientWindows
 
         public override string Title => "Console";
 
-        private object ConsoleLock = new object();
-
         public Dictionary<string, ConsoleCommand> ConsoleCommands = new Dictionary<string, ConsoleCommand>();
         public List<string> ConsoleHistory = new List<string>();
         public List<ConsoleElement> ConsoleItems = new List<ConsoleElement>();
 
+        public bool REPLMode = false;
+
+        private object ConsoleLock = new object();
         private string consoleInput = "";
-
         private bool ScrollToBottom = false;
-
         private bool AutoScroll = true;
-
         private int historyPos = -1;
+        
 
         public override void Draw(ImGuiIOPtr io)
         {
@@ -106,7 +105,6 @@ namespace TerraAngel.Client.ClientWindows
                 ImGui.SetKeyboardFocusHere(-1);
 
             ImGui.End();
-            //ImGui.PopStyleColor(2);
 
             ImGui.PopFont();
         }
@@ -150,17 +148,35 @@ namespace TerraAngel.Client.ClientWindows
                     break;
                 }
             }
-            ConsoleHistory.Add(message); 
+            ConsoleHistory.Add(message);
 
-            CmdStr command = new CmdStr(message);
-            if (ConsoleCommands.ContainsKey(command.Command))
+            if (REPLMode)
             {
-                ConsoleCommand aacmd = ConsoleCommands[command.Command];
-                aacmd?.CommandAction(command);
+                string trimmed = consoleInput.Trim();
+                if (trimmed == "#exit")
+                {
+                    REPLMode = false;
+                    return;
+                }
+                else if (trimmed == "#clear")
+                {
+                    ClearConsole();
+                    return;
+                }
+                CSharpREPL.Execute(consoleInput);
             }
             else
             {
-                WriteError($"Could not find command {command.Command}");
+                CmdStr command = new CmdStr(message);
+                if (ConsoleCommands.ContainsKey(command.Command))
+                {
+                    ConsoleCommand aacmd = ConsoleCommands[command.Command];
+                    aacmd?.CommandAction(command);
+                }
+                else
+                {
+                    WriteError($"Could not find command {command.Command}");
+                }
             }
         }
         public void AddCommand(string name, Action<CmdStr> action, string description = "No Description Given")
@@ -324,6 +340,16 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     CSharpREPL.ExecuteAsync(x.FullArgs);
                 }, "Executes arbitrary c# code");
+            console.AddCommand(
+                "repl",
+                (x) =>
+                {
+                    console.REPLMode = true;
+                    if (console.REPLMode)
+                        console.WriteLine("Entering C# REPL mode\nType #exit to exit REPL mode");
+                    else
+                        console.WriteLine("Exiting C# REPL mode");
+                });
         }
     }
 }

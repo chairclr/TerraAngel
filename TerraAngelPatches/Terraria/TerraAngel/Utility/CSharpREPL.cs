@@ -76,9 +76,11 @@ namespace TerraAngel.Utility
                 scriptState = CSharpScript.RunAsync("", compilationOptions).Result;
             }
 
+            bool success = false;
             try
             {
                 scriptState = scriptState.ContinueWithAsync(code, catchException: (x) => true).Result;
+                success = true;
             }
             catch (CompilationErrorException cex)
             {
@@ -89,8 +91,11 @@ namespace TerraAngel.Utility
                 ClientLoader.Console.WriteError(ex.ToString());
             }
 
-            if (scriptState.ReturnValue is not null) ClientLoader.Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(scriptState.ReturnValue));
-            if (scriptState.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
+            if (success)
+            {
+                if (scriptState.ReturnValue is not null) ClientLoader.Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(scriptState.ReturnValue));
+                if (scriptState.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
+            }
         }
     }
 }
