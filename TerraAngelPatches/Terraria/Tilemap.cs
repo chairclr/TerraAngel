@@ -15,12 +15,12 @@ namespace Terraria
 		public readonly Tile[,] tiles;
 
 		public Tilemap(int width, int height)
-        {
+                {
 			Width = (ushort)width;
 			Height = (ushort)height;
 
 			tiles = new Tile[Width, Height];
-        }
+                }
 
 		public Tile this[int x, int y]
 		{
