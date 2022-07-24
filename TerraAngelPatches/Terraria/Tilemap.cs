@@ -7,36 +7,36 @@ using System.Threading.Tasks;
 
 namespace Terraria
 {
-	public class Tilemap
-	{
-		public readonly ushort Width;
-		public readonly ushort Height;
+    public class Tilemap
+    {
+        public readonly ushort Width;
+        public readonly ushort Height;
 
-		public readonly Tile[,] tiles;
+        public readonly Tile[,] tiles;
 
-		public Tilemap(int width, int height)
+        public Tilemap(int width, int height)
         {
-			Width = (ushort)width;
-			Height = (ushort)height;
+            Width = (ushort)width;
+            Height = (ushort)height;
 
-			tiles = new Tile[Width, Height];
+            tiles = new Tile[Width, Height];
         }
 
-		public Tile this[int x, int y]
-		{
-			[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-			get
-			{
-				if ((uint)x >= Width || (uint)y >= Height)
-				{
-					return null;
-				}
-				return tiles[x, y];
-			}
-			internal set
-			{
-				tiles[x, y] = value;
-			}
-		}
-	}
+        public Tile this[int x, int y]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+            get
+            {
+                if ((uint)x >= Width || (uint)y >= Height)
+                {
+                    return null;
+                }
+                return tiles[x, y];
+            }
+            internal set
+            {
+                tiles[x, y] = value;
+            }
+        }
+    }
 }

@@ -9,7 +9,19 @@ using Microsoft.Xna.Framework.Input;
 using Terraria;
 using NVector2 = System.Numerics.Vector2;
 using TerraAngel.Utility;
-
+using System;
+using System.Collections.Generic;
+using System.Composition.Hosting;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
+using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Text;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -35,6 +47,7 @@ namespace TerraAngel.Client.ClientWindows
         private bool AutoScroll = true;
         private int historyPos = -1;
         private List<string> candidates = new List<string>();
+        private List<CompletionItem> replCandidates = new List<CompletionItem>();
         private int currentCandidate = 0;
         private bool consoleFocus = false;
 
@@ -119,47 +132,96 @@ namespace TerraAngel.Client.ClientWindows
 
 
             // 🤓 code ahead
-            if (consoleFocus && candidates.Count > 0)
+            if (consoleFocus)
             {
-                ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
-                float maxSize = 0f;
-                float drawHeight = style.ItemSpacing.Y * 2f;
-                for (int i = 0; i < candidates.Count; i++)
+                if (REPLMode)
                 {
-                    string s = candidates[i];
-                    NVector2 textSize = ImGui.CalcTextSize(s);
-                    if (textSize.X > maxSize)
-                        maxSize = textSize.X + style.ItemSpacing.Y;
-                    drawHeight += textSize.Y + style.ItemSpacing.Y;
-                }
-
-                NVector2 origin = new NVector2(minInput.X, maxInput.Y + style.ItemSpacing.Y);
-                NVector2 size = new NVector2(maxSize + style.ItemSpacing.Y * 3f, drawHeight);
-
-                if (origin.X + size.X > io.DisplaySize.X)
-                {
-                    origin.X -= (origin.X + size.X) - io.DisplaySize.X;
-                }
-
-                if (origin.Y + size.Y > io.DisplaySize.Y)
-                {
-                    origin.Y -= (origin.Y + size.Y) - io.DisplaySize.Y;
-                }
-
-                drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
-                float offset = style.ItemSpacing.Y;
-                for (int i = 0; i < candidates.Count; i++)
-                {
-                    string s = candidates[i];
-                    if (i != currentCandidate)
+                    if (replCandidates.Any())
                     {
-                        drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.Gray.PackedValue, s);
+                        ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
+                        float maxSize = 0f;
+                        float drawHeight = style.ItemSpacing.Y * 2f;
+                        for (int i = 0; i < MathF.Min(replCandidates.Count, 10); i++)
+                        {
+                            string s = replCandidates[i].DisplayText;
+                            NVector2 textSize = ImGui.CalcTextSize(s);
+                            if (textSize.X > maxSize)
+                                maxSize = textSize.X + style.ItemSpacing.Y;
+                            drawHeight += textSize.Y + style.ItemSpacing.Y;
+                        }
+
+                        NVector2 origin = new NVector2(minInput.X, maxInput.Y + style.ItemSpacing.Y);
+                        NVector2 size = new NVector2(maxSize + style.ItemSpacing.Y * 3f, drawHeight);
+
+                        if (origin.X + size.X > io.DisplaySize.X)
+                        {
+                            origin.X -= (origin.X + size.X) - io.DisplaySize.X;
+                        }
+
+                        if (origin.Y + size.Y > io.DisplaySize.Y)
+                        {
+                            origin.Y -= (origin.Y + size.Y) - io.DisplaySize.Y;
+                        }
+
+                        drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
+                        float offset = style.ItemSpacing.Y;
+                        for (int i = 0; i < MathF.Min(replCandidates.Count, 10); i++)
+                        {
+                            string s = replCandidates[i].DisplayText;
+                            if (i != currentCandidate)
+                            {
+                                drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.Gray.PackedValue, s);
+                            }
+                            else
+                            {
+                                drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.White.PackedValue, s);
+                            }
+                            offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+                        }
                     }
-                    else
-                    { 
-                        drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.White.PackedValue, s);
+                }
+                else if (candidates.Any())
+                {
+                    ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
+                    float maxSize = 0f;
+                    float drawHeight = style.ItemSpacing.Y * 2f;
+                    for (int i = 0; i < MathF.Min(candidates.Count, 10); i++)
+                    {
+                        string s = candidates[i];
+                        NVector2 textSize = ImGui.CalcTextSize(s);
+                        if (textSize.X > maxSize)
+                            maxSize = textSize.X + style.ItemSpacing.Y;
+                        drawHeight += textSize.Y + style.ItemSpacing.Y;
                     }
-                    offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+
+                    NVector2 origin = new NVector2(minInput.X, maxInput.Y + style.ItemSpacing.Y);
+                    NVector2 size = new NVector2(maxSize + style.ItemSpacing.Y * 3f, drawHeight);
+
+                    if (origin.X + size.X > io.DisplaySize.X)
+                    {
+                        origin.X -= (origin.X + size.X) - io.DisplaySize.X;
+                    }
+
+                    if (origin.Y + size.Y > io.DisplaySize.Y)
+                    {
+                        origin.Y -= (origin.Y + size.Y) - io.DisplaySize.Y;
+                    }
+
+                    drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
+                    float offset = style.ItemSpacing.Y;
+                    for (int i = 0; i < MathF.Min(candidates.Count, 10); i++)
+                    {
+                        string s = candidates[i];
+                        if (i != currentCandidate)
+                        {
+                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.Gray.PackedValue, s);
+                        }
+                        else
+                        {
+                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.White.PackedValue, s);
+                        }
+                        offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+                    }
                 }
             }
 
@@ -293,41 +355,67 @@ namespace TerraAngel.Client.ClientWindows
                             if (data.EventKey == ImGuiKey.UpArrow)
                             {
                                 currentCandidate--;
-                                currentCandidate = Utils.Clamp(currentCandidate, 0, candidates.Count - 1);
+                                if (REPLMode)
+                                {
+                                    currentCandidate = Utils.Clamp(currentCandidate, 0, replCandidates.Count - 1);
+                                }
+                                else
+                                {
+                                    currentCandidate = Utils.Clamp(currentCandidate, 0, candidates.Count - 1);
+                                }
                             }
                             else if (data.EventKey == ImGuiKey.DownArrow)
                             {
                                 currentCandidate++;
-                                currentCandidate = Utils.Clamp(currentCandidate, 0, candidates.Count - 1);
+                                if (REPLMode)
+                                {
+                                    currentCandidate = Utils.Clamp(currentCandidate, 0, replCandidates.Count - 1);
+                                }
+                                else
+                                {
+                                    currentCandidate = Utils.Clamp(currentCandidate, 0, candidates.Count - 1);
+                                }
                             }
                         }
                         break;
                     }
                 case ImGuiInputTextFlags.CallbackCompletion:
                     {
-                        if (candidates.Count > 0)
+                        if (REPLMode)
                         {
-                            if (currentCandidate >= candidates.Count)
-                                currentCandidate = candidates.Count - 1;
-
-                            char* wordEnd = (char*)data.Buf + data.CursorPos;
-                            char* wordStart = wordEnd;
-
-                            while (wordStart > (char*)data.Buf)
+                            if (replCandidates.Count > 0)
                             {
-                                char c = wordStart[-1];
+                                if (currentCandidate >= replCandidates.Count)
+                                    currentCandidate = replCandidates.Count - 1;
 
-                                if (c == ' ')
-                                {
-                                    break;
-                                }
+                                TextSpan s = replCandidates[currentCandidate].Span;
 
-                                wordStart--;
+                                data.DeleteChars(s.Start, data.BufTextLen - s.Start);
+                                data.InsertChars(s.Start, replCandidates[currentCandidate].DisplayText);
                             }
+                            CSharpREPL.GetCompletionAsync(Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen), data.CursorPos, (x) => replCandidates = x);
+                        }
+                        else
+                        {
+                            if (candidates.Count > 0)
+                            {
+                                if (currentCandidate >= candidates.Count)
+                                    currentCandidate = candidates.Count - 1;
 
-                            data.DeleteChars((int)(wordStart - (char*)data.Buf), (int)(wordEnd - wordStart));
-                            data.InsertChars(data.CursorPos, candidates[currentCandidate]);
-                            data.InsertChars(data.CursorPos, " ");
+                                data.DeleteChars(0, data.BufTextLen);
+                                data.InsertChars(data.CursorPos, candidates[currentCandidate]);
+                                data.InsertChars(data.CursorPos, " ");
+                            }
+                        }
+
+                        
+                        break;
+                    }
+                case ImGuiInputTextFlags.CallbackEdit:
+                    {
+                        if (REPLMode)
+                        {
+                            CSharpREPL.GetCompletionAsync(Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen), data.CursorPos, (x) => replCandidates = x);
                         }
                         break;
                     }
@@ -337,19 +425,22 @@ namespace TerraAngel.Client.ClientWindows
                     }
             }
 
-            candidates.Clear();
-            if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1) && !REPLMode)
+            if (!REPLMode)
             {
-                string s = consoleInput.Trim();
-                int firstSpace = s.IndexOf(' ');
-                if (firstSpace > 0)
-                    s = s.Substring(0, firstSpace);
-
-                foreach (ConsoleCommand command in ConsoleCommands.Values)
+                candidates.Clear();
+                if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1) && !REPLMode)
                 {
-                    if (command.CommandName.ToLower().Contains(s))
+                    string s = consoleInput.Trim();
+                    int firstSpace = s.IndexOf(' ');
+                    if (firstSpace > 0)
+                        s = s.Substring(0, firstSpace);
+
+                    foreach (ConsoleCommand command in ConsoleCommands.Values)
                     {
-                        candidates.Add(command.CommandName);
+                        if (command.CommandName.ToLower().Contains(s))
+                        {
+                            candidates.Add(command.CommandName);
+                        }
                     }
                 }
             }
