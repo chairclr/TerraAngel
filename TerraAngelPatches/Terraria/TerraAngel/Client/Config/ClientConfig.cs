@@ -36,42 +36,73 @@ namespace TerraAngel.Client.Config
 
         [UIConfigElement("Show Stats Window")]
         public bool ShowStatsWindow = true;
+
         [UIConfigElement("Show Console Window")]
         public bool ShowConsoleWindow = true;
+
         [UIConfigElement("Default Anti-Hurt")]
         public bool DefaultAntiHurt = true;
+
         [UIConfigElement("Default Infinite Mana")]
         public bool DefaultInfiniteMana = true;
+
         [UIConfigElement("Default Infinite Minions")]
         public bool DefaultInfiniteMinions = true;
+
         [UIConfigElement("Default Tracers")]
         public bool DefaultESPTracers = false;
-        [UIConfigElement("Default Hitboxes")]
-        public bool DefaultESPBoxes = true;
+
+        [UIConfigElement("Default Player Hitboxes")]
+        public bool DefaultPlayerESPBoxes = true;
+
+        [UIConfigElement("Default NPC Hitboxes")]
+        public bool DefaultNPCBoxes = false;
+
+        [UIConfigElement("Default Projectile Hitboxes")]
+        public bool DefaultProjectileBoxes = false;
+
         [UIConfigElement("Default Show Held Item")]
         public bool DefaultShowHeldItem = false;
+
         [UIConfigElement("Send Rod of Discord packet when teleporting")]
         public bool TeleportSendRODPacket = true;
+
         [UIConfigElement("Right click on the map to teleport")]
         public bool RightClickOnMapToTeleport = true;
+
         [UIConfigElement("Right click on player to view inventory")]
         public bool RightClickOnPlayerToInspect = true;
+
         [UIConfigElement("Disable Nebula Packet")]
         public bool DisableNebulaLagPacket = true;
+
         [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
+
         [UIConfigElement("Toggle stats window being movable")]
         public Keys ToggleStatsWindowMovability = Keys.NumPad5;
+
         [UIConfigElement("Toggle Net Message Sender UI")]
         public Keys ToggleNetMessageSender = Keys.NumPad6;
+
         [UIConfigElement("Toggle Noclip")]
         public Keys ToggleNoclip = Keys.F2;
+
         [UIConfigElement("Toggle Freecam")]
         public Keys ToggleFreecam = Keys.F3;
+
         [UIConfigElement("Toggle Fullbright")]
         public Keys ToggleFullbright = Keys.F4;
+
         [UIConfigElement("Teleport to cursor")]
         public Keys TeleportToCursor = Keys.Z;
+
+        public Color TracerColor = new Color(0f, 0f, 1f);
+        public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);
+        public Color OtherBoxPlayerColor = new Color(1f, 0f, 0f);
+        public Color NPCBoxColor = new Color(1f, 0f, 1f);
+        public Color ProjectileBoxColor = new Color(1f, 0f, 1f);
+
 
         [JsonIgnore]
         public List<string> PluginsToEnable

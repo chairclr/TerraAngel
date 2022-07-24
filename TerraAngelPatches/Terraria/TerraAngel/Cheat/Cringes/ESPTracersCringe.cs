@@ -16,7 +16,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
-        public Color TracerColor = new Color(0f, 0f, 1f);
+        public ref Color TracerColor => ref ClientLoader.Config.TracerColor;
 
         public override void DrawUI(ImGuiIOPtr io)
         {
@@ -27,6 +27,8 @@ namespace TerraAngel.Cheat.Cringes
                 ESPBoxesCringe espBoxes = CringeManager.GetCringe<ESPBoxesCringe>();
                 ImGuiUtil.ColorEdit4("Local player box color", ref espBoxes.LocalPlayerColor);
                 ImGuiUtil.ColorEdit4("Other player box color", ref espBoxes.OtherPlayerColor);
+                ImGuiUtil.ColorEdit4("NPC box color", ref espBoxes.NPCColor);
+                ImGuiUtil.ColorEdit4("Projectile box color", ref espBoxes.ProjectileColor);
                 ImGuiUtil.ColorEdit4("Tracer color", ref TracerColor);
             }
         }

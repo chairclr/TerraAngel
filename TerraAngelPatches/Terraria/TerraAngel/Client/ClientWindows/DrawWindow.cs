@@ -28,7 +28,7 @@ namespace TerraAngel.Client.ClientWindows
         public override void Draw(ImGuiIOPtr io)
         {
             ImGui.Begin("DRAWWINDOW", ImGuiWindowFlags.NoMouseInputs | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground);
-            ImGui.PushClipRect(System.Numerics.Vector2.Zero, io.DisplaySize, false);
+            ImGui.PushClipRect(NVector2.Zero, io.DisplaySize, false);
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
 
             if (!Main.gameMenu)
@@ -37,15 +37,15 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     ESPBoxesCringe espBoxes = CringeManager.GetCringe<ESPBoxesCringe>();
                     ESPTracersCringe espTracers = CringeManager.GetCringe<ESPTracersCringe>();
-                    if (espBoxes.Enabled || espTracers.Enabled)
+                    Vector2 localPlayerCenter = Util.WorldToScreen(Main.LocalPlayer.Center);
+                    for (int i = 0; i < 1000; i++)
                     {
-                        Vector2 localPlayerCenter = Util.WorldToScreen(Main.LocalPlayer.Center);
-                        for (int i = 0; i < 255; i++)
+                        if (i < 255)
                         {
                             if (Main.player[i].active)
                             {
                                 Player currentPlayer = Main.player[i];
-                                if (espBoxes.Enabled)
+                                if (espBoxes.PlayerBoxes)
                                 {
                                     Vector2 minScreenPos = Util.WorldToScreen(currentPlayer.TopLeft);
                                     Vector2 maxScreenPos = Util.WorldToScreen(currentPlayer.BottomRight);
@@ -58,7 +58,6 @@ namespace TerraAngel.Client.ClientWindows
                                         drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.OtherPlayerColor.PackedValue);
                                     }
                                 }
-
                                 if (espTracers.Enabled)
                                 {
                                     if (currentPlayer.whoAmI != Main.myPlayer)
@@ -67,6 +66,67 @@ namespace TerraAngel.Client.ClientWindows
 
                                         drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), espTracers.TracerColor.PackedValue);
                                     }
+                                }
+                            }
+                        }
+                        if (i < 201)
+                        {
+                            if (Main.npc[i].active)
+                            {
+                                NPC currentNPC = Main.npc[i];
+                                if (espBoxes.NPCBoxes)
+                                {
+                                    Vector2 minScreenPos = Util.WorldToScreen(currentNPC.TopLeft);
+                                    Vector2 maxScreenPos = Util.WorldToScreen(currentNPC.BottomRight);
+                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.NPCColor.PackedValue);
+                                }
+                            }
+                        }
+                        if (Main.projectile[i].active)
+                        {
+                            Projectile currentProjectile = Main.projectile[i];
+                            if (espBoxes.ProjectileBoxes)
+                            {
+
+                                Rectangle myRect = new Rectangle((int)currentProjectile.position.X, (int)currentProjectile.position.Y, currentProjectile.width, currentProjectile.height);
+                                if (currentProjectile.type == 85 || currentProjectile.type == 101)
+                                {
+                                    int num = 30;
+                                    myRect.X -= num;
+                                    myRect.Y -= num;
+                                    myRect.Width += num * 2;
+                                    myRect.Height += num * 2;
+                                }
+
+                                if (currentProjectile.type == 188)
+                                {
+                                    int num2 = 20;
+                                    myRect.X -= num2;
+                                    myRect.Y -= num2;
+                                    myRect.Width += num2 * 2;
+                                    myRect.Height += num2 * 2;
+                                }
+
+                                if (currentProjectile.aiStyle == 29)
+                                {
+                                    int num3 = 4;
+                                    myRect.X -= num3;
+                                    myRect.Y -= num3;
+                                    myRect.Width += num3 * 2;
+                                    myRect.Height += num3 * 2;
+                                }
+
+                                Vector2 minScreenPos = Util.WorldToScreen(myRect.TopLeft());
+                                Vector2 maxScreenPos = Util.WorldToScreen(myRect.BottomRight());
+
+
+                                // dont draw if its off screen
+                                if (minScreenPos.X > 0 || minScreenPos.X < io.DisplaySize.X ||
+                                    minScreenPos.Y > 0 || minScreenPos.Y < io.DisplaySize.Y ||
+                                    maxScreenPos.X > 0 || maxScreenPos.X < io.DisplaySize.X ||
+                                    maxScreenPos.Y > 0 || maxScreenPos.Y < io.DisplaySize.Y)
+                                {
+                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.ProjectileColor.PackedValue);
                                 }
                             }
                         }
@@ -156,7 +216,7 @@ namespace TerraAngel.Client.ClientWindows
                     WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
                     worldEdit?.DrawPreviewInMap(io, drawList);
 
-                    
+
                 }
 
                 {

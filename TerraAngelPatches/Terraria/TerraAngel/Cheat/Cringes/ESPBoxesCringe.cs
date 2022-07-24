@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImGuiNET;
 using Microsoft.Xna.Framework;
 
 
@@ -10,11 +11,22 @@ namespace TerraAngel.Cheat.Cringes
 {
     public class ESPBoxesCringe : Cringe
     {
-        public override string Name => "ESP boxes";
-
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
-        public Color LocalPlayerColor = new Color(0f, 1f, 0f);
-        public Color OtherPlayerColor = new Color(1f, 0f, 0f);
+        public ref Color LocalPlayerColor => ref ClientLoader.Config.LocalBoxPlayerColor;
+        public ref Color OtherPlayerColor => ref ClientLoader.Config.OtherBoxPlayerColor;
+        public ref Color NPCColor => ref ClientLoader.Config.NPCBoxColor;
+        public ref Color ProjectileColor => ref ClientLoader.Config.ProjectileBoxColor;
+
+        public bool NPCBoxes = false;
+        public bool PlayerBoxes = false;
+        public bool ProjectileBoxes = false;
+
+        public override void DrawUI(ImGuiIOPtr io)
+        {
+            ImGui.Checkbox("Player hitboxes", ref PlayerBoxes);
+            ImGui.Checkbox("NPC hitboxes", ref NPCBoxes);
+            ImGui.Checkbox("Projectile hitboxes", ref ProjectileBoxes);
+        }
     }
 }
