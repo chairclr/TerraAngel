@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
+using System.Reflection;
 
 namespace TerraAngel.Utility
 {
@@ -38,6 +39,58 @@ namespace TerraAngel.Utility
             "Microsoft.Xna.Framework",
         };
 
+        public static IEnumerable<Assembly> RefernceAssemblies => AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location));
+
+        public static Task Warmup()
+        {
+            return Task.Run(
+                async ()=>
+                {
+                    ClientLoader.Console.WriteLine("Warming up c# REPL");
+                    if (scriptState is null)
+                    {
+                        ScriptOptions compilationOptions = ScriptOptions.Default
+                            .AddReferences(RefernceAssemblies)
+                            .AddImports(defaultUsings);
+                        scriptState = await CSharpScript.RunAsync("", compilationOptions);
+                    }
+
+                    CompilationOptions options = scriptState.Script.GetCompilation().Options;
+
+                    if (completionProject is null)
+                    {
+                        Type[] partTypes = MefHostServices.DefaultAssemblies.Concat(
+                            AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location)))
+                            .Distinct()
+                            .SelectMany(x =>
+                            {
+                                Type[] types = new Type[0];
+                                try { types = x.GetTypes(); } catch (Exception e) { }
+                                return types;
+                            })
+                            .ToArray();
+
+                        CompositionHost? compositionContext = new ContainerConfiguration()
+                            .WithParts(partTypes)
+                            .CreateContainer();
+
+                        completionHost = new MefHostServices(compositionContext);
+
+                        completionWorkspace = new AdhocWorkspace(completionHost);
+
+                        ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp, isSubmission: true)
+                            .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location))).Select(x => MetadataReference.CreateFromFile(x.Location)))
+                            .WithCompilationOptions(options);
+
+                        completionProject = completionWorkspace.AddProject(scriptProjectInfo);
+
+                        completionDocument = completionProject.AddDocument("Script", "").WithSourceCodeKind(SourceCodeKind.Script);
+                    }
+
+                    ClientLoader.Console.WriteLine("Warmed up c# REPL");
+                });
+        }
+
         public static Task ExecuteAsync(string code)
         {
             return Task.Run(
@@ -46,7 +99,7 @@ namespace TerraAngel.Utility
                     if (scriptState is null)
                     {
                         ScriptOptions compilationOptions = ScriptOptions.Default
-                            .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(x => File.Exists(x.Location)))
+                            .AddReferences(RefernceAssemblies)
                             .AddImports(defaultUsings);
                         scriptState = await CSharpScript.RunAsync("", compilationOptions);
                     }
@@ -73,7 +126,7 @@ namespace TerraAngel.Utility
             if (scriptState is null)
             {
                 ScriptOptions compilationOptions = ScriptOptions.Default
-                    .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location)))
+                    .AddReferences(RefernceAssemblies)
                     .AddImports(defaultUsings);
                 scriptState = CSharpScript.RunAsync("", compilationOptions).Result;
             }
@@ -112,7 +165,7 @@ namespace TerraAngel.Utility
                     if (scriptState is null)
                     {
                         ScriptOptions compilationOptions = ScriptOptions.Default
-                            .AddReferences(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location)))
+                            .AddReferences(RefernceAssemblies)
                             .AddImports(defaultUsings);
                         scriptState = CSharpScript.RunAsync("", compilationOptions).Result;
                     }
@@ -121,8 +174,7 @@ namespace TerraAngel.Utility
 
                     if (completionProject is null)
                     {
-                        Type[] partTypes = MefHostServices.DefaultAssemblies.Concat(
-                            AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location)))
+                        Type[] partTypes = MefHostServices.DefaultAssemblies.Concat(RefernceAssemblies)
                             .Distinct()
                             .SelectMany(x =>
                             {
@@ -141,7 +193,8 @@ namespace TerraAngel.Utility
                         completionWorkspace = new AdhocWorkspace(completionHost);
 
                         ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp, isSubmission: true)
-                            .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location))).Select(x => MetadataReference.CreateFromFile(x.Location)))
+                            .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(RefernceAssemblies)
+                            .Select(x => MetadataReference.CreateFromFile(x.Location)))
                             .WithCompilationOptions(options);
 
                         completionProject = completionWorkspace.AddProject(scriptProjectInfo);
@@ -163,8 +216,6 @@ namespace TerraAngel.Utility
                         }
 
                         CompletionList? results = await completion?.GetCompletionsAsync(completionDocument, cursorPosition);
-
-                        results = results.WithRules(CompletionRules.Default.WithSnippetsRule(SnippetsRule.NeverInclude));
 
                         int lastWord = (int)MathF.Max(MathF.Max(code.LastIndexOf('.'), code.LastIndexOf(';')), code.LastIndexOf(' '));
                         lastWord = lastWord == -1 ? 0 : lastWord;
