@@ -41,7 +41,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
 
                 Player player = Main.player[selectedPlayer];
-                ImGui.Text($"Inspecting {player.name}");
+                ImGui.Text($"Inspecting player \"{player.name}\"");
 
 
                 if (ImGui.CollapsingHeader("Player Inventory"))

@@ -7,12 +7,14 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Scripting;
 using System.IO;
+using Microsoft.CodeAnalysis;
 
 namespace TerraAngel.Utility
 {
     public class CSharpREPL
     {
         private static ScriptState<object>? scriptState = null;
+        private static AdhocWorkspace? completionWorkspace = null;
         private static string[] defaultUsings = new string[] 
         {
             "System",
@@ -65,7 +67,6 @@ namespace TerraAngel.Utility
                     if (scriptState.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
                 });
         }
-
         public static void Execute(string code)
         {
             if (scriptState is null)
@@ -96,6 +97,11 @@ namespace TerraAngel.Utility
                 if (scriptState.ReturnValue is not null) ClientLoader.Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(scriptState.ReturnValue));
                 if (scriptState.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
             }
+        }
+
+        public static void GetCompletion(string code, int cursorPosition)
+        {
+
         }
     }
 }
