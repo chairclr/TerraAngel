@@ -72,6 +72,16 @@ namespace TerraAngel.Hooks.Hooks
                     self.manaCost = 0.0f;
                 }
 
+                if (CringeManager.GetCringe<InfiniteReachCringe>().Enabled)
+                {
+                    Player.tileRangeX = 100;
+                    Player.tileRangeY = 100;
+                }
+                else
+                {
+                    Player.tileRangeX = 5;
+                    Player.tileRangeY = 4;
+                }
                 
 
                 if (Main.mapFullscreen)
