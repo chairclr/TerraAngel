@@ -53,6 +53,10 @@ namespace TerraAngel.Utility
         {
             return Vector2.Transform(worldPosition - Main.screenPosition, Main.GameViewMatrix.ZoomMatrix);
         }
+        public static Vector2 WorldToScreenExact(Vector2 worldPosition)
+        {
+            return Vector2.Transform(worldPosition.Floor() - Main.screenPosition.Floor(), Main.GameViewMatrix.ZoomMatrix).Floor();
+        }
         public static Vector2 ScreenToWorld(Vector2 screenPosition)
         {
             return Vector2.Transform(screenPosition, Matrix.Invert(Main.GameViewMatrix.ZoomMatrix)) + Main.screenPosition;

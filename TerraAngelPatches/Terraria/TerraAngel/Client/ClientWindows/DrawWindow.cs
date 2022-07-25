@@ -47,8 +47,8 @@ namespace TerraAngel.Client.ClientWindows
                                 Player currentPlayer = Main.player[i];
                                 if (espBoxes.PlayerBoxes)
                                 {
-                                    Vector2 minScreenPos = Util.WorldToScreen(currentPlayer.TopLeft);
-                                    Vector2 maxScreenPos = Util.WorldToScreen(currentPlayer.BottomRight);
+                                    Vector2 minScreenPos = Util.WorldToScreenExact(currentPlayer.TopLeft);
+                                    Vector2 maxScreenPos = Util.WorldToScreenExact(currentPlayer.BottomRight);
                                     if (currentPlayer.whoAmI == Main.myPlayer)
                                     {
                                         drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.LocalPlayerColor.PackedValue);
@@ -76,8 +76,8 @@ namespace TerraAngel.Client.ClientWindows
                                 NPC currentNPC = Main.npc[i];
                                 if (espBoxes.NPCBoxes)
                                 {
-                                    Vector2 minScreenPos = Util.WorldToScreen(currentNPC.TopLeft);
-                                    Vector2 maxScreenPos = Util.WorldToScreen(currentNPC.BottomRight);
+                                    Vector2 minScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft);
+                                    Vector2 maxScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight);
                                     drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.NPCColor.PackedValue);
                                 }
                             }
@@ -116,8 +116,8 @@ namespace TerraAngel.Client.ClientWindows
                                     myRect.Height += num3 * 2;
                                 }
 
-                                Vector2 minScreenPos = Util.WorldToScreen(myRect.TopLeft());
-                                Vector2 maxScreenPos = Util.WorldToScreen(myRect.BottomRight());
+                                Vector2 minScreenPos = Util.WorldToScreenExact(myRect.TopLeft());
+                                Vector2 maxScreenPos = Util.WorldToScreenExact(myRect.BottomRight());
 
 
                                 // dont draw if its off screen
