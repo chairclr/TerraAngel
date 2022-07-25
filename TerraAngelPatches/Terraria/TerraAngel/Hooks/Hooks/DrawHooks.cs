@@ -23,7 +23,7 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Main>("DoDraw", DoDrawHook);
             HookUtil.HookGen(Main.DrawCursor, DrawCursorHook);
             HookUtil.HookGen(Main.DrawThickCursor, DrawThickCursorHook);
-            //HookUtil.HookGen<Main>("DoDraw_UpdateCameraPosition", UpdateCameraHook);
+            HookUtil.HookGen<Main>("DoDraw_UpdateCameraPosition", UpdateCameraHook);
 
             HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("GetColor", LightingHook);
             HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("GetColor", LegacyLightingHook);
