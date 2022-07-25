@@ -101,6 +101,7 @@ namespace TerraAngel.Client.Config
         public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);
         public Color OtherBoxPlayerColor = new Color(1f, 0f, 0f);
         public Color NPCBoxColor = new Color(1f, 0f, 1f);
+        public Color NPCNetOffsetBoxColor = new Color(0f, 0f, 0f);
         public Color ProjectileBoxColor = new Color(1f, 0f, 1f);
 
 

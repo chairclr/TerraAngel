@@ -76,9 +76,16 @@ namespace TerraAngel.Client.ClientWindows
                                 NPC currentNPC = Main.npc[i];
                                 if (espBoxes.NPCBoxes)
                                 {
+                                    // as per request of an anonymous user, NPC net offset drawing
+                                    Vector2 minNetScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft - currentNPC.netOffset);
+                                    Vector2 maxNetScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight - currentNPC.netOffset);
+                                    drawList.AddRect(minNetScreenPos.ToNumerics(), maxNetScreenPos.ToNumerics(), espBoxes.NPCNetOffsetColor.PackedValue);
+
+
                                     Vector2 minScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft);
                                     Vector2 maxScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight);
                                     drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.NPCColor.PackedValue);
+
                                 }
                             }
                         }
@@ -119,6 +126,7 @@ namespace TerraAngel.Client.ClientWindows
                                 Vector2 minScreenPos = Util.WorldToScreenExact(myRect.TopLeft());
                                 Vector2 maxScreenPos = Util.WorldToScreenExact(myRect.BottomRight());
 
+                                
 
                                 // dont draw if its off screen
                                 if (minScreenPos.X > 0 || minScreenPos.X < io.DisplaySize.X ||

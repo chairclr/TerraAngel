@@ -11,11 +11,13 @@ namespace TerraAngel.Cheat.Cringes
 {
     public class ESPBoxesCringe : Cringe
     {
+        public override string Name => "ESP Boxes";
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
         public ref Color LocalPlayerColor => ref ClientLoader.Config.LocalBoxPlayerColor;
         public ref Color OtherPlayerColor => ref ClientLoader.Config.OtherBoxPlayerColor;
         public ref Color NPCColor => ref ClientLoader.Config.NPCBoxColor;
+        public ref Color NPCNetOffsetColor => ref ClientLoader.Config.NPCNetOffsetBoxColor;
         public ref Color ProjectileColor => ref ClientLoader.Config.ProjectileBoxColor;
 
         public bool NPCBoxes = false;
