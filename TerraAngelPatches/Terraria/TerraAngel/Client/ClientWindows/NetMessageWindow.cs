@@ -164,7 +164,17 @@ namespace TerraAngel.Client.ClientWindows
                             if (CheckFilter(i, packetName))
                                 continue;
 
-                            if (ImGui.Selectable($"{(messagesShownInTree[i] ? ClientAssets.IconFont.ArrowDown : ClientAssets.IconFont.ArrowRight)} {packetName}"))
+                            List<NetPacketInfo> packetInfo = allPackets[i];
+                            if (upMessages && !downMessages)
+                            {
+                                packetInfo = sentPackets[i];
+                            }
+                            else if (downMessages && !upMessages)
+                            {
+                                packetInfo = receivePackets[i];
+                            }
+
+                            if (ImGui.Selectable($"{(messagesShownInTree[i] ? ClientAssets.IconFont.ArrowDown : ClientAssets.IconFont.ArrowRight)} {packetName,-35}{(packetInfo.Count == 0 ? "" : packetInfo.Count.ToString())}"))
                             {
                                 messagesShownInTree[i] = !messagesShownInTree[i];
                             }
@@ -172,15 +182,6 @@ namespace TerraAngel.Client.ClientWindows
                             if (messagesShownInTree[i])
                             {
                                 ImGui.Indent(20f);
-                                List<NetPacketInfo> packetInfo = allPackets[i];
-                                if (upMessages && !downMessages)
-                                {
-                                    packetInfo = sentPackets[i];
-                                }
-                                else if (downMessages && !upMessages)
-                                {
-                                    packetInfo = receivePackets[i];
-                                }
                                 for (int j = 0; j < packetInfo.Count; j++)
                                 {
                                     if (packetInfo[j].Sent)
