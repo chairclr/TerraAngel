@@ -11,6 +11,7 @@ using TerraAngel.Cheat;
 using TerraAngel.Hooks;
 using System.IO;
 using TerraAngel;
+using Terraria.Localization;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -25,6 +26,8 @@ namespace TerraAngel.Hooks.Hooks
             //HookUtil.HookGen(Collision.TileCollision, TileCollisionHook);
             //HookUtil.HookGen<Terraria.UI.Gamepad.UILinkPointNavigator>("Update", UILinkPointNavigatorUpdateHook);
             HookUtil.HookGen(NetMessage.DecompressTileBlock_Inner, DecompressTileBlock_InnerHook);
+            HookUtil.HookGen(NetMessage.SendData, SendDataHook);
+            HookUtil.HookGen<MessageBuffer>("GetData", GetDataHook);
         }
         public static void set_IsMouseVisibleHook(Action<Game, bool> orig, Game self, bool visible)
         {
@@ -54,6 +57,27 @@ namespace TerraAngel.Hooks.Hooks
             }
 
             orig(reader, xStart, yStart, width, height);
+        }
+        public static void SendDataHook(Action<int, int, int, NetworkText, int, float, float, float, int, int, int> orig, int msgType, int remoteClient, int ignoreClient, NetworkText text, int number, float number2, float number3, float number4, int number5, int number6, int number7)
+        {
+            if (Client.ClientWindows.NetMessageWindow.LoggingMessages)
+            {
+                Client.ClientWindows.NetMessageWindow.AddPacket(new Client.ClientWindows.NetPacketInfo(msgType, true, number, number2, number3, number4, number5, number6, number7));
+            }
+
+            orig(msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
+        }
+
+        public delegate void GetDataDesc(MessageBuffer self, int start, int length, out int messageType);
+
+        public static void GetDataHook(GetDataDesc orig, MessageBuffer self, int start, int length, out int messageType)
+        {
+            orig(self, start, length, out messageType);
+
+            if (Client.ClientWindows.NetMessageWindow.LoggingMessages)
+            {
+                Client.ClientWindows.NetMessageWindow.AddPacket(new Client.ClientWindows.NetPacketInfo(messageType, false, 0, 0, 0, 0, 0, 0, 0));
+            }
         }
         //public static Vector2 TileCollisionHook(Func<Vector2, Vector2, int, int, bool, bool, int, Vector2> orig, Vector2 Position, Vector2 Velocity, int Width, int Height, bool fallThrough = false, bool fall2 = false, int gravDir = 1)
         //{

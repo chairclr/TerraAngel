@@ -82,8 +82,8 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Toggle stats window being movable")]
         public Keys ToggleStatsWindowMovability = Keys.NumPad5;
 
-        [UIConfigElement("Toggle Net Message Sender UI")]
-        public Keys ToggleNetMessageSender = Keys.NumPad6;
+        [UIConfigElement("Toggle Net Debugger UI")]
+        public Keys ToggleNetDebugger = Keys.NumPad6;
 
         [UIConfigElement("Toggle Noclip")]
         public Keys ToggleNoclip = Keys.F2;
