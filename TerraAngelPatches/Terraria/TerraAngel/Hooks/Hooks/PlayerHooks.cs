@@ -30,8 +30,9 @@ namespace TerraAngel.Hooks.Hooks
         {
             if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
             {
-                if (Main.GameUpdateCount % 6 == 0)
+                if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket == 0)
                 {
+                    CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket = 6;
                     NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, self.whoAmI);
                 }
                 return 0.0d;
@@ -82,7 +83,11 @@ namespace TerraAngel.Hooks.Hooks
                     Player.tileRangeX = 5;
                     Player.tileRangeY = 4;
                 }
-                
+
+                if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket > 0)
+                    CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket--;
+
+
 
                 if (Main.mapFullscreen)
                 {

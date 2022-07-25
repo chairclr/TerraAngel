@@ -66,6 +66,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public static bool LoggingMessages = false;
         private string logsFilter = "";
+        private string traceFilter = "";
         private bool upMessages = true;
         private bool downMessages = true;
 
@@ -73,6 +74,7 @@ namespace TerraAngel.Client.ClientWindows
         private static List<NetPacketInfo>[] sentPackets = new List<NetPacketInfo>[MessageID.Count];
         private static List<NetPacketInfo>[] receivePackets = new List<NetPacketInfo>[MessageID.Count];
         private static bool[] messagesShownInTree = new bool[MessageID.Count];
+        public static HashSet<int> MessagesToLogTraces = new HashSet<int>();
 
         public static void AddPacket(NetPacketInfo packet)
         {
@@ -130,11 +132,29 @@ namespace TerraAngel.Client.ClientWindows
             {
                 if (ImGui.BeginTabItem("Net Message Logs"))
                 {
-                    ImGui.Text("Search: "); ImGui.SameLine();
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 3f); ImGui.InputText("##MessageFilter", ref logsFilter, 512); ImGui.PopItemWidth(); ImGui.SameLine();
+                    ImGui.Text("Search:"); ImGui.SameLine();
+                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##MessageFilter", ref logsFilter, 512); ImGui.PopItemWidth(); ImGui.SameLine();
                     ImGui.Checkbox("Log Messages", ref LoggingMessages); ImGui.SameLine();
                     ImGui.Checkbox($"{ClientAssets.IconFont.ArrowUp}", ref upMessages); ImGui.SameLine();
                     ImGui.Checkbox($"{ClientAssets.IconFont.ArrowDown}", ref downMessages);
+
+                    ImGui.Text("Packets with traces:"); ImGui.SameLine();
+                    unsafe
+                    {
+                        ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##TraceFilter", ref traceFilter, 512, ImGuiInputTextFlags.CallbackCharFilter, (x) => 
+                        { 
+                            switch (x->EventFlag) 
+                            { 
+                                case ImGuiInputTextFlags.CallbackCharFilter:
+                                    if (char.IsNumber((char)x->EventChar) || x->EventChar == ',' || x->EventChar == ' ') return 0;
+                                    return 1;
+                                    break;
+                            } 
+                            return 0; 
+                        }); ImGui.PopItemWidth();
+                    }
+                    MessagesToLogTraces = new HashSet<int>(traceFilter.Split(',').Select(x => { if (int.TryParse(x.Trim(), out int a)) { return a; } return -1; }).Where(x => x != -1));
+
 
                     if (ImGui.BeginChild("##MessageLogScrolling"))
                     {
@@ -186,7 +206,7 @@ namespace TerraAngel.Client.ClientWindows
                                 {
                                     if (packetInfo[j].Sent)
                                     {
-                                        ImGui.TextUnformatted(GetSendCallAsString(packetInfo[j].Type, "", packetInfo[j].Number1, packetInfo[j].Number2, packetInfo[j].Number3, packetInfo[j].Number4, packetInfo[j].Number5, packetInfo[j].Number6, packetInfo[j].Number7, true));
+                                        ImGui.TextUnformatted(GetSendCallAsString(packetInfo[j].Type, "", packetInfo[j].Number1, packetInfo[j].Number2, packetInfo[j].Number3, packetInfo[j].Number4, packetInfo[j].Number5, packetInfo[j].Number6, packetInfo[j].Number7, true) + (packetInfo[j].StackTrace.Length == 0 ? "" : $"\nStack Trace:\n{packetInfo[j].StackTrace}"));
                                     }
                                     else
                                     {
@@ -197,6 +217,7 @@ namespace TerraAngel.Client.ClientWindows
                             }
                         }
                     }
+                    ImGui.EndTabItem();
                 }
                 if (ImGui.BeginTabItem("Packet Sender"))
                 {
@@ -316,8 +337,9 @@ namespace TerraAngel.Client.ClientWindows
         public int   Number6;
         public int   Number7;
         public bool  Sent;
+        public string StackTrace;
 
-        public NetPacketInfo(int type, bool sent, int number1, float number2, float number3, float number4, int number5, int number6, int number7)
+        public NetPacketInfo(int type, bool sent, int number1, float number2, float number3, float number4, int number5, int number6, int number7, string stackTrace = "")
         {
             Type = type;
             Sent = sent;
@@ -328,6 +350,7 @@ namespace TerraAngel.Client.ClientWindows
             Number5 = number5;
             Number6 = number6;
             Number7 = number7;
+            StackTrace = stackTrace;
         }
     }
 }

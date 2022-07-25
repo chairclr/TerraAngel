@@ -79,22 +79,31 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.BeginChild("ConsoleScrollingRegion", new NVector2(0, -footerHeight), false, ImGuiWindowFlags.HorizontalScrollbar);
 
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1)); // Tighten spacing
+            float wrapPos = ImGui.GetContentRegionAvail().X;
             lock (ConsoleLock)
             {
-                ImGui.PushTextWrapPos();
+                ImGui.PushTextWrapPos(wrapPos);
                 for (int i = 0; i < ConsoleItems.Count; i++)
                 {
                     ConsoleElement item = ConsoleItems[i];
                     ImGui.PushStyleColor(ImGuiCol.Text, item.color);
-                    if (item.countAbove > 0)
+                    string text = "";
+                    if (item.countAbove > 0) text = $"{item.text} ({item.countAbove})";
+                    else text = item.text;
+
+                    NVector2 textSize = ImGui.CalcTextSize(text, wrapPos);
+                    if (ImGui.IsRectVisible(textSize))
                     {
-                        string s = $"{item.text} ({item.countAbove})";
-                        ImGui.TextUnformatted(s);
+                        if (ImGui.Selectable(text))
+                        {
+                            ImGui.SetClipboardText(item.text);
+                        }
                     }
                     else
                     {
-                        ImGui.TextUnformatted(item.text);
+                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + 1f);
                     }
+
                     ImGui.PopStyleColor();
                 }
                 ImGui.PopTextWrapPos(); 
