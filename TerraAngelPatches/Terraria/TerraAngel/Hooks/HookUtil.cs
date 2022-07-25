@@ -15,36 +15,41 @@ namespace TerraAngel.Hooks
         {
             return type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, parameterTypes, null);
         }
-        public static void HookGen(MethodInfo from, Delegate to)
+        public static IDetour HookGen(MethodInfo from, Delegate to)
         {
             IDetour detour = new Hook(from, to);
             detour.Apply();
+            return detour;
         }
-        public static void HookGen(Delegate from, Delegate to)
+        public static IDetour HookGen(Delegate from, Delegate to)
         {
             IDetour detour = new Hook(from, to);
             detour.Apply();
+            return detour;
         }
-        public static void HookGen<T>(string from, Delegate to)
+        public static IDetour HookGen<T>(string from, Delegate to)
         {
             IDetour detour = new Hook(GetMethod(typeof(T), from), to);
             detour.Apply();
+            return detour;
         }
-        public static void HookGen<T>(string from, Delegate to, params Type[] parameterTypes)
+        public static IDetour HookGen<T>(string from, Delegate to, params Type[] parameterTypes)
         {
             IDetour detour = new Hook(GetMethod(typeof(T), from, parameterTypes), to);
             detour.Apply();
+            return detour;
         }
-
-        public static void HookGen(Type fromType, string from, Delegate to)
+        public static IDetour HookGen(Type fromType, string from, Delegate to)
         {
             IDetour detour = new Hook(GetMethod(fromType, from), to);
             detour.Apply();
+            return detour;
         }
-        public static void HookGen(Type fromType, string from, Delegate to, params Type[] parameterTypes)
+        public static IDetour HookGen(Type fromType, string from, Delegate to, params Type[] parameterTypes)
         {
             IDetour detour = new Hook(GetMethod(fromType, from, parameterTypes), to);
             detour.Apply();
+            return detour;
         }
     }
 }

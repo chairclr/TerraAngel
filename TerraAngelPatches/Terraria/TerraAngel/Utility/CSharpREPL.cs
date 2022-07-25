@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using System.Reflection;
+using System.Threading;
 
 namespace TerraAngel.Utility
 {
@@ -96,12 +97,9 @@ namespace TerraAngel.Utility
             return Task.Run(
                 async () =>
                 {
-                    if (scriptState is null)
+                    while (scriptState is null)
                     {
-                        ScriptOptions compilationOptions = ScriptOptions.Default
-                            .AddReferences(RefernceAssemblies)
-                            .AddImports(defaultUsings);
-                        scriptState = await CSharpScript.RunAsync("", compilationOptions);
+                        Thread.Sleep(10);
                     }
 
                     try
@@ -123,12 +121,9 @@ namespace TerraAngel.Utility
         }
         public static void Execute(string code)
         {
-            if (scriptState is null)
+            while (scriptState is null)
             {
-                ScriptOptions compilationOptions = ScriptOptions.Default
-                    .AddReferences(RefernceAssemblies)
-                    .AddImports(defaultUsings);
-                scriptState = CSharpScript.RunAsync("", compilationOptions).Result;
+                Thread.Sleep(10);
             }
 
             bool success = false;
@@ -162,46 +157,14 @@ namespace TerraAngel.Utility
             return Task.Run(
                 async () =>
                 {
-                    if (scriptState is null)
+                    while (scriptState is null || completionDocument is null)
                     {
-                        ScriptOptions compilationOptions = ScriptOptions.Default
-                            .AddReferences(RefernceAssemblies)
-                            .AddImports(defaultUsings);
-                        scriptState = CSharpScript.RunAsync("", compilationOptions).Result;
+                        Thread.Sleep(10);
                     }
 
                     CompilationOptions options = scriptState.Script.GetCompilation().Options;
 
-                    if (completionProject is null)
-                    {
-                        Type[] partTypes = MefHostServices.DefaultAssemblies.Concat(RefernceAssemblies)
-                            .Distinct()
-                            .SelectMany(x =>
-                            {
-                                Type[] types = new Type[0];
-                                try { types = x.GetTypes(); } catch (Exception e) { }
-                                return types;
-                            })
-                            .ToArray();
-
-                        CompositionHost? compositionContext = new ContainerConfiguration()
-                            .WithParts(partTypes)
-                            .CreateContainer();
-
-                        completionHost = new MefHostServices(compositionContext);
-
-                        completionWorkspace = new AdhocWorkspace(completionHost);
-
-                        ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp, isSubmission: true)
-                            .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(RefernceAssemblies)
-                            .Select(x => MetadataReference.CreateFromFile(x.Location)))
-                            .WithCompilationOptions(options);
-
-                        completionProject = completionWorkspace.AddProject(scriptProjectInfo);
-
-                        completionDocument = completionProject.AddDocument("Script", code).WithSourceCodeKind(SourceCodeKind.Script);
-                    }
-
+                    completionProject = completionProject.WithCompilationOptions(options);
                     completionDocument = completionDocument.WithText(Microsoft.CodeAnalysis.Text.SourceText.From(code));
 
                     try
@@ -217,17 +180,7 @@ namespace TerraAngel.Utility
 
                         CompletionList? results = await completion?.GetCompletionsAsync(completionDocument, cursorPosition);
 
-                        int lastWord = (int)MathF.Max(MathF.Max(code.LastIndexOf('.'), code.LastIndexOf(';')), code.LastIndexOf(' '));
-                        lastWord = lastWord == -1 ? 0 : lastWord;
-                        lastWord += 1;
-                        if (!(lastWord < code.Length))
-                            lastWord = code.Length - 1;
-
-                        string t = code.Substring(lastWord);
-                        List<CompletionItem> items = results.Items.Where(x => x.DisplayText.ToLower().Contains(t.ToLower())).ToList();
-
-                        items.Sort((x, y) => CompareStringDist(x.DisplayText, t).CompareTo(CompareStringDist(y.DisplayText, t)));
-                        action(items);
+                        action(completion.FilterItems(completionDocument, results.Items, (await completionDocument.GetSyntaxRootAsync()).FindToken(cursorPosition - 1).Text).ToList());
                     }
                     catch (Exception ex)
                     {

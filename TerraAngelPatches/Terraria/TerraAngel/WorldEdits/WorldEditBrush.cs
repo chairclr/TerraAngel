@@ -153,6 +153,7 @@ namespace TerraAngel.WorldEdits
                 ImGui.Text("Liquid"); ImGui.SameLine();
                 ImGui.Combo("##WorldEditLiquidActions", ref currentLiquidAction, liquidActionNames, liquidActionNames.Length);
 
+
                 ImGui.EndTabItem();
                 return true;
             }
@@ -248,7 +249,7 @@ namespace TerraAngel.WorldEdits
             if (revealMap)
             {
                 Main.Map.Update(x, y, 255);
-                Main.refreshMap = true;
+                Main.refreshMap = true; 
             }
         }
 

@@ -132,62 +132,6 @@ namespace TerraAngel.Client.ClientWindows
                         }
                     }
 
-                    if (CringeManager.GetCringe<ProjectilePredictionCringe>().Enabled)
-                    {
-                        Item currentItem = Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem];
-                        float n = CringeManager.GetCringe<ProjectilePredictionCringe>().n;
-                        /*if (currentItem.shoot > ProjectileID.None && currentItem.shoot < ProjectileID.Count)
-                        {
-                            int projectileType = currentItem.shoot;
-
-                            Projectile proj = new Projectile();
-                            proj.SetDefaults(projectileType);
-
-                            if (proj.arrow)
-                            {
-                                float shootSpeed = currentItem.shootSpeed;
-
-                                if (currentItem.useAmmo > 0)
-                                {
-                                    bool cs = true;
-                                    int dm = 0;
-                                    float kb = 0.0f;
-                                    Main.LocalPlayer.PickAmmo(currentItem, ref projectileType, ref shootSpeed, ref cs, ref dm, ref kb, out _, true);
-                                }
-
-                                if (currentItem.type == ItemID.PulseBow)
-                                {
-                                    projectileType = ProjectileID.PulseBolt;
-                                }
-
-                                Vector2 pointPoisition = Main.LocalPlayer.RotatedRelativePoint(Main.LocalPlayer.MountedCenter, reverseRotation: true);
-                                Vector2 projectileCenter = pointPoisition;
-                                Vector2 projectileVelocity = pointPoisition.DirectionTo(Main.MouseWorld) * shootSpeed;
-
-                                for (int i = 0; i < 1200; i++)
-                                {
-                                    Vector2 lastPosition = projectileCenter;
-                                    projectileCenter += projectileVelocity;
-
-
-                                    drawList.AddLine(Util.WorldToScreen(lastPosition).ToNumerics(), Util.WorldToScreen(projectileCenter).ToNumerics(), Color.Red.PackedValue);
-
-                                    if (proj.arrow)
-                                    {
-                                        Vector2 position = new Vector2(projectileCenter.X - (proj.width / 2), projectileCenter.Y - (proj.height / 2));
-                                        if (SolidCollisionSexer(position, proj.width, proj.height))
-                                        {
-                                            break;
-                                        }
-
-                                        projectileVelocity.Y += n;
-                                    }
-                                }
-                            }
-                        }*/
-
-                    }
-
                     WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
                     worldEdit?.DrawPreviewInWorld(io, drawList);
 
@@ -277,54 +221,6 @@ namespace TerraAngel.Client.ClientWindows
 
             ImGui.PopClipRect();
             ImGui.End();
-        }
-
-        public static bool SolidCollisionSexer(Vector2 Position, int Width, int Height)
-        {
-            int value = (int)(Position.X / 16f) - 1;
-            int value2 = (int)((Position.X + (float)Width) / 16f) + 2;
-            int value3 = (int)(Position.Y / 16f) - 1;
-            int value4 = (int)((Position.Y + (float)Height) / 16f) + 2;
-            int num = Utils.Clamp(value, 0, Main.maxTilesX - 1);
-            value2 = Utils.Clamp(value2, 0, Main.maxTilesX - 1);
-            value3 = Utils.Clamp(value3, 0, Main.maxTilesY - 1);
-            value4 = Utils.Clamp(value4, 0, Main.maxTilesY - 1);
-            Vector2 vector = default(Vector2);
-            for (int i = num; i < value2; i++)
-            {
-                for (int j = value3; j < value4; j++)
-                {
-                    if (Main.tile[i, j] != null && !Main.tile[i, j].inActive() && Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type])
-                    {
-                        vector.X = i * 16;
-                        vector.Y = j * 16;
-                        int num2 = 16;
-                        if (Main.tile[i, j].halfBrick())
-                        {
-                            vector.Y += 8f;
-                            num2 -= 8;
-                        }
-                        if (Main.tile[i, j].slope() == Tile.Type_SlopeDownLeft || Main.tile[i, j].slope() == Tile.Type_SlopeDownRight)
-                        {
-                            vector.Y += 8f;
-                            num2 -= 8;
-                        }
-                        if (Main.tile[i, j].slope() == Tile.Type_SlopeUpLeft || Main.tile[i, j].slope() == Tile.Type_SlopeUpRight)
-                        {
-                            vector.Y -= 8f;
-                            num2 += 8;
-                        }
-
-
-                        if (Position.X + (float)Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float)Height > vector.Y && Position.Y < vector.Y + (float)num2)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
         }
 
     }

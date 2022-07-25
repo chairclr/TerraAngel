@@ -8,6 +8,15 @@
  using Terraria.UI;
  using Terraria.UI.Chat;
  using Terraria.UI.Gamepad;
+@@ -16650,7 +_,7 @@
+                     }
+ 
+                     int num5 = tile.frameY / 22;
+-                    if (num5 < 22)
++                    if (num5 < 22 && num5 > -1)
+                     {
+                         nearbyTorch[num5] = true;
+                         if (num5 == 17 && (tile.liquid == 0 || tile.liquidType() != 0))
 @@ -18173,7 +_,7 @@
  
              int num = (int)(position.X + (float)(width / 2)) / 16;
