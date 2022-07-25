@@ -144,11 +144,11 @@
              Configuration.Load();
              graphics = new GraphicsDeviceManager(this as Game);
              base.Content.RootDirectory = "Content";
++            base.Window.AllowUserResizing = true;
 +            base.Window.ClientSizeChanged += (x, y) =>
 +            {
 +                if (!graphics.IsFullScreen && !screenBorderless)
 +                {
-+
 +                    SDL2.SDL.SDL_GetWindowSize(Window.Handle, out int w, out int h);
 +                    SetResolution(w, h);
 +                    didResize = true;
@@ -656,6 +656,17 @@
              Asset<Texture2D> asset = TextureAssets.MapBGs[0];
              int num = -1;
              Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+@@ -59439,8 +_,8 @@
+             }
+ 
+             instance.CameraModifiers.ApplyTo(ref screenPosition);
+-            screenPosition.X = (int)screenPosition.X;
++            //screenPosition.X = (int)screenPosition.X;
+-            screenPosition.Y = (int)screenPosition.Y;
++            //screenPosition.Y = (int)screenPosition.Y;
+             ClampScreenPositionToWorld();
+         }
+ 
 @@ -62938,15 +_,19 @@
          public static void SetDisplayMode(int width, int height, bool fullscreen)
          {
@@ -804,12 +815,14 @@
          }
  
          public static void FixUIScale()
-@@ -63126,7 +_,11 @@
+@@ -63126,7 +_,13 @@
                  FullscreenStartup();
              }
  
 +            if (!Main.didResize)
 +            {
++                SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
++                base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
 -            SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
 +                SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
 +            }

@@ -59,7 +59,7 @@
                  }
 -
 -                MessageBox.Show(text, "Terraria: Error");
-+                // MessageBox.Show(text, "Terraria: Error");
++                SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Terraria: Error", text, Main.instance.Window.Handle);
              }
              catch
              {

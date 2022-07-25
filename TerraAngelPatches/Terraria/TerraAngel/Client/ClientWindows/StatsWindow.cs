@@ -121,8 +121,7 @@ namespace TerraAngel.Client.ClientWindows
 
             ImGuiUtil.TextColored($"Packets \t{ClientAssets.IconFont.ArrowUp}{packetsUpString,7} / {ClientAssets.IconFont.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
 
-            ImGuiUtil.TextColored($"Bytes   \t{ClientAssets.IconFont.ArrowUp}{kilobytesUpString,7} / {ClientAssets.IconFont.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);    
-
+            ImGuiUtil.TextColored($"Bytes   \t{ClientAssets.IconFont.ArrowUp}{kilobytesUpString,7} / {ClientAssets.IconFont.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
 
             ImGui.PopFont();
             ImGui.End();
