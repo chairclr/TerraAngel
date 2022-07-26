@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
 using NVector2 = System.Numerics.Vector2;
-using TerraAngel.Utility;
 using System;
 using System.Collections.Generic;
 using System.Composition.Hosting;
@@ -23,11 +22,16 @@ using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.Tags;
+using TerraAngel.Scripting;
 
 namespace TerraAngel.Client.ClientWindows
 {
     public class ConsoleWindow : ClientWindow
     {
+        public static readonly int MaxUndoSize = 3000;
+
+
+
         public override bool DefaultEnabled => true;
 
         public override bool IsEnabled => ClientLoader.Config.ShowConsoleWindow;
@@ -39,8 +43,10 @@ namespace TerraAngel.Client.ClientWindows
         public Dictionary<string, ConsoleCommand> ConsoleCommands = new Dictionary<string, ConsoleCommand>();
         public List<string> ConsoleHistory = new List<string>();
         public List<ConsoleElement> ConsoleItems = new List<ConsoleElement>();
+        private List<UndoState> undoStack = new List<UndoState>() { new UndoState(0, "") };
+        private int undoStackPointer = 1;
 
-        public bool REPLMode = false;
+        public bool ScriptMode = false;
 
         private object ConsoleLock = new object();
         private string consoleInput = "";
@@ -48,14 +54,16 @@ namespace TerraAngel.Client.ClientWindows
         private bool AutoScroll = true;
         private int historyPos = -1;
         private List<string> candidates = new List<string>();
-        private List<CompletionItem> replCandidates = new List<CompletionItem>();
+
+        public CSharpScriptEnvironment Script = new CSharpScriptEnvironment();
+        private List<CompletionItem> scriptCandidates = new List<CompletionItem>();
         private int currentCandidate = 0;
         private bool consoleFocus = false;
         private object CandidateLock = new object();
 
         public ConsoleWindow()
         {
-            CSharpREPL.Warmup();
+            Script.Warmup();
         }
 
 
@@ -126,7 +134,7 @@ namespace TerraAngel.Client.ClientWindows
             consoleFocus = false;
             unsafe
             {
-                if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
+                if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
                 {
                     if (consoleInput.Length > 0)
                     {
@@ -153,11 +161,11 @@ namespace TerraAngel.Client.ClientWindows
                 // 🤓 code ahead
                 if (consoleFocus)
                 {
-                    if (REPLMode)
+                    if (ScriptMode)
                     {
                         if (consoleInput.Trim().Length == 0)
-                            replCandidates.Clear();
-                        RenderREPLCandidates(io, minInput, maxInput);
+                            scriptCandidates.Clear();
+                        RenderScriptCandidates(io, minInput, maxInput);
                     }
                     else
                     {
@@ -210,12 +218,12 @@ namespace TerraAngel.Client.ClientWindows
             }
             ConsoleHistory.Add(message);
 
-            if (REPLMode)
+            if (ScriptMode)
             {
                 string trimmed = consoleInput.Trim();
                 if (trimmed == "#exit")
                 {
-                    REPLMode = false;
+                    ScriptMode = false;
                     return;
                 }
                 else if (trimmed == "#clear")
@@ -223,7 +231,7 @@ namespace TerraAngel.Client.ClientWindows
                     ClearConsole();
                     return;
                 }
-                CSharpREPL.Execute(consoleInput);
+                WriteLine(Script.FormatObject(Script.Eval(consoleInput)));
             }
             else
             {
@@ -342,18 +350,18 @@ namespace TerraAngel.Client.ClientWindows
             }
 
         }
-        private void RenderREPLCandidates(ImGuiIOPtr io, NVector2 textboxMin, NVector2 textboxMax)
+        private void RenderScriptCandidates(ImGuiIOPtr io, NVector2 textboxMin, NVector2 textboxMax)
         {
             ImGuiStylePtr style = ImGui.GetStyle();
 
-            currentCandidate = Utils.Clamp(currentCandidate, 0, replCandidates.Count - 1);
-            if (replCandidates.Any())
+            currentCandidate = Utils.Clamp(currentCandidate, 0, scriptCandidates.Count - 1);
+            if (scriptCandidates.Any())
             {
                 string GetCandidateIcon(int i)
                 {
-                    if (replCandidates[i].Tags.Length > 0)
+                    if (scriptCandidates[i].Tags.Length > 0)
                     {
-                        string tag = replCandidates[i].Tags[0];
+                        string tag = scriptCandidates[i].Tags[0];
                         switch (tag)
                         {
                             case WellKnownTags.Field:
@@ -390,9 +398,9 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 Color GetIconColor(int i)
                 {
-                    if (replCandidates[i].Tags.Length > 0)
+                    if (scriptCandidates[i].Tags.Length > 0)
                     {
-                        string tag = replCandidates[i].Tags[0];
+                        string tag = scriptCandidates[i].Tags[0];
                         switch (tag)
                         {
                             case WellKnownTags.Field:
@@ -423,7 +431,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 string GetCandidateText(int i)
                 {
-                    return replCandidates[i].DisplayText;
+                    return scriptCandidates[i].DisplayText;
                 }
 
 
@@ -431,11 +439,11 @@ namespace TerraAngel.Client.ClientWindows
                 float maxSize = 0f;
                 float drawHeight = style.ItemSpacing.Y * 2f;
 
-                int startCandidate = Utils.Clamp(currentCandidate - 5, 0, replCandidates.Count);
-                int endCandidate = Utils.Clamp(startCandidate + 10, 0, replCandidates.Count);
+                int startCandidate = Utils.Clamp(currentCandidate - 5, 0, scriptCandidates.Count);
+                int endCandidate = Utils.Clamp(startCandidate + 10, 0, scriptCandidates.Count);
                 if ((endCandidate - startCandidate) < 10)
                 {
-                    startCandidate = Utils.Clamp(endCandidate - 10, 0, replCandidates.Count);
+                    startCandidate = Utils.Clamp(endCandidate - 10, 0, scriptCandidates.Count);
                 }
 
                 for (int i = startCandidate; i < endCandidate; i++)
@@ -497,14 +505,31 @@ namespace TerraAngel.Client.ClientWindows
                 }
             }
         }
+        private Task GetScriptCandidates(string text, int cursorPosition)
+        {
+            return Task.Run(
+                async () =>
+                {
+                    scriptCandidates = await Script.GetCompletionAsync(text, cursorPosition);
+                });
+        }
+
+
 
         unsafe int TextEditCallback(ImGuiInputTextCallbackDataPtr data)
         {
+            string GetText() => Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen);
+            void ReplaceText(string t)
+            {
+                data.DeleteChars(0, data.BufTextLen);
+                data.InsertChars(0, t);
+            }
+
             switch (data.EventFlag)
             {
                 case ImGuiInputTextFlags.CallbackHistory:
                     {
-                        if (((!candidates.Any() || REPLMode) && !replCandidates.Any()) || (Input.InputSystem.IsKeyDown(Keys.RightControl) || Input.InputSystem.IsKeyDown(Keys.LeftControl)))
+                        if (((!candidates.Any() || ScriptMode) && !scriptCandidates.Any()) || (Input.InputSystem.IsKeyDown(Keys.RightControl) || Input.InputSystem.IsKeyDown(Keys.LeftControl)))
                         {
                             int prev_history_pos = historyPos;
                             if (data.EventKey == ImGuiKey.UpArrow)
@@ -542,28 +567,27 @@ namespace TerraAngel.Client.ClientWindows
                                 currentCandidate += cadidatesFlipped ? -amount : amount;
                             }
                         }
+
                         break;
                     }
                 case ImGuiInputTextFlags.CallbackCompletion:
                     {
-                        if (REPLMode)
+                        if (ScriptMode)
                         {
-                            if (replCandidates.Count > 0)
+                            if (scriptCandidates.Count > 0)
                             {
-                                if (currentCandidate >= replCandidates.Count)
-                                    currentCandidate = replCandidates.Count - 1;
+                                if (currentCandidate >= scriptCandidates.Count)
+                                    currentCandidate = scriptCandidates.Count - 1;
 
-                                //TextSpan s = replCandidates[currentCandidate].Span;
-                                //
-                                //data.DeleteChars(s.Start, s.End - s.Start);
-                                //data.InsertChars(s.Start, replCandidates[currentCandidate].DisplayText);
-
-                                string s = Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen);
+                                string s = GetText();
+                                int cursorPosition = data.CursorPos;
                                 data.DeleteChars(0, data.BufTextLen);
-                                data.InsertChars(0, CSharpREPL.GetChangedText(s, replCandidates[currentCandidate]));
-                                
+                                data.InsertChars(0, Script.GetChangedText(s, scriptCandidates[currentCandidate], cursorPosition, out int newCursorPosition));
+
+                                data.CursorPos = newCursorPosition;
                             }
-                            CSharpREPL.GetCompletionAsync(Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen), data.CursorPos, (x) => replCandidates = x);
+
+                            GetScriptCandidates(GetText(), data.CursorPos);
                         }
                         else
                         {
@@ -578,27 +602,96 @@ namespace TerraAngel.Client.ClientWindows
                             }
                         }
 
-                        
+                        if (undoStackPointer < undoStack.Count)
+                        {
+                            undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
+                        }
+
+                        undoStack.Add(new UndoState(data.CursorPos, GetText()));
+                        undoStackPointer++;
+
+                        if (undoStack.Count > MaxUndoSize)
+                        {
+                            undoStackPointer--;
+                            undoStack.RemoveAt(0);
+                        }
                         break;
                     }
                 case ImGuiInputTextFlags.CallbackEdit:
                     {
-                        if (REPLMode)
+                        if (ScriptMode)
                         {
-                            CSharpREPL.GetCompletionAsync(Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen), data.CursorPos, (x) => replCandidates = x);
+                            GetScriptCandidates(GetText(), data.CursorPos);
+                        }
+
+                        if (undoStackPointer < undoStack.Count)
+                        {
+                            undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
+                        }
+
+                        undoStack.Add(new UndoState(data.CursorPos, GetText()));
+                        undoStackPointer++;
+
+                        if (undoStack.Count > MaxUndoSize)
+                        {
+                            undoStackPointer--;
+                            undoStack.RemoveAt(0);
                         }
                         break;
                     }
                 case ImGuiInputTextFlags.CallbackAlways:
                     {
+                        bool ctrl = Input.InputSystem.IsKeyDown(Keys.RightControl) || Input.InputSystem.IsKeyDown(Keys.LeftControl);
+
+                        if (ctrl)
+                        {
+                            if (ImGui.IsKeyPressed('Z', true))
+                            {
+                                if (undoStackPointer > 1)
+                                {
+                                    UndoState state = undoStack[undoStackPointer - 2];
+                                    undoStackPointer--;
+
+                                    ReplaceText(state.Text);
+                                    data.CursorPos = state.CursorPosition;
+
+                                    if (ScriptMode)
+                                    {
+                                        GetScriptCandidates(GetText(), data.CursorPos);
+                                    }
+                                }
+                            }
+
+                            if (ImGui.IsKeyPressed('Y', true))
+                            {
+                                if (undoStackPointer > 1 && undoStackPointer < undoStack.Count)
+                                {
+                                    UndoState state = undoStack[undoStackPointer];
+                                    undoStackPointer++;
+
+                                    ReplaceText(state.Text);
+                                    data.CursorPos = state.CursorPosition;
+
+                                    if (ScriptMode)
+                                    {
+                                        GetScriptCandidates(GetText(), data.CursorPos);
+                                    }
+                                }
+                            }
+                        }
                         break;
                     }
             }
 
-            if (!REPLMode)
+            if (ScriptMode)
+            {
+                if (data.EventKey == ImGuiKey.Enter)
+                    GetScriptCandidates(GetText(), data.CursorPos);
+            }
+            else
             {
                 candidates.Clear();
-                if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1) && !REPLMode)
+                if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1) && !ScriptMode)
                 {
                     string s = consoleInput.Trim();
                     int firstSpace = s.IndexOf(' ');
@@ -613,11 +706,6 @@ namespace TerraAngel.Client.ClientWindows
                         }
                     }
                 }
-            }
-            else
-            {
-                if (data.EventKey == ImGuiKey.Enter)
-                    CSharpREPL.GetCompletionAsync(Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen), data.CursorPos, (x) => replCandidates = x);
             }
             consoleFocus = true;
 
@@ -673,6 +761,18 @@ namespace TerraAngel.Client.ClientWindows
                 this.CommandDescription = description;
             }
         }
+
+        struct UndoState
+        {
+            public int CursorPosition;
+            public string Text;
+
+            public UndoState(int cursorPosition, string text)
+            {
+                CursorPosition = cursorPosition;
+                Text = text;
+            }
+        }
     }
 
     public class ConsoleSetup
@@ -722,20 +822,20 @@ namespace TerraAngel.Client.ClientWindows
                 "e",
                 (x) =>
                 {
-                    CSharpREPL.Execute(x.FullArgs);
+                    console.WriteLine(console.Script.FormatObject(console.Script.Eval(x.FullArgs)));
                 }, "Executes arbitrary c# code");
             console.AddCommand(
                 "ea",
                 (x) =>
                 {
-                    CSharpREPL.ExecuteAsync(x.FullArgs);
+                    console.WriteLine(console.Script.FormatObject(console.Script.EvalAsync(x.FullArgs)));
                 }, "Executes arbitrary c# code");
             console.AddCommand(
                 "repl",
                 (x) =>
                 {
-                    console.REPLMode = true;
-                    if (console.REPLMode)
+                    console.ScriptMode = true;
+                    if (console.ScriptMode)
                         console.WriteLine("Entering C# REPL mode\nType #exit to exit REPL mode");
                     else
                         console.WriteLine("Exiting C# REPL mode");
