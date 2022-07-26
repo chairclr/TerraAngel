@@ -31,22 +31,44 @@ Run `fast_diff.bat` to create patches based on your changes
 Main features
 </h2>
 
+<h3>
+Features for Terraria developers
+</h3>
 
+- Freecam
+- Visual utilites
+   - View player hitboxes
+   - View NPC hitboxes and visualize NPC lag
+   - View projectile hitboxes
+   - View tile section borders
+   - Disable dust and gore
+- Interactive C# execution engine (aka [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop))
+  - Real time auto-completion
+- Net message debugger
+  - Logging send and received
+  - Stack traces of packets that are sent
+  - Send messages with custom values and generate NetMessage.SendData calls
+- Plugin system that supports hot-reloading
 - Supports building x64 and x86
+
+<h3>
+Other usefult features
+</h3>
+
 - Anti-Hurt/Godmode
 - Fullbright
 - Noclip
-- ESP
+- Item browser
 - Revealing the map
+- Tools for butchering NPCs
 - Actually good looking and customizable UI
 - World edit 
   - Tile brush
-    - Placing & Replacing tiles
-    - Breaking tiles
-- Interactive C# execution engine (aka [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop))
-- Net message sending
-- Plugin system that supports hot-reloading
-- Item browser
+    - Basic tile manipulation
+    - Basic liquid manipluation
+- Switch from the decades old Microsoft XNA framework to use FNA (significant performance boost)
+- Viewing other players inventories
+- Many bugfixes for vanilla
 
 <h2>
 Planned features
@@ -56,7 +78,12 @@ Planned features
 - Re-write of the multiplayer UI
 - Aimbot/Enemy prediction
 - World edit features for cut-copy-paste
-- More customization options
+- More customization options for the clients UI
+- Syntax highlighting for the C# [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)
+- Better completion for the console
+- More console commands
+  - Add keybind command to bind a console input to a key
+
 
 <h2>
 Contributing
