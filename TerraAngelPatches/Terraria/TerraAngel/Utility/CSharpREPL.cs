@@ -10,24 +10,27 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Text;
 using System.Reflection;
 using System.Threading;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace TerraAngel.Utility
 {
     public class CSharpREPL
     {
         private static ScriptState<object>? scriptState = null;
-        private static string[] defaultUsings = new string[] 
+        private static ulong scount = 0;
+        private static string[] defaultUsings = new string[]
         {
             "System",
             "System.IO",
             "System.Collections.Generic",
-            "System.Console", 
-            "System.Diagnostics", 
+            "System.Console",
+            "System.Diagnostics",
             "System.Dynamic",
             "System.Linq",
-            "System.Linq.Expressions", 
+            "System.Linq.Expressions",
             "System.Net.Http",
             "System.Text",
             "System.Threading.Tasks",
@@ -45,7 +48,7 @@ namespace TerraAngel.Utility
         public static Task Warmup()
         {
             return Task.Run(
-                async ()=>
+                async () =>
                 {
                     ClientLoader.Console.WriteLine("Warming up c# REPL");
                     if (scriptState is null)
@@ -79,13 +82,18 @@ namespace TerraAngel.Utility
 
                         completionWorkspace = new AdhocWorkspace(completionHost);
 
-                        ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp, isSubmission: true)
+                        ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp)
                             .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location))).Select(x => MetadataReference.CreateFromFile(x.Location)))
-                            .WithCompilationOptions(options);
+                            .WithCompilationOptions(options)
+                            .WithParseOptions(new CSharpParseOptions(kind: SourceCodeKind.Script));
 
                         completionProject = completionWorkspace.AddProject(scriptProjectInfo);
 
-                        completionDocument = completionProject.AddDocument("Script", "").WithSourceCodeKind(SourceCodeKind.Script);
+                        completionDocument = completionProject.AddDocument("CScript", SourceText.From("using Terraria;"));
+                        DocumentId? did = completionDocument?.Id;
+                        if (!completionWorkspace.TryApplyChanges(completionDocument?.Project.Solution)) throw new InvalidOperationException("Could not apply changes.");
+                        completionDocument = completionWorkspace?.CurrentSolution.GetDocument(did);
+                        completionProject = completionDocument?.Project;
                     }
 
                     ClientLoader.Console.WriteLine("Warmed up c# REPL");
@@ -145,6 +153,14 @@ namespace TerraAngel.Utility
             {
                 if (scriptState.ReturnValue is not null) ClientLoader.Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(scriptState.ReturnValue));
                 if (scriptState.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
+                if (code.Trim().Length > 0)
+                {
+                    completionDocument = completionDocument?.Project.AddDocument("CScript", SourceText.From(code));
+                    DocumentId? did = completionDocument?.Id;
+                    if (!completionWorkspace.TryApplyChanges(completionDocument?.Project.Solution)) throw new InvalidOperationException("Could not apply changes.");
+                    completionDocument = completionWorkspace?.CurrentSolution.GetDocument(did);
+                    completionProject = completionDocument?.Project;
+                }
             }
         }
 
@@ -157,15 +173,23 @@ namespace TerraAngel.Utility
             return Task.Run(
                 async () =>
                 {
-                    while (scriptState is null || completionDocument is null)
+                    while (scriptState is null || completionWorkspace is null)
                     {
                         Thread.Sleep(10);
                     }
 
-                    CompilationOptions options = scriptState.Script.GetCompilation().Options;
+                    completionDocument = completionDocument?.WithText(SourceText.From(code));
+                    DocumentId? did = completionDocument?.Id;
+                    if (!completionWorkspace.TryApplyChanges(completionDocument?.Project.Solution)) throw new InvalidOperationException("Could not apply changes.");
+                    completionDocument = completionWorkspace?.CurrentSolution.GetDocument(did);
+                    completionProject = completionDocument?.Project;
 
-                    completionProject = completionProject.WithCompilationOptions(options);
-                    completionDocument = completionDocument.WithText(Microsoft.CodeAnalysis.Text.SourceText.From(code));
+
+                    if (completionDocument is null)
+                    {
+                        action(new List<CompletionItem>());
+                        return;
+                    }
 
                     try
                     {
@@ -178,9 +202,23 @@ namespace TerraAngel.Utility
                             return;
                         }
 
-                        CompletionList? results = await completion?.GetCompletionsAsync(completionDocument, cursorPosition);
+                        CompletionList? results = await completion.GetCompletionsAsync(completionDocument, cursorPosition);
 
-                        action(completion.FilterItems(completionDocument, results.Items, (await completionDocument.GetSyntaxRootAsync()).FindToken(cursorPosition - 1).Text).ToList());
+                        if (results is null)
+                        {
+                            action(new List<CompletionItem>());
+                            return;
+                        }
+
+                        SyntaxNode? rootNode = await completionDocument.GetSyntaxRootAsync();
+
+                        string textFilter = "";
+                        if (rootNode is not null && code.Length > 0)
+                        {
+                            textFilter = rootNode.FindToken(cursorPosition - 1).Text;
+                        }
+
+                        action(completion.FilterItems(completionDocument, results.Items, textFilter).ToList());
                     }
                     catch (Exception ex)
                     {
@@ -189,8 +227,41 @@ namespace TerraAngel.Utility
                 });
         }
 
+        public static string GetChangedText(string code, CompletionItem item)
+        {
+            completionDocument = completionDocument?.WithText(SourceText.From(code));
+            DocumentId? did = completionDocument?.Id;
+            if (!completionWorkspace.TryApplyChanges(completionDocument?.Project.Solution)) throw new InvalidOperationException("Could not apply changes.");
+            completionDocument = completionWorkspace?.CurrentSolution.GetDocument(did);
+            completionProject = completionDocument?.Project;
 
-        public static int CompareStringDist(string s, string t)
+
+            if (completionDocument is null)
+            {
+                return code;
+            }
+
+            try
+            {
+
+                CompletionService? completion = CompletionService.GetService(completionDocument);
+
+                if (completion is null)
+                {
+                    return code;
+                }
+
+                CompletionChange change = completion.GetChangeAsync(completionDocument, item).Result;
+
+                return code.Remove(change.TextChange.Span.Start, change.TextChange.Span.End - change.TextChange.Span.Start).Insert(change.TextChange.Span.Start, change.TextChange.NewText ?? "");
+            }
+            catch (Exception ex)
+            {
+                return code;
+            }
+            return code;
+        }
+        public int GetStringDistance(string s, string t)
         {
             if (string.IsNullOrEmpty(s))
             {

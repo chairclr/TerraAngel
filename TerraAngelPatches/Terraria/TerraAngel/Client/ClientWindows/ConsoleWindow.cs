@@ -22,6 +22,7 @@ using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Tags;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -50,6 +51,7 @@ namespace TerraAngel.Client.ClientWindows
         private List<CompletionItem> replCandidates = new List<CompletionItem>();
         private int currentCandidate = 0;
         private bool consoleFocus = false;
+        private object CandidateLock = new object();
 
         public ConsoleWindow()
         {
@@ -124,7 +126,7 @@ namespace TerraAngel.Client.ClientWindows
             consoleFocus = false;
             unsafe
             {
-                if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion, (x) => TextEditCallback(x)))
+                if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
                 {
                     if (consoleInput.Length > 0)
                     {
@@ -146,18 +148,21 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.End();
 
 
-            // 🤓 code ahead
-            if (consoleFocus)
+            lock (CandidateLock)
             {
-                if (REPLMode)
+                // 🤓 code ahead
+                if (consoleFocus)
                 {
-                    if (consoleInput.Trim().Length == 0)
-                        replCandidates.Clear();
-                    RenderREPLCandidates(io, minInput, maxInput);
-                }
-                else
-                {
-                    RenderConsoleCandidates(io, minInput, maxInput);
+                    if (REPLMode)
+                    {
+                        if (consoleInput.Trim().Length == 0)
+                            replCandidates.Clear();
+                        RenderREPLCandidates(io, minInput, maxInput);
+                    }
+                    else
+                    {
+                        RenderConsoleCandidates(io, minInput, maxInput);
+                    }
                 }
             }
 
@@ -344,13 +349,90 @@ namespace TerraAngel.Client.ClientWindows
             currentCandidate = Utils.Clamp(currentCandidate, 0, replCandidates.Count - 1);
             if (replCandidates.Any())
             {
+                string GetCandidateIcon(int i)
+                {
+                    if (replCandidates[i].Tags.Length > 0)
+                    {
+                        string tag = replCandidates[i].Tags[0];
+                        switch (tag)
+                        {
+                            case WellKnownTags.Field:
+                                return ClientAssets.IconFont.SymbolField;
+                            case WellKnownTags.Method:
+                            case WellKnownTags.ExtensionMethod:
+                                return ClientAssets.IconFont.SymbolMethod;
+                            case WellKnownTags.Namespace:
+                                return ClientAssets.IconFont.SymbolNamespace;
+                            case WellKnownTags.Class:
+                                return ClientAssets.IconFont.SymbolClass;
+                            case WellKnownTags.Structure:
+                                return ClientAssets.IconFont.SymbolStructure;
+                            case WellKnownTags.Enum:
+                                return ClientAssets.IconFont.SymbolEnum;
+                            case WellKnownTags.Interface:
+                                return ClientAssets.IconFont.SymbolInterface;
+                            case WellKnownTags.Event:
+                                return ClientAssets.IconFont.SymbolEvent;
+                            case WellKnownTags.Property:
+                                return ClientAssets.IconFont.SymbolProperty;
+                            case WellKnownTags.Constant:
+                                return ClientAssets.IconFont.SymbolConstant;
+                            case WellKnownTags.Delegate:
+                                return ClientAssets.IconFont.TypeHierarchySub;
+                            case WellKnownTags.EnumMember:
+                                return ClientAssets.IconFont.SymbolEnumMember;
+                            case WellKnownTags.Keyword:
+                                return ClientAssets.IconFont.SymbolKeyword;
+
+                        }
+                    }
+                    return ClientAssets.IconFont.SymbolMisc;
+                }
+                Color GetIconColor(int i)
+                {
+                    if (replCandidates[i].Tags.Length > 0)
+                    {
+                        string tag = replCandidates[i].Tags[0];
+                        switch (tag)
+                        {
+                            case WellKnownTags.Field:
+                            case WellKnownTags.Interface:
+                                return new Color(0x00, 0x5d, 0xba);
+                            case WellKnownTags.Method:
+                            case WellKnownTags.ExtensionMethod:
+                                return new Color(0x69, 0x36, 0xaa);
+                            case WellKnownTags.Namespace:
+                            case WellKnownTags.Property:
+                            case WellKnownTags.Keyword:
+                                return new Color(0xe0, 0xe0, 0xe0);
+                            case WellKnownTags.Class:
+                            case WellKnownTags.Enum:
+                            case WellKnownTags.Event:
+                                return new Color(0xff, 0xe3, 0x9e);
+                            case WellKnownTags.Structure:
+                                return new Color(0x55, 0xaa, 0xff);
+                            case WellKnownTags.Constant:
+                                return new Color(0x55, 0xaa, 0xff);
+                            case WellKnownTags.Delegate:
+                                return new Color(0x92, 0x64, 0xcd);
+                            case WellKnownTags.EnumMember:
+                                return new Color(0x55, 0xaa, 0xff);
+                        }
+                    }
+                    return new Color(0xff, 0xe3, 0x9e);
+                }
+                string GetCandidateText(int i)
+                {
+                    return replCandidates[i].DisplayText;
+                }
+
+
                 ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
                 float maxSize = 0f;
                 float drawHeight = style.ItemSpacing.Y * 2f;
 
                 int startCandidate = Utils.Clamp(currentCandidate - 5, 0, replCandidates.Count);
                 int endCandidate = Utils.Clamp(startCandidate + 10, 0, replCandidates.Count);
-
                 if ((endCandidate - startCandidate) < 10)
                 {
                     startCandidate = Utils.Clamp(endCandidate - 10, 0, replCandidates.Count);
@@ -358,61 +440,59 @@ namespace TerraAngel.Client.ClientWindows
 
                 for (int i = startCandidate; i < endCandidate; i++)
                 {
-                    string s = replCandidates[i].DisplayText;
+                    string s = GetCandidateText(i);
                     NVector2 textSize = ImGui.CalcTextSize(s);
                     if (textSize.X > maxSize)
-                        maxSize = textSize.X + style.ItemSpacing.Y;
+                        maxSize = textSize.X;
                     drawHeight += textSize.Y + style.ItemSpacing.Y;
                 }
-
+                maxSize += 18f + style.ItemSpacing.X * 3.75f;
                 NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + style.ItemSpacing.Y);
                 NVector2 size = new NVector2(maxSize + style.ItemSpacing.Y * 3f, drawHeight);
-
                 if (origin.X + size.X > io.DisplaySize.X)
                 {
                     origin.X -= (origin.X + size.X) - io.DisplaySize.X;
                 }
-
                 cadidatesFlipped = false;
-
                 if (origin.Y + size.Y > io.DisplaySize.Y)
                 {
                     cadidatesFlipped = true;
                     origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
                 }
-
                 drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
                 float offset = style.ItemSpacing.Y;
+
+
+
+                void RenderCandidate(int i)
+                {
+                    string s = GetCandidateText(i);
+                    Color iconColor = GetIconColor(i);
+                    Color col = Color.Gray;
+
+                    if (i == currentCandidate)
+                    {
+                        col = Color.White;
+                    }
+
+                    drawList.AddText(origin + new NVector2(style.ItemSpacing.X * 2f + 18f, offset), col.PackedValue, s);
+
+                    drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset + 4f), iconColor.PackedValue, GetCandidateIcon(i));
+
+                    offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+                }
                 if (cadidatesFlipped)
                 {
                     for (int i = endCandidate - 1; i > startCandidate - 1; i--)
                     {
-                        string s = replCandidates[i].DisplayText;
-                        if (i != currentCandidate)
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.Gray.PackedValue, s);
-                        }
-                        else
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.White.PackedValue, s);
-                        }
-                        offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+                        RenderCandidate(i);
                     }
                 }
                 else
                 {
                     for (int i = startCandidate; i < endCandidate; i++)
                     {
-                        string s = replCandidates[i].DisplayText;
-                        if (i != currentCandidate)
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.Gray.PackedValue, s);
-                        }
-                        else
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.White.PackedValue, s);
-                        }
-                        offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+                        RenderCandidate(i);
                     }
                 }
             }
@@ -473,10 +553,15 @@ namespace TerraAngel.Client.ClientWindows
                                 if (currentCandidate >= replCandidates.Count)
                                     currentCandidate = replCandidates.Count - 1;
 
-                                TextSpan s = replCandidates[currentCandidate].Span;
+                                //TextSpan s = replCandidates[currentCandidate].Span;
+                                //
+                                //data.DeleteChars(s.Start, s.End - s.Start);
+                                //data.InsertChars(s.Start, replCandidates[currentCandidate].DisplayText);
 
-                                data.DeleteChars(s.Start, s.End - s.Start);
-                                data.InsertChars(s.Start, replCandidates[currentCandidate].DisplayText);
+                                string s = Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen);
+                                data.DeleteChars(0, data.BufTextLen);
+                                data.InsertChars(0, CSharpREPL.GetChangedText(s, replCandidates[currentCandidate]));
+                                
                             }
                             CSharpREPL.GetCompletionAsync(Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen), data.CursorPos, (x) => replCandidates = x);
                         }

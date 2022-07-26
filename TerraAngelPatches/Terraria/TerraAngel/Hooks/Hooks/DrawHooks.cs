@@ -45,14 +45,6 @@ namespace TerraAngel.Hooks.Hooks
             if (ClientLoader.SetupRenderer)
             {
                 Main.blockInput = ImGui.GetIO().WantCaptureKeyboard;
-            
-                //if (Main.drawingPlayerChat && !Main.blockInput)
-                //{
-                //    if (ImGui.GetIO().KeyCtrl && Input.InputSystem.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.V))
-                //    {
-                //        Main.chatText += SDL2.SDL.SDL_GetClipboardText();
-                //    }
-                //}
             }
             orig(self, time);
             if (ClientLoader.SetupRenderer)
