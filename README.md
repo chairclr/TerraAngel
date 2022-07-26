@@ -52,7 +52,7 @@ Features for Terraria developers
 - Supports building x64 and x86
 
 <h3>
-Other usefult features
+Other useful features
 </h3>
 
 - Anti-Hurt/Godmode
