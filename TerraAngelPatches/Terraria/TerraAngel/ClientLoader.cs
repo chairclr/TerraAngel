@@ -64,6 +64,8 @@ namespace TerraAngel
             boxesCringe.OtherPlayerColor = Config.OtherBoxPlayerColor;
             boxesCringe.NPCColor = Config.NPCBoxColor;
             boxesCringe.ProjectileColor = Config.ProjectileBoxColor;
+
+
         }
 
         public static void SetupImGuiRenderer(Game main)

@@ -23,6 +23,9 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.Tags;
 using TerraAngel.Scripting;
+using TerraAngel.Utility;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -49,9 +52,8 @@ namespace TerraAngel.Client.ClientWindows
         public bool ScriptMode = false;
 
         private object ConsoleLock = new object();
+        public bool ScrollToBottom = false;
         private string consoleInput = "";
-        private bool ScrollToBottom = false;
-        private bool AutoScroll = true;
         private int historyPos = -1;
         private List<string> candidates = new List<string>();
 
@@ -60,6 +62,7 @@ namespace TerraAngel.Client.ClientWindows
         private int currentCandidate = 0;
         private bool consoleFocus = false;
         private object CandidateLock = new object();
+
 
         public ConsoleWindow()
         {
@@ -90,9 +93,9 @@ namespace TerraAngel.Client.ClientWindows
 
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1)); // Tighten spacing
             float wrapPos = ImGui.GetContentRegionAvail().X;
+            ImGui.PushTextWrapPos(wrapPos);
             lock (ConsoleLock)
             {
-                ImGui.PushTextWrapPos(wrapPos);
                 for (int i = 0; i < ConsoleItems.Count; i++)
                 {
                     ConsoleElement item = ConsoleItems[i];
@@ -111,21 +114,21 @@ namespace TerraAngel.Client.ClientWindows
                     }
                     else
                     {
-                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + 1f);
+                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + (i + 1 < ConsoleItems.Count ? 1f : 0f));
                     }
 
                     ImGui.PopStyleColor();
                 }
-                ImGui.PopTextWrapPos(); 
             }
+            ImGui.PopTextWrapPos();
+            ImGui.PopStyleVar();
+            if (ScrollToBottom || (ClientLoader.Config.ConsoleAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())))
+                ImGui.SetScrollY(ImGui.GetScrollMaxY() * 2);
 
-            if (ScrollToBottom || (AutoScroll && ImGui.GetScrollY() >= ImGui.GetScrollMaxY()))
-                ImGui.SetScrollHereY(1.0f);
+            ImGui.EndChild();
 
             ScrollToBottom = false;
 
-            ImGui.PopStyleVar();
-            ImGui.EndChild();
 
             bool reclaim_focus = false;
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
@@ -141,6 +144,8 @@ namespace TerraAngel.Client.ClientWindows
                         WriteLine(">> " + consoleInput, new Color(0, 255, 0, 255));
                         ExecuteAndParseCommand(consoleInput);
                         consoleInput = "";
+
+                        if (ClientLoader.Config.ConsoleAutoScroll) ScrollToBottom = true;
                     }
 
                     reclaim_focus = true;
@@ -158,7 +163,6 @@ namespace TerraAngel.Client.ClientWindows
 
             lock (CandidateLock)
             {
-                // 🤓 code ahead
                 if (consoleFocus)
                 {
                     if (ScriptMode)
@@ -247,15 +251,16 @@ namespace TerraAngel.Client.ClientWindows
                 }
             }
         }
-        public void AddCommand(string name, Action<CmdStr> action, string description = "No Description Given")
+        public void AddCommand(string name, Action<CmdStr> action, string description = "No Description Given", Func<CmdStr, int, List<string>>? getCandidates = null)
         {
             if (!ConsoleCommands.ContainsKey(name))
-                ConsoleCommands.Add(name, new ConsoleCommand(name, action, description));
+                ConsoleCommands.Add(name, new ConsoleCommand(name, action, description, getCandidates));
             else
             {
                 ConsoleCommand command = ConsoleCommands[name];
                 command.CommandAction = action;
                 command.CommandDescription = description;
+                command.GetCandidates = getCandidates;
             }
         }
         public void ClearConsole()
@@ -691,7 +696,7 @@ namespace TerraAngel.Client.ClientWindows
             else
             {
                 candidates.Clear();
-                if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1) && !ScriptMode)
+                if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1))
                 {
                     string s = consoleInput.Trim();
                     int firstSpace = s.IndexOf(' ');
@@ -704,6 +709,16 @@ namespace TerraAngel.Client.ClientWindows
                         {
                             candidates.Add(command.CommandName);
                         }
+                    }
+                }
+                else
+                {
+                    CmdStr command = new CmdStr(GetText());
+                    if (ConsoleCommands.ContainsKey(command.Command))
+                    {
+                        ConsoleCommand aacmd = ConsoleCommands[command.Command];
+
+                        candidates = aacmd.GetCandidates?.Invoke(command, data.CursorPos) ?? new List<string>();
                     }
                 }
             }
@@ -734,6 +749,16 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 this.FullMessage = toParse;
             }
+
+            public string FullArgsFrom(int index)
+            {
+                string s = "";
+                for (int i = index; i < Args.Count; i++)
+                {
+                    s += Args[i] + (i + 1 < Args.Count ? " " : "");
+                }
+                return s;
+            }
         }
         public class ConsoleElement
         {
@@ -753,12 +778,14 @@ namespace TerraAngel.Client.ClientWindows
             public string CommandName;
             public string CommandDescription;
             public Action<CmdStr> CommandAction;
+            public Func<CmdStr, int, List<string>>? GetCandidates;
 
-            public ConsoleCommand(string name, Action<CmdStr> function, string description = "No Description Given")
+            public ConsoleCommand(string name, Action<CmdStr> function, string description = "No Description Given", Func<CmdStr, int, List<string>>? getCandidates = null)
             {
                 this.CommandName = name;
                 this.CommandAction = function;
                 this.CommandDescription = description;
+                this.GetCandidates = getCandidates;
             }
         }
 
@@ -841,5 +868,43 @@ namespace TerraAngel.Client.ClientWindows
                         console.WriteLine("Exiting C# REPL mode");
                 });
         }
+
+        public static bool TryConvertValue(Type targetType, string stringValue, out object? convertedValue)
+        {
+            if (targetType == typeof(string))
+            {
+                convertedValue = Convert.ChangeType(stringValue, targetType);
+                return true;
+            }
+            if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                if (string.IsNullOrEmpty(stringValue))
+                {
+                    convertedValue = null;
+                    return true;
+                }
+                targetType = new NullableConverter(targetType).UnderlyingType;
+            }
+
+            Type[] argTypes = { typeof(string), targetType.MakeByRefType() };
+            MethodInfo? tryParseMethodInfo = targetType.GetMethod("TryParse", argTypes);
+            if (tryParseMethodInfo == null)
+            {
+                convertedValue = null;
+                return false;
+            }
+
+            object?[] args = { stringValue, null };
+            bool successfulParse = (bool)tryParseMethodInfo?.Invoke(null, args);
+            if (!successfulParse)
+            {
+                convertedValue = null;
+                return false;
+            }
+
+            convertedValue = args[1];
+            return true;
+        }
+
     }
 }

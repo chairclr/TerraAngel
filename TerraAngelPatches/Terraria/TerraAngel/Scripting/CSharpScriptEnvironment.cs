@@ -15,6 +15,8 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.CodeAnalysis.CSharp;
 using TerraAngel;
+using MonoMod;
+using MonoMod.RuntimeDetour;
 
 namespace TerraAngel.Scripting
 {
@@ -22,24 +24,41 @@ namespace TerraAngel.Scripting
     {
         private static readonly string[] defaultUsings = new string[]
         {
+            "ImGuiNET",
+            "Microsoft.Xna.Framework",
+            "Microsoft.Xna.Framework.Graphics",
+            "Microsoft.Xna.Framework.Input",
+            "MonoMod",
+            "MonoMod.RuntimeDetour",
             "System",
             "System.IO",
             "System.Collections.Generic",
-            "System.Console",
             "System.Diagnostics",
-            "System.Dynamic",
             "System.Linq",
             "System.Linq.Expressions",
-            "System.Net.Http",
             "System.Text",
+            "System.Threading",
             "System.Threading.Tasks",
             "Terraria",
+            "Terraria.DataStructures",
+            "Terraria.ID",
             "TerraAngel",
             "TerraAngel.Client",
             "TerraAngel.Client.ClientWindows",
             "TerraAngel.Client.Config",
             "TerraAngel.Cheat",
-            "Microsoft.Xna.Framework",
+            "TerraAngel.Cheat.Cringes",
+            "TerraAngel.Graphics",
+            "TerraAngel.Hooks",
+            "TerraAngel.Hooks.Hooks",
+            "TerraAngel.ID",
+            "TerraAngel.Input",
+            "TerraAngel.Net",
+            "TerraAngel.Plugin",
+            "TerraAngel.Scripting",
+            "TerraAngel.UI",
+            "TerraAngel.Utility",
+            "TerraAngel.WorldEdits",
         };
 
         public static IEnumerable<Assembly> DefaultAssemblies => AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location));

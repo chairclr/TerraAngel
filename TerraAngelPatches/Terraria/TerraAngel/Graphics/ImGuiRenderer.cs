@@ -16,46 +16,6 @@ using System.Reflection;
 
 namespace TerraAngel.Graphics
 {
-    //public class TerraRenderer
-    //{
-
-    //    public static TerraImGuiRenderer ImGuiRenderer;
-    //    public static void Init(Game game)
-    //    {
-    //        ImGuiRenderer = new TerraImGuiRenderer(game);
-    //        ImGuiRenderer.RebuildFontAtlas();
-
-    //        unsafe
-    //        {
-    //            TextInputEXT.TextInput += (c) =>
-    //            {
-    //                ImGuiIOPtr io = ImGui.GetIO();
-    //                if (io.NativePtr != (ImGuiIO*)IntPtr.Zero)
-    //                {
-    //                    io.AddInputCharacter(c);
-    //                }
-    //            };
-    //        }
-    //    }
-
-    //    private static Queue<Action> actionQueue = new Queue<Action>();
-    //    public static void QueueTaskForNextPredraw(Action fun)
-    //    {
-    //        actionQueue.Enqueue(fun);
-    //    }
-
-    //    public static void Draw(GameTime gameTime)
-    //    {
-    //        while (actionQueue.Count > 0)
-    //            actionQueue.Dequeue()?.Invoke();
-
-    //        ImGuiRenderer.BeforeLayout(gameTime);
-
-
-
-    //        ImGuiRenderer.AfterLayout();
-    //    }
-    //}
     public static class DrawVertDeclaration
     {
         public static readonly VertexDeclaration Declaration;

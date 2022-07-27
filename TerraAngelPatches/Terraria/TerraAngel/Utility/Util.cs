@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -163,6 +164,14 @@ namespace TerraAngel.Utility
             }
         }
 
+        public static object GetDefault(Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+            return null;
+        }
     }
     public static class VectorExtensions
     {
@@ -205,4 +214,77 @@ namespace TerraAngel.Utility
             return Util.ColorDistance(x, y);
         }
     }
+
+    public class ValueStore : DynamicObject
+    {
+        public Dictionary<string, object?> Values = new Dictionary<string, object?>();
+        public override bool TryGetMember(GetMemberBinder binder, out object? result)
+        {
+            string name = binder.Name;
+
+            if (Values.ContainsKey(name))
+            {
+                result = Values[name];
+            }
+            else
+            {
+                result = Util.GetDefault(binder.ReturnType);
+            }
+
+
+            return true;
+        }
+        public override bool TrySetMember(SetMemberBinder binder, object? value)
+        {
+            string name = binder.Name;
+
+            if (Values.ContainsKey(name))
+            {
+                if (value?.GetType() == Values[name]?.GetType())
+                {
+                    Values[name] = value;
+                }
+                else
+                {
+                    throw new ArgumentException($"Type missmatch, expected '{Values[name]?.GetType().FullName}' got '{value?.GetType().FullName}'");
+
+                }
+            }
+            else
+            {
+                Values.Add(name, value);
+            }
+
+            return true;
+        }
+        public object? this[string name]
+        {
+            get 
+            {
+                Values.TryGetValue(name, out object? value);
+
+                return value;
+            }
+            set 
+            {
+                if (Values.ContainsKey(name))
+                {
+                    if (value?.GetType() == Values[name]?.GetType())
+                    {
+                        Values[name] = value;
+                    }
+                    else
+                    {
+                        throw new ArgumentException($"Type missmatch, expected '{Values[name]?.GetType().FullName}' got '{value?.GetType().FullName}'");
+
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException($"'{name}' does not exist");
+                }
+            }
+        }
+    }
+
 }

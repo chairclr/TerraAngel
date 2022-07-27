@@ -76,6 +76,9 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Disable Nebula Packet")]
         public bool DisableNebulaLagPacket = true;
 
+        [UIConfigElement("Console Auto Scroll")]
+        public bool ConsoleAutoScroll = true;
+
         [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
 
@@ -142,8 +145,13 @@ namespace TerraAngel.Client.Config
         {
             List<UIElement> elements = new List<UIElement>();
 
-            foreach (FieldInfo field in typeof(ClientConfig).GetFields(BindingFlags.Public | BindingFlags.Instance))
+            List<FieldInfo> fields = typeof(ClientConfig).GetFields(BindingFlags.Public | BindingFlags.Instance).ToList();
+
+            fields.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+            for (int i = 0; i < fields.Count; i++)
             {
+                FieldInfo field = fields[i];
                 UIConfigElementAttribute? attribute = field.GetCustomAttribute<UIConfigElementAttribute>();
                 if (attribute != null)
                 {
@@ -159,6 +167,7 @@ namespace TerraAngel.Client.Config
                     }
                 }
             }
+
 
             return elements;
         }

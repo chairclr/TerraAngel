@@ -14,6 +14,7 @@ using TerraAngel.Cheat;
 using TerraAngel.Graphics;
 using TerraAngel.WorldEdits;
 using TerraAngel;
+using TerraAngel.Cheat.Cringes;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -229,6 +230,14 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 
             }
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            // Optimization since WorldGen.TileFrame is called so fucking often
+            Hooks.Hooks.MiscHooks.framingDisabled = CringeManager.GetCringe<DisableFramingCringe>().Enabled;
         }
     }
 }

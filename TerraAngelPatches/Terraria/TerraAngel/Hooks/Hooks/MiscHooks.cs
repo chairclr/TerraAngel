@@ -13,6 +13,7 @@ using System.IO;
 using TerraAngel;
 using Terraria.Localization;
 using System.Diagnostics;
+using TerraAngel.Cheat.Cringes;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -29,6 +30,7 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen(NetMessage.DecompressTileBlock_Inner, DecompressTileBlock_InnerHook);
             HookUtil.HookGen(NetMessage.SendData, SendDataHook);
             HookUtil.HookGen<MessageBuffer>("GetData", GetDataHook);
+            HookUtil.HookGen(WorldGen.TileFrame, TileFrameHook);
         }
         public static void set_IsMouseVisibleHook(Action<Game, bool> orig, Game self, bool visible)
         {
@@ -86,6 +88,16 @@ namespace TerraAngel.Hooks.Hooks
                 Client.ClientWindows.NetMessageWindow.AddPacket(new Client.ClientWindows.NetPacketInfo(messageType, false, 0, 0, 0, 0, 0, 0, 0));
             }
         }
+
+        public static bool framingDisabled = false;
+        public static void TileFrameHook(Action<int, int, bool, bool> orig, int i, int j, bool resetFrame = false, bool noBreak = false)
+        {
+            if (framingDisabled)
+                return;
+
+            orig(i, j, resetFrame, noBreak);
+        }
+
         //public static Vector2 TileCollisionHook(Func<Vector2, Vector2, int, int, bool, bool, int, Vector2> orig, Vector2 Position, Vector2 Velocity, int Width, int Height, bool fallThrough = false, bool fall2 = false, int gravDir = 1)
         //{
         //    return orig(Position, Velocity, Width, Height, fallThrough, fall2, gravDir);
