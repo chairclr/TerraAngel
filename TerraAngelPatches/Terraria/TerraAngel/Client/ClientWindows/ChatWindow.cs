@@ -195,10 +195,11 @@ namespace TerraAngel.Client.ClientWindows
                 ImGui.EndChild();
             }
 
+            bool chatBoxFocus = false;
             if (IsChatting)
             {
                 ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
-                ImGui.InputText("##consoleInput", ref ChatText, 512);
+                unsafe { ImGui.InputText("##consoleInput", ref ChatText, 512, ImGuiInputTextFlags.CallbackAlways, (x) => { chatBoxFocus = true; return 0; }); }
                 ImGui.PopItemWidth();
 
                 if (justOpened)
@@ -215,7 +216,7 @@ namespace TerraAngel.Client.ClientWindows
 
             if (IsChatting)
             {
-                if (!justOpened && Input.InputSystem.IsKeyPressed(Keys.Enter))
+                if (!justOpened && chatBoxFocus && Input.InputSystem.IsKeyPressed(Keys.Enter))
                 {
                     ClosePlayerChat();
                     if (!string.IsNullOrEmpty(ChatText))

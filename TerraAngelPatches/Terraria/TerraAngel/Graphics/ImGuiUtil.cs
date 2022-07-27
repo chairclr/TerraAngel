@@ -313,13 +313,44 @@ namespace TerraAngel.Graphics
             bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
             ImGui.PopID();
 
-            ImGui.SetCursorScreenPos(ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing);
+            NVector2 min = ImGui.GetItemRectMin();
+            NVector2 spacing = ImGui.GetStyle().ItemSpacing;
 
-            ImGui.PushTextWrapPos(wrapWidth);
-            ImGui.TextWrapped(text);
-            ImGui.PopTextWrapPos();
+            NVector2 pos = min + spacing;
+
+            ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
+
+            windowDrawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
 
             return v;
+        }
+
+        public static unsafe void AddText(this ImDrawListPtr drawList, ImFontPtr font, float fontSize, NVector2 pos, string text, uint color, float wrapWidth)
+        {
+            int textByteCount = Encoding.UTF8.GetByteCount(text);
+            byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
+            fixed (char* textStartPtr = text)
+            {
+                int native_text_begin_offset = Encoding.UTF8.GetBytes(textStartPtr, text.Length, nativeTextPtr, textByteCount);
+                nativeTextPtr[native_text_begin_offset] = 0;
+            }
+            byte* native_text_end = null;
+
+            ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, font.NativePtr, fontSize, pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
+        }
+
+        public static unsafe void AddText(this ImDrawListPtr drawList, NVector2 pos, string text, uint color, float wrapWidth)
+        {
+            int textByteCount = Encoding.UTF8.GetByteCount(text);
+            byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
+            fixed (char* textStartPtr = text)
+            {
+                int native_text_begin_offset = Encoding.UTF8.GetBytes(textStartPtr, text.Length, nativeTextPtr, textByteCount);
+                nativeTextPtr[native_text_begin_offset] = 0;
+            }
+            byte* native_text_end = null;
+
+            ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
         }
 
         public static bool WrappedSelectableWithTextBorder(string text, float wrapWidth, Color borderColor)
@@ -333,39 +364,17 @@ namespace TerraAngel.Graphics
             NVector2 min = ImGui.GetItemRectMin();
             NVector2 spacing = ImGui.GetStyle().ItemSpacing;
 
-            ImGui.PushTextWrapPos(wrapWidth);
-            {
-                NVector2 pos = min + spacing;
+            NVector2 pos = min + spacing;
 
-                ImGui.PushStyleColor(ImGuiCol.Text, borderColor.PackedValue);
-                pos.X -= 1;
-                ImGui.PushTextWrapPos(wrapWidth - 1);
-                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
-                ImGui.PopTextWrapPos();
+            ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
 
-                pos.X += 2;
-                ImGui.PushTextWrapPos(wrapWidth + 1);
-                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
-                ImGui.PopTextWrapPos();
 
-                pos.X -= 1;
-                pos.Y -= 1;
-                ImGui.PushTextWrapPos(wrapWidth - 1);
-                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
-                ImGui.PopTextWrapPos();
+            windowDrawList.AddText(pos - NVector2.UnitX, text, borderColor.PackedValue, wrapWidth);
+            windowDrawList.AddText(pos + NVector2.UnitX, text, borderColor.PackedValue, wrapWidth);
+            windowDrawList.AddText(pos - NVector2.UnitY, text, borderColor.PackedValue, wrapWidth);
+            windowDrawList.AddText(pos + NVector2.UnitY, text, borderColor.PackedValue, wrapWidth);
 
-                pos.Y += 2f;
-                ImGui.PushTextWrapPos(wrapWidth);
-                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
-                ImGui.PopStyleColor();
-                ImGui.PopTextWrapPos();
-
-                ImGui.PushTextWrapPos(wrapWidth);
-                pos = min + spacing;
-                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
-                ImGui.PopTextWrapPos();
-            }
-
+            windowDrawList.AddText(pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
             return v;
         }
     }
