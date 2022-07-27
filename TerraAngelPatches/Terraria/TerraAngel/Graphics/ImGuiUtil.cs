@@ -321,5 +321,52 @@ namespace TerraAngel.Graphics
 
             return v;
         }
+
+        public static bool WrappedSelectableWithTextBorder(string text, float wrapWidth, Color borderColor)
+        {
+            NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+
+            ImGui.PushID(text);
+            bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
+            ImGui.PopID();
+
+            NVector2 min = ImGui.GetItemRectMin();
+            NVector2 spacing = ImGui.GetStyle().ItemSpacing;
+
+            ImGui.PushTextWrapPos(wrapWidth);
+            {
+                NVector2 pos = min + spacing;
+
+                ImGui.PushStyleColor(ImGuiCol.Text, borderColor.PackedValue);
+                pos.X -= 1;
+                ImGui.PushTextWrapPos(wrapWidth - 1);
+                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
+                ImGui.PopTextWrapPos();
+
+                pos.X += 2;
+                ImGui.PushTextWrapPos(wrapWidth + 1);
+                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
+                ImGui.PopTextWrapPos();
+
+                pos.X -= 1;
+                pos.Y -= 1;
+                ImGui.PushTextWrapPos(wrapWidth - 1);
+                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
+                ImGui.PopTextWrapPos();
+
+                pos.Y += 2f;
+                ImGui.PushTextWrapPos(wrapWidth);
+                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
+                ImGui.PopStyleColor();
+                ImGui.PopTextWrapPos();
+
+                ImGui.PushTextWrapPos(wrapWidth);
+                pos = min + spacing;
+                ImGui.SetCursorScreenPos(pos); ImGui.TextWrapped(text);
+                ImGui.PopTextWrapPos();
+            }
+
+            return v;
+        }
     }
 }

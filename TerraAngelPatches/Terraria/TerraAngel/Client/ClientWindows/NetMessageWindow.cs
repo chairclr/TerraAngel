@@ -22,13 +22,14 @@ namespace TerraAngel.Client.ClientWindows
 {
     public class NetMessageWindow : ClientWindow
     {
-        public override bool IsToggleable => false;
+        public override bool IsToggleable => true;
 
         public override bool DefaultEnabled => false;
 
         public override string Title => "Net Debugger";
 
         public override Keys ToggleKey => ClientLoader.Config.ToggleNetDebugger;
+        public override bool IsPartOfGlobalUI => false;
 
 
         private Dictionary<int, FieldInfo> messageIDFields = typeof(MessageID).GetFields().Where(x =>
@@ -294,8 +295,6 @@ namespace TerraAngel.Client.ClientWindows
             {
                 NetMessage.SendData(messageIdToSend, -1, -1, NetworkText.FromLiteral(networkText), number1, number2, number3, number4, number5, number6, number7);
             }
-            if (Input.InputSystem.IsKeyPressed(ToggleKey))
-                IsEnabled = !IsEnabled;
         }
 
         private string GetSendCallAsString(int type, string networkText, int number1, float number2, float number3, float number4, int number5, int number6, int number7, bool showNumbersInId = false)

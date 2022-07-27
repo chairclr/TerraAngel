@@ -17,9 +17,9 @@ namespace TerraAngel.Client
         private static Dictionary<float, ImFontPtr> TerrariaFonts = new Dictionary<float, ImFontPtr>();
         private static Dictionary<float, ImFontPtr> MonospaceFonts = new Dictionary<float, ImFontPtr>();
 
-        public static readonly float[] DefaultSizes = new float[] { 12, 16, 18, 20, 22, 24, 32 };
+        public static readonly float[] DefaultSizes = new float[] { 16, 18, 20, 22, 24 };
 
-        private static string TerrariaFontName = "TerrariaFont.TTF";
+        private static string TerrariaFontName = "TerrariaFont.ttf";
         private static string MonoFontName = "MonoFont.ttf";
 
         public static void LoadFonts(ImGuiIOPtr io)
@@ -28,6 +28,7 @@ namespace TerraAngel.Client
             {
                 LoadMonospaceFont(DefaultSizes[i], false);
             }
+			LoadTerrariaFont(20f);
         }
 
         public static void LoadTerrariaFont(float size, bool withoutSymbols = false)
@@ -35,7 +36,7 @@ namespace TerraAngel.Client
             ImGuiIOPtr io = ImGui.GetIO();
             TerrariaFonts.Add(size, io.Fonts.AddFontFromFileTTF(TerrariaFontName, size));
 
-            if (!withoutSymbols)
+			if (!withoutSymbols)
                 MergeSymbolFont(size);
         }
         public static void LoadMonospaceFont(float size, bool withoutSymbols = false)
@@ -61,6 +62,8 @@ namespace TerraAngel.Client
                 ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
 
                 config.MergeMode = true;
+
+				config.GlyphOffset.Y += 5f;
 
                 io.Fonts.AddFontFromFileTTF(IconFont.FontIconFileName, size, config, rangeHandle.AddrOfPinnedObject());
 

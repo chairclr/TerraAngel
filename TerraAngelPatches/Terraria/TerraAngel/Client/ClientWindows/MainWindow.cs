@@ -27,6 +27,7 @@ namespace TerraAngel.Client.ClientWindows
         public override bool IsToggleable => true;
 
         public override string Title => "Main Window";
+        public override bool IsPartOfGlobalUI => true;
 
         public override void Draw(ImGuiIOPtr io)
         {
@@ -199,6 +200,7 @@ namespace TerraAngel.Client.ClientWindows
                             }
                         }
                     }
+
                     ImGui.EndTabItem();
                 }
             }
@@ -226,6 +228,7 @@ namespace TerraAngel.Client.ClientWindows
                         framesToShowUUIDFor--;
                         ImGui.Text(Main.clientUUID);
                     }
+
                     ImGui.EndTabItem();
                 }
                 

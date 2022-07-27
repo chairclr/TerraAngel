@@ -107,6 +107,10 @@ namespace TerraAngel.Client.Config
         public Color NPCNetOffsetBoxColor = new Color(0f, 0f, 0f);
         public Color ProjectileBoxColor = new Color(1f, 0f, 1f);
 
+        public float ChatWindowTransperencyActive = 0.5f;
+        public float ChatWindowTransperencyInactive = 0.0f;
+        public bool ChatAutoScroll = true;
+        public int framesForMessageToBeVisible = 600;
 
         [JsonIgnore]
         public List<string> PluginsToEnable

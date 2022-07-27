@@ -29,6 +29,7 @@ namespace TerraAngel.Client.ClientWindows
         public override bool IsEnabled { get => ClientLoader.Config.ShowStatsWindow; }
 
         public override string Title => "Stat Window";
+        public override bool IsPartOfGlobalUI => false;
 
         private static bool HooksGenerated = false;
 

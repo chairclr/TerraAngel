@@ -12,6 +12,8 @@ namespace TerraAngel.Client
 
         public virtual bool IsToggleable => true;
 
+        public virtual bool IsPartOfGlobalUI => true;
+
         public virtual string Title => GetType().Name;
 
         public virtual Keys ToggleKey => Keys.None;

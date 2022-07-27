@@ -129,7 +129,7 @@ namespace TerraAngel.Client.ClientWindows
             ScrollToBottom = false;
 
 
-            bool reclaim_focus = false;
+            bool reclaimFocus = false;
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
             NVector2 minInput;
             NVector2 maxInput;
@@ -147,14 +147,14 @@ namespace TerraAngel.Client.ClientWindows
                         if (ClientLoader.Config.ConsoleAutoScroll) ScrollToBottom = true;
                     }
 
-                    reclaim_focus = true;
+                    reclaimFocus = true;
                 }
                  minInput = ImGui.GetItemRectMin();
                  maxInput = ImGui.GetItemRectMax();
             }
 
             ImGui.SetItemDefaultFocus();
-            if (reclaim_focus)
+            if (reclaimFocus)
                 ImGui.SetKeyboardFocusHere(-1);
 
             ImGui.End();
@@ -396,6 +396,8 @@ namespace TerraAngel.Client.ClientWindows
                                 return ClientAssets.IconFont.SymbolEnumMember;
                             case WellKnownTags.Keyword:
                                 return ClientAssets.IconFont.SymbolKeyword;
+                            case WellKnownTags.Local:
+                                return ClientAssets.IconFont.SymbolVariable;
 
                         }
                     }
@@ -410,6 +412,7 @@ namespace TerraAngel.Client.ClientWindows
                         {
                             case WellKnownTags.Field:
                             case WellKnownTags.Interface:
+                            case WellKnownTags.Local:
                                 return new Color(0x00, 0x5d, 0xba);
                             case WellKnownTags.Method:
                             case WellKnownTags.ExtensionMethod:
@@ -490,7 +493,7 @@ namespace TerraAngel.Client.ClientWindows
 
                     drawList.AddText(origin + new NVector2(style.ItemSpacing.X * 2f + 18f, offset), col.PackedValue, s);
 
-                    drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset + 4f), iconColor.PackedValue, GetCandidateIcon(i));
+                    drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), iconColor.PackedValue, GetCandidateIcon(i));
 
                     offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
                 }

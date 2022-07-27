@@ -55,6 +55,7 @@ Features for Terraria developers
 Other useful features
 </h3>
 
+- Complete re-write of the chat UI
 - Anti-Hurt/Godmode
 - Fullbright
 - Noclip
@@ -74,7 +75,6 @@ Other useful features
 Planned features
 </h2>
 
-- Re-write of the chat UI
 - Re-write of the multiplayer UI
 - Aimbot/Enemy prediction
 - World edit features for cut-copy-paste

@@ -16,6 +16,8 @@ using TerraAngel.Cheat;
 using System.Threading.Tasks;
 using System.Linq;
 using TerraAngel;
+using System.Runtime.InteropServices;
+using System;
 
 namespace TerraAngel.Client
 {
@@ -49,13 +51,14 @@ namespace TerraAngel.Client
 
         public void Init()
         {
-            base.RebuildFontAtlas();
+            this.RebuildFontAtlas();
             AddWindow(new DrawWindow());
             AddWindow(new MainWindow());
             ConsoleSetup.SetConsoleInitialCommands(ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow()));
             AddWindow(new StatsWindow());
             AddWindow(new NetMessageWindow());
             AddWindow(new PlayerInspectorWindow());
+            AddWindow(ClientLoader.ChatWindow = new ChatWindow());
 
 
             Task.Run(() => ImGuiUtil.ItemLoaderThread(this));
@@ -72,7 +75,6 @@ namespace TerraAngel.Client
                     }
                 };
             }
-
         }
 
         public void Render(GameTime time)
@@ -125,7 +127,7 @@ namespace TerraAngel.Client
             for (int i = 0; i < ClientWindows.Count; i++)
             {
                 ClientWindow window = ClientWindows[i];
-                if ((!window.IsToggleable || GlobalUIState) && window.IsEnabled)
+                if ((!window.IsPartOfGlobalUI || GlobalUIState) && window.IsEnabled)
                 {
                     window.Draw(io);
                 }

@@ -22,6 +22,7 @@ namespace TerraAngel
         public static bool SetupRenderer = false;
         public static ClientRenderer? MainRenderer;
         internal static ConsoleWindow? ConsoleWindow;
+        internal static ChatWindow? ChatWindow;
         public static ConfigUI ConfigUI = new ConfigUI();
         public static PluginUI PluginUI = new PluginUI();
         public static ResolutionUI ResolutionUI = new ResolutionUI();
@@ -85,6 +86,12 @@ namespace TerraAngel
             public static void WriteError(string message) => ConsoleWindow?.WriteError(message);
             public static void AddCommand(string name, Action<ConsoleWindow.CmdStr> action, string description = "No Description Given") => ConsoleWindow?.AddCommand(name, action, description);
             public static void ClearConsole() => ConsoleWindow?.ClearConsole();
+        }
+
+        public static class Chat
+        {
+            public static void WriteLine(string message) => ChatWindow?.WriteLine(message);
+            public static void WriteLine(string message, Color color) => ChatWindow?.WriteLine(message, color);
         }
     }
 }

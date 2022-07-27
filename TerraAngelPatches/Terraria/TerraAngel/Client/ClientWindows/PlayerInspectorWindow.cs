@@ -23,6 +23,8 @@ namespace TerraAngel.Client.ClientWindows
         public override bool DefaultEnabled => false;
         public override bool IsEnabled => selectedPlayer > 0;
         public override bool IsToggleable => false;
+        public override bool IsPartOfGlobalUI => false;
+
 
         private int selectedPlayer = -1;
 

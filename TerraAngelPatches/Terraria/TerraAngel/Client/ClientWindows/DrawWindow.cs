@@ -22,6 +22,7 @@ namespace TerraAngel.Client.ClientWindows
         public override bool IsToggleable => false;
         public override bool DefaultEnabled => true;
         public override bool IsEnabled { get => true; }
+        public override bool IsPartOfGlobalUI => false;
 
 
 

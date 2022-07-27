@@ -220,27 +220,21 @@ namespace TerraAngel.Graphics
 
         public virtual unsafe void RebuildFontAtlas()
         {
-            // Get font texture from ImGui
             ImGuiIOPtr io = ImGui.GetIO();
             io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
 
-            // Copy the data to a managed array
             byte[] pixels = new byte[width * height * bytesPerPixel];
             unsafe { Marshal.Copy(new IntPtr(pixelData), pixels, 0, pixels.Length); }
 
-            // Create and register the texture as an XNA texture
             Texture2D tex2d = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
             tex2d.SetData(pixels);
 
-            // Should a texture already have been build previously, unbind it first so it can be deallocated
             if (FontTextureId.HasValue) UnbindTexture(FontTextureId.Value);
 
-            // Bind the new texture to an ImGui-friendly id
             FontTextureId = BindTexture(tex2d);
 
-            // Let ImGui know where to find the texture
             io.Fonts.SetTexID(FontTextureId.Value);
-            io.Fonts.ClearTexData(); // Clears CPU side texture data
+            io.Fonts.ClearTexData();
         }
         protected virtual BasicEffect UpdateEffect(Texture2D texture, IntPtr specialEffect)
         {
