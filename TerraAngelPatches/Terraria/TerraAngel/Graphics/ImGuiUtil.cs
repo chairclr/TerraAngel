@@ -15,6 +15,8 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using TerraAngel.Utility;
 using Terraria.GameContent.UI;
+using NVector2 = System.Numerics.Vector2;
+
 
 namespace TerraAngel.Graphics
 {
@@ -301,6 +303,23 @@ namespace TerraAngel.Graphics
                     }
                 }
             }
+        }
+
+        public static bool WrappedSelectable(string text, float wrapWidth)
+        {
+            NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+
+            ImGui.PushID(text);
+            bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
+            ImGui.PopID();
+
+            ImGui.SetCursorScreenPos(ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing);
+
+            ImGui.PushTextWrapPos(wrapWidth);
+            ImGui.TextWrapped(text);
+            ImGui.PopTextWrapPos();
+
+            return v;
         }
     }
 }

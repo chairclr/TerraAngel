@@ -114,9 +114,11 @@ namespace TerraAngel.Scripting
                 {
                     if (scriptState is null) throw new InvalidOperationException("Script state not intialized. Call CSharpScriptEnvironment.Warmup");
 
+                    object? returnValue = null;
                     try
                     {
                         scriptState = await scriptState.ContinueWithAsync(code, catchException: (x) => true);
+                        returnValue = scriptState.ReturnValue;
                         SubmitCodeToDocument(code);
                     }
                     catch (CompilationErrorException cex)
@@ -129,7 +131,7 @@ namespace TerraAngel.Scripting
                     }
 
                     if (scriptState.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
-                    return scriptState.ReturnValue;
+                    return returnValue;
                 });
         }
         public object? Eval(string code)

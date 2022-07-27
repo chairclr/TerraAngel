@@ -26,6 +26,7 @@ using TerraAngel.Scripting;
 using TerraAngel.Utility;
 using System.Reflection;
 using System.ComponentModel;
+using TerraAngel.Graphics;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -92,8 +93,7 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.BeginChild("ConsoleScrollingRegion", new NVector2(0, -footerHeight), false, ImGuiWindowFlags.HorizontalScrollbar);
 
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1)); // Tighten spacing
-            float wrapPos = ImGui.GetContentRegionAvail().X;
-            ImGui.PushTextWrapPos(wrapPos);
+            float wrapWidth = ImGui.GetContentRegionAvail().X;
             lock (ConsoleLock)
             {
                 for (int i = 0; i < ConsoleItems.Count; i++)
@@ -104,10 +104,10 @@ namespace TerraAngel.Client.ClientWindows
                     if (item.countAbove > 0) text = $"{item.text} ({item.countAbove})";
                     else text = item.text;
 
-                    NVector2 textSize = ImGui.CalcTextSize(text, wrapPos);
+                    NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
                     if (ImGui.IsRectVisible(textSize))
                     {
-                        if (ImGui.Selectable(text))
+                        if (ImGuiUtil.WrappedSelectable(text, wrapWidth))
                         {
                             ImGui.SetClipboardText(item.text);
                         }
@@ -120,7 +120,6 @@ namespace TerraAngel.Client.ClientWindows
                     ImGui.PopStyleColor();
                 }
             }
-            ImGui.PopTextWrapPos();
             ImGui.PopStyleVar();
             if (ScrollToBottom || (ClientLoader.Config.ConsoleAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())))
                 ImGui.SetScrollY(ImGui.GetScrollMaxY() * 2);
@@ -235,7 +234,8 @@ namespace TerraAngel.Client.ClientWindows
                     ClearConsole();
                     return;
                 }
-                WriteLine(Script.FormatObject(Script.Eval(consoleInput)));
+                object? expressionValue = Script.Eval(consoleInput);
+                if (expressionValue is not null) WriteLine(Script.FormatObject(expressionValue));
             }
             else
             {
