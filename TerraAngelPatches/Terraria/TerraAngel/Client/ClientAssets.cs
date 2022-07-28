@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TerraAngel.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ImGuiNET;
@@ -21,15 +22,17 @@ namespace TerraAngel.Client
 
         private static string TerrariaFontName = "TerrariaFont.ttf";
         private static string MonoFontName = "MonoFont.ttf";
+        private static string RussianFontName = "RussianGlyphFont.ttf";
 
-        public static void LoadFonts(ImGuiIOPtr io)
+		public static void LoadFonts(ImGuiIOPtr io)
         {
             for (int i = 0; i < DefaultSizes.Length; i++)
             {
                 LoadMonospaceFont(DefaultSizes[i], false);
             }
 			LoadTerrariaFont(22f);
-        }
+			LoadTerrariaFont(18f);
+		}
 
         public static void LoadTerrariaFont(float size, bool withoutSymbols = false)
         {
@@ -45,47 +48,55 @@ namespace TerraAngel.Client
 
 				ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
 
-
-				TerrariaFonts.Add(size, io.Fonts.AddFontFromFileTTF(TerrariaFontName, size, config, rangeHandle.AddrOfPinnedObject()));
+				ImFontPtr font = io.Fonts.AddFontFromFileTTF(TerrariaFontName, size, config, rangeHandle.AddrOfPinnedObject());
+				if (rangeHandle.IsAllocated) rangeHandle.Free();
+				config.Destroy();
+				TerrariaFonts.Add(size, font);
 			}
 
+			MergeFont(size, RussianFontName, 0x0400, 0x04FF);
+
 			if (!withoutSymbols)
-                MergeSymbolFont(size);
-        }
+			{
+				MergeFont(size, IconFont.FontIconFileName, IconFont.IconMin, IconFont.IconMax, new Vector2(0f, 4f));
+			}
+		}
         public static void LoadMonospaceFont(float size, bool withoutSymbols = false)
         {
             ImGuiIOPtr io = ImGui.GetIO();
             MonospaceFonts.Add(size, io.Fonts.AddFontFromFileTTF(MonoFontName, size));
 
-            if (!withoutSymbols)
-                MergeSymbolFont(size);
-        }
-        public static void MergeSymbolFont(float size)
+			if (!withoutSymbols)
+			{
+				MergeFont(size, IconFont.FontIconFileName, IconFont.IconMin, IconFont.IconMax, new Vector2(0f, 4f));
+			}
+		}
+		public static void MergeFont(float size, string path, ushort glyphMin, ushort glyphMax, Vector2 glyphOffset = default, Vector2 glyphExtraSpacing = default)
         {
-            ImGuiIOPtr io = ImGui.GetIO();
-            unsafe
-            {
-                GCHandle rangeHandle = GCHandle.Alloc(new ushort[]
-                {
-                    IconFont.IconMin,
-                    IconFont.IconMax,
-                    0
-                }, GCHandleType.Pinned);
+			ImGuiIOPtr io = ImGui.GetIO();
+			unsafe
+			{
+				GCHandle rangeHandle = GCHandle.Alloc(new ushort[]
+				{
+					glyphMin,
+					glyphMax,
+					0
+				}, GCHandleType.Pinned);
 
-                ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
+				ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
 
-                config.MergeMode = true;
+				config.MergeMode = true;
+				config.GlyphOffset = glyphOffset.ToNumerics();
+				config.GlyphExtraSpacing = glyphExtraSpacing.ToNumerics();
 
-				config.GlyphOffset.Y += 5f;
+				io.Fonts.AddFontFromFileTTF(path, size, config, rangeHandle.AddrOfPinnedObject());
 
-                io.Fonts.AddFontFromFileTTF(IconFont.FontIconFileName, size, config, rangeHandle.AddrOfPinnedObject());
+				config.Destroy();
+				if (rangeHandle.IsAllocated) rangeHandle.Free();
+			}
+		}
 
-                config.Destroy();
-                if (rangeHandle.IsAllocated) rangeHandle.Free();
-            }
-        }
-
-        public static ImFontPtr GetMonospaceFont(float size)
+		public static ImFontPtr GetMonospaceFont(float size)
         {
             if (MonospaceFonts.ContainsKey(size))
                 return MonospaceFonts[size];
@@ -130,8 +141,6 @@ namespace TerraAngel.Client
             return TerrariaFonts[closestFontSize];
         }
 
-
-		//  you should also change the fields from 'const' to 'public static readonly'
 		public static class IconFont
 		{
 			public static readonly string FontIconFileName = "IconFont.ttf";

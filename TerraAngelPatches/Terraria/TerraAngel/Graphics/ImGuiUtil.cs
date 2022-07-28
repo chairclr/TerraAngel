@@ -62,16 +62,13 @@ namespace TerraAngel.Graphics
         {
             while (true)
             {
-                lock (ItemsToLoad)
+                for (int i = 0; i < itemPtr; i++)
                 {
-                    for (int i = 0; i < itemPtr; i++)
-                    {
-                        Main.instance.LoadItem(ItemsToLoad[i]);
-                        ItemImages[ItemsToLoad[i]] = renderer.BindTexture(TextureAssets.Item[ItemsToLoad[i]].Value);
-                    }
-                    itemPtr = 0;
+                    Main.instance.LoadItem(ItemsToLoad[i]);
+                    ItemImages[ItemsToLoad[i]] = renderer.BindTexture(TextureAssets.Item[ItemsToLoad[i]].Value);
                 }
-                Thread.Sleep(32);
+                itemPtr = 0;
+                Thread.Sleep(10);
             }
         }
 
@@ -186,7 +183,7 @@ namespace TerraAngel.Graphics
                     if (count != 0)
                     {
                         string s = count.ToString();
-                        ImFontPtr font = Client.ClientAssets.GetMonospaceFont(20);
+                        ImFontPtr font = Client.ClientAssets.GetTerrariaFont(18f);
                         System.Numerics.Vector2 pos = min + (max - min) / 2;
                         ImGui.PushFont(font);
                         pos.X -= ImGui.CalcTextSize(s).X / 2;
@@ -217,13 +214,13 @@ namespace TerraAngel.Graphics
             return clicked;
         }
 
-        public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, int count = 0, float countFontSize = 20f)
+        public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, int count = 0, float countFontSize = 18f)
         {
             Vector2 v = new Vector2(size);
             DrawItem(drawList, id, center - v / 2f, v, count, countFontSize);
         }
 
-        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 20f)
+        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 18f)
         {
             if (ItemImages[id] == IntPtr.Zero)
             {
@@ -251,7 +248,8 @@ namespace TerraAngel.Graphics
                             num = ((width <= height) ? (size.X / (float)height) : (size.Y / (float)width));
                         }
                         Vector2 scaledEnd = (new Vector2(width, height) * num);
-                        drawList.AddImage(ItemImages[id], position.ToNumerics(), (position + scaledEnd).ToNumerics());
+                        Vector2 start = position + (size / 2f) - scaledEnd / 2f;
+                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start.Floor() + scaledEnd.Floor()).ToNumerics());
                     }
                     else
                     {
@@ -265,24 +263,21 @@ namespace TerraAngel.Graphics
                             num = ((width <= height) ? (size.X / (float)height) : (size.Y / (float)width));
                         }
                         Vector2 scaledEnd = (new Vector2(width, height) * num);
-                        drawList.AddImage(ItemImages[id], position.ToNumerics(), (position + scaledEnd).ToNumerics());
-
                         System.Numerics.Vector2 rectStart = new System.Numerics.Vector2(animationRect.X, animationRect.Y);
                         System.Numerics.Vector2 rectEnd = new System.Numerics.Vector2(animationRect.X + width, animationRect.Y + height);
 
                         System.Numerics.Vector2 uvMin = rectStart / new System.Numerics.Vector2(value.Width, value.Height);
                         System.Numerics.Vector2 uvMax = rectEnd / new System.Numerics.Vector2(value.Width, value.Height);
-                        drawList.AddImage(ItemImages[id], position.ToNumerics(), (position + scaledEnd).ToNumerics(), uvMin, uvMax);
+                        drawList.AddImage(ItemImages[id], position.Floor().ToNumerics(), (position.Floor() + scaledEnd.Floor()).ToNumerics(), uvMin, uvMax);
 
                     }
 
                     if (count != 0)
                     {
                         string s = count.ToString();
-                        ImFontPtr font = Client.ClientAssets.GetMonospaceFont(countFontSize);
-                        Vector2 pos = position + size / 2;
+                        ImFontPtr font = Client.ClientAssets.GetTerrariaFont(countFontSize);
                         ImGui.PushFont(font);
-                        pos.X -= ImGui.CalcTextSize(s).X / 2;
+                        Vector2 pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f)).Floor();
 
                         // for shadow 
                         pos.X -= 1;
@@ -298,8 +293,7 @@ namespace TerraAngel.Graphics
                         pos.Y += 2f;
                         drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
 
-                        pos = position + size / 2;
-                        pos.X -= ImGui.CalcTextSize(s).X / 2;
+                        pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f)).Floor();
                         drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xffffffff, s);
                         ImGui.PopFont();
                     }
@@ -363,6 +357,7 @@ namespace TerraAngel.Graphics
         public unsafe static NVector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)
         {
             ImFontPtr font = ImGui.GetFont();
+            float itemTagSpacingWidth = ImGui.CalcTextSize(" ").X / 2f;
 
             NVector2 textSize = new NVector2(0f, font.FontSize);
             NVector2 offset = textSize;
@@ -372,37 +367,64 @@ namespace TerraAngel.Graphics
             float spaceLeft = wrapWidth;
             for (int i = 0; i < tags.Count; i++)
             {
-                string text = tags[i].Text;
 
-                string[] words = Regex.Split(text, @"(?<=[.,;\s])");
-
-                for (int j = 0; j < words.Length; j++)
+                if (tags[i] is ItemTagHandler.ItemSnippet)
                 {
-                    if (string.IsNullOrEmpty(words[j]))
-                        continue;
+                    float width = itemTagSpacingWidth * 2f + font.FontSize;
 
-                    float wordWidth = ImGui.CalcTextSize(words[j]).X;
-
-                    if (wordWidth == 0)
-                        continue;
-
-                    if (renderedWord && wordWidth > spaceLeft)
+                    if (renderedWord && width > spaceLeft)
                     {
-                        spaceLeft = wrapWidth - wordWidth;
+                        spaceLeft = wrapWidth - width;
 
                         offset.Y += font.FontSize;
                         offset.X = 0;
-                        offset.X = wordWidth;
+                        offset.X = width;
                         textSize.X = MathF.Max(textSize.X, offset.X);
                         textSize.Y = MathF.Max(textSize.Y, offset.Y);
                     }
                     else
                     {
-                        spaceLeft -= wordWidth;
-                        offset.X += wordWidth;
+                        spaceLeft -= width;
+                        offset.X += width;
                         textSize.X = MathF.Max(textSize.X, offset.X);
                         textSize.Y = MathF.Max(textSize.Y, offset.Y);
                         renderedWord = true;
+                    }
+                }
+                else
+                {
+                    string text = tags[i].Text;
+
+                    string[] words = Regex.Split(text, @"(?<=[.,;\s])");
+
+                    for (int j = 0; j < words.Length; j++)
+                    {
+                        if (string.IsNullOrEmpty(words[j]))
+                            continue;
+
+                        float wordWidth = ImGui.CalcTextSize(words[j]).X;
+
+                        if (wordWidth == 0)
+                            continue;
+
+                        if (renderedWord && wordWidth > spaceLeft)
+                        {
+                            spaceLeft = wrapWidth - wordWidth;
+
+                            offset.Y += font.FontSize;
+                            offset.X = 0;
+                            offset.X = wordWidth;
+                            textSize.X = MathF.Max(textSize.X, offset.X);
+                            textSize.Y = MathF.Max(textSize.Y, offset.Y);
+                        }
+                        else
+                        {
+                            spaceLeft -= wordWidth;
+                            offset.X += wordWidth;
+                            textSize.X = MathF.Max(textSize.X, offset.X);
+                            textSize.Y = MathF.Max(textSize.Y, offset.Y);
+                            renderedWord = true;
+                        }
                     }
                 }
             }
@@ -545,6 +567,7 @@ namespace TerraAngel.Graphics
             NVector2 min = ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing;
 
             ImFontPtr font = ImGui.GetFont();
+            float itemTagSpacingWidth = ImGui.CalcTextSize(" ").X / 2f;
 
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
 
@@ -555,78 +578,131 @@ namespace TerraAngel.Graphics
             float spaceLeft = wrapWidth;
             for (int i = 0; i < tags.Count; i++)
             {
-                string text = tags[i].Text;
-                Color tagColor = tags[i].Color;
-
-                tagColor.A = (byte)(alpha * 255f);
-
-                string[] words = Regex.Split(text, @"(?<=[.,;\s])");
-
-                for (int j = 0; j < words.Length; j++)
+                if (tags[i] is ItemTagHandler.ItemSnippet)
                 {
-                    if (string.IsNullOrEmpty(words[j]))
-                        continue;
+                    ItemTagHandler.ItemSnippet snippet = (ItemTagHandler.ItemSnippet)tags[i];
+                    NVector2 wordSize = new NVector2(font.FontSize);
 
-                    NVector2 wordSize = ImGui.CalcTextSize(words[j]);
-
-                    if (wordSize.X == 0)
-                        continue;
-
-                    if (renderedWord && wordSize.X > spaceLeft)
+                    if (renderedWord && (wordSize.X + itemTagSpacingWidth * 2f) > spaceLeft)
                     {
-                        spaceLeft = wrapWidth - wordSize.X;
+                        spaceLeft = wrapWidth - (wordSize.X + itemTagSpacingWidth * 2f);
 
                         offset.Y += font.FontSize;
-                        offset.X = 0;
-                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
-                        offset.X = wordSize.X;
+                        offset.X = itemTagSpacingWidth;
+
+                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 22f);
+
+                        if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
+                        {
+                            ImGui.BeginTooltip();
+
+                            int yoyoLogo = 0;
+                            int researchLine = 0;
+                            int numLines = 1;
+                            string[] array = new string[30];
+                            bool[] goodPrefixLine = new bool[30];
+                            bool[] badPrefixLine = new bool[30];
+
+                            Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
+
+                            for (int k = 0; k < numLines; k++)
+                            {
+                                Color color = Color.White;
+                                if (k == 0) color = snippet.Color;
+                                if (goodPrefixLine[k]) color = new Color(117, 185, 117);
+                                if (badPrefixLine[k]) color = new Color(185, 117, 117);
+                                TextColored(array[k], color);
+                            }
+
+
+                            ImGui.EndTooltip();
+                            ImGui.GetIO().WantCaptureMouse = true;
+                        }
+
+                        offset.X += wordSize.X + itemTagSpacingWidth;
                     }
                     else
                     {
-                        spaceLeft -= wordSize.X;
-                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
+                        spaceLeft -= (wordSize.X + itemTagSpacingWidth * 2f);
 
-                        if (tags[i] is ItemTagHandler.ItemSnippet)
+                        offset.X += itemTagSpacingWidth;
+
+                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 22f);
+
+                        if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {
-                            ItemTagHandler.ItemSnippet snippet = (ItemTagHandler.ItemSnippet)tags[i];
-                            if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
+                            ImGui.BeginTooltip();
+
+                            int yoyoLogo = 0;
+                            int researchLine = 0;
+                            int numLines = 1;
+                            string[] array = new string[30];
+                            bool[] goodPrefixLine = new bool[30];
+                            bool[] badPrefixLine = new bool[30];
+
+                            Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
+
+                            for (int k = 0; k < numLines; k++)
                             {
-                                ImGui.BeginTooltip();
-
-                                int yoyoLogo = 0;
-                                int researchLine = 0;
-                                int numLines = 1;
-                                string[] array = new string[30];
-                                bool[] goodPrefixLine = new bool[30];
-                                bool[] badPrefixLine = new bool[30];
-
-                                Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
-
-                                for (int k = 0; k < numLines; k++)
-                                {
-                                    Color color = Color.White;
-                                    if (k == 0) color = snippet.Color;
-                                    if (goodPrefixLine[k]) color = new Color(117, 185, 117);
-                                    if (badPrefixLine[k]) color = new Color(185, 117, 117);
-                                    TextColored(array[k], color);
-                                }
-
-
-                                ImGui.EndTooltip();
-                                ImGui.GetIO().WantCaptureMouse = true;
+                                Color color = Color.White;
+                                if (k == 0) color = snippet.Color;
+                                if (goodPrefixLine[k]) color = new Color(117, 185, 117);
+                                if (badPrefixLine[k]) color = new Color(185, 117, 117);
+                                TextColored(array[k], color);
                             }
-                        }
 
-                        offset.X += wordSize.X;
+
+                            ImGui.EndTooltip();
+                            ImGui.GetIO().WantCaptureMouse = true;
+                        }
+                        offset.X += wordSize.X + itemTagSpacingWidth;
                         renderedWord = true;
+                    }
+
+                }
+                else
+                {
+                    string text = tags[i].Text;
+                    Color tagColor = tags[i].Color;
+
+                    tagColor.A = (byte)(alpha * 255f);
+
+                    string[] words = Regex.Split(text, @"(?<=[.,;\s])");
+
+                    for (int j = 0; j < words.Length; j++)
+                    {
+                        if (string.IsNullOrEmpty(words[j]))
+                            continue;
+
+                        NVector2 wordSize = ImGui.CalcTextSize(words[j]);
+
+                        if (wordSize.X == 0)
+                            continue;
+
+                        if (renderedWord && wordSize.X > spaceLeft)
+                        {
+                            spaceLeft = wrapWidth - wordSize.X;
+
+                            offset.Y += font.FontSize;
+                            offset.X = 0;
+                            drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
+                            offset.X = wordSize.X;
+                        }
+                        else
+                        {
+                            spaceLeft -= wordSize.X;
+                            drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
+                            offset.X += wordSize.X;
+                            renderedWord = true;
+                        }
                     }
                 }
             }

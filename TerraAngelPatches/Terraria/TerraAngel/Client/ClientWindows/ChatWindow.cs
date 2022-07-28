@@ -186,19 +186,16 @@ namespace TerraAngel.Client.ClientWindows
 
                         NVector2 textSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
 
-
-                        //ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, Color.Black, textSize);
-
-                        bool visibleAtAll = false;
+                        bool showMessageFade = false;
                         if (item.TimeMessageHasBeenVisible < ClientLoader.Config.framesForMessageToBeVisible + 60)
                         {
-                            visibleAtAll = true;
+                            showMessageFade = true;
                             item.TimeMessageHasBeenVisible++;
                         }
                         
-                        if (ImGui.IsRectVisible(textSize) && (IsChatting || visibleAtAll))
+                        if (ImGui.IsRectVisible(textSize) && (IsChatting || showMessageFade))
                         {
-                            if (!IsChatting && visibleAtAll && item.TimeMessageHasBeenVisible > (ClientLoader.Config.framesForMessageToBeVisible))
+                            if (!IsChatting && showMessageFade && item.TimeMessageHasBeenVisible > (ClientLoader.Config.framesForMessageToBeVisible))
                             {
                                 float alpha = 1.0f - ((float)(item.TimeMessageHasBeenVisible - ClientLoader.Config.framesForMessageToBeVisible) / 60f);
                                 if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, new Color(0f, 0f, 0f), textSize, alpha))
@@ -230,6 +227,10 @@ namespace TerraAngel.Client.ClientWindows
                         autoScrollFix = true;
                     ImGui.SetScrollY(ImGui.GetScrollMaxY());
                 }
+                else
+                {
+                    autoScrollFix = false;
+                }
                 style.ItemSpacing = tip;
                 ScrollToBottom = false;
                 drawList.PopClipRect();
@@ -257,12 +258,6 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 ImGui.PopItemWidth();
 
-                //if (io.KeyAlt && chatBoxFocus && !io.WantCaptureMouse && Input.InputSystem.LeftMousePressed && Main.HoverItem != null && Main.HoverItem.type != ItemID.None)
-                //{
-                //    ChatText += ItemTagHandler.GenerateTag(Main.HoverItem);
-                //    ImGui.SetItemDefaultFocus();
-                //    ImGui.SetKeyboardFocusHere(-1);
-                //}
                 if (justOpened)
                 {
                     ImGui.SetItemDefaultFocus();
