@@ -10,12 +10,17 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Terraria;
+using System.Reflection;
+using Terraria.ID;
 
 namespace TerraAngel.Utility
 {
     public class Util
     {
         private static string[] ByteSizeNames = { "b", "k", "m", "g", "t", "p" };
+
+        public static FieldInfo[] itemIds = typeof(ItemID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(short) && ((short)x.GetRawConstantValue()) >= 0).ToArray();
+        public static FieldInfo[] prefixIds = typeof(PrefixID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(int) && ((int)x.GetRawConstantValue()) >= 0).ToArray();
 
         public static string PrettyPrintBytes(long bytes, string format = "{0:F2}{1}")
         {

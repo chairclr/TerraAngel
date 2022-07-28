@@ -14,6 +14,8 @@ using TerraAngel;
 using Terraria.Localization;
 using System.Diagnostics;
 using TerraAngel.Cheat.Cringes;
+using Terraria.GameInput;
+using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -31,10 +33,19 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen(NetMessage.SendData, SendDataHook);
             HookUtil.HookGen<MessageBuffer>("GetData", GetDataHook);
             HookUtil.HookGen(WorldGen.TileFrame, TileFrameHook);
+            HookUtil.HookGen<PlayerInput>("MouseInput", MouseInputHook);
+            HookUtil.HookGen<PlayerInput>("UpdateInput", UpdateInputHook);
+            HookUtil.HookGen<Main>("DrawInterface_41_InterfaceLogic4", InterfaceLogic4Hook);
+        }
+        private static int lastCursorOverride = -1;
+        public static void InterfaceLogic4Hook(Action orig)
+        {
+            lastCursorOverride = Main.cursorOverride;
+            orig();
         }
         public static void set_IsMouseVisibleHook(Action<Game, bool> orig, Game self, bool visible)
         {
-            if (ClientLoader.SetupRenderer && ImGui.GetIO().WantCaptureMouse)
+            if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || (ImGui.GetIO().WantCaptureKeyboard && !(ImGui.GetIO().KeyAlt && (ClientLoader.ChatWindow?.IsChatting ?? false) && lastCursorOverride == 2))))
                 visible = true;
             orig(self, visible);
         }
@@ -96,6 +107,58 @@ namespace TerraAngel.Hooks.Hooks
                 return;
 
             orig(i, j, resetFrame, noBreak);
+        }
+        private static int framesSinceStopped = 0;
+        public static void MouseInputHook(Action orig)
+        {
+            if (ClientLoader.SetupRenderer && ImGui.GetIO().WantCaptureMouse)
+            {
+                PlayerInput.ScrollWheelDelta = 0;
+                PlayerInput.ScrollWheelDeltaForUI = 0;
+                PlayerInput.ScrollWheelValueOld = PlayerInput.ScrollWheelValue;
+                PlayerInput.GamepadScrollValue = 0;
+                framesSinceStopped = 0;
+            }
+            else
+            {
+                framesSinceStopped++;
+                if (framesSinceStopped < 2)
+                {
+                    PlayerInput.ScrollWheelDelta = 0;
+                    PlayerInput.ScrollWheelDeltaForUI = 0;
+                    PlayerInput.ScrollWheelValueOld = PlayerInput.ScrollWheelValue;
+                    PlayerInput.GamepadScrollValue = 0;
+                }
+                orig();
+                if (framesSinceStopped < 2)
+                {
+                    PlayerInput.ScrollWheelDelta = 0;
+                    PlayerInput.ScrollWheelDeltaForUI = 0;
+                    PlayerInput.ScrollWheelValueOld = PlayerInput.ScrollWheelValue;
+                    PlayerInput.GamepadScrollValue = 0;
+                }
+            }
+        }
+        public static void UpdateInputHook(Action orig)
+        {
+            if (ClientLoader.SetupRenderer)
+            {
+                ImGuiIOPtr io = ImGui.GetIO();
+
+                if (io.WantCaptureKeyboard && !io.WantCaptureMouse)
+                {
+                    PlayerInput.MouseInfoOld = PlayerInput.MouseInfo;
+                    PlayerInput.MouseInfo = Mouse.GetState();
+                    PlayerInput.MouseX = (int)((float)PlayerInput.MouseInfo.X * PlayerInput.RawMouseScale.X);
+                    PlayerInput.MouseY = (int)((float)PlayerInput.MouseInfo.Y * PlayerInput.RawMouseScale.Y);
+                    PlayerInput.UpdateMainMouse();
+                    PlayerInput.CacheZoomableValues();
+                }
+
+                if (io.WantCaptureKeyboard)
+                    return;
+            }
+            orig();
         }
 
         //public static Vector2 TileCollisionHook(Func<Vector2, Vector2, int, int, bool, bool, int, Vector2> orig, Vector2 Position, Vector2 Velocity, int Width, int Height, bool fallThrough = false, bool fall2 = false, int gravDir = 1)

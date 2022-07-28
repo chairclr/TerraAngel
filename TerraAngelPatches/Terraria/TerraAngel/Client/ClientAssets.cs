@@ -28,13 +28,26 @@ namespace TerraAngel.Client
             {
                 LoadMonospaceFont(DefaultSizes[i], false);
             }
-			LoadTerrariaFont(20f);
+			LoadTerrariaFont(22f);
         }
 
         public static void LoadTerrariaFont(float size, bool withoutSymbols = false)
         {
             ImGuiIOPtr io = ImGui.GetIO();
-            TerrariaFonts.Add(size, io.Fonts.AddFontFromFileTTF(TerrariaFontName, size));
+			unsafe
+			{
+				GCHandle rangeHandle = GCHandle.Alloc(new ushort[]
+				{
+					32,
+					9674,
+					0
+				}, GCHandleType.Pinned);
+
+				ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
+
+
+				TerrariaFonts.Add(size, io.Fonts.AddFontFromFileTTF(TerrariaFontName, size, config, rangeHandle.AddrOfPinnedObject()));
+			}
 
 			if (!withoutSymbols)
                 MergeSymbolFont(size);

@@ -16,7 +16,9 @@ using Microsoft.Xna.Framework;
 using TerraAngel.Utility;
 using Terraria.GameContent.UI;
 using NVector2 = System.Numerics.Vector2;
-
+using Terraria.UI.Chat;
+using System.Text.RegularExpressions;
+using Terraria.GameContent.UI.Chat;
 
 namespace TerraAngel.Graphics
 {
@@ -353,6 +355,61 @@ namespace TerraAngel.Graphics
             ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
         }
 
+        static char[] lengths = (new int[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 3, 4, 0 }).Select(x => (char)x).ToArray();
+        static int[] masks = { 0x00, 0x7f, 0x1f, 0x0f, 0x07 };
+        static uint[] mins = { 0x400000, 0, 0x80, 0x800, 0x10000 };
+        static int[] shiftc = { 0, 18, 12, 6, 0 };
+        static int[] shifte = { 0, 6, 4, 2, 0 };
+        public unsafe static NVector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)
+        {
+            ImFontPtr font = ImGui.GetFont();
+
+            NVector2 textSize = new NVector2(0f, font.FontSize);
+            NVector2 offset = textSize;
+
+            bool renderedWord = false;
+
+            float spaceLeft = wrapWidth;
+            for (int i = 0; i < tags.Count; i++)
+            {
+                string text = tags[i].Text;
+
+                string[] words = Regex.Split(text, @"(?<=[.,;\s])");
+
+                for (int j = 0; j < words.Length; j++)
+                {
+                    if (string.IsNullOrEmpty(words[j]))
+                        continue;
+
+                    float wordWidth = ImGui.CalcTextSize(words[j]).X;
+
+                    if (wordWidth == 0)
+                        continue;
+
+                    if (renderedWord && wordWidth > spaceLeft)
+                    {
+                        spaceLeft = wrapWidth - wordWidth;
+
+                        offset.Y += font.FontSize;
+                        offset.X = 0;
+                        offset.X = wordWidth;
+                        textSize.X = MathF.Max(textSize.X, offset.X);
+                        textSize.Y = MathF.Max(textSize.Y, offset.Y);
+                    }
+                    else
+                    {
+                        spaceLeft -= wordWidth;
+                        offset.X += wordWidth;
+                        textSize.X = MathF.Max(textSize.X, offset.X);
+                        textSize.Y = MathF.Max(textSize.Y, offset.Y);
+                        renderedWord = true;
+                    }
+                }
+            }
+
+            return textSize;
+        }
+
         public static bool WrappedSelectableWithTextBorder(string text, float wrapWidth, Color borderColor)
         {
             NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
@@ -375,6 +432,204 @@ namespace TerraAngel.Graphics
             windowDrawList.AddText(pos + NVector2.UnitY, text, borderColor.PackedValue, wrapWidth);
 
             windowDrawList.AddText(pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
+            return v;
+        }
+        public static bool WrappedSelectableWithTextBorderWithTags(string id, List<TextSnippet> tags, float wrapWidth, Color borderColor, float alpha = 1.0f)
+        {
+            borderColor.A = (byte)(alpha * 255f);
+            NVector2 textSize = CalcTextSizeWithTags(tags, wrapWidth);
+
+            ImGui.PushID(id);
+            bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
+            ImGui.PopID();
+
+            NVector2 min = ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing;
+
+            ImFontPtr font = ImGui.GetFont();
+
+            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+            NVector2 offset = NVector2.Zero;
+
+            bool renderedWord = false;
+
+            float spaceLeft = wrapWidth;
+            for (int i = 0; i < tags.Count; i++)
+            {
+                string text = tags[i].Text;
+                Color tagColor = tags[i].Color;
+
+                tagColor.A = (byte)(alpha * 255f);
+
+                string[] words = Regex.Split(text, @"(?<=[.,;\s])");
+
+                for (int j = 0; j < words.Length; j++)
+                {
+                    if (string.IsNullOrEmpty(words[j]))
+                        continue;
+
+                    NVector2 wordSize = ImGui.CalcTextSize(words[j]);
+
+                    if (wordSize.X == 0)
+                        continue;
+
+                    if (renderedWord && wordSize.X > spaceLeft)
+                    {
+                        spaceLeft = wrapWidth - wordSize.X;
+
+                        offset.Y += font.FontSize;
+                        offset.X = 0;
+                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
+                        offset.X = wordSize.X;
+                    }
+                    else
+                    {
+                        spaceLeft -= wordSize.X;
+                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
+
+                        if (tags[i] is ItemTagHandler.ItemSnippet)
+                        {
+                            ItemTagHandler.ItemSnippet snippet = (ItemTagHandler.ItemSnippet)tags[i];
+                            if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
+                            {
+                                ImGui.BeginTooltip();
+
+                                int yoyoLogo = 0;
+                                int researchLine = 0;
+                                int numLines = 1;
+                                string[] array = new string[30];
+                                bool[] goodPrefixLine = new bool[30];
+                                bool[] badPrefixLine = new bool[30];
+
+                                Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
+
+                                for (int k = 0; k < numLines; k++)
+                                {
+                                    Color color = Color.White;
+                                    if (k == 0) color = snippet.Color;
+                                    if (goodPrefixLine[k]) color = new Color(117, 185, 117);
+                                    if (badPrefixLine[k]) color = new Color(185, 117, 117);
+                                    TextColored(array[k], color);
+                                }
+
+
+                                ImGui.EndTooltip();
+
+                                ImGui.GetIO().WantCaptureMouse = true;
+                            }
+                        }
+
+                        offset.X += wordSize.X;
+                        renderedWord = true;
+                    }
+                }
+            }
+
+            return v;
+        }
+        public static bool WrappedSelectableWithTextBorderWithTags(string id, List<TextSnippet> tags, float wrapWidth, Color borderColor, NVector2 textSize, float alpha = 1.0f)
+        {
+            borderColor.A = (byte)(alpha * 255f);
+            ImGui.PushID(id);
+            bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
+            ImGui.PopID();
+
+            NVector2 min = ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing;
+
+            ImFontPtr font = ImGui.GetFont();
+
+            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+            NVector2 offset = NVector2.Zero;
+
+            bool renderedWord = false;
+
+            float spaceLeft = wrapWidth;
+            for (int i = 0; i < tags.Count; i++)
+            {
+                string text = tags[i].Text;
+                Color tagColor = tags[i].Color;
+
+                tagColor.A = (byte)(alpha * 255f);
+
+                string[] words = Regex.Split(text, @"(?<=[.,;\s])");
+
+                for (int j = 0; j < words.Length; j++)
+                {
+                    if (string.IsNullOrEmpty(words[j]))
+                        continue;
+
+                    NVector2 wordSize = ImGui.CalcTextSize(words[j]);
+
+                    if (wordSize.X == 0)
+                        continue;
+
+                    if (renderedWord && wordSize.X > spaceLeft)
+                    {
+                        spaceLeft = wrapWidth - wordSize.X;
+
+                        offset.Y += font.FontSize;
+                        offset.X = 0;
+                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
+                        offset.X = wordSize.X;
+                    }
+                    else
+                    {
+                        spaceLeft -= wordSize.X;
+                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
+
+                        if (tags[i] is ItemTagHandler.ItemSnippet)
+                        {
+                            ItemTagHandler.ItemSnippet snippet = (ItemTagHandler.ItemSnippet)tags[i];
+                            if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
+                            {
+                                ImGui.BeginTooltip();
+
+                                int yoyoLogo = 0;
+                                int researchLine = 0;
+                                int numLines = 1;
+                                string[] array = new string[30];
+                                bool[] goodPrefixLine = new bool[30];
+                                bool[] badPrefixLine = new bool[30];
+
+                                Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
+
+                                for (int k = 0; k < numLines; k++)
+                                {
+                                    Color color = Color.White;
+                                    if (k == 0) color = snippet.Color;
+                                    if (goodPrefixLine[k]) color = new Color(117, 185, 117);
+                                    if (badPrefixLine[k]) color = new Color(185, 117, 117);
+                                    TextColored(array[k], color);
+                                }
+
+
+                                ImGui.EndTooltip();
+                            }
+                        }
+
+                        offset.X += wordSize.X;
+                        renderedWord = true;
+                    }
+                }
+            }
+
             return v;
         }
     }

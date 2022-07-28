@@ -14,6 +14,7 @@ using TerraAngel.Cheat.Cringes;
 using System.Reflection;
 using System.Linq;
 using TerraAngel.UI;
+using DiscordRPC;
 
 namespace TerraAngel
 {
@@ -27,6 +28,8 @@ namespace TerraAngel
         public static PluginUI PluginUI = new PluginUI();
         public static ResolutionUI ResolutionUI = new ResolutionUI();
         public static ClientConfig Config = new ClientConfig();
+        public static DiscordRpcClient? DiscordClient;
+
 
         public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
         public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
@@ -67,6 +70,10 @@ namespace TerraAngel
             boxesCringe.ProjectileColor = Config.ProjectileBoxColor;
 
 
+            if (Config.UseDiscordRPC)
+            {
+                InitDiscord();
+            }
         }
 
         public static void SetupImGuiRenderer(Game main)
@@ -77,6 +84,34 @@ namespace TerraAngel
                 MainRenderer = new ClientRenderer(main);
                 Config.PluginsToEnable = Config.pluginsToEnable;
             }
+        }
+
+        public static void InitDiscord()
+        {
+            DiscordClient = new DiscordRpcClient("1002097004672995369");
+
+            DiscordClient.Initialize();
+
+            DiscordClient.SetPresence(new RichPresence()
+            {
+                Timestamps = new Timestamps()
+                {
+                    Start = DateTime.UtcNow
+                },
+                Assets = new Assets()
+                {
+                    LargeImageKey = "angel-icon",
+                    LargeImageText = "TerraAngel Client",
+                },
+                Buttons = new Button[]
+                {
+                        new Button()
+                        {
+                            Label = "View GitHub",
+                            Url = "https://github.com/CEO-Chair/TerraAngel/"
+                        }
+                }
+            });
         }
 
         public static class Console
@@ -92,6 +127,7 @@ namespace TerraAngel
         {
             public static void WriteLine(string message) => ChatWindow?.WriteLine(message);
             public static void WriteLine(string message, Color color) => ChatWindow?.WriteLine(message, color);
+            public static void AddText(string message) => ChatWindow?.AddText(message);
         }
     }
 }

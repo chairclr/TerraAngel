@@ -290,6 +290,22 @@
          }
  
          private static void TryPlayingCreditsRoll()
+@@ -18346,6 +_,7 @@
+                         preFixLine[numLines] = true;
+                         numLines++;
+                     }
++
+                 }
+ 
+                 if (item.wornArmor && player[myPlayer].setBonus != "")
+@@ -18387,6 +_,7 @@
+                     toolTipLine[numLines++] = text2;
+                 }
+             }
++
+         }
+ 
+         private void MouseText_DrawBuffTooltip(string buffString, ref int X, ref int Y)
 @@ -43833,7 +_,6 @@
  
          private static void TryDisposingEverything()

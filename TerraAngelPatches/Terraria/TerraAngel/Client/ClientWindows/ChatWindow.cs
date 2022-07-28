@@ -10,6 +10,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using NVector2 = System.Numerics.Vector2;
 using Terraria.UI.Chat;
+using Terraria.GameContent.UI.Chat;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -33,8 +34,12 @@ namespace TerraAngel.Client.ClientWindows
         private bool chatLocked = true;
         private bool justOpened = false;
         private bool justClosed = false;
-
+        private bool resetPosition = false;
+        private bool autoScrollFix = false;
+        private float autoScrollFixMaxY = 0;
+        private float autoScrollFixPrevMaxY = 0;
         public string ChatText = "";
+        private string textToAppend = "";
 
         private object ChatLock = new object();
 
@@ -42,16 +47,19 @@ namespace TerraAngel.Client.ClientWindows
 
         public class ChatItem
         {
-            public string Text;
+            public string OriginalText;
+            public List<TextSnippet> TextSnippets;
             public uint Color;
             public uint CountAbove;
             public uint TimeMessageHasBeenVisible = 0;
 
-            public ChatItem(string text, Color color, int CountAboue)
+            public ChatItem(string text, List<TextSnippet> snippets, Color color, int CountAboue)
             {
-                this.Text = text;
+                this.OriginalText = text;
                 this.Color = color.PackedValue;
                 this.CountAbove = (uint)(CountAboue);
+                TextSnippets = snippets;
+                TextSnippets.Add(new TextSnippet(""));
             }
         }
 
@@ -81,7 +89,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
             }
 
-            ImGui.PushFont(ClientAssets.GetTerrariaFont(20f));
+            ImGui.PushFont(ClientAssets.GetTerrariaFont(22f));
 
             ImGuiStylePtr style = ImGui.GetStyle();
 
@@ -107,6 +115,13 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.SetNextWindowPos(windowPosition, ImGuiCond.Appearing);
             ImGui.SetNextWindowSize(windowSize, ImGuiCond.Appearing);
 
+            if (resetPosition)
+            {
+                resetPosition = false;
+                ImGui.SetNextWindowPos(windowPosition);
+                ImGui.SetNextWindowSize(windowSize);
+            }
+
             ImGui.PushStyleColor(ImGuiCol.WindowBg, bgColor.PackedValue);
             ImGui.PushStyleColor(ImGuiCol.MenuBarBg, titleColorActive.PackedValue);
             ImGui.PushStyleColor(ImGuiCol.Border, borderColor.PackedValue);
@@ -123,8 +138,31 @@ namespace TerraAngel.Client.ClientWindows
 
             if (IsChatting && ImGui.BeginMenuBar())
             {
+                ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 1f);
                 ImGui.TextUnformatted("Chat");
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(0f, 1f));
                 if (ImGui.Button($"{(chatLocked ? ClientAssets.IconFont.Lock : ClientAssets.IconFont.Unlock)}")) chatLocked = !chatLocked;
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text($"Chat {(chatLocked ? "Locked" : "Unlocked")}");
+                    ImGui.EndTooltip();
+                }
+                if (ImGui.Button($"{ClientAssets.IconFont.ClearAll}")) ChatItems.Clear();
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text("Clear Chat");
+                    ImGui.EndTooltip();
+                }
+                if (ImGui.Button($"{ClientAssets.IconFont.DebugRestart}")) resetPosition = true;
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text("Reset Position");
+                    ImGui.EndTooltip();
+                }
+                ImGui.PopStyleVar();
                 ImGui.EndMenuBar();
             }
 
@@ -132,6 +170,8 @@ namespace TerraAngel.Client.ClientWindows
 
             if (ImGui.BeginChild("##ChatScrolling", new NVector2(0, -footerHeight), false, IsChatting ? ImGuiWindowFlags.None : (ImGuiWindowFlags.NoInputs)))
             {
+                ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+                drawList.PushClipRect(drawList.GetClipRectMin(), drawList.GetClipRectMax() + new NVector2(0, 5f));
                 NVector2 tip = style.ItemSpacing;
                 style.ItemSpacing = new NVector2(4f, 1f);
                 float wrapWidth = ImGui.GetContentRegionAvail().X;
@@ -142,11 +182,12 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         ChatItem item = ChatItems[i];
 
-                        string text = "";
-                        if (item.CountAbove > 0) text = $"{item.Text} ({item.CountAbove})";
-                        else text = item.Text;
+                        if (item.CountAbove > 0) item.TextSnippets[item.TextSnippets.Count - 1].Text = $" ({item.CountAbove})";
 
-                        NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+                        NVector2 textSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
+
+
+                        //ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, Color.Black, textSize);
 
                         bool visibleAtAll = false;
                         if (item.TimeMessageHasBeenVisible < ClientLoader.Config.framesForMessageToBeVisible + 60)
@@ -154,44 +195,44 @@ namespace TerraAngel.Client.ClientWindows
                             visibleAtAll = true;
                             item.TimeMessageHasBeenVisible++;
                         }
-
+                        
                         if (ImGui.IsRectVisible(textSize) && (IsChatting || visibleAtAll))
                         {
                             if (!IsChatting && visibleAtAll && item.TimeMessageHasBeenVisible > (ClientLoader.Config.framesForMessageToBeVisible))
                             {
-                                float t = 1.0f - ((float)(item.TimeMessageHasBeenVisible - ClientLoader.Config.framesForMessageToBeVisible) / 60f);
-                                Color c = new Color();
-                                c.PackedValue = item.Color;
-                                c.A = (byte)(255f * t);
-                                ImGui.PushStyleColor(ImGuiCol.Text, c.PackedValue);
-                                if (ImGuiUtil.WrappedSelectableWithTextBorder(text, wrapWidth, new Color(0f, 0f, 0f, t)))
+                                float alpha = 1.0f - ((float)(item.TimeMessageHasBeenVisible - ClientLoader.Config.framesForMessageToBeVisible) / 60f);
+                                if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, new Color(0f, 0f, 0f), textSize, alpha))
                                 {
-                                    ImGui.SetClipboardText(item.Text);
+                                    ImGui.SetClipboardText(item.OriginalText);
                                 }
-                                ImGui.PopStyleColor();
                             }
                             else
                             {
-                                ImGui.PushStyleColor(ImGuiCol.Text, item.Color);
-                                if (ImGuiUtil.WrappedSelectableWithTextBorder(text, wrapWidth, Color.Black))
+                                if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, Color.Black, textSize))
                                 {
-                                    ImGui.SetClipboardText(item.Text);
+                                    ImGui.SetClipboardText(item.OriginalText);
                                 }
-                                ImGui.PopStyleColor();
                             }
                         }
                         else
                         {
-                            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + style.ItemSpacing.Y * 2f);
+                            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + (i + 1 < ChatItems.Count ? style.ItemSpacing.Y : 0f));
                         }
                     }
                 }
 
-
-                style.ItemSpacing = tip;
-                if (ScrollToBottom || (ClientLoader.Config.ConsoleAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())) || !IsChatting || justOpened)
+                autoScrollFixPrevMaxY = autoScrollFixMaxY;
+                autoScrollFixMaxY = ImGui.GetScrollMaxY();
+                if (ScrollToBottom || (ClientLoader.Config.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || (autoScrollFix && autoScrollFixMaxY > autoScrollFixPrevMaxY))) || !IsChatting || justOpened)
+                {
+                    autoScrollFix = false;
+                    if (ClientLoader.Config.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY()))
+                        autoScrollFix = true;
                     ImGui.SetScrollY(ImGui.GetScrollMaxY());
+                }
+                style.ItemSpacing = tip;
                 ScrollToBottom = false;
+                drawList.PopClipRect();
                 ImGui.EndChild();
             }
 
@@ -199,9 +240,29 @@ namespace TerraAngel.Client.ClientWindows
             if (IsChatting)
             {
                 ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
-                unsafe { ImGui.InputText("##consoleInput", ref ChatText, 512, ImGuiInputTextFlags.CallbackAlways, (x) => { chatBoxFocus = true; return 0; }); }
+                unsafe
+                {
+                    ImGui.InputText("##consoleInput", ref ChatText, 512, ImGuiInputTextFlags.CallbackAlways,
+                        (x) =>
+                        {
+                            ImGuiInputTextCallbackDataPtr data = x;
+                            chatBoxFocus = true;
+                            if (textToAppend.Length > 0)
+                            {
+                                data.InsertChars(data.CursorPos, textToAppend);
+                                textToAppend = "";
+                            }
+                            return 0;
+                        });
+                }
                 ImGui.PopItemWidth();
 
+                //if (io.KeyAlt && chatBoxFocus && !io.WantCaptureMouse && Input.InputSystem.LeftMousePressed && Main.HoverItem != null && Main.HoverItem.type != ItemID.None)
+                //{
+                //    ChatText += ItemTagHandler.GenerateTag(Main.HoverItem);
+                //    ImGui.SetItemDefaultFocus();
+                //    ImGui.SetKeyboardFocusHere(-1);
+                //}
                 if (justOpened)
                 {
                     ImGui.SetItemDefaultFocus();
@@ -264,31 +325,16 @@ namespace TerraAngel.Client.ClientWindows
             SoundEngine.PlaySound(SoundID.MenuClose);
         }
 
-        public string ParseOutSomeTags(string s, Color color)
-        {
-            List<TextSnippet> snippets = ChatManager.ParseMessage(s, color);
-
-            string output = "";
-            for (int i = 0; i < snippets.Count; i++)
-            {
-                output += snippets[i].Text;
-            }
-
-            return output;
-        }
-
         public void WriteLine(string message, Color color)
         {
-            // i WILL be adding the tags back into the game at SOME POINT but today is not that day
-            message = ParseOutSomeTags(message, color);
-
+            List<TextSnippet> snippets = ChatManager.ParseMessage(message, color);
 
             lock (ChatLock)
             {
                 if (ChatItems.Count > 0)
                 {
                     ChatItem above = ChatItems[ChatItems.Count - 1];
-                    if (message == above.Text && above.Color == color.PackedValue)
+                    if (message == above.OriginalText && above.Color == color.PackedValue)
                     {
                         if (above.CountAbove == 0)
                             above.CountAbove++;
@@ -297,12 +343,12 @@ namespace TerraAngel.Client.ClientWindows
                     }
                     else
                     {
-                        ChatItems.Add(new ChatItem(message, color, 0));
+                        ChatItems.Add(new ChatItem(message, snippets, color, 0));
                     }
                 }
                 else
                 {
-                    ChatItems.Add(new ChatItem(message, color, 0));
+                    ChatItems.Add(new ChatItem(message, snippets, color, 0));
                 }
             }
         }
@@ -312,5 +358,13 @@ namespace TerraAngel.Client.ClientWindows
             WriteLine(message, Color.White);
         }
 
+        public void AddText(string message)
+        {
+            if (IsChatting)
+            {
+                justOpened = true;
+                textToAppend += message;
+            }
+        }
     }
 }

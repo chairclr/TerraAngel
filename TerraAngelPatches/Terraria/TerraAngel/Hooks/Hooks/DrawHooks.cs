@@ -38,8 +38,25 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen(Gore.NewGore, NewGoreHook);
             HookUtil.HookGen<Main>("DrawGore", DrawGoreHook);
             HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
+            HookUtil.HookGen(Main.MouseText_DrawItemTooltip_GetLinesInfo, GetLinesInfoHook);
         }
 
+        public delegate void GetLinesInfoDef(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine);
+        public static void GetLinesInfoHook(GetLinesInfoDef orig, Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine)
+        {
+            orig(item, ref yoyoLogo, ref researchLine, oldKB, ref numLines, toolTipLine, preFixLine, badPreFixLine);
+            if (ClientLoader.Config.ShowIDsInTooltips)
+            {
+                toolTipLine[0] += $" [ItemID.{Util.itemIds[item.type].Name}/{item.type}]";
+                for (int i = 0; i < numLines; i++)
+                {
+                    if (preFixLine[i] || badPreFixLine[i])
+                    {
+                        toolTipLine[i] += $" [PrefixID.{Util.prefixIds[item.prefix - 1].Name}/{item.prefix}]";
+                    }
+                }
+            }
+        }
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
             if (ClientLoader.SetupRenderer)
@@ -59,7 +76,7 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
         {
-            if (ClientLoader.SetupRenderer && ImGui.GetIO().WantCaptureMouse)
+            if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
             {
                 return;
             }
@@ -67,7 +84,7 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static Vector2 DrawThickCursorHook(Func<bool, Vector2> orig, bool smart)
         {
-            if (ClientLoader.SetupRenderer && ImGui.GetIO().WantCaptureMouse)
+            if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
             {
                 return Vector2.Zero;
             }

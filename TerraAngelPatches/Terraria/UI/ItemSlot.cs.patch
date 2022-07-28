@@ -1,0 +1,14 @@
+--- src/Terraria/Terraria/UI/ItemSlot.cs
++++ src/TerraAngel/Terraria/UI/ItemSlot.cs
+@@ -456,9 +_,9 @@
+                 }
+             }
+ 
+-            if (Main.keyState.IsKeyDown(Main.FavoriteKey) && (canFavoriteAt[context] || (Main.drawingPlayerChat && canShareAt[context])))
++            if (Main.keyState.IsKeyDown(Main.FavoriteKey) && (canFavoriteAt[context] || (TerraAngel.ClientLoader.ChatWindow?.IsChatting ?? false && canShareAt[context])))
+             {
+-                if (item.type > 0 && item.stack > 0 && Main.drawingPlayerChat)
++                if (item.type > 0 && item.stack > 0 && (TerraAngel.ClientLoader.ChatWindow?.IsChatting ?? false))
+                 {
+                     Main.cursorOverride = 2;
+                 }

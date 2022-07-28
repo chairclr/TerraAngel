@@ -79,6 +79,12 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Console Auto Scroll")]
         public bool ConsoleAutoScroll = true;
 
+        [UIConfigElement("Show ID's In Tooltips")]
+        public bool ShowIDsInTooltips = true;
+
+        [UIConfigElement("Discord Rich Presence")]
+        public bool UseDiscordRPC = true;
+
         [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
 

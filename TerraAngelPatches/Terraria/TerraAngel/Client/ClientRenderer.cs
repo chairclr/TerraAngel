@@ -95,10 +95,6 @@ namespace TerraAngel.Client
 
         public void PostDraw()
         {
-            if (ImGui.GetIO().WantCaptureKeyboard)
-            {
-                Main.ClosePlayerChat();
-            }
             updateCount++;
             if (updateCount % 600 == 0)
             {
@@ -110,6 +106,16 @@ namespace TerraAngel.Client
             if (Netplay.Connection.State <= 3 && CringeManager.LoadedTileSections != null)
             {
                 CringeManager.LoadedTileSections = null;
+            }
+
+            if (!ClientLoader.Config.UseDiscordRPC && ClientLoader.DiscordClient is not null)
+            {
+                ClientLoader.DiscordClient.Dispose();
+                ClientLoader.DiscordClient = null;
+            }
+            if (ClientLoader.Config.UseDiscordRPC && ClientLoader.DiscordClient is null)
+            {
+                ClientLoader.InitDiscord();
             }
 
             foreach (Plugin.Plugin plugin in Plugin.PluginLoader.LoadedPlugins)

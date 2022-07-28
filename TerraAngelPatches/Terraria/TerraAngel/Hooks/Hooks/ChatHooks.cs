@@ -10,6 +10,8 @@ using Terraria.ID;
 using TerraAngel.Cheat;
 using TerraAngel.Hooks;
 using TerraAngel;
+using Terraria.UI.Chat;
+using ReLogic.Graphics;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -24,6 +26,7 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Main>("DoUpdate_HandleChat", DoUpdateChatHook);
             HookUtil.HookGen<Main>("NewText", NewTextHook);
             HookUtil.HookGen<Main>("NewTextMultiline", NewTextMultilineHook);
+            HookUtil.HookGen(ChatManager.AddChatText, AddChatTextHook);
         }
         public static void ToggleChatHook(Action orig)
         {
@@ -61,6 +64,11 @@ namespace TerraAngel.Hooks.Hooks
             ClientLoader.Chat.WriteLine(text, color);
             return;
             orig(text, force, color, WidthLimit);
+        }
+        public static bool AddChatTextHook(Func<DynamicSpriteFont, string, Vector2, bool> orig, DynamicSpriteFont font, string text, Vector2 baseScale)
+        {
+            ClientLoader.Chat.AddText(text);
+            return orig(font, text, baseScale);
         }
     }
 }
