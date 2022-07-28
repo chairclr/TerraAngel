@@ -621,6 +621,7 @@ namespace TerraAngel.Graphics
 
 
                                 ImGui.EndTooltip();
+                                ImGui.GetIO().WantCaptureMouse = true;
                             }
                         }
 
