@@ -18,7 +18,7 @@ using DiscordRPC;
 
 namespace TerraAngel
 {
-    public class ClientLoader
+    public unsafe class ClientLoader
     {
         public static bool SetupRenderer = false;
         public static ClientRenderer? MainRenderer;
@@ -29,6 +29,9 @@ namespace TerraAngel
         public static ResolutionUI ResolutionUI = new ResolutionUI();
         public static ClientConfig Config = new ClientConfig();
         public static DiscordRpcClient? DiscordClient;
+        public static ImGuiNET.ImGuiIOPtr? ImGuiIO => (ImGuiNET.ImGui.GetIO().NativePtr == null ? null : ImGuiNET.ImGui.GetIO());
+        public static bool WantCaptureMouse => ImGuiIO?.WantCaptureMouse ?? false;
+        public static bool WantCaptureKeyboard => ImGuiIO?.WantCaptureKeyboard ?? false;
 
 
         public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");

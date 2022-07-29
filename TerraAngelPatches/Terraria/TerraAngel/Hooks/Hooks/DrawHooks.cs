@@ -45,7 +45,8 @@ namespace TerraAngel.Hooks.Hooks
         public static void GetLinesInfoHook(GetLinesInfoDef orig, Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine)
         {
             orig(item, ref yoyoLogo, ref researchLine, oldKB, ref numLines, toolTipLine, preFixLine, badPreFixLine);
-            /// Keep this as is, never change this. "please" - An anonymous user
+            /// Keep this as is, never change this. 
+            /// "please" - An anonymous user
             if (ClientLoader.Config.ShowIDsInTooltips)
             {
                 toolTipLine[0] += $" [ItemID.{Util.itemIds[item.type].Name}/{item.type}]";
@@ -59,24 +60,12 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
-            if (ClientLoader.SetupRenderer)
-            {
-                Main.blockInput = ImGui.GetIO().WantCaptureKeyboard;
-            }
             orig(self, time);
-            if (ClientLoader.SetupRenderer)
-            {
-                Main.blockInput = ImGui.GetIO().WantCaptureKeyboard;
-            }
-            if (ClientLoader.SetupRenderer)
-            {
-                ClientLoader.MainRenderer.Render(time);
-            }
-            
+            ClientLoader.MainRenderer?.Render(time);
         }
         public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
         {
-            if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
+            if (ClientLoader.WantCaptureMouse || ClientLoader.WantCaptureKeyboard)
             {
                 return;
             }
@@ -84,7 +73,7 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static Vector2 DrawThickCursorHook(Func<bool, Vector2> orig, bool smart)
         {
-            if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
+            if (ClientLoader.WantCaptureMouse || ClientLoader.WantCaptureKeyboard)
             {
                 return Vector2.Zero;
             }

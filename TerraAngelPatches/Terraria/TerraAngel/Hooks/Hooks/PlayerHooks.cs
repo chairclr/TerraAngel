@@ -53,7 +53,7 @@ namespace TerraAngel.Hooks.Hooks
         {
             orig(self);
 
-            if (self.whoAmI == Main.myPlayer)
+            if (ClientLoader.SetupRenderer && self.whoAmI == Main.myPlayer)
             {
                 ImGuiIOPtr io = ImGui.GetIO();
 

@@ -111,7 +111,7 @@ namespace TerraAngel.Hooks.Hooks
         private static int framesSinceStopped = 0;
         public static void MouseInputHook(Action orig)
         {
-            if (ClientLoader.SetupRenderer && ImGui.GetIO().WantCaptureMouse)
+            if (ClientLoader.WantCaptureMouse)
             {
                 PlayerInput.ScrollWheelDelta = 0;
                 PlayerInput.ScrollWheelDeltaForUI = 0;
