@@ -13,6 +13,7 @@ using TerraAngel.Utility;
 using TerraAngel.Client.Config;
 using TerraAngel;
 using TerraAngel.Cheat.Cringes;
+using ReLogic.Threading;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -28,8 +29,8 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("GetColor", LightingHook);
             HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("GetColor", LegacyLightingHook);
 
-            //HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("ProcessArea", LightingProcessAreaHook);
-            //HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("ProcessArea", LegacyLightingProcessAreaHook);
+            HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("ProcessArea", LightingProcessAreaHook);
+            HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("ProcessArea", LegacyLightingProcessAreaHook);
 
             HookUtil.HookGen(Dust.NewDust, NewDustHook);
             HookUtil.HookGen(Dust.UpdateDust, UpdateDustHook);
@@ -49,17 +50,18 @@ namespace TerraAngel.Hooks.Hooks
             /// "please" - An anonymous user
             if (ClientLoader.Config.ShowIDsInTooltips)
             {
-                toolTipLine[0] += $" [ItemID.{Util.itemIds[item.type].Name}/{item.type}]";
+                toolTipLine[0] += $" [{Util.itemIds[item.type].Name}/{item.type}]";
                 if (item.prefix > 0)
                 {
                     int firstSpace = toolTipLine[0].IndexOf(' ');
                     firstSpace = firstSpace == - 1 ? toolTipLine[0].Length : firstSpace;
-                    toolTipLine[0] = toolTipLine[0].Insert(firstSpace, $" [PrefixID.{Util.prefixIds[item.prefix - 1].Name}/{item.prefix}]");
+                    toolTipLine[0] = toolTipLine[0].Insert(firstSpace, $" [{Util.prefixIds[item.prefix - 1].Name}/{item.prefix}]");
                 }
             }
         }
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
+            fullBrightCache = CringeManager.GetCringe<FullBrightCringe>();
             orig(self, time);
             ClientLoader.MainRenderer?.Render(time);
         }
@@ -110,36 +112,82 @@ namespace TerraAngel.Hooks.Hooks
             orig();
         }
 
+        private static FullBrightCringe fullBrightCache;
         private static Vector3 LightingHook(Func<Terraria.Graphics.Light.LightingEngine, int, int, Vector3> orig, Terraria.Graphics.Light.LightingEngine self, int x, int y)
         {
-            FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
-            if (fullBright.Enabled)
+            if (fullBrightCache.Enabled)
             {
-                return Vector3.One * fullBright.Brightness;
+                return Vector3.One * fullBrightCache.Brightness;
             }
             return orig(self, x, y);
         }
         private static Vector3 LegacyLightingHook(Func<Terraria.Graphics.Light.LegacyLighting, int, int, Vector3> orig, Terraria.Graphics.Light.LegacyLighting self, int x, int y)
         {
-            FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
-            if (fullBright.Enabled)
+            if (fullBrightCache.Enabled)
             {
-                return Vector3.One * fullBright.Brightness;
+                return Vector3.One * fullBrightCache.Brightness;
             }
             return orig(self, x, y);
         }
-        //private static void LightingProcessAreaHook(Action<Terraria.Graphics.Light.LightingEngine, Rectangle> orig, Terraria.Graphics.Light.LightingEngine self, Rectangle area)
-        //{
-        //    if (GlobalCheatManager.FullBright)
-        //        return;
-        //    orig(self, area);
-        //}
-        //private static void LegacyLightingProcessAreaHook(Action<Terraria.Graphics.Light.LegacyLighting, Rectangle> orig, Terraria.Graphics.Light.LegacyLighting self, Rectangle area)
-        //{
-        //    if (GlobalCheatManager.FullBright)
-        //        return;
-        //    orig(self, area);
-        //}
+        private static void LightingProcessAreaHook(Action<Terraria.Graphics.Light.LightingEngine, Rectangle> orig, Terraria.Graphics.Light.LightingEngine self, Rectangle area)
+        {
+            if (fullBrightCache.Enabled)
+            {
+                Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
+                value.Inflate(-40, -40);
+                area = Rectangle.Intersect(area, value);
+                Main.mapMinX = area.Left;
+                Main.mapMinY = area.Top;
+                Main.mapMaxX = area.Right;
+                Main.mapMaxY = area.Bottom;
+
+                /// this hurts to use :(
+                FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
+                {
+                    for (int i = start; i < end; i++)
+                    {
+                        for (int j = area.Top; j < area.Bottom; j++)
+                        {
+                            Main.Map.Update(i, j, 255);
+                        }
+                    }
+                });
+
+                Main.updateMap = true;
+
+
+                return;
+            }
+            orig(self, area);
+        }
+        private static void LegacyLightingProcessAreaHook(Action<Terraria.Graphics.Light.LegacyLighting, Rectangle> orig, Terraria.Graphics.Light.LegacyLighting self, Rectangle area)
+        {
+            if (fullBrightCache.Enabled)
+            {
+                Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
+                value.Inflate(-40, -40);
+                area = Rectangle.Intersect(area, value);
+                Main.mapMinX = area.Left;
+                Main.mapMinY = area.Top;
+                Main.mapMaxX = area.Right;
+                Main.mapMaxY = area.Bottom;
+
+                FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
+                {
+                    for (int i = start; i < end; i++)
+                    {
+                        for (int j = area.Top; j < area.Bottom; j++)
+                        {
+                            Main.Map.Update(i, j, 255);
+                        }
+                    }
+                });
+
+                Main.updateMap = true;
+                return;
+            }
+            orig(self, area);
+        }
 
         public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
         {

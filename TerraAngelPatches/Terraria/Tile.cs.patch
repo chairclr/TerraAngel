@@ -7,7 +7,7 @@
  
  namespace Terraria
  {
-+    [StructLayout(LayoutKind.Sequential, Pack = 0)]
++    [StructLayout(LayoutKind.Sequential, Pack = 8)]
      public class Tile
      {
          public ushort type;

@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,106 @@
+@@ -3,40 +_,90 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -64,45 +64,29 @@
      <EmbeddedResource Include="GameContent/WorldBuilding/*" />
      <EmbeddedResource Include="IO/Data/*" />
 -    <EmbeddedResource Include="Libraries/**" />
-+    <!-- <EmbeddedResource Include="Libraries/**" /> -->
      <EmbeddedResource Include="Localization/Content/**" />
 -    <EmbeddedResource Include="Microsoft/**" />
 -  </ItemGroup>
-+    <!-- <EmbeddedResource Include="Microsoft/**" />
-+    <EmbeddedResource Include="LibNew/$(Platform)/FNA/FNA.dll" />
-+    <EmbeddedResource Include="LibNew/$(Platform)/Steamworks.NET.dll" />
-+    <EmbeddedResource Include="LibNew/$(Platform)/ImGui/ImGui.NET.dll" />
-+    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/Mono.Cecil.dll" />
-+    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
-+    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
-+    <EmbeddedResource Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
-+    <EmbeddedResource Include="../TerraAngelPluginAPI/bin/$(Platform)/$(Configuration)/$(TargetFramework)/TerraAngelPluginAPI.dll" /> -->
 +  </ItemGroup>
 +	
-+  <!-- Copy some steam stuff -->
-+  <Target Name="CopySteam" AfterTargets="AfterBuild">
++  <!-- Copy some native libraries -->
++  <Target Name="CopyNative" AfterTargets="AfterBuild">
++    <Message Text="Copying native libraries" Importance="high" />
 +    <Copy SourceFiles="LibNew/$(Platform)/steam_api.dll" DestinationFolder="$(OutDir)" />
-+  </Target>
-+  
-+
-+  <!-- Copy some FNA stuff -->
-+  <Target Name="CopyFNA" AfterTargets="AfterBuild">
 +    <Copy SourceFiles="LibNew/$(Platform)/FNA/FAudio.dll" DestinationFolder="$(OutDir)" />
 +    <Copy SourceFiles="LibNew/$(Platform)/FNA/FNA3D.dll" DestinationFolder="$(OutDir)" />
 +    <Copy SourceFiles="LibNew/$(Platform)/FNA/SDL2.dll" DestinationFolder="$(OutDir)" />
 +    <Copy SourceFiles="LibNew/$(Platform)/FNA/libtheorafile.dll" DestinationFolder="$(OutDir)" />
-+  </Target>
-+
-+  <!-- Copy some ImGui stuff -->
-+  <Target Name="CopyImGui" AfterTargets="AfterBuild">
 +    <Copy SourceFiles="LibNew/$(Platform)/ImGui/cimgui.dll" DestinationFolder="$(OutDir)" />
 +  </Target>
 +
-+  <!-- Copy some Font stuff -->
++  <!-- Copy some assets -->
 +  <Target Name="CopyAssets" AfterTargets="AfterBuild">
++    <Message Text="Client assets" Importance="high" />
 +    <Copy SourceFiles="Assets/IconFont.ttf" DestinationFolder="$(OutDir)" />
 +    <Copy SourceFiles="Assets/MonoFont.ttf" DestinationFolder="$(OutDir)" />
 +    <Copy SourceFiles="Assets/TerrariaFont.ttf" DestinationFolder="$(OutDir)" />
++    <Copy SourceFiles="Assets/RussianGlyphFont.ttf" DestinationFolder="$(OutDir)" />
 +  </Target>
 +
 +  <Target Name="EditBin" AfterTargets="Build">

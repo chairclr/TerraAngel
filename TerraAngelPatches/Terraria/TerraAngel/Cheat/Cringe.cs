@@ -9,6 +9,7 @@ namespace TerraAngel.Cheat
 {
     public abstract class Cringe
     {
+        private bool lastEnabled;
         public bool Enabled;
         public virtual string Name => GetType().Name;
         public virtual CringeTabs Tab => CringeTabs.None;
@@ -17,5 +18,20 @@ namespace TerraAngel.Cheat
         {
             ImGui.Checkbox(Name, ref Enabled);
         }
+
+        public virtual void Update()
+        {
+            if (lastEnabled != Enabled)
+            {
+                if (Enabled)
+                    OnEnable();
+                else
+                    OnDisable();
+            }
+            lastEnabled = Enabled;
+        }
+
+        public virtual void OnEnable() { }
+        public virtual void OnDisable() { }
     }
 }

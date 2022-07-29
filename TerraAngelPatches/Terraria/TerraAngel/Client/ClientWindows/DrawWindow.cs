@@ -31,7 +31,6 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.Begin("DRAWWINDOW", ImGuiWindowFlags.NoMouseInputs | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground);
             ImGui.PushClipRect(NVector2.Zero, io.DisplaySize, false);
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
-
             if (!Main.gameMenu)
             {
                 if (!Main.mapFullscreen)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImGuiNET;
+using Terraria;
 
 namespace TerraAngel.Cheat.Cringes
 {
@@ -24,7 +25,13 @@ namespace TerraAngel.Cheat.Cringes
             if (ImGui.SliderFloat("##Brightness", ref tmp, 1f, 100f))
             {
                 Brightness = tmp / 100f;
+                Main.renderNow = true;
             }
+        }
+
+        public override void OnEnable()
+        {
+            Main.renderNow = true;
         }
     }
 }

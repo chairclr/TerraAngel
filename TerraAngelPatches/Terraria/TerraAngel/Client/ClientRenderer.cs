@@ -122,6 +122,8 @@ namespace TerraAngel.Client
             {
                 plugin.Update();
             }
+
+            CringeManager.Update();
         }
 
         public void Draw()

@@ -9,7 +9,7 @@ namespace TerraAngel.Cheat
 {
     public class CringeManager
     {
-        private static Dictionary<string, Cringe> cringes = new Dictionary<string, Cringe>();
+        private static Dictionary<int, Cringe> cringes = new Dictionary<int, Cringe>();
         private static List<Cringe>[] cringesAsTabs;
 
         static CringeManager()
@@ -23,51 +23,51 @@ namespace TerraAngel.Cheat
 
         public static T GetCringe<T>() where T : Cringe
         {
-            return (T)cringes[typeof(T).FullName];
+            return (T)cringes[typeof(T).MetadataToken];
         }
         public static void AddCringe<T>(bool enabled = false) where T : Cringe
         {
-            if (!cringes.ContainsKey(typeof(T).FullName))
+            if (!cringes.ContainsKey(typeof(T).MetadataToken))
             {
                 Cringe cringe = Activator.CreateInstance<T>();
                 cringe.Enabled = enabled;
                 cringesAsTabs[(int)cringe.Tab].Add(cringe);
-                cringes.Add(typeof(T).FullName, cringe);
+                cringes.Add(typeof(T).MetadataToken, cringe);
             }
         }
         public static void RemoveCringe<T>() where T : Cringe
         {
-            if (cringes.ContainsKey(typeof(T).FullName))
+            if (cringes.ContainsKey(typeof(T).MetadataToken))
             {
                 Cringe? cringe = GetCringe<T>();
                 if (cringe is not null)
                     cringesAsTabs[(int)cringe.Tab].Remove(cringe);
-                cringes.Remove(typeof(T).FullName);
+                cringes.Remove(typeof(T).MetadataToken);
             }
         }
 
         public static Cringe GetCringe(Type type)
         {
-            return cringes[type.FullName];
+            return cringes[type.MetadataToken];
         }
         public static void AddCringe(Type type, bool enabled = false)
         {
-            if (!cringes.ContainsKey(type.FullName))
+            if (!cringes.ContainsKey(type.MetadataToken))
             {
                 Cringe cringe = (Cringe)Activator.CreateInstance(type);
                 cringe.Enabled = enabled;
                 cringesAsTabs[(int)cringe.Tab].Add(cringe);
-                cringes.Add(type.FullName, cringe);
+                cringes.Add(type.MetadataToken, cringe);
             }
         }
         public static void RemoveCringe(Type type)
         {
-            if (cringes.ContainsKey(type.FullName))
+            if (cringes.ContainsKey(type.MetadataToken))
             {
                 Cringe? cringe = GetCringe(type);
                 if (cringe is not null)
                     cringesAsTabs[(int)cringe.Tab].Remove(cringe);
-                cringes.Remove(type.FullName);
+                cringes.Remove(type.MetadataToken);
             }
         }
 
@@ -81,6 +81,15 @@ namespace TerraAngel.Cheat
             foreach (List<Cringe> tab in cringesAsTabs)
             {
                 tab.Sort((x, y) => x.Name.CompareTo(y.Name));
+            }
+        }
+
+        public static void Update()
+        {
+            for (int i = 0; i < cringesAsTabs.Length; i++)
+            {
+                List<Cringe> tab = cringesAsTabs[i];
+                tab.ForEach(x => x.Update());
             }
         }
         

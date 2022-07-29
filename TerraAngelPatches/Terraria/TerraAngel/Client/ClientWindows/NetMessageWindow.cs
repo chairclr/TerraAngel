@@ -195,7 +195,7 @@ namespace TerraAngel.Client.ClientWindows
                                 packetInfo = receivePackets[i];
                             }
 
-                            if (ImGui.Selectable($"{(messagesShownInTree[i] ? ClientAssets.IconFont.ArrowDown : ClientAssets.IconFont.ArrowRight)} {packetName,-35}{(packetInfo.Count == 0 ? "" : packetInfo.Count.ToString())}"))
+                            if (ImGui.Selectable($"{(messagesShownInTree[i] ? ClientAssets.IconFont.TriangleDown : ClientAssets.IconFont.TriangleRight)} {packetName,-35}{(packetInfo.Count == 0 ? "" : packetInfo.Count.ToString())}"))
                             {
                                 messagesShownInTree[i] = !messagesShownInTree[i];
                             }
