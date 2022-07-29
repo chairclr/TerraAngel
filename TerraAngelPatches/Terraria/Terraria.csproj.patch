@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,33 +_,40 @@
+@@ -3,40 +_,106 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -44,7 +44,7 @@
 -    <Reference Include="System.Windows.Forms" />
 -    <Reference Include="WindowsBase" />
 -  </ItemGroup>
-+    <EmbeddedResource Include="../ReLogic/bin/$(Platform)/$(Configuration)/$(TargetFramework)/ReLogic.dll" />
++    <!-- <EmbeddedResource Include="../ReLogic/bin/$(Platform)/$(Configuration)/$(TargetFramework)/ReLogic.dll" /> -->
 +  </ItemGroup>
 +
 +  <!-- New libraries added -->
@@ -61,10 +61,14 @@
    <ItemGroup>
      <EmbeddedResource Include="GameContent/Creative/Content/*" />
      <EmbeddedResource Include="GameContent/Metadata/MaterialData/*" />
-@@ -38,5 +_,64 @@
-     <EmbeddedResource Include="Libraries/**" />
+     <EmbeddedResource Include="GameContent/WorldBuilding/*" />
+     <EmbeddedResource Include="IO/Data/*" />
+-    <EmbeddedResource Include="Libraries/**" />
++    <!-- <EmbeddedResource Include="Libraries/**" /> -->
      <EmbeddedResource Include="Localization/Content/**" />
-     <EmbeddedResource Include="Microsoft/**" />
+-    <EmbeddedResource Include="Microsoft/**" />
+-  </ItemGroup>
++    <!-- <EmbeddedResource Include="Microsoft/**" />
 +    <EmbeddedResource Include="LibNew/$(Platform)/FNA/FNA.dll" />
 +    <EmbeddedResource Include="LibNew/$(Platform)/Steamworks.NET.dll" />
 +    <EmbeddedResource Include="LibNew/$(Platform)/ImGui/ImGui.NET.dll" />
@@ -72,8 +76,8 @@
 +    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
 +    <EmbeddedResource Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
 +    <EmbeddedResource Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
-+    <EmbeddedResource Include="../TerraAngelPluginAPI/bin/$(Platform)/$(Configuration)/$(TargetFramework)/TerraAngelPluginAPI.dll" />
-   </ItemGroup>
++    <EmbeddedResource Include="../TerraAngelPluginAPI/bin/$(Platform)/$(Configuration)/$(TargetFramework)/TerraAngelPluginAPI.dll" /> -->
++  </ItemGroup>
 +	
 +  <!-- Copy some steam stuff -->
 +  <Target Name="CopySteam" AfterTargets="AfterBuild">

@@ -44,3 +44,12 @@
                      }
                  }
              }
+@@ -2563,6 +_,8 @@
+                     while (num2 >= 2)
+                     {
+                         int num3 = BitConverter.ToUInt16(buffer[bufferIndex].readBuffer, num);
++                        if (num3 <= 0)
++                            break; // prevent zero length packets lmao
+                         if (num2 >= num3)
+                         {
+                             long position = buffer[bufferIndex].reader.BaseStream.Position;

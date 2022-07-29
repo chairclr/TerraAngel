@@ -177,6 +177,19 @@ namespace TerraAngel.Utility
             }
             return null;
         }
+
+        public static string EscapeString(string value)
+        {
+            try
+            {
+                value = Regex.Unescape(value);
+            }
+            catch (RegexParseException)
+            {
+
+            }
+            return value;
+        }
     }
     public static class VectorExtensions
     {

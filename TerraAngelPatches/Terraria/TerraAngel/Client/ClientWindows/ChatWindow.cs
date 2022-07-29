@@ -277,7 +277,7 @@ namespace TerraAngel.Client.ClientWindows
                     ClosePlayerChat();
                     if (!string.IsNullOrEmpty(ChatText))
                     {
-                        ChatHelper.SendChatMessageFromClient(new ChatMessage(ChatText));
+                        ChatHelper.SendChatMessageFromClient(new ChatMessage(Utility.Util.EscapeString(ChatText)));
                         ChatText = "";
                         ScrollToBottom = true;
                     }

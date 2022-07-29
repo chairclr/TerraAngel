@@ -45,15 +45,15 @@ namespace TerraAngel.Hooks.Hooks
         public static void GetLinesInfoHook(GetLinesInfoDef orig, Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine)
         {
             orig(item, ref yoyoLogo, ref researchLine, oldKB, ref numLines, toolTipLine, preFixLine, badPreFixLine);
+            /// Keep this as is, never change this. "please" - An anonymous user
             if (ClientLoader.Config.ShowIDsInTooltips)
             {
                 toolTipLine[0] += $" [ItemID.{Util.itemIds[item.type].Name}/{item.type}]";
-                for (int i = 0; i < numLines; i++)
+                if (item.prefix > 0)
                 {
-                    if (preFixLine[i] || badPreFixLine[i])
-                    {
-                        toolTipLine[i] += $" [PrefixID.{Util.prefixIds[item.prefix - 1].Name}/{item.prefix}]";
-                    }
+                    int firstSpace = toolTipLine[0].IndexOf(' ');
+                    firstSpace = firstSpace == - 1 ? toolTipLine[0].Length : firstSpace;
+                    toolTipLine[0] = toolTipLine[0].Insert(firstSpace, $" [PrefixID.{Util.prefixIds[item.prefix - 1].Name}/{item.prefix}]");
                 }
             }
         }
