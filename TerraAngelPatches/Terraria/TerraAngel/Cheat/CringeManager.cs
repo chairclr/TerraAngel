@@ -9,7 +9,7 @@ namespace TerraAngel.Cheat
 {
     public class CringeManager
     {
-        private static Dictionary<Type, Cringe> cringes = new Dictionary<Type, Cringe>();
+        private static Dictionary<string, Cringe> cringes = new Dictionary<string, Cringe>();
         private static List<Cringe>[] cringesAsTabs;
 
         static CringeManager()
@@ -23,51 +23,51 @@ namespace TerraAngel.Cheat
 
         public static T GetCringe<T>() where T : Cringe
         {
-            return (T)cringes[typeof(T)];
+            return (T)cringes[typeof(T).FullName];
         }
         public static void AddCringe<T>(bool enabled = false) where T : Cringe
         {
-            if (!cringes.ContainsKey(typeof(T)))
+            if (!cringes.ContainsKey(typeof(T).FullName))
             {
                 Cringe cringe = Activator.CreateInstance<T>();
                 cringe.Enabled = enabled;
                 cringesAsTabs[(int)cringe.Tab].Add(cringe);
-                cringes.Add(typeof(T), cringe);
+                cringes.Add(typeof(T).FullName, cringe);
             }
         }
         public static void RemoveCringe<T>() where T : Cringe
         {
-            if (cringes.ContainsKey(typeof(T)))
+            if (cringes.ContainsKey(typeof(T).FullName))
             {
                 Cringe? cringe = GetCringe<T>();
                 if (cringe is not null)
                     cringesAsTabs[(int)cringe.Tab].Remove(cringe);
-                cringes.Remove(typeof(T));
+                cringes.Remove(typeof(T).FullName);
             }
         }
 
         public static Cringe GetCringe(Type type)
         {
-            return cringes[type];
+            return cringes[type.FullName];
         }
         public static void AddCringe(Type type, bool enabled = false)
         {
-            if (!cringes.ContainsKey(type))
+            if (!cringes.ContainsKey(type.FullName))
             {
                 Cringe cringe = (Cringe)Activator.CreateInstance(type);
                 cringe.Enabled = enabled;
                 cringesAsTabs[(int)cringe.Tab].Add(cringe);
-                cringes.Add(type, cringe);
+                cringes.Add(type.FullName, cringe);
             }
         }
         public static void RemoveCringe(Type type)
         {
-            if (cringes.ContainsKey(type))
+            if (cringes.ContainsKey(type.FullName))
             {
                 Cringe? cringe = GetCringe(type);
                 if (cringe is not null)
                     cringesAsTabs[(int)cringe.Tab].Remove(cringe);
-                cringes.Remove(type);
+                cringes.Remove(type.FullName);
             }
         }
 
