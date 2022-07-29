@@ -107,7 +107,7 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.Begin("##StatWindow", flags);
             ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
-            ImGui.TextUnformatted($"{ClientAssets.IconFont.CircleFilled} TerraAngel v2.0");
+            ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v2.0");
 
             ImGui.TextUnformatted($"FPS {io.Framerate:F1}");
 
@@ -120,9 +120,9 @@ namespace TerraAngel.Client.ClientWindows
             if (!isInMultiplayerGame) kilobytesDownString = kilobytesUpString = packetsDownString = packetsUpString = "N/A";
 
 
-            ImGuiUtil.TextColored($"Packets \t{ClientAssets.IconFont.ArrowUp}{packetsUpString,7} / {ClientAssets.IconFont.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
+            ImGuiUtil.TextColored($"Packets \t{Icon.ArrowUp}{packetsUpString,7} / {Icon.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
 
-            ImGuiUtil.TextColored($"Bytes   \t{ClientAssets.IconFont.ArrowUp}{kilobytesUpString,7} / {ClientAssets.IconFont.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
+            ImGuiUtil.TextColored($"Bytes   \t{Icon.ArrowUp}{kilobytesUpString,7} / {Icon.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
 
             ImGui.PopFont();
             ImGui.End();

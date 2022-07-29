@@ -370,38 +370,38 @@ namespace TerraAngel.Client.ClientWindows
                         switch (tag)
                         {
                             case WellKnownTags.Field:
-                                return ClientAssets.IconFont.SymbolField;
+                                return Icon.SymbolField;
                             case WellKnownTags.Method:
                             case WellKnownTags.ExtensionMethod:
-                                return ClientAssets.IconFont.SymbolMethod;
+                                return Icon.SymbolMethod;
                             case WellKnownTags.Namespace:
-                                return ClientAssets.IconFont.SymbolNamespace;
+                                return Icon.SymbolNamespace;
                             case WellKnownTags.Class:
-                                return ClientAssets.IconFont.SymbolClass;
+                                return Icon.SymbolClass;
                             case WellKnownTags.Structure:
-                                return ClientAssets.IconFont.SymbolStructure;
+                                return Icon.SymbolStructure;
                             case WellKnownTags.Enum:
-                                return ClientAssets.IconFont.SymbolEnum;
+                                return Icon.SymbolEnum;
                             case WellKnownTags.Interface:
-                                return ClientAssets.IconFont.SymbolInterface;
+                                return Icon.SymbolInterface;
                             case WellKnownTags.Event:
-                                return ClientAssets.IconFont.SymbolEvent;
+                                return Icon.SymbolEvent;
                             case WellKnownTags.Property:
-                                return ClientAssets.IconFont.SymbolProperty;
+                                return Icon.SymbolProperty;
                             case WellKnownTags.Constant:
-                                return ClientAssets.IconFont.SymbolConstant;
+                                return Icon.SymbolConstant;
                             case WellKnownTags.Delegate:
-                                return ClientAssets.IconFont.TypeHierarchySub;
+                                return Icon.TypeHierarchySub;
                             case WellKnownTags.EnumMember:
-                                return ClientAssets.IconFont.SymbolEnumMember;
+                                return Icon.SymbolEnumMember;
                             case WellKnownTags.Keyword:
-                                return ClientAssets.IconFont.SymbolKeyword;
+                                return Icon.SymbolKeyword;
                             case WellKnownTags.Local:
-                                return ClientAssets.IconFont.SymbolVariable;
+                                return Icon.SymbolVariable;
 
                         }
                     }
-                    return ClientAssets.IconFont.SymbolMisc;
+                    return Icon.SymbolMisc;
                 }
                 Color GetIconColor(int i)
                 {

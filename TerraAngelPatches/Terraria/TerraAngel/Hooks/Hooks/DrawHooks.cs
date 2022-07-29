@@ -133,6 +133,7 @@ namespace TerraAngel.Hooks.Hooks
         {
             if (fullBrightCache.Enabled)
             {
+                Main.renderCount = (Main.renderCount + 1) % 4;
                 Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
                 value.Inflate(-40, -40);
                 area = Rectangle.Intersect(area, value);
@@ -164,6 +165,7 @@ namespace TerraAngel.Hooks.Hooks
         {
             if (fullBrightCache.Enabled)
             {
+                Main.renderCount = (Main.renderCount + 1) % 4;
                 Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
                 value.Inflate(-40, -40);
                 area = Rectangle.Intersect(area, value);
@@ -184,6 +186,7 @@ namespace TerraAngel.Hooks.Hooks
                 });
 
                 Main.updateMap = true;
+
                 return;
             }
             orig(self, area);

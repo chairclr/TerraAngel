@@ -136,8 +136,8 @@ namespace TerraAngel.Client.ClientWindows
                     ImGui.Text("Search:"); ImGui.SameLine();
                     ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##MessageFilter", ref logsFilter, 512); ImGui.PopItemWidth(); ImGui.SameLine();
                     ImGui.Checkbox("Log Messages", ref LoggingMessages); ImGui.SameLine();
-                    ImGui.Checkbox($"{ClientAssets.IconFont.ArrowUp}", ref upMessages); ImGui.SameLine();
-                    ImGui.Checkbox($"{ClientAssets.IconFont.ArrowDown}", ref downMessages);
+                    ImGui.Checkbox($"{Icon.ArrowUp}", ref upMessages); ImGui.SameLine();
+                    ImGui.Checkbox($"{Icon.ArrowDown}", ref downMessages);
 
                     ImGui.Text("Packets with traces:"); ImGui.SameLine();
                     unsafe
@@ -195,7 +195,7 @@ namespace TerraAngel.Client.ClientWindows
                                 packetInfo = receivePackets[i];
                             }
 
-                            if (ImGui.Selectable($"{(messagesShownInTree[i] ? ClientAssets.IconFont.TriangleDown : ClientAssets.IconFont.TriangleRight)} {packetName,-35}{(packetInfo.Count == 0 ? "" : packetInfo.Count.ToString())}"))
+                            if (ImGui.Selectable($"{(messagesShownInTree[i] ? Icon.TriangleDown : Icon.TriangleRight)} {packetName,-35}{(packetInfo.Count == 0 ? "" : packetInfo.Count.ToString())}"))
                             {
                                 messagesShownInTree[i] = !messagesShownInTree[i];
                             }

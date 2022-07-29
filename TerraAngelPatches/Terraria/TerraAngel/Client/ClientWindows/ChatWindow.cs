@@ -141,21 +141,21 @@ namespace TerraAngel.Client.ClientWindows
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 1f);
                 ImGui.TextUnformatted("Chat");
                 ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(0f, 1f));
-                if (ImGui.Button($"{(chatLocked ? ClientAssets.IconFont.Lock : ClientAssets.IconFont.Unlock)}")) chatLocked = !chatLocked;
+                if (ImGui.Button($"{(chatLocked ? Icon.Lock : Icon.Unlock)}")) chatLocked = !chatLocked;
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
                     ImGui.Text($"Chat {(chatLocked ? "Locked" : "Unlocked")}");
                     ImGui.EndTooltip();
                 }
-                if (ImGui.Button($"{ClientAssets.IconFont.ClearAll}")) ChatItems.Clear();
+                if (ImGui.Button($"{Icon.ClearAll}")) ChatItems.Clear();
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
                     ImGui.Text("Clear Chat");
                     ImGui.EndTooltip();
                 }
-                if (ImGui.Button($"{ClientAssets.IconFont.DebugRestart}")) resetPosition = true;
+                if (ImGui.Button($"{Icon.DebugRestart}")) resetPosition = true;
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();

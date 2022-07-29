@@ -213,7 +213,7 @@ namespace TerraAngel.Client.ClientWindows
             {
                 if (ImGui.BeginTabItem("Cheats"))
                 {
-                    ImGui.Button($"{ClientAssets.IconFont.Refresh} Client UUID"); ImGui.SameLine();
+                    ImGui.Button($"{Icon.Refresh} Client UUID"); ImGui.SameLine();
                     if (ImGui.Button("Click to reveal"))
                     {
                         framesToShowUUIDFor = 600;
