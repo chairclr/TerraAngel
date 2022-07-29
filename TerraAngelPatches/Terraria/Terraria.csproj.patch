@@ -1,8 +1,11 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,90 @@
+@@ -1,42 +_,160 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+   <Import Project="../Configuration.targets" />
    <PropertyGroup>
-     <OutputType>WinExe</OutputType>
+-    <OutputType>WinExe</OutputType>
++    <OutputType>Exe</OutputType>
      <Nullable>enable</Nullable>
 +    <Deterministic>false</Deterministic>
      <Version>1.4.3.6</Version>
@@ -10,11 +13,15 @@
      <Company>Copyright © 2022 Re-Logic</Company>
      <RootNamespace>Terraria</RootNamespace>
 +    <TargetFramework>net6.0</TargetFramework>
-+    <Platforms>x86;x64</Platforms>
++    <Platforms>AnyCPU</Platforms>
    </PropertyGroup>
 +  <PropertyGroup>
 +    <ApplicationIcon>app.ico</ApplicationIcon>
 +    <Win32Resource />
++  </PropertyGroup>
++
++  <PropertyGroup>
++    <AssetDir>$(OutDir)Assets</AssetDir>
 +  </PropertyGroup>
 +
 +  <!-- Libraries part of Terraria -->
@@ -47,14 +54,26 @@
 +    <!-- <EmbeddedResource Include="../ReLogic/bin/$(Platform)/$(Configuration)/$(TargetFramework)/ReLogic.dll" /> -->
 +  </ItemGroup>
 +
++  
++
 +  <!-- New libraries added -->
 +  <ItemGroup>
-+    <Reference Include="LibNew/$(Platform)/FNA/FNA.dll" />
-+    <Reference Include="LibNew/$(Platform)/Steamworks.NET.dll" />
-+    <Reference Include="LibNew/$(Platform)/ImGui/ImGui.NET.dll" />
-+    <Reference Include="LibNew/AnyCpu/MonoMod/Mono.Cecil.dll" />
-+    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.Utils.dll" />
-+    <Reference Include="LibNew/AnyCpu/MonoMod/MonoMod.RuntimeDetour.dll" />
++    <Reference Include="FNA">
++      <HintPath>LibNew\FNA\FNA.dll</HintPath>
++    </Reference>
++    <Reference Include="ImGui.NET">
++      <HintPath>LibNew\ImGui\ImGui.NET.dll</HintPath>
++    </Reference>
++    <Reference Include="Mono.Cecil">
++      <HintPath>LibNew\MonoMod\Mono.Cecil.dll</HintPath>
++    </Reference>
++    <Reference Include="MonoMod.RuntimeDetour">
++      <HintPath>LibNew\MonoMod\MonoMod.RuntimeDetour.dll</HintPath>
++    </Reference>
++    <Reference Include="MonoMod.Utils">
++      <HintPath>LibNew\MonoMod\MonoMod.Utils.dll</HintPath>
++    </Reference>
++    <Reference Include="LibNew/x64/Steamworks/Steamworks.NET.dll" />
 +    <ProjectReference Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
 +  </ItemGroup>
 +
@@ -69,7 +88,7 @@
 -  </ItemGroup>
 +  </ItemGroup>
 +	
-+  <!-- Copy some native libraries -->
++  <!-- Copy some native libraries
 +  <Target Name="CopyNative" AfterTargets="AfterBuild">
 +    <Message Text="Copying native libraries" Importance="high" />
 +    <Copy SourceFiles="LibNew/$(Platform)/steam_api.dll" DestinationFolder="$(OutDir)" />
@@ -80,14 +99,14 @@
 +    <Copy SourceFiles="LibNew/$(Platform)/ImGui/cimgui.dll" DestinationFolder="$(OutDir)" />
 +  </Target>
 +
-+  <!-- Copy some assets -->
++  Copy some assets
 +  <Target Name="CopyAssets" AfterTargets="AfterBuild">
 +    <Message Text="Client assets" Importance="high" />
-+    <Copy SourceFiles="Assets/IconFont.ttf" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="Assets/MonoFont.ttf" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="Assets/TerrariaFont.ttf" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="Assets/RussianGlyphFont.ttf" DestinationFolder="$(OutDir)" />
-+  </Target>
++    <Copy SourceFiles="Assets/IconFont.ttf" DestinationFolder="$(AssetDir)" />
++    <Copy SourceFiles="Assets/MonoFont.ttf" DestinationFolder="$(AssetDir)" />
++    <Copy SourceFiles="Assets/TerrariaFont.ttf" DestinationFolder="$(AssetDir)" />
++    <Copy SourceFiles="Assets/RussianGlyphFont.ttf" DestinationFolder="$(AssetDir)" />
++  </Target> -->
 +
 +  <Target Name="EditBin" AfterTargets="Build">
 +    <PropertyGroup>
@@ -111,6 +130,58 @@
 +    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.2.0" />
 +    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
++  </ItemGroup>
++
++
++  <ItemGroup>
++    <None Update="Assets\IconFont.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="Assets\MonoFont.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="Assets\RussianGlyphFont.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="Assets\TerrariaFont.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x64\FNA\FAudio.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x64\FNA\FNA3D.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x64\FNA\libtheorafile.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x64\FNA\SDL2.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x64\ImGui\cimgui.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x64\Steamworks\steam_api.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x86\FNA\FAudio.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x86\FNA\FNA3D.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x86\FNA\libtheorafile.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x86\FNA\SDL2.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x86\ImGui\cimgui.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x86\Steamworks\steam_api.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
 +  </ItemGroup>
 +
  </Project>

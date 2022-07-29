@@ -653,7 +653,7 @@ namespace TerraAngel.Client.ClientWindows
 
                         if (ctrl)
                         {
-                            if (ImGui.IsKeyPressed('Z', true))
+                            if (ImGui.IsKeyPressed(ImGuiKey.Z, true))
                             {
                                 if (undoStackPointer > 1)
                                 {
@@ -670,7 +670,7 @@ namespace TerraAngel.Client.ClientWindows
                                 }
                             }
 
-                            if (ImGui.IsKeyPressed('Y', true))
+                            if (ImGui.IsKeyPressed(ImGuiKey.Z, true))
                             {
                                 if (undoStackPointer > 1 && undoStackPointer < undoStack.Count)
                                 {

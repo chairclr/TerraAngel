@@ -35,7 +35,6 @@ public class Program
     public const string DiffName = "-diff";
     public const string AutoStartName = "-auto";
     public const string BuildDebugName = "-debug";
-    public const string Buildx86Name = "-x86";
     public const string NoCopyName = "-nocopy";
 
     public static string TerrariaPath = @"C:\Program Files (x86)\Steam\steamapps\common\Terraria";
@@ -48,7 +47,6 @@ public class Program
     public static bool Diff = false;
     public static bool AutoStart = false;
     public static bool BuildDebug = false;
-    public static bool Buildx86 = false;
     public static bool NoCopy = false;
 
     public static void Main(string[] args)
@@ -109,9 +107,6 @@ public class Program
                 case BuildDebugName:
                     BuildDebug = true;
                     break;
-                case Buildx86Name:
-                    Buildx86 = true;
-                    break;
                 case NoCopyName:
                     NoCopy = true;
                     break;
@@ -156,60 +151,28 @@ public class Program
             }
             if (AutoStart)
             {
-                if (!Buildx86)
+                if (BuildDebug)
                 {
-                    if (BuildDebug)
-                    {
-                        Console.WriteLine("Building TerraAngel as debug x64");
-                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Debug;Platform=x64 > build_log_x64.txt");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Building TerraAngel as release x64");
-                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Release;Platform=x64 > build_log_x64.txt");
-                    }
+                    Console.WriteLine("Building TerraAngel as debug");
+                    ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Debug > build_log.txt");
                 }
                 else
                 {
-                    if (BuildDebug)
-                    {
-                        Console.WriteLine("Building TerraAngel as debug x86");
-                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Debug;Platform=x86 > build_log_x86.txt");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Building TerraAngel as release x86");
-                        ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Release;Platform=x86 > build_log_x86.txt");
-                    }
+                    Console.WriteLine("Building TerraAngel as release");
+                    ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Release > build_log.txt");
                 }
 
                 if (!NoCopy)
                 {
-                    if (Buildx86)
+                    if (BuildDebug)
                     {
-                        if (BuildDebug)
-                        {
-                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x86\\Debug\\net6.0\\Content\\\"");
-                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x86\\Debug\\net6.0\\Content\\\" /E > NUL");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x86\\Release\\net6.0\\Content\\\"");
-                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x86\\Release\\net6.0\\Content\\\" /E > NUL");
-                        }
+                        Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\Debug\\net6.0\\Content\\\"");
+                        ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\Debug\\net6.0\\Content\\\" /E > NUL");
                     }
                     else
                     {
-                        if (BuildDebug)
-                        {
-                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x64\\Debug\\net6.0\\Content\\\"");
-                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x64\\Debug\\net6.0\\Content\\\" /E > NUL");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\x64\\Release\\net6.0\\Content\\\"");
-                            ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\x64\\Release\\net6.0\\Content\\\" /E > NUL");
-                        }
+                        Console.WriteLine($"Copying \"{TerrariaPath}\\Content\" to \"src\\TerraAngel\\Terraria\\bin\\Release\\net6.0\\Content\\\"");
+                        ExecCommand($"xcopy \"{TerrariaPath}\\Content\\\" \"src\\TerraAngel\\Terraria\\bin\\Release\\net6.0\\Content\\\" /E > NUL");
                     }
                 }
             }

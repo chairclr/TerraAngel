@@ -15,9 +15,7 @@ To install, clone the github repo
 
 ```git clone https://github.com/CEO-Chair/TerraAngel.git --recursive```
 
-To quickstart as x64, run `fast_start_x64.bat`, and as x86 `fast_start_x86.bat`
-
-Or, manually build `TerraAngelSetup` and run `TerraAngelSetup.exe -auto` or `TerraAngelSetup.exe -decompile -patch` and build TerraAngel, and then run `TerraAngelSetup.exe -prebuild`
+Then run `fast_start.bat` and wait for it to finish
 
 <h2>
 Development
@@ -49,7 +47,7 @@ Features for Terraria developers
   - Stack traces of packets that are sent
   - Send messages with custom values and generate NetMessage.SendData calls
 - Plugin system that supports hot-reloading
-- Supports building x64 and x86
+- Supports any CPU (x64 and x86)
 
 <h3>
 Other useful features

@@ -15,6 +15,8 @@ using System.Reflection;
 using System.Linq;
 using TerraAngel.UI;
 using DiscordRPC;
+using System.Runtime.InteropServices;
+using ImGuiNET;
 
 namespace TerraAngel
 {
@@ -37,9 +39,57 @@ namespace TerraAngel
         public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
         public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
         public static string PluginsPath => Path.Combine(SavePath, "Plugins");
+        public static string AssetPath => "Assets";
+        public static string NativeLibraryPath => "LibNew";
+        public static string Platform => Environment.Is64BitProcess ? "x64" : "x86";
 
-        public static void Hookgen_Early()
+        public static void LoadClient()
         {
+            NativeLibrary.SetDllImportResolver(typeof(ImGui).Assembly, (libraryName, assembly, searchPath) =>
+            {
+                IntPtr handle = IntPtr.Zero;
+
+                if (libraryName == "cimgui")
+                {
+                    if (!NativeLibrary.TryLoad($"{NativeLibraryPath}/{Platform}/ImGui/{libraryName}", out handle))
+                    {
+                        throw new DllNotFoundException($"Could not load {libraryName}");
+                    }
+                }
+
+                return handle;
+            });
+
+            NativeLibrary.SetDllImportResolver(typeof(Vector2).Assembly, (libraryName, assembly, searchPath) =>
+            {
+                IntPtr handle = IntPtr.Zero;
+
+                if (libraryName == "FAudio" || libraryName == "FNA3D" || libraryName == "libtheorafile" || libraryName == "SDL2")
+                {
+                    if (!NativeLibrary.TryLoad($"{NativeLibraryPath}/{Platform}/FNA/{libraryName}", out handle))
+                    {
+                        throw new DllNotFoundException($"Could not load {libraryName}");
+                    }
+                }
+
+                return handle;
+            });
+
+            NativeLibrary.SetDllImportResolver(typeof(Steamworks.SteamAPI).Assembly, (libraryName, assembly, searchPath) =>
+            {
+                IntPtr handle = IntPtr.Zero;
+
+                if (libraryName == "steam_api" || libraryName == "steam_api64")
+                {
+                    if (!NativeLibrary.TryLoad($"{NativeLibraryPath}/{Platform}/Steamworks/{libraryName}", out handle))
+                    {
+                        throw new DllNotFoundException($"Could not load {libraryName}");
+                    }
+                }
+
+                return handle;
+            });
+
             GameHooks.Generate();
 
             Config = ClientConfig.ReadFromFile();

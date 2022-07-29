@@ -20,9 +20,10 @@ namespace TerraAngel.Client
 
         public static readonly float[] DefaultSizes = new float[] { 16, 18, 20, 22, 24 };
 
-        private static string TerrariaFontName = "TerrariaFont.ttf";
-        private static string MonoFontName = "MonoFont.ttf";
-        private static string RussianFontName = "RussianGlyphFont.ttf";
+        private static string TerrariaFontName => $"{ClientLoader.AssetPath}/TerrariaFont.ttf";
+        private static string MonoFontName => $"{ClientLoader.AssetPath}/MonoFont.ttf";
+        private static string RussianFontName => $"{ClientLoader.AssetPath}/RussianGlyphFont.ttf";
+		public static string IconFontName => $"{ClientLoader.AssetPath}/IconFont.ttf";
 
 		public static void LoadFonts(ImGuiIOPtr io)
         {
@@ -54,11 +55,11 @@ namespace TerraAngel.Client
 				TerrariaFonts.Add(size, font);
 			}
 
-			MergeFont(size, RussianFontName, 0x0400, 0x04FF);
+			MergeFont(RussianFontName, size, 0x0400, 0x04FF);
 
 			if (!withoutSymbols)
 			{
-				MergeFont(size, IconFont.FontIconFileName, IconFont.IconMin, IconFont.IconMax, new Vector2(0f, 4f));
+				MergeFont(IconFontName, size, IconFont.IconMin, IconFont.IconMax, new Vector2(0f, 4f));
 			}
 		}
         public static void LoadMonospaceFont(float size, bool withoutSymbols = false)
@@ -68,11 +69,11 @@ namespace TerraAngel.Client
 
 			if (!withoutSymbols)
 			{
-				MergeFont(size, IconFont.FontIconFileName, IconFont.IconMin, IconFont.IconMax, new Vector2(0f, 4f));
+				MergeFont(IconFontName, size, IconFont.IconMin, IconFont.IconMax, new Vector2(0f, 4f));
 			}
 		}
-		public static void MergeFont(float size, string path, ushort glyphMin, ushort glyphMax, Vector2 glyphOffset = default, Vector2 glyphExtraSpacing = default)
-        {
+		public static void MergeFont(string path, float size, ushort glyphMin, ushort glyphMax, Vector2 glyphOffset = default, Vector2 glyphExtraSpacing = default)
+		{
 			ImGuiIOPtr io = ImGui.GetIO();
 			unsafe
 			{

@@ -18,7 +18,7 @@
  
          public static void LaunchGame(string[] args, bool monoArgs = false)
          {
-+            ClientLoader.Hookgen_Early();
++            ClientLoader.LoadClient();
              Thread.CurrentThread.Name = "Main Thread";
              if (monoArgs)
              {
