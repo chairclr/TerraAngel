@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Terraria": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
