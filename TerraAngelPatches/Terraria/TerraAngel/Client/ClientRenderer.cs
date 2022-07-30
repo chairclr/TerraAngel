@@ -24,7 +24,7 @@ namespace TerraAngel.Client
     public class ClientRenderer : TerraImGuiRenderer
     {
         public List<ClientWindow> ClientWindows = new List<ClientWindow>();
-        public List<WorldEdit> WorldEdits = new List<WorldEdit>() { new WorldEditBrush() };
+        public List<WorldEdit> WorldEdits = new List<WorldEdit>() { new WorldEditBrush(), new WorldEditCopyPaste() };
 
         public int CurrentWorldEditIndex = -1;
 
@@ -51,6 +51,7 @@ namespace TerraAngel.Client
 
         public void Init()
         {
+            Utility.TileUtil.Init();
             this.RebuildFontAtlas();
             AddWindow(new DrawWindow());
             AddWindow(new MainWindow());

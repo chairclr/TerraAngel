@@ -17,6 +17,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using TerraAngel;
 using MonoMod;
 using MonoMod.RuntimeDetour;
+using System.Runtime.InteropServices;
 
 namespace TerraAngel.Scripting
 {
@@ -39,6 +40,8 @@ namespace TerraAngel.Scripting
             "System.Text",
             "System.Threading",
             "System.Threading.Tasks",
+            "System.Runtime.CompilerServices",
+            "System.Runtime.InteropServices",
             "Terraria",
             "Terraria.DataStructures",
             "Terraria.ID",
@@ -63,13 +66,13 @@ namespace TerraAngel.Scripting
 
         public static IEnumerable<Assembly> DefaultAssemblies => AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location));
 
+        private bool warmedUp = false;
         private ScriptState? scriptState = null;
         private MefHostServices? scriptHost = null;
         private AdhocWorkspace? scriptWorkspace = null;
         private Project? scriptProject = null;
         private Document? scriptDocument = null;
         private DocumentId? scriptDocumentId;
-        private bool warmedUp = false;
         private CompilationOptions? scriptCompilationOptions => scriptState?.Script.GetCompilation().Options;
 
         public CSharpScriptEnvironment()
@@ -96,7 +99,7 @@ namespace TerraAngel.Scripting
                     ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp)
                         .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(DefaultAssemblies).Select(x => MetadataReference.CreateFromFile(x.Location)))
                         .WithCompilationOptions(scriptCompilationOptions)
-                        .WithParseOptions(new CSharpParseOptions(kind: SourceCodeKind.Script));
+                        .WithParseOptions(new CSharpParseOptions(languageVersion: LanguageVersion.Latest, kind: SourceCodeKind.Script));
 
                     scriptProject = scriptWorkspace?.AddProject(scriptProjectInfo);
 

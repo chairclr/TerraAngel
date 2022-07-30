@@ -103,8 +103,11 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Toggle Fullbright")]
         public Keys ToggleFullbright = Keys.F4;
 
-        [UIConfigElement("Teleport to cursor")]
+        [UIConfigElement("Teleport to Cursor")]
         public Keys TeleportToCursor = Keys.Z;
+
+        [UIConfigElement("World Edit Select")]
+        public Keys WorldEditSelectKey = Keys.F;
 
         public Color TracerColor = new Color(0f, 0f, 1f);
         public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);

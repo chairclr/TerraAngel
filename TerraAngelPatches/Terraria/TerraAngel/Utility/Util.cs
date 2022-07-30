@@ -190,6 +190,7 @@ namespace TerraAngel.Utility
             }
             return value;
         }
+
     }
     public static class VectorExtensions
     {
@@ -223,6 +224,11 @@ namespace TerraAngel.Utility
         public static System.Numerics.Vector3 XYZ(this System.Numerics.Vector4 v)
         {
             return new System.Numerics.Vector3(v.X, v.Y, v.Z);
+        }
+
+        public static Vector2 Round(this Vector2 vec)
+        {
+            return new Vector2(MathF.Round(vec.X), MathF.Round(vec.Y));
         }
     }
     public static class ColorExtensions
