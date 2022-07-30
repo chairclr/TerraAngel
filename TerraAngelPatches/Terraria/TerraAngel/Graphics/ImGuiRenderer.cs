@@ -370,23 +370,18 @@ namespace TerraAngel.Graphics
             int vtxOffset = 0;
             int idxOffset = 0;
 
-            for (int n = 0; n < drawData.CmdListsCount; n++)
+            for (int i = 0; i < drawData.CmdListsCount; i++)
             {
-                ImDrawListPtr cmdList = drawData.CmdListsRange[n];
+                ImDrawListPtr cmdList = drawData.CmdListsRange[i];
 
-                for (int cmdi = 0; cmdi < cmdList.CmdBuffer.Size; cmdi++)
+                for (int j = 0; j < cmdList.CmdBuffer.Size; j++)
                 {
-                    ImDrawCmdPtr drawCmd = cmdList.CmdBuffer[cmdi];
+                    ImDrawCmdPtr drawCmd = cmdList.CmdBuffer[j];
 
 
-                    // Use LoadedTextures.TryGetValue? Why don't you try get some bitches.
-                    Texture2D cmdTexture = GraphicsUtility.MissingTexture;
-                    if (LoadedTextures.ContainsKey(drawCmd.TextureId))
+                    if (!LoadedTextures.TryGetValue(drawCmd.TextureId, out Texture2D? cmdTexture))
                     {
-                        cmdTexture = LoadedTextures[drawCmd.TextureId];
-                    }
-                    else
-                    {
+                        cmdTexture = GraphicsUtility.MissingTexture;
                         GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                     }
 
@@ -403,7 +398,6 @@ namespace TerraAngel.Graphics
                     {
                         pass.Apply();
 
-#pragma warning disable CS0618 // // FNA does not expose an alternative method.
                         GraphicsDevice.DrawIndexedPrimitives(
                             primitiveType: PrimitiveType.TriangleList,
                             baseVertex: vtxOffset,
@@ -412,7 +406,6 @@ namespace TerraAngel.Graphics
                             startIndex: idxOffset,
                             primitiveCount: (int)drawCmd.ElemCount / 3
                         );
-#pragma warning restore CS0618
                     }
 
                     idxOffset += (int)drawCmd.ElemCount;

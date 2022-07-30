@@ -77,20 +77,22 @@ namespace TerraAngel.Client
             }
         }
 
-        public void Render(GameTime time)
+        public void Update(GameTime time)
         {
-            base.BeforeLayout(time);
-            PreDraw();
-            Draw();
-            PostDraw();
-            base.AfterLayout();
             
         }
+        public void Render(GameTime time)
+        {
+            PreDraw(time);
+            Draw();
+            PostDraw();
+        }
 
-        public void PreDraw()
+        public void PreDraw(GameTime time)
         {
             InputSystem.EndUpdateInput();
             InputSystem.UpdateInput();
+            base.BeforeLayout(time);
         }
 
         public void PostDraw()
@@ -124,6 +126,7 @@ namespace TerraAngel.Client
             }
 
             CringeManager.Update();
+            base.AfterLayout();
         }
 
         public void Draw()

@@ -1,11 +1,8 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -1,42 +_,160 @@
- <Project Sdk="Microsoft.NET.Sdk">
-   <Import Project="../Configuration.targets" />
+@@ -3,40 +_,132 @@
    <PropertyGroup>
--    <OutputType>WinExe</OutputType>
-+    <OutputType>Exe</OutputType>
+     <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
 +    <Deterministic>false</Deterministic>
      <Version>1.4.3.6</Version>
@@ -18,10 +15,6 @@
 +  <PropertyGroup>
 +    <ApplicationIcon>app.ico</ApplicationIcon>
 +    <Win32Resource />
-+  </PropertyGroup>
-+
-+  <PropertyGroup>
-+    <AssetDir>$(OutDir)Assets</AssetDir>
 +  </PropertyGroup>
 +
 +  <!-- Libraries part of Terraria -->
@@ -51,7 +44,6 @@
 -    <Reference Include="System.Windows.Forms" />
 -    <Reference Include="WindowsBase" />
 -  </ItemGroup>
-+    <!-- <EmbeddedResource Include="../ReLogic/bin/$(Platform)/$(Configuration)/$(TargetFramework)/ReLogic.dll" /> -->
 +  </ItemGroup>
 +
 +  
@@ -85,28 +77,7 @@
 -    <EmbeddedResource Include="Libraries/**" />
      <EmbeddedResource Include="Localization/Content/**" />
 -    <EmbeddedResource Include="Microsoft/**" />
--  </ItemGroup>
 +  </ItemGroup>
-+	
-+  <!-- Copy some native libraries
-+  <Target Name="CopyNative" AfterTargets="AfterBuild">
-+    <Message Text="Copying native libraries" Importance="high" />
-+    <Copy SourceFiles="LibNew/$(Platform)/steam_api.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/$(Platform)/FNA/FAudio.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/$(Platform)/FNA/FNA3D.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/$(Platform)/FNA/SDL2.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/$(Platform)/FNA/libtheorafile.dll" DestinationFolder="$(OutDir)" />
-+    <Copy SourceFiles="LibNew/$(Platform)/ImGui/cimgui.dll" DestinationFolder="$(OutDir)" />
-+  </Target>
-+
-+  Copy some assets
-+  <Target Name="CopyAssets" AfterTargets="AfterBuild">
-+    <Message Text="Client assets" Importance="high" />
-+    <Copy SourceFiles="Assets/IconFont.ttf" DestinationFolder="$(AssetDir)" />
-+    <Copy SourceFiles="Assets/MonoFont.ttf" DestinationFolder="$(AssetDir)" />
-+    <Copy SourceFiles="Assets/TerrariaFont.ttf" DestinationFolder="$(AssetDir)" />
-+    <Copy SourceFiles="Assets/RussianGlyphFont.ttf" DestinationFolder="$(AssetDir)" />
-+  </Target> -->
 +
 +  <Target Name="EditBin" AfterTargets="Build">
 +    <PropertyGroup>
@@ -182,6 +153,5 @@
 +    <None Update="LibNew\x86\Steamworks\steam_api.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+  </ItemGroup>
-+
+   </ItemGroup>
  </Project>

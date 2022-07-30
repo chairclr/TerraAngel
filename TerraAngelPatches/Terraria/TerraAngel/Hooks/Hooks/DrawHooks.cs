@@ -22,6 +22,7 @@ namespace TerraAngel.Hooks.Hooks
         public static void Generate()
         {
             HookUtil.HookGen<Main>("DoDraw", DoDrawHook);
+            HookUtil.HookGen<Main>("Update", UpdateHook);
             HookUtil.HookGen(Main.DrawCursor, DrawCursorHook);
             HookUtil.HookGen(Main.DrawThickCursor, DrawThickCursorHook);
             HookUtil.HookGen<Main>("DoDraw_UpdateCameraPosition", UpdateCameraHook);
@@ -64,6 +65,11 @@ namespace TerraAngel.Hooks.Hooks
             fullBrightCache = CringeManager.GetCringe<FullBrightCringe>();
             orig(self, time);
             ClientLoader.MainRenderer?.Render(time);
+        }
+        public static void UpdateHook(Action<Main, GameTime> orig, Main self, GameTime time)
+        {
+            orig(self, time);
+            ClientLoader.MainRenderer?.Update(time);
         }
         public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
         {

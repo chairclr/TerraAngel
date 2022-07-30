@@ -53,10 +53,8 @@ namespace TerraAngel.Hooks.Hooks
         {
             orig(self);
 
-            if (ClientLoader.SetupRenderer && self.whoAmI == Main.myPlayer)
+            if (self.whoAmI == Main.myPlayer)
             {
-                ImGuiIOPtr io = ImGui.GetIO();
-
                 if (CringeManager.GetCringe<AntiHurtCringe>().Enabled)
                 {
                     self.statLife = self.statLifeMax2;
@@ -89,87 +87,14 @@ namespace TerraAngel.Hooks.Hooks
 
 
 
-                if (Main.mapFullscreen)
-                {
-
-                    if (ClientLoader.Config.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
-                    {
-                        Main.LocalPlayer.velocity = Vector2.Zero;
-                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition);
-                        if (!io.KeyCtrl)
-                            Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
-
-                        if (!io.KeyCtrl)
-                            if (ClientLoader.Config.TeleportSendRODPacket)
-                            {
-                                NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
-                                    0,
-                                    Main.LocalPlayer.whoAmI,
-                                    Main.LocalPlayer.position.X,
-                                    Main.LocalPlayer.position.Y,
-                                    TeleportationStyleID.RodOfDiscord);
-                            }
-
-                        NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-
-                        if (!io.KeyCtrl)
-                            Main.mapFullscreen = false;
-                    }
-                }
-                else
+                if (!Main.mapFullscreen)
                 {
                     NoClipCringe noClip = CringeManager.GetCringe<NoClipCringe>();
-                    if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleNoclip))
-                    {
-                        noClip.Enabled = !noClip.Enabled;
-                    }
-
                     if (noClip.Enabled)
                     {
-                        if (!io.WantCaptureKeyboard && !io.WantTextInput && !Main.drawingPlayerChat)
-                        {
-                            self.oldPosition = self.position;
-                            if (io.KeysDown[(int)Keys.W])
-                            {
-                                self.position.Y -= noClip.NoClipSpeed;
-                            }
-                            if (io.KeysDown[(int)Keys.S])
-                            {
-                                self.position.Y += noClip.NoClipSpeed;
-                            }
-                            if (io.KeysDown[(int)Keys.A])
-                            {
-                                self.position.X -= noClip.NoClipSpeed;
-                            }
-                            if (io.KeysDown[(int)Keys.D])
-                            {
-                                self.position.X += noClip.NoClipSpeed;
-                            }
-                        }
-
                         if (Main.GameUpdateCount % noClip.NoClipPlayerSyncTime == 0)
                         {
                             SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
-                        }
-                    }
-
-
-                    if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.TeleportToCursor) && !Main.drawingPlayerChat && !io.WantTextInput)
-                    {
-                        Main.LocalPlayer.velocity = Vector2.Zero;
-                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorld(Input.InputSystem.MousePosition);
-                        Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
-
-                        NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-
-                        if (ClientLoader.Config.TeleportSendRODPacket)
-                        {
-                            NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
-                                0,
-                                Main.LocalPlayer.whoAmI,
-                                Main.LocalPlayer.position.X,
-                                Main.LocalPlayer.position.Y,
-                                TeleportationStyleID.RodOfDiscord);
                         }
                     }
                 }
