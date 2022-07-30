@@ -118,6 +118,15 @@ namespace TerraAngel.WorldEdits
 
                     Tile tile = section.Tiles[x, y];
 
+                    if (tile.wall != 0)
+                    {
+                        Main.instance.LoadWall(tile.wall);
+                        wallRectCache.X = tile.wallFrameX();
+                        wallRectCache.Y = tile.wallFrameY() + Main.wallFrame[tile.wall] * 180;
+                        Texture2D wallTexture = GetWallDrawTexture(tile);
+                        sb.Draw(wallTexture, origin + new Vector2(x * 16, y * 16), wallRectCache, Color.White);
+                    }
+
                     if (tile.active())
                     {
                         Main.instance.LoadTiles(tile.type);
@@ -127,14 +136,6 @@ namespace TerraAngel.WorldEdits
                         sb.Draw(tileTexture, origin + new Vector2(x * 16, y * 16), tileRectCache, Color.White);
                     }
 
-                    if (tile.wall != 0)
-                    {
-                        Main.instance.LoadWall(tile.wall);
-                        wallRectCache.X = tile.wallFrameX();
-                        wallRectCache.Y = tile.wallFrameY() + Main.wallFrame[tile.wall] * 180;
-                        Texture2D wallTexture = GetWallDrawTexture(tile);
-                        sb.Draw(wallTexture, origin + new Vector2(x * 16, y * 16), wallRectCache, Color.White);
-                    }
                 }
             }
             sb.End();
@@ -165,15 +166,16 @@ namespace TerraAngel.WorldEdits
 
                     Tile tile = section.Tiles[x, y];
 
+                    if (tile.wall != 0)
+                    {
+                        sb.Draw(GraphicsUtility.BlankTexture, new Rectangle(((int)MathF.Ceiling(origin.X + x * 16)), ((int)MathF.Ceiling(origin.Y + y * 16f)), 16, 16), rectCache, Utility.TileUtil.GetWallColor(tile.wall, tile.wallColor()));
+                    }
+
                     if (tile.active())
                     {
                         sb.Draw(GraphicsUtility.BlankTexture, new Rectangle(((int)MathF.Ceiling(origin.X + x * 16)), ((int)MathF.Ceiling(origin.Y + y * 16f)), 16, 16), rectCache, Utility.TileUtil.GetWallColor(tile.type, tile.color()));
                     }
 
-                    if (tile.wall != 0)
-                    {
-                        sb.Draw(GraphicsUtility.BlankTexture, new Rectangle(((int)MathF.Ceiling(origin.X + x * 16)), ((int)MathF.Ceiling(origin.Y + y * 16f)), 16, 16), rectCache, Utility.TileUtil.GetWallColor(tile.wall, tile.wallColor()));
-                    }
                 }
             }
             sb.End();
@@ -211,15 +213,16 @@ namespace TerraAngel.WorldEdits
                         (int)MathF.Ceiling(worldCoords2.X - worldCoords.X),
                         (int)MathF.Ceiling(worldCoords2.Y - worldCoords.Y));
 
+                    if (tile.wall != 0)
+                    {
+                        sb.Draw(GraphicsUtility.BlankTexture, rect, rectCache, TileUtil.GetWallColor(tile.wall, tile.wallColor()));
+                    }
+
                     if (tile.active())
                     {
                         sb.Draw(GraphicsUtility.BlankTexture, rect, rectCache, TileUtil.GetTileColor(tile.type, tile.color()));
                     }
 
-                    if (tile.wall != 0)
-                    {
-                        sb.Draw(GraphicsUtility.BlankTexture, rect, rectCache, TileUtil.GetWallColor(tile.wall, tile.wallColor()));
-                    }
                 }
             }
             sb.End();

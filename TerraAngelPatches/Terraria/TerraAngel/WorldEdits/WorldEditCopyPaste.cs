@@ -30,11 +30,14 @@ namespace TerraAngel.WorldEdits
         public TileSection? CopiedSection;
         private bool isCopying = false;
         private Vector2 startSelectTile;
+        private string[] placeModes = Util.EnumFancyNames<PlaceMode>();
+        private int currentPlaceMode = 0;
+        private bool destroyTiles = false;
 
         public override void DrawPreviewInMap(ImGuiIOPtr io, ImDrawListPtr drawList)
         {
             Vector2 worldMouse = Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition);
-            Vector2 tileMouse = (worldMouse / 16f).Round();
+            Vector2 tileMouse = (worldMouse / 16f).Floor();
             if (InputSystem.IsKeyPressed(ClientLoader.Config.WorldEditSelectKey))
             {
                 isCopying = true;
@@ -63,11 +66,10 @@ namespace TerraAngel.WorldEdits
                 }
             }
         }
-
         public override void DrawPreviewInWorld(ImGuiIOPtr io, ImDrawListPtr drawList)
         {
             Vector2 worldMouse = Util.ScreenToWorld(InputSystem.MousePosition);
-            Vector2 tileMouse = (worldMouse / 16f).Round();
+            Vector2 tileMouse = (worldMouse / 16f).Floor();
             if (InputSystem.IsKeyPressed(ClientLoader.Config.WorldEditSelectKey))
             {
                 isCopying = true;
@@ -101,6 +103,8 @@ namespace TerraAngel.WorldEdits
         {
             if (ImGui.BeginTabItem("Copy/Paste"))
             {
+                ImGui.Checkbox("Destroy Tiles", ref destroyTiles);
+                ImGui.Text("Place Mode"); ImGui.SameLine(); ImGui.Combo("##PlaceMode", ref currentPlaceMode, placeModes, placeModes.Length);
                 ImGui.EndTabItem();
                 return true;
             }
@@ -109,6 +113,114 @@ namespace TerraAngel.WorldEdits
 
         public override void Edit(Vector2 cursorTilePosition)
         {
+            if (CopiedSection is null)
+                return;
+            switch ((PlaceMode)currentPlaceMode)
+            {
+                case PlaceMode.SendTileRect:
+                    EditSendTileRect(cursorTilePosition);
+                    break;
+                case PlaceMode.TileManipulation:
+                    EditSendTileManipulation(cursorTilePosition);
+                    break;
+            }
+        }
+
+        private void EditSendTileRect(Vector2 originTile)
+        {
+            if (CopiedSection is null)
+                return;
+
+            int ox = (int)MathF.Round(originTile.X);
+            int oy = (int)MathF.Round(originTile.Y);
+            Task.Run(
+                () =>
+                {
+                    Main.rand = new Terraria.Utilities.UnifiedRandom();
+                    // pass one, for solid tiles
+                    for (int x = 0; x < CopiedSection.Width; x++)
+                    {
+                        for (int y = CopiedSection.Height - 1; y > -1; y--)
+                        {
+                            if (!WorldGen.InWorld(ox + x, oy + y))
+                                continue;
+
+                            Tile? tile = Main.tile[ox + x, oy + y];
+                            Tile? copiedTile = CopiedSection.Tiles?[x, y];
+
+                            if (tile is null || copiedTile is null)
+                                continue;
+
+                            if (!(Main.tileSolid[copiedTile.type] &&
+                                copiedTile.type != TileID.GolfTee &&
+                                copiedTile.type != TileID.GolfHole &&
+                                copiedTile.type != TileID.GolfCupFlag))
+                                continue;
+
+                            bool isCopiedTileEmpty = !(copiedTile.active() || copiedTile.wall > 0);
+                            if (isCopiedTileEmpty && !destroyTiles)
+                                continue;
+
+
+
+                            tile.CopyFrom(copiedTile);
+                        }
+                    }
+
+                    // pass two, for non solid tiles
+                    for (int x = 0; x < CopiedSection.Width; x++)
+                    {
+                        for (int y = CopiedSection.Height - 1; y > -1; y--)
+                        {
+                            if (!WorldGen.InWorld(ox + x, oy + y))
+                                continue;
+
+                            Tile? tile = Main.tile[ox + x, oy + y];
+                            Tile? copiedTile = CopiedSection.Tiles?[x, y];
+
+                            if (tile is null || copiedTile is null)
+                                continue;
+
+                            if ((Main.tileSolid[copiedTile.type] &&
+                                copiedTile.type != TileID.GolfTee &&
+                                copiedTile.type != TileID.GolfHole &&
+                                copiedTile.type != TileID.GolfCupFlag))
+                                continue;
+
+                            bool isCopiedTileEmpty = !(copiedTile.active() || copiedTile.wall > 0);
+                            if (isCopiedTileEmpty && !destroyTiles)
+                                continue;
+
+                            tile.CopyFrom(copiedTile);
+                        }
+                    }
+
+                    // pass three, for framing and syncing
+                    for (int x = 0; x < CopiedSection.Width; x++)
+                    {
+                        for (int y = CopiedSection.Height - 1; y > -1; y--)
+                        {
+                            if (!WorldGen.InWorld(ox + x, oy + y))
+                                continue;
+
+                            Tile? tile = Main.tile[ox + x, oy + y];
+                            Tile? copiedTile = CopiedSection.Tiles?[x, y];
+
+                            if (tile is null || copiedTile is null)
+                                continue;
+
+                            WorldGen.SquareTileFrame(ox + x, oy + y);
+                            WorldGen.SquareWallFrame(ox + x, oy + y);
+
+                            NetMessage.SendTileSquare(Main.myPlayer, ox + x, oy + y);
+                        }
+                    }
+                });
+            
+        }
+
+        private void EditSendTileManipulation(Vector2 originTile)
+        {
 
         }
 
@@ -116,7 +228,23 @@ namespace TerraAngel.WorldEdits
         {
             float width = endTile.X - startTile.X;
             float height = endTile.Y - startTile.Y;
+
+            for (int x = ((int)startTile.X); x < ((int)endTile.X); x++)
+            {
+                for (int y = ((int)startTile.Y); y < ((int)endTile.Y); y++)
+                {
+                    WorldGen.SquareTileFrame(x, y);
+                    WorldGen.SquareWallFrame(x, y);
+                }
+            }
+
             CopiedSection = new TileSection(((int)startTile.X), ((int)startTile.Y), ((int)width), ((int)height));
+        }
+
+        enum PlaceMode
+        {
+            SendTileRect,
+            TileManipulation
         }
     }
 }

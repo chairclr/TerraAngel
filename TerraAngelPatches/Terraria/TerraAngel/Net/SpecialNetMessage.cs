@@ -14,6 +14,7 @@ using Terraria.Localization;
 using Terraria.Social;
 using Terraria;
 using TerraAngel.ID;
+using TerraAngel.Utility;
 
 namespace TerraAngel.Net
 {
@@ -156,8 +157,8 @@ namespace TerraAngel.Net
 
         public static void SendPlaceTile(int x, int y, int tile, int useSlot = 0, bool resetToNormal = true)
         {
-            int itemId;
-            if (!Utility.TileUtil.TileToItem.TryGetValue(tile, out itemId))
+            int itemId = TileUtil.TileToItem[tile];
+            if (itemId == -1)
                 itemId = 0;
             SendPlayerControl(new Vector2(x * 16f, y * 16f), 0);
             SendInventorySlot(useSlot, itemId);
@@ -172,8 +173,8 @@ namespace TerraAngel.Net
 
         public static void SendPlaceWall(int x, int y, int wall, int useSlot = 0, bool resetToNormal = true)
         {
-            int itemId;
-            if (!Utility.TileUtil.WallToItem.TryGetValue(wall, out itemId))
+            int itemId = TileUtil.WallToItem[wall];
+            if (itemId == -1)
                 itemId = 0;
             SendPlayerControl(new Vector2(x * 16f, y * 16f), 0);
             SendInventorySlot(useSlot, itemId);
