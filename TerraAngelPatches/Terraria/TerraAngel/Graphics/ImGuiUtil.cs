@@ -30,6 +30,12 @@ namespace TerraAngel.Graphics
             ImGui.TextUnformatted(text);
             ImGui.PopStyleColor();
         }
+        public static void TextColored(string text, uint color)
+        {
+            ImGui.PushStyleColor(ImGuiCol.Text, color);
+            ImGui.TextUnformatted(text);
+            ImGui.PopStyleColor();
+        }
         public static void ColorEdit4(string label, ref Color color)
         {
             System.Numerics.Vector4 v4c = color.ToVector4().ToNumerics();

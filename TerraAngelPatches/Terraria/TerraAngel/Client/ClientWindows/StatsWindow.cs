@@ -120,9 +120,9 @@ namespace TerraAngel.Client.ClientWindows
             if (!isInMultiplayerGame) kilobytesDownString = kilobytesUpString = packetsDownString = packetsUpString = "N/A";
 
 
-            ImGuiUtil.TextColored($"Packets \t{Icon.ArrowUp}{packetsUpString,7} / {Icon.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
+            ImGuiUtil.TextColored($"Packets \t{Icon.ArrowUp}{packetsUpString,7} / {Icon.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
 
-            ImGuiUtil.TextColored($"Bytes   \t{Icon.ArrowUp}{kilobytesUpString,7} / {Icon.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? Color.DimGray : Color.White);
+            ImGuiUtil.TextColored($"Bytes   \t{Icon.ArrowUp}{kilobytesUpString,7} / {Icon.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
 
             ImGui.PopFont();
             ImGui.End();

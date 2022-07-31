@@ -106,8 +106,13 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Teleport to Cursor")]
         public Keys TeleportToCursor = Keys.Z;
 
+        [UIConfigElement("Toggle Style Editor")]
+        public Keys ToggleStyleEditor = Keys.NumPad8;
+
         [UIConfigElement("World Edit Select")]
         public Keys WorldEditSelectKey = Keys.F;
+
+
 
         public Color TracerColor = new Color(0f, 0f, 1f);
         public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);
@@ -120,6 +125,8 @@ namespace TerraAngel.Client.Config
         public float ChatWindowTransperencyInactive = 0.0f;
         public bool ChatAutoScroll = true;
         public int framesForMessageToBeVisible = 600;
+
+        public ClientUIConfig UIConfig = new ClientUIConfig();
 
         [JsonIgnore]
         public List<string> PluginsToEnable
@@ -191,8 +198,9 @@ namespace TerraAngel.Client.Config
             lock (FileLock)
             {
                 config.pluginsToEnable = config.PluginsToEnable;
+                config.UIConfig.Get();
 
-                string s = JsonConvert.SerializeObject(config);
+                string s = JsonConvert.SerializeObject(config, new JsonSerializerSettings() { Formatting = Formatting.Indented });
                 Utility.Util.CreateParentDirectory(ClientLoader.ConfigPath);
                 using (FileStream fs = new FileStream(ClientLoader.ConfigPath, FileMode.OpenOrCreate))
                 {
