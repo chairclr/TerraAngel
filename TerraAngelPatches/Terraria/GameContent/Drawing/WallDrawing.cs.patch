@@ -5,7 +5,7 @@
  {
      private static VertexColors _glowPaintColors = new VertexColors(Color.White);
 -    private Tile[,] _tileArray;
-+        private Tilemap _tileArray;
++    private Tilemap _tileArray;
      private TilePaintSystemV2 _paintSystem;
      public WallDrawing(TilePaintSystemV2 paintSystem)
      {

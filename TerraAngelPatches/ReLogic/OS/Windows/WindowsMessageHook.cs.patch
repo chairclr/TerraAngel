@@ -1,9 +1,9 @@
 --- src/Terraria/ReLogic/OS/Windows/WindowsMessageHook.cs
 +++ src/TerraAngel/ReLogic/OS/Windows/WindowsMessageHook.cs
-@@ -1,78 +_,28 @@
+@@ -1,78 +_,26 @@
  using System;
- using System.Collections.Generic;
- using System.Runtime.InteropServices;
+-using System.Collections.Generic;
+-using System.Runtime.InteropServices;
 -using System.Windows.Forms;
  
  namespace ReLogic.OS.Windows;

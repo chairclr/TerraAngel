@@ -1,5 +1,13 @@
 --- src/Terraria/Terraria/Main.cs
 +++ src/TerraAngel/Terraria/Main.cs
+@@ -3,7 +_,6 @@
+ using System.Collections.Concurrent;
+ using System.Collections.Generic;
+ using System.Diagnostics;
+-using System.Drawing;
+ using System.IO;
+ using System.Linq;
+ using System.Reflection;
 @@ -12,7 +_,6 @@
  using System.Text.RegularExpressions;
  using System.Threading;
@@ -8,22 +16,16 @@
  using Microsoft.Win32;
  using Microsoft.Xna.Framework;
  using Microsoft.Xna.Framework.Content;
-@@ -23,7 +_,6 @@
+@@ -23,8 +_,8 @@
  using ReLogic.Graphics;
  using ReLogic.Localization.IME;
  using ReLogic.OS;
 -using ReLogic.Peripherals.RGB;
  using ReLogic.Utilities;
++using TerraAngel;
  using Terraria.Achievements;
  using Terraria.Audio;
-@@ -65,6 +_,7 @@
- using Terraria.Net;
- using Terraria.ObjectData;
- using Terraria.Social;
-+using TerraAngel;
- using Terraria.UI;
- using Terraria.UI.Chat;
- using Terraria.UI.Gamepad;
+ using Terraria.Chat;
 @@ -203,8 +_,6 @@
      public static bool CaptureModeDisabled = false;
      public bool unityMouseOver;
@@ -38,7 +40,7 @@
      public static bool tilesLoaded = false;
      public static WorldMap Map = new WorldMap(maxTilesX, maxTilesY);
 -    public static Tile[,] tile = new Tile[maxTilesX, maxTilesY];
-+        public static Tilemap tile = new Tilemap(maxTilesX, maxTilesY);
++    public static Tilemap tile = new Tilemap(maxTilesX, maxTilesY);
      public static Dust[] dust = new Dust[6001];
      public static Star[] star = new Star[400];
      public static Item[] item = new Item[401];
@@ -47,11 +49,11 @@
      public static float MinimumZoomComparerX = 1920f;
      public static float MinimumZoomComparerY = 1200f;
 -    private static int _renderTargetMaxSize = 2048;
-+        private static int _renderTargetMaxSize = 8192;
++    private static int _renderTargetMaxSize = 8192;
 -    private static GraphicsProfile _selectedGraphicsProfile = GraphicsProfile.Reach;
-+        private static GraphicsProfile _selectedGraphicsProfile = GraphicsProfile.HiDef;
++    private static GraphicsProfile _selectedGraphicsProfile = GraphicsProfile.HiDef;
 -    private static GraphicsProfile _currentGraphicsProfile = GraphicsProfile.Reach;
-+        private static GraphicsProfile _currentGraphicsProfile = GraphicsProfile.HiDef;
++    private static GraphicsProfile _currentGraphicsProfile = GraphicsProfile.HiDef;
      public static int LogicCheckScreenWidth = 1920;
      public static int LogicCheckScreenHeight = 1200;
      private static WorldPreparationState _worldPreparationState = WorldPreparationState.AwaitingData;
@@ -60,9 +62,9 @@
      public static string motd = "";
      public static bool toggleFullscreen;
 -    public static int numDisplayModes;
++    //public static int numDisplayModes;
 -    public static int[] displayWidth = new int[99];
 -    public static int[] displayHeight = new int[99];
-+        //public static int numDisplayModes;
      public static bool gameMenu = true;
      public static bool menuBGChangedDay = false;
      public static bool menuBGChangedNight = false;
@@ -71,7 +73,7 @@
      private float logoScaleDirection = 1f;
      private float logoScaleSpeed = 1f;
 -    private static int maxMenuItems = 16;
-+        private static int maxMenuItems = 17;
++    private static int maxMenuItems = 17;
      private float[] menuItemScale = new float[maxMenuItems];
      private int focusMenu = -1;
      private int selectedMenu = -1;
@@ -92,25 +94,25 @@
          if (screenBorderless)
          {
 -            SetBorderlessFormStyle(form);
-+                SetBorderlessFormStyle();
++            SetBorderlessFormStyle();
          }
          else if (screenMaximized)
          {
 -            form.FormBorderStyle = FormBorderStyle.Sizable;
 -            form.WindowState = FormWindowState.Maximized;
-+                SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
-+                SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
-+                SDL2.SDL.SDL_MaximizeWindow(Main.instance.Window.Handle);
++            SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
++            SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
++            SDL2.SDL.SDL_MaximizeWindow(Main.instance.Window.Handle);
          }
          else
          {
 -            form.FormBorderStyle = FormBorderStyle.Sizable;
-+                SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
-+                SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
++            SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
++            SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
          }
  
 -        form.BringToFront();
-+            SDL2.SDL.SDL_SetWindowInputFocus(Main.instance.Window.Handle);
++        SDL2.SDL.SDL_SetWindowInputFocus(Main.instance.Window.Handle);
 +
          int currentValue2 = graphics.PreferredBackBufferWidth;
          int currentValue3 = graphics.PreferredBackBufferHeight;
@@ -128,7 +130,7 @@
                  if (num >= 91 && binaryReader.ReadBoolean())
                  {
 -                    ((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
-+                        //((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
++                    //((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
                  }
  
                  if (num >= 4)
@@ -136,16 +138,16 @@
          Configuration.Load();
          graphics = new GraphicsDeviceManager(this as Game);
          base.Content.RootDirectory = "Content";
-+            base.Window.AllowUserResizing = true;
-+            base.Window.ClientSizeChanged += (x, y) =>
++        base.Window.AllowUserResizing = true;
++        base.Window.ClientSizeChanged += (x, y) =>
++        {
++            if (!graphics.IsFullScreen && !screenBorderless)
 +            {
-+                if (!graphics.IsFullScreen && !screenBorderless)
-+                {
-+                    SDL2.SDL.SDL_GetWindowSize(Window.Handle, out int w, out int h);
-+                    SetResolution(w, h);
-+                    didResize = true;
-+                }
-+            };
++                SDL2.SDL.SDL_GetWindowSize(Window.Handle, out int w, out int h);
++                SetResolution(w, h);
++                didResize = true;
++            }
++        };
      }
  
      private static void SetDisplayMonitor()
@@ -232,7 +234,7 @@
          }
      }
  
-+        static bool didResize = false;
++    static bool didResize = false;
      public static void stopMoonEvent()
      {
          _ = NPC.waveNumber;
@@ -348,7 +350,7 @@
                      menuMode = 112;
                  }
  
-+                
++
 +
                  num20++;
                  array9[num20] = Lang.menu[210].Value;
@@ -434,87 +436,87 @@
 -
 -                num30++;
 -                num5 = num30;
-+                    SoundEngine.PlaySound(10);
-+                    menuMode = 888;
-+                    MenuUI.SetState(ClientLoader.ResolutionUI);
++                SoundEngine.PlaySound(10);
++                menuMode = 888;
++                MenuUI.SetState(ClientLoader.ResolutionUI);
 +
-+                    //for (int num29 = 0; num29 < 9; num29++)
-+                    //{
-+                    //    array7[num29] = 0.85f;
-+                    //}
++                //for (int num29 = 0; num29 < 9; num29++)
++                //{
++                //    array7[num29] = 0.85f;
++                //}
 +
-+                    //num2 = 210;
-+                    //num4 = 55;
-+                    //int num30 = 0;
-+                    //array9[num30] = Lang.menu[73].Value + ": " + PendingResolutionWidth + "x" + PendingResolutionHeight;
-+                    //if (selectedMenu == num30)
-+                    //{
-+                    //    SoundEngine.PlaySound(12);
-+                    //    int num31 = 0;
-+                    //    for (int num32 = 0; num32 < numDisplayModes; num32++)
-+                    //    {
-+                    //        if (displayWidth[num32] == PendingResolutionWidth && displayHeight[num32] == PendingResolutionHeight)
-+                    //        {
-+                    //            num31 = num32;
-+                    //            break;
-+                    //        }
-+                    //    }
++                //num2 = 210;
++                //num4 = 55;
++                //int num30 = 0;
++                //array9[num30] = Lang.menu[73].Value + ": " + PendingResolutionWidth + "x" + PendingResolutionHeight;
++                //if (selectedMenu == num30)
++                //{
++                //    SoundEngine.PlaySound(12);
++                //    int num31 = 0;
++                //    for (int num32 = 0; num32 < numDisplayModes; num32++)
++                //    {
++                //        if (displayWidth[num32] == PendingResolutionWidth && displayHeight[num32] == PendingResolutionHeight)
++                //        {
++                //            num31 = num32;
++                //            break;
++                //        }
++                //    }
 +
-+                    //    num31 = (num31 + 1) % numDisplayModes;
-+                    //    PendingResolutionWidth = displayWidth[num31];
-+                    //    PendingResolutionHeight = displayHeight[num31];
-+                    //}
++                //    num31 = (num31 + 1) % numDisplayModes;
++                //    PendingResolutionWidth = displayWidth[num31];
++                //    PendingResolutionHeight = displayHeight[num31];
++                //}
 +
-+                    //num30++;
-+                    //if (IsBorderlessDisplayAvailable())
-+                    //{
-+                    //    array9[num30] = Lang.menu[PendingBorderlessState ? 245 : 246].Value;
-+                    //    if (selectedMenu == num30)
-+                    //    {
-+                    //        SoundEngine.PlaySound(12);
-+                    //        PendingBorderlessState = !PendingBorderlessState;
-+                    //    }
++                //num30++;
++                //if (IsBorderlessDisplayAvailable())
++                //{
++                //    array9[num30] = Lang.menu[PendingBorderlessState ? 245 : 246].Value;
++                //    if (selectedMenu == num30)
++                //    {
++                //        SoundEngine.PlaySound(12);
++                //        PendingBorderlessState = !PendingBorderlessState;
++                //    }
 +
-+                    //    num30++;
-+                    //}
++                //    num30++;
++                //}
 +
-+                    //array9[num30] = (graphics.IsFullScreen ? Lang.menu[49].Value : Lang.menu[50].Value);
-+                    //if (selectedMenu == num30)
-+                    //{
-+                    //    ToggleFullScreen();
-+                    //}
++                //array9[num30] = (graphics.IsFullScreen ? Lang.menu[49].Value : Lang.menu[50].Value);
++                //if (selectedMenu == num30)
++                //{
++                //    ToggleFullScreen();
++                //}
 +
-+                    //num30++;
-+                    //array4[num30] = 100;
-+                    //array9[num30] = Lang.menu[134].Value;
-+                    //if (selectedMenu == num30)
-+                    //{
-+                    //    if (graphics.IsFullScreen || PendingBorderlessState != screenBorderless || PendingResolutionWidth != screenWidth || PendingResolutionHeight != screenHeight)
-+                    //    {
-+                    //        screenBorderless = PendingBorderlessState;
-+                    //        screenBorderlessPendingResizes = (screenBorderless ? 6 : 0);
-+                    //        SetResolution(PendingResolutionWidth, PendingResolutionHeight);
-+                    //    }
++                //num30++;
++                //array4[num30] = 100;
++                //array9[num30] = Lang.menu[134].Value;
++                //if (selectedMenu == num30)
++                //{
++                //    if (graphics.IsFullScreen || PendingBorderlessState != screenBorderless || PendingResolutionWidth != screenWidth || PendingResolutionHeight != screenHeight)
++                //    {
++                //        screenBorderless = PendingBorderlessState;
++                //        screenBorderlessPendingResizes = (screenBorderless ? 6 : 0);
++                //        SetResolution(PendingResolutionWidth, PendingResolutionHeight);
++                //    }
 +
-+                    //    SoundEngine.PlaySound(11);
-+                    //    menuMode = 1111;
-+                    //}
++                //    SoundEngine.PlaySound(11);
++                //    menuMode = 1111;
++                //}
 +
-+                    //num30++;
-+                    //array9[num30] = Lang.menu[5].Value;
-+                    //array4[num30] = 100;
-+                    //if (selectedMenu == num30 || flag5)
-+                    //{
-+                    //    flag5 = false;
-+                    //    PendingResolutionWidth = graphics.PreferredBackBufferWidth;
-+                    //    PendingResolutionHeight = graphics.PreferredBackBufferHeight;
-+                    //    PendingBorderlessState = screenBorderless;
-+                    //    menuMode = 1111;
-+                    //    SoundEngine.PlaySound(11);
-+                    //}
++                //num30++;
++                //array9[num30] = Lang.menu[5].Value;
++                //array4[num30] = 100;
++                //if (selectedMenu == num30 || flag5)
++                //{
++                //    flag5 = false;
++                //    PendingResolutionWidth = graphics.PreferredBackBufferWidth;
++                //    PendingResolutionHeight = graphics.PreferredBackBufferHeight;
++                //    PendingBorderlessState = screenBorderless;
++                //    menuMode = 1111;
++                //    SoundEngine.PlaySound(11);
++                //}
 +
-+                    //num30++;
-+                    //num5 = num30;
++                //num30++;
++                //num5 = num30;
              }
              else if (menuMode == 1125)
              {
@@ -523,24 +525,24 @@
      }
  
 -    private static void SetDisplayModeAsBorderless(ref int width, ref int height, Form form)
-+        public static void SetDisplayModeAsBorderless(ref int width, ref int height)
++    public static void SetDisplayModeAsBorderless(ref int width, ref int height)
      {
          if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0)
          {
              screenBorderlessPendingResizes--;
 -            System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
++            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
 -            width = bounds.Width;
++            width = bounds.w;
 -            height = bounds.Height;
-+                SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
-+                width = bounds.w;
-+                height = bounds.h;
-+                ApplyBorderlessResolution();
++            height = bounds.h;
++            ApplyBorderlessResolution();
              TryPickingDefaultUIScale(height);
          }
      }
  
 -    private static void ApplyBorderlessResolution(Form form)
-+        private static void ApplyBorderlessResolution()
++    private static void ApplyBorderlessResolution()
      {
          if (screenBorderlessPendingResizes > 0)
          {
@@ -551,24 +553,24 @@
 -            form.Width = bounds.Width;
 -            form.Height = bounds.Height;
 +
-+                SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
-+                SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
-+                SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, bounds.x, bounds.y);
-+                SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, bounds.w, bounds.h);
++            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
++            SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
++            SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, bounds.x, bounds.y);
++            SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, bounds.w, bounds.h);
 +
-+                Main.screenWidth = bounds.w;
-+                Main.screenHeight = bounds.h;
++            Main.screenWidth = bounds.w;
++            Main.screenHeight = bounds.h;
          }
      }
  
 -    private static void SetBorderlessFormStyle(Form form)
-+        private static void SetBorderlessFormStyle()
++    private static void SetBorderlessFormStyle()
      {
 -        form.Location = new System.Drawing.Point(0, 0);
 -        form.FormBorderStyle = FormBorderStyle.None;
-+            SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, 0, 0);
-+            SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
-+            SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
++        SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, 0, 0);
++        SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
++        SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
      }
  
      public static void OpenCharacterSelectUI()
@@ -576,10 +578,10 @@
  
      private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)
      {
-+            if (!WorldGen.InWorld((int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)) || tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] == null)
-+            {
-+                return;
-+            }
++        if (!WorldGen.InWorld((int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)) || tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] == null)
++        {
++            return;
++        }
          Asset<Texture2D> asset = TextureAssets.MapBGs[0];
          int num = -1;
          Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
@@ -603,9 +605,9 @@
  
          instance.CameraModifiers.ApplyTo(ref screenPosition);
 -        screenPosition.X = (int)screenPosition.X;
-+            //screenPosition.X = (int)screenPosition.X;
++        //screenPosition.X = (int)screenPosition.X;
 -        screenPosition.Y = (int)screenPosition.Y;
-+            //screenPosition.Y = (int)screenPosition.Y;
++        //screenPosition.Y = (int)screenPosition.Y;
          ClampScreenPositionToWorld();
      }
  

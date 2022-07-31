@@ -4,7 +4,7 @@
      private float _dragYOffset;
      private Asset<Texture2D> _texture;
      private Asset<Texture2D> _innerTexture;
-+        public Color BarColor = Color.White;
++    public Color BarColor = Color.White;
      public float ViewPosition
      {
          get
@@ -13,9 +13,9 @@
          }
  
 -        DrawBar(spriteBatch, _texture.Value, dimensions.ToRectangle(), Color.White);
-+            DrawBar(spriteBatch, _texture.Value, dimensions.ToRectangle(), BarColor);
++        DrawBar(spriteBatch, _texture.Value, dimensions.ToRectangle(), BarColor);
 -        DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, Color.White * ((_isDragging || _isHoveringOverHandle) ? 1f : 0.85f));
-+            DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, BarColor * ((_isDragging || _isHoveringOverHandle) ? 1f : 0.85f));
++        DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, BarColor * ((_isDragging || _isHoveringOverHandle) ? 1f : 0.85f));
      }
  
      public override void MouseDown(UIMouseEvent evt)
