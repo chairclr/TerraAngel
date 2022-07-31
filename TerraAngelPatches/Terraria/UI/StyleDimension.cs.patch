@@ -1,14 +1,14 @@
 --- src/Terraria/Terraria/UI/StyleDimension.cs
 +++ src/TerraAngel/Terraria/UI/StyleDimension.cs
-@@ -6,6 +_,11 @@
-         public static StyleDimension Empty = new StyleDimension(0f, 0f);
-         public float Pixels;
-         public float Precent;
-+        public float Percent
-+        {
-+            get => Precent;
-+            set => Precent = value;
-+        }
-         public StyleDimension(float pixels, float precent)
-         {
-             Pixels = pixels;
+@@ -5,6 +_,11 @@
+     public static StyleDimension Empty = new StyleDimension(0f, 0f);
+     public float Pixels;
+     public float Precent;
++    public float Percent
++    {
++        get => Precent;
++        set => Precent = value;
++    }
+     public StyleDimension(float pixels, float precent)
+     {
+         Pixels = pixels;

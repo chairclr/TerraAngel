@@ -1,84 +1,84 @@
 --- src/Terraria/ReLogic/OS/Windows/WindowsMessageHook.cs
 +++ src/TerraAngel/ReLogic/OS/Windows/WindowsMessageHook.cs
-@@ -1,79 +_,28 @@
+@@ -1,78 +_,28 @@
  using System;
  using System.Collections.Generic;
  using System.Runtime.InteropServices;
 -using System.Windows.Forms;
  
- namespace ReLogic.OS.Windows
+ namespace ReLogic.OS.Windows;
+-internal class WindowsMessageHook : IDisposable, IMessageFilter
++
++internal class WindowsMessageHook : IDisposable
  {
--    internal class WindowsMessageHook : IDisposable, IMessageFilter
-+    internal class WindowsMessageHook : IDisposable
+     private delegate IntPtr WndProcCallback(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+     private const int GWL_WNDPROC = -4;
+     private IntPtr _windowHandle = IntPtr.Zero;
+     private IntPtr _previousWndProc = IntPtr.Zero;
+     private WndProcCallback _wndProc;
+-    private List<IMessageFilter> _filters = new List<IMessageFilter>();
+     private bool disposedValue;
+     public WindowsMessageHook(IntPtr windowHandle)
      {
-         private delegate IntPtr WndProcCallback(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-         private const int GWL_WNDPROC = -4;
-         private IntPtr _windowHandle = IntPtr.Zero;
-         private IntPtr _previousWndProc = IntPtr.Zero;
-         private WndProcCallback _wndProc;
--        private List<IMessageFilter> _filters = new List<IMessageFilter>();
-         private bool disposedValue;
-         public WindowsMessageHook(IntPtr windowHandle)
-         {
--            _windowHandle = windowHandle;
--            Application.AddMessageFilter(this);
--            _wndProc = WndProc;
--            _previousWndProc = (IntPtr)NativeMethods.SetWindowLong(_windowHandle, -4, (int)Marshal.GetFunctionPointerForDelegate((Delegate)_wndProc));
--        }
+-        _windowHandle = windowHandle;
+-        Application.AddMessageFilter(this);
+-        _wndProc = WndProc;
+-        _previousWndProc = (IntPtr)NativeMethods.SetWindowLong(_windowHandle, -4, (int)Marshal.GetFunctionPointerForDelegate((Delegate)_wndProc));
+-    }
 -
--        public void AddMessageFilter(IMessageFilter filter)
--        {
--            _filters.Add(filter);
--        }
+-    public void AddMessageFilter(IMessageFilter filter)
+-    {
+-        _filters.Add(filter);
+-    }
 -
--        public void RemoveMessageFilter(IMessageFilter filter)
--        {
--            _filters.Remove(filter);
-         }
+-    public void RemoveMessageFilter(IMessageFilter filter)
+-    {
+-        _filters.Remove(filter);
+     }
  
-         private IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
-         {
--            Message message = Message.Create(hWnd, msg, wParam, lParam);
--            if (InternalWndProc(ref message))
--            {
--                return message.Result;
--            }
--
--            return NativeMethods.CallWindowProc(_previousWndProc, message.HWnd, message.Msg, message.WParam, message.LParam);
+     private IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam)
+     {
+-        Message message = Message.Create(hWnd, msg, wParam, lParam);
+-        if (InternalWndProc(ref message))
+-        {
+-            return message.Result;
 -        }
 -
--        public bool PreFilterMessage(ref Message message)
+-        return NativeMethods.CallWindowProc(_previousWndProc, message.HWnd, message.Msg, message.WParam, message.LParam);
+-    }
+-
+-    public bool PreFilterMessage(ref Message message)
+-    {
+-        if (message.Msg == 258)
 -        {
--            if (message.Msg == 258)
--            {
--                return false;
--            }
--
--            return InternalWndProc(ref message);
--        }
--
--        private bool InternalWndProc(ref Message message)
--        {
--            foreach (IMessageFilter filter in _filters)
--            {
--                if (filter.PreFilterMessage(ref message))
--                {
--                    return true;
--                }
--            }
--
 -            return false;
-+            return IntPtr.Zero;
-         }
- 
-         protected virtual void Dispose(bool disposing)
-         {
--            if (!disposedValue)
+-        }
+-
+-        return InternalWndProc(ref message);
+-    }
+-
+-    private bool InternalWndProc(ref Message message)
+-    {
+-        foreach (IMessageFilter filter in _filters)
+-        {
+-            if (filter.PreFilterMessage(ref message))
 -            {
--                Application.RemoveMessageFilter(this);
--                NativeMethods.SetWindowLong(_windowHandle, -4, (int)_previousWndProc);
--                disposedValue = true;
+-                return true;
 -            }
-         }
+-        }
+-
+-        return false;
++        return IntPtr.Zero;
+     }
  
-         ~WindowsMessageHook()
+     protected virtual void Dispose(bool disposing)
+     {
+-        if (!disposedValue)
+-        {
+-            Application.RemoveMessageFilter(this);
+-            NativeMethods.SetWindowLong(_windowHandle, -4, (int)_previousWndProc);
+-            disposedValue = true;
+-        }
+     }
+ 
+     ~WindowsMessageHook()

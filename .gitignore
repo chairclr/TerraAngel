@@ -364,6 +364,7 @@ FodyWeavers.xsd
 
 # stuff
 src/
+src_backup/
 
 Build/
 

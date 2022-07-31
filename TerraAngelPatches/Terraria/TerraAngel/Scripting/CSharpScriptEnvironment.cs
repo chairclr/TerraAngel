@@ -18,6 +18,8 @@ using TerraAngel;
 using MonoMod;
 using MonoMod.RuntimeDetour;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using Terraria;
 
 namespace TerraAngel.Scripting
 {
@@ -227,7 +229,7 @@ namespace TerraAngel.Scripting
                             .SelectMany(x =>
                             {
                                 Type[] types = new Type[0];
-                                try { types = x.GetTypes(); } catch (Exception e) { }
+                                try { types = x.GetTypes(); } catch (Exception) { }
                                 return types;
                             })
                             .ToArray();

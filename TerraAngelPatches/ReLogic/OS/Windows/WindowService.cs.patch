@@ -1,50 +1,50 @@
 --- src/Terraria/ReLogic/OS/Windows/WindowService.cs
 +++ src/TerraAngel/ReLogic/OS/Windows/WindowService.cs
-@@ -9,46 +_,23 @@
+@@ -8,45 +_,23 @@
+ {
+     public float GetScaling()
      {
-         public float GetScaling()
-         {
--            try
--            {
--                IntPtr hdc = System.Drawing.Graphics.FromHwnd(IntPtr.Zero).GetHdc();
--                int deviceCaps = NativeMethods.GetDeviceCaps(hdc, NativeMethods.DeviceCap.VertRes);
--                return (float)NativeMethods.GetDeviceCaps(hdc, NativeMethods.DeviceCap.DesktopVertRes) / (float)deviceCaps;
--            }
--            catch (Exception)
--            {
--                return 1f;
--            }
-+            return 0.0f;
-         }
+-        try
+-        {
+-            IntPtr hdc = System.Drawing.Graphics.FromHwnd(IntPtr.Zero).GetHdc();
+-            int deviceCaps = NativeMethods.GetDeviceCaps(hdc, NativeMethods.DeviceCap.VertRes);
+-            return (float)NativeMethods.GetDeviceCaps(hdc, NativeMethods.DeviceCap.DesktopVertRes) / (float)deviceCaps;
+-        }
+-        catch (Exception)
+-        {
+-            return 1f;
+-        }
++        return 0.0f;
+     }
  
-         public void SetQuickEditEnabled(bool enabled)
-         {
--            IntPtr stdHandle = NativeMethods.GetStdHandle(NativeMethods.StdHandleType.Input);
--            if (NativeMethods.GetConsoleMode(stdHandle, out var lpMode))
--            {
--                lpMode = ((!enabled) ? (lpMode & ~NativeMethods.ConsoleMode.QuickEditMode) : (lpMode | NativeMethods.ConsoleMode.QuickEditMode));
--                NativeMethods.SetConsoleMode(stdHandle, lpMode);
--            }
-         }
+     public void SetQuickEditEnabled(bool enabled)
+     {
+-        IntPtr stdHandle = NativeMethods.GetStdHandle(NativeMethods.StdHandleType.Input);
+-        if (NativeMethods.GetConsoleMode(stdHandle, out var lpMode))
+-        {
+-            lpMode = ((!enabled) ? (lpMode & ~NativeMethods.ConsoleMode.QuickEditMode) : (lpMode | NativeMethods.ConsoleMode.QuickEditMode));
+-            NativeMethods.SetConsoleMode(stdHandle, lpMode);
+-        }
++
+     }
  
-         public void SetUnicodeTitle(GameWindow window, string title)
-         {
--            NativeMethods.WndProcCallback d = NativeMethods.DefWindowProc;
--            int dwNewLong = NativeMethods.SetWindowLong(window.Handle, -4, (int)Marshal.GetFunctionPointerForDelegate((Delegate)d));
--            window.Title = title;
--            NativeMethods.SetWindowLong(window.Handle, -4, dwNewLong);
-         }
+     public void SetUnicodeTitle(GameWindow window, string title)
+     {
+-        NativeMethods.WndProcCallback d = NativeMethods.DefWindowProc;
+-        int dwNewLong = NativeMethods.SetWindowLong(window.Handle, -4, (int)Marshal.GetFunctionPointerForDelegate((Delegate)d));
+-        window.Title = title;
+-        NativeMethods.SetWindowLong(window.Handle, -4, dwNewLong);
+     }
  
-         public void StartFlashingIcon(GameWindow window)
-         {
--            NativeMethods.FlashInfo flashInfo = NativeMethods.FlashInfo.CreateStart(window.Handle);
--            NativeMethods.FlashWindowEx(ref flashInfo);
-         }
+     public void StartFlashingIcon(GameWindow window)
+     {
+-        NativeMethods.FlashInfo flashInfo = NativeMethods.FlashInfo.CreateStart(window.Handle);
+-        NativeMethods.FlashWindowEx(ref flashInfo);
+     }
  
-         public void StopFlashingIcon(GameWindow window)
-         {
--            NativeMethods.FlashInfo flashInfo = NativeMethods.FlashInfo.CreateStop(window.Handle);
--            NativeMethods.FlashWindowEx(ref flashInfo);
-         }
+     public void StopFlashingIcon(GameWindow window)
+     {
+-        NativeMethods.FlashInfo flashInfo = NativeMethods.FlashInfo.CreateStop(window.Handle);
+-        NativeMethods.FlashWindowEx(ref flashInfo);
      }
  }

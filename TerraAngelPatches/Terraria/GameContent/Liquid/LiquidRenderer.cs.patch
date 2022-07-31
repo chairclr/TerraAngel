@@ -1,11 +1,11 @@
 --- src/Terraria/Terraria/GameContent/Liquid/LiquidRenderer.cs
 +++ src/TerraAngel/Terraria/GameContent/Liquid/LiquidRenderer.cs
-@@ -64,7 +_,7 @@
-         private readonly UnifiedRandom _random = new UnifiedRandom();
-         private Color[] _waveMask = new Color[1];
-         private float _frameState;
--        private static Tile[,] Tiles => Main.tile;
+@@ -63,7 +_,7 @@
+     private readonly UnifiedRandom _random = new UnifiedRandom();
+     private Color[] _waveMask = new Color[1];
+     private float _frameState;
+-    private static Tile[,] Tiles => Main.tile;
 +        private static Tilemap Tiles => Main.tile;
-         public event Action<Color[], Rectangle> WaveFilters;
-         public static void LoadContent()
-         {
+     public event Action<Color[], Rectangle> WaveFilters;
+     public static void LoadContent()
+     {

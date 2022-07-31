@@ -7,12 +7,11 @@
 -using System.Windows.Forms;
  using ReLogic.Content;
  
- namespace Terraria.UI
-@@ -140,7 +_,6 @@
+ namespace Terraria.UI;
+@@ -139,6 +_,5 @@
  
-         private static void ShowTheBox(string preparedMessage)
-         {
--            MessageBox.Show(preparedMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-         }
+     private static void ShowTheBox(string preparedMessage)
+     {
+-        MessageBox.Show(preparedMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
      }
  }

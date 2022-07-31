@@ -6,90 +6,50 @@
 -using System.Windows.Forms;
  using ReLogic.OS.Base;
  
- namespace ReLogic.OS.Windows
-@@ -14,83 +_,12 @@
+ namespace ReLogic.OS.Windows;
+@@ -20,10 +_,7 @@
  
-         protected override void SetClipboard(string text)
+         try
          {
--            if (string.IsNullOrEmpty(text))
+-            InvokeInStaThread(delegate
 -            {
--                return;
--            }
--
--            try
--            {
--                InvokeInStaThread(delegate
--                {
--                    System.Windows.Forms.Clipboard.SetText(text);
--                });
--            }
--            catch
--            {
--                Console.WriteLine("Failed to set clipboard contents!");
--            }
+-                System.Windows.Forms.Clipboard.SetText(text);
+-            });
 +            SDL2.SDL.SDL_SetClipboardText(text);
          }
- 
-         private string TryToGetClipboardText()
+         catch
          {
--            try
--            {
--                return InvokeInStaThread(() => System.Windows.Forms.Clipboard.GetText());
--            }
--            catch
--            {
--                string result = "";
--                Console.WriteLine("Failed to get clipboard contents!");
--                return result;
--            }
--        }
--
--        private static T InvokeInStaThread<T>(Func<T> callback)
--        {
--            if (GetApartmentStateSafely() == ApartmentState.STA)
--            {
--                return callback();
--            }
--
--            T result = default(T);
--            Thread thread = new Thread((ThreadStart)delegate
--            {
--                result = callback();
--            });
--            thread.SetApartmentState(ApartmentState.STA);
--            thread.Start();
--            thread.Join();
--            return result;
--        }
--
--        private static void InvokeInStaThread(Action callback)
--        {
--            if (GetApartmentStateSafely() == ApartmentState.STA)
--            {
--                callback();
--                return;
--            }
--
--            Thread thread = new Thread((ThreadStart)delegate
--            {
--                callback();
--            });
--            thread.SetApartmentState(ApartmentState.STA);
--            thread.Start();
--            thread.Join();
--        }
--
--        private static ApartmentState GetApartmentStateSafely()
--        {
--            try
--            {
--                return Thread.CurrentThread.GetApartmentState();
--            }
--            catch
--            {
--                return ApartmentState.MTA;
--            }
+@@ -35,7 +_,7 @@
+     {
+         try
+         {
+-            return InvokeInStaThread(() => System.Windows.Forms.Clipboard.GetText());
 +            return SDL2.SDL.SDL_GetClipboardText();
          }
+         catch
+         {
+@@ -43,24 +_,6 @@
+             Console.WriteLine("Failed to get clipboard contents!");
+             return result;
+         }
+-    }
+-
+-    private static T InvokeInStaThread<T>(Func<T> callback)
+-    {
+-        if (GetApartmentStateSafely() == ApartmentState.STA)
+-        {
+-            return callback();
+-        }
+-
+-        T result = default(T);
+-        Thread thread = new Thread((ThreadStart)delegate
+-        {
+-            result = callback();
+-        });
+-        thread.SetApartmentState(ApartmentState.STA);
+-        thread.Start();
+-        thread.Join();
+-        return result;
      }
- }
+ 
+     private static void InvokeInStaThread(Action callback)

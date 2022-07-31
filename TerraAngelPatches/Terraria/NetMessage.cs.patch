@@ -1,55 +1,53 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
-@@ -2530,23 +_,35 @@
+@@ -2527,23 +_,33 @@
+     {
+         lock (buffer[i])
          {
-             lock (buffer[i])
+-            try
++            if (buffer[i].totalData + streamLength < buffer[i].readBuffer.Length)
              {
--                try
+                 Buffer.BlockCopy(bytes, 0, buffer[i].readBuffer, buffer[i].totalData, streamLength);
+                 buffer[i].totalData += streamLength;
+                 buffer[i].checkBytes = true;
+             }
+-            catch
++            else
+             {
+-                if (Main.netMode == 1)
++                // Executing goes here when it overflows
++                // Maybe log it or something
++                // Clear the read buffer up a bit
++                int before;
++                int after;
++                while (buffer[i].totalData > 200)
+                 {
+-                    Main.menuMode = 15;
+-                    Main.statusText = Language.GetTextValue("Error.BadHeaderBufferOverflow");
+-                    Netplay.Disconnect = true;
++                    before = buffer[i].totalData;
++                    CheckBytes(i);
++                    after = buffer[i].totalData;
++                    if (before == after)
++                        break;
+                 }
+-                else
++
 +                if (buffer[i].totalData + streamLength < buffer[i].readBuffer.Length)
                  {
-                     Buffer.BlockCopy(bytes, 0, buffer[i].readBuffer, buffer[i].totalData, streamLength);
-                     buffer[i].totalData += streamLength;
-                     buffer[i].checkBytes = true;
-                 }
--                catch
-+                else
-                 {
--                    if (Main.netMode == 1)
-+                    // Executing goes here when it overflows
-+                    // Maybe log it or something
-+
-+                    // Clear the read buffer up a bit
-+                    int before;
-+                    int after;
-+                    while (buffer[i].totalData > 200)
-                     {
--                        Main.menuMode = 15;
--                        Main.statusText = Language.GetTextValue("Error.BadHeaderBufferOverflow");
--                        Netplay.Disconnect = true;
-+                        before = buffer[i].totalData;
-+                        CheckBytes(i);
-+                        after = buffer[i].totalData;
-+
-+                        if (before == after)
-+                            break;
-                     }
--                    else
-+
-+                    if (buffer[i].totalData + streamLength < buffer[i].readBuffer.Length)
-                     {
--                        Netplay.Clients[i].PendingTermination = true;
-+                        Buffer.BlockCopy(bytes, 0, buffer[i].readBuffer, buffer[i].totalData, streamLength);
-+                        buffer[i].totalData += streamLength;
-+                        buffer[i].checkBytes = true;
-                     }
+-                    Netplay.Clients[i].PendingTermination = true;
++                    Buffer.BlockCopy(bytes, 0, buffer[i].readBuffer, buffer[i].totalData, streamLength);
++                    buffer[i].totalData += streamLength;
++                    buffer[i].checkBytes = true;
                  }
              }
-@@ -2563,6 +_,8 @@
-                     while (num2 >= 2)
+         }
+@@ -2560,6 +_,8 @@
+                 while (num2 >= 2)
+                 {
+                     int num3 = BitConverter.ToUInt16(buffer[bufferIndex].readBuffer, num);
++                    if (num3 <= 0)
++                        break; // prevent zero length packets lmao
+                     if (num2 >= num3)
                      {
-                         int num3 = BitConverter.ToUInt16(buffer[bufferIndex].readBuffer, num);
-+                        if (num3 <= 0)
-+                            break; // prevent zero length packets lmao
-                         if (num2 >= num3)
-                         {
-                             long position = buffer[bufferIndex].reader.BaseStream.Position;
+                         long position = buffer[bufferIndex].reader.BaseStream.Position;

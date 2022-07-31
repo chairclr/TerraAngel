@@ -1,27 +1,24 @@
 --- src/Terraria/ReLogic/Threading/FastParallel.cs
 +++ src/TerraAngel/ReLogic/Threading/FastParallel.cs
-@@ -53,8 +_,8 @@
-                 num2 = 1;
-             }
- 
--            ThreadPriority priority = Thread.CurrentThread.Priority;
-+            //ThreadPriority priority = Thread.CurrentThread.Priority;
--            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-+            //Thread.CurrentThread.Priority = ThreadPriority.Highest;
-             int num3 = num / num2;
-             int num4 = num % num2;
-             CountdownEvent countdownEvent = new CountdownEvent(num2);
-@@ -81,11 +_,9 @@
-                 }
-             }
- 
--            while (countdownEvent.CurrentCount != 0)
--            {
--            }
-+            countdownEvent.Wait();
- 
--            Thread.CurrentThread.Priority = priority;
-+            //Thread.CurrentThread.Priority = priority;
+@@ -52,8 +_,6 @@
+             num2 = 1;
          }
  
-         private static void InvokeTask(object context)
+-        ThreadPriority priority = Thread.CurrentThread.Priority;
+-        Thread.CurrentThread.Priority = ThreadPriority.Highest;
+         int num3 = num / num2;
+         int num4 = num % num2;
+         CountdownEvent countdownEvent = new CountdownEvent(num2);
+@@ -80,11 +_,7 @@
+             }
+         }
+ 
+-        while (countdownEvent.CurrentCount != 0)
+-        {
+-        }
+-
+-        Thread.CurrentThread.Priority = priority;
++        countdownEvent.Wait();
+     }
+ 
+     private static void InvokeTask(object context)

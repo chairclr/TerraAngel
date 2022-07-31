@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "TerraAngelSetup": {
-      "commandName": "Project",
-      "commandLineArgs": "-auto"
-    }
-  }
-}

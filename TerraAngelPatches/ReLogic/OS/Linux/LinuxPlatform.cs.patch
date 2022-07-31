@@ -1,20 +1,19 @@
 --- src/Terraria/ReLogic/OS/Linux/LinuxPlatform.cs
 +++ src/TerraAngel/ReLogic/OS/Linux/LinuxPlatform.cs
-@@ -7,7 +_,7 @@
+@@ -6,7 +_,7 @@
+ {
+     public LinuxPlatform() : base(PlatformType.Linux)
      {
-         public LinuxPlatform() : base(PlatformType.Linux)
-         {
--            RegisterService((IClipboard)new Clipboard());
+-        RegisterService((IClipboard)new Clipboard());
 +            RegisterService((IClipboard)new FNAClipboard());
-             RegisterService((IPathService)new PathService());
-             RegisterService((IWindowService)new WindowService());
-             RegisterService((IImeService)new UnsupportedPlatformIme());
-@@ -15,7 +_,7 @@
+         RegisterService((IPathService)new PathService());
+         RegisterService((IWindowService)new WindowService());
+         RegisterService((IImeService)new UnsupportedPlatformIme());
+@@ -14,6 +_,6 @@
  
-         public override void InitializeClientServices(IntPtr windowHandle)
-         {
--            RegisterService((IImeService)new FnaIme());
+     public override void InitializeClientServices(IntPtr windowHandle)
+     {
+-        RegisterService((IImeService)new FnaIme());
 +            RegisterService((IImeService)new TerraAngel.Input.RealFNAIme());
-         }
      }
  }

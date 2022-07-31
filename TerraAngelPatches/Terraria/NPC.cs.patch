@@ -8,12 +8,21 @@
  using Terraria.GameContent.Tile_Entities;
  using Terraria.GameContent.UI;
  using Terraria.Graphics.CameraModifiers;
-@@ -884,8 +_,6 @@
-             {
-                 highestTierBossOrEvent = 398;
-             }
--
--            CommonConditions.Boss.HighestTierBossOrEvent = highestTierBossOrEvent;
+@@ -884,7 +_,7 @@
+             highestTierBossOrEvent = 398;
          }
  
-         public void SpawnWithHigherTime(int timeMult)
+-        CommonConditions.Boss.HighestTierBossOrEvent = highestTierBossOrEvent;
++        //CommonConditions.Boss.HighestTierBossOrEvent = highestTierBossOrEvent;
+     }
+ 
+     public void SpawnWithHigherTime(int timeMult)
+@@ -11346,8 +_,6 @@
+             {
+                 bossAdjustment = 0.85f;
+             }
+-
+-            ScaleStats_ApplyMultiplayerStats(num, balance, boost, bossAdjustment);
+         }
+ 
+         strengthMultiplier = strength;

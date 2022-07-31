@@ -1,22 +1,22 @@
 --- src/Terraria/Terraria/Utils.cs
 +++ src/TerraAngel/Terraria/Utils.cs
-@@ -1030,9 +_,7 @@
+@@ -1029,9 +_,7 @@
  
-         public static Vector2 Floor(this Vector2 vec)
-         {
--            vec.X = (int)vec.X;
--            vec.Y = (int)vec.Y;
--            return vec;
-+            return new Vector2(MathF.Floor(vec.X), MathF.Floor(vec.Y));
-         }
+     public static Vector2 Floor(this Vector2 vec)
+     {
+-        vec.X = (int)vec.X;
+-        vec.Y = (int)vec.Y;
+-        return vec;
++        return new Vector2(MathF.Floor(vec.X), MathF.Floor(vec.Y));
+     }
  
-         public static bool HasNaNs(this Vector2 vec)
-@@ -1735,7 +_,7 @@
+     public static bool HasNaNs(this Vector2 vec)
+@@ -1734,7 +_,7 @@
  
-         public static string ReadEmbeddedResource(string path)
-         {
--            using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
-+            using Stream stream = Assembly.GetAssembly(typeof(Main)).GetManifestResourceStream(path);
-             using StreamReader streamReader = new StreamReader(stream);
-             return streamReader.ReadToEnd();
-         }
+     public static string ReadEmbeddedResource(string path)
+     {
+-        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
++        using Stream stream = Assembly.GetAssembly(typeof(Main)).GetManifestResourceStream(path);
+         using StreamReader streamReader = new StreamReader(stream);
+         return streamReader.ReadToEnd();
+     }

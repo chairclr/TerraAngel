@@ -1,65 +1,65 @@
 --- src/Terraria/Terraria/Program.cs
 +++ src/TerraAngel/Terraria/Program.cs
-@@ -6,12 +_,12 @@
+@@ -6,12 +_,11 @@
  using System.Runtime.CompilerServices;
  using System.Text;
  using System.Threading;
 -using System.Windows.Forms;
  using ReLogic.IO;
  using ReLogic.OS;
++using TerraAngel;
  using Terraria.Initializers;
  using Terraria.Localization;
- using Terraria.Social;
-+using TerraAngel;
+-using Terraria.Social;
  using Terraria.Utilities;
  
- namespace Terraria
-@@ -166,6 +_,7 @@
+ namespace Terraria;
+@@ -165,6 +_,7 @@
  
-         public static void LaunchGame(string[] args, bool monoArgs = false)
+     public static void LaunchGame(string[] args, bool monoArgs = false)
+     {
++        ClientLoader.LoadClient();
+         Thread.CurrentThread.Name = "Main Thread";
+         if (monoArgs)
          {
-+            ClientLoader.LoadClient();
-             Thread.CurrentThread.Name = "Main Thread";
-             if (monoArgs)
-             {
-@@ -187,18 +_,18 @@
-             SetupLogging();
-             Platform.Get<IWindowService>().SetQuickEditEnabled(enabled: false);
-             using Main main = new Main();
--            try
--            {
--                Lang.InitializeLegacyLocalization();
--                SocialAPI.Initialize();
--                LaunchInitializer.LoadParameters(main);
--                Main.OnEnginePreload += StartForceLoad;
--                main.Run();
--            }
--            catch (Exception e)
--            {
--                DisplayException(e);
--            }
-+            //try
-+            //{
-+            Lang.InitializeLegacyLocalization();
-+            //SocialAPI.Initialize();
-+            LaunchInitializer.LoadParameters(main);
-+            Main.OnEnginePreload += StartForceLoad;
-+            main.Run();
-+            //}
-+            //catch (Exception e)
-+            //{
-+            //    DisplayException(e);
-+            //}
-         }
+@@ -186,18 +_,18 @@
+         SetupLogging();
+         Platform.Get<IWindowService>().SetQuickEditEnabled(enabled: false);
+         using Main main = new Main();
+-        try
+-        {
+-            Lang.InitializeLegacyLocalization();
+-            SocialAPI.Initialize();
+-            LaunchInitializer.LoadParameters(main);
+-            Main.OnEnginePreload += StartForceLoad;
+-            main.Run();
+-        }
+-        catch (Exception e)
+-        {
+-            DisplayException(e);
+-        }
++        //try
++        //{
++        Lang.InitializeLegacyLocalization();
++        //SocialAPI.Initialize();
++        LaunchInitializer.LoadParameters(main);
++        Main.OnEnginePreload += StartForceLoad;
++        main.Run();
++        //}
++        //catch (Exception e)
++        //{
++        //    DisplayException(e);
++        //}
+     }
  
-         private static void TrySettingFNAToOpenGL(string[] args)
-@@ -241,8 +_,7 @@
-                     streamWriter.WriteLine(text);
-                     streamWriter.WriteLine("");
-                 }
--
--                MessageBox.Show(text, "Terraria: Error");
-+                SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Terraria: Error", text, Main.instance.Window.Handle);
+     private static void TrySettingFNAToOpenGL(string[] args)
+@@ -240,8 +_,7 @@
+                 streamWriter.WriteLine(text);
+                 streamWriter.WriteLine("");
              }
-             catch
-             {
+-
+-            MessageBox.Show(text, "Terraria: Error");
++            SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Terraria: Error", text, Main.instance.Window.Handle);
+         }
+         catch
+         {
