@@ -11,11 +11,22 @@ TerraAngel is a modern and heavily featured utility client for Terraria.
 Installation
 </h2>
 
-To install, clone the github repo
+You need to have [git](https://git-scm.com/download/win) installed
+
+You need to have the [dotnet runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed 
+
+First, open command prompt or some other terminal, and clone the repository
 
 ```git clone https://github.com/CEO-Chair/TerraAngel.git --recursive```
 
-Then run `fast_start.bat` and wait for it to finish
+![image](https://user-images.githubusercontent.com/87276335/182042166-c967bcba-cd52-4372-ad75-3bc5faaac0ea.png)
+
+
+Then run `fast_start.bat` and wait for it to finish, it will take a few minutes
+
+![image](https://user-images.githubusercontent.com/87276335/182042235-9ce87d19-61ee-4636-b3ab-eee0ccb0e428.png)
+
+If it finishes successfully, the client will be built in the src/TerraAngel/Terraria/bin/Release/net6.0/ folder
 
 <h2>
 Development
