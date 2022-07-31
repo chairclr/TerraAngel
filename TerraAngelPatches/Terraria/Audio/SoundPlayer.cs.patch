@@ -6,11 +6,34 @@
  using Microsoft.Xna.Framework;
  using ReLogic.Utilities;
  
-@@ -90,6 +_,7 @@
+@@ -76,19 +_,22 @@
+ 
+     public void Update()
+     {
+-        foreach (SlotVector<ActiveSound>.ItemPair item in (IEnumerable<SlotVector<ActiveSound>.ItemPair>)_trackedSounds)
++        lock (SoundEngine.AudioLock)
+         {
+-            try
++            foreach (SlotVector<ActiveSound>.ItemPair item in (IEnumerable<SlotVector<ActiveSound>.ItemPair>)_trackedSounds)
              {
-                 _trackedSounds.Remove(item.Id);
++                try
++                {
+-                item.Value.Update();
++                    item.Value.Update();
+-                if (!item.Value.IsPlaying)
++                    if (!item.Value.IsPlaying)
++                    {
++                        _trackedSounds.Remove(item.Id);
++                    }
++                }
++                catch
+                 {
+                     _trackedSounds.Remove(item.Id);
+                 }
+-            }
+-            catch
+-            {
+-                _trackedSounds.Remove(item.Id);
              }
-+            Monitor.Exit(SoundEngine.AudioLock);
          }
      }
- 
