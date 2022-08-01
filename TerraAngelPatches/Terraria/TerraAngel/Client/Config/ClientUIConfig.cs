@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,26 +15,30 @@ using Newtonsoft.Json;
 using NVector2 = System.Numerics.Vector2;
 using NVector3 = System.Numerics.Vector3;
 using NVector4 = System.Numerics.Vector4;
+using TerraAngel.Utility;
 
 namespace TerraAngel.Client.Config
 {
     public class ClientUIConfig
     {
         [JsonIgnore]
+        public static string[] ColorNames = Enum.GetNames<ImGuiCol>();
+
+        [JsonIgnore]
         private ImGuiStylePtr style => ImGui.GetStyle();
 
         [JsonIgnore]
-        public NVector4[] StyleColors
+        public Dictionary<string, NVector4> StyleColors
         {
             get
             {
                 ImGuiStylePtr styleCache = style;
 
-                NVector4[] colors = new NVector4[styleCache.Colors.Count];
+                Dictionary<string, NVector4> colors = new Dictionary<string, NVector4>(styleCache.Colors.Count);
 
-                for (int i = 0; i < colors.Length; i++)
+                for (int i = 0; i < styleCache.Colors.Count; i++)
                 {
-                    colors[i] = styleCache.Colors[i];
+                    colors.Add(ColorNames[i], styleCache.Colors[i]);
                 }
 
                 return colors;
@@ -42,75 +50,121 @@ namespace TerraAngel.Client.Config
 
                 ImGuiStylePtr styleCache = style;
 
-                for (int i = 0; i < value.Length; i++)
+                for (int i = 0; i < styleCache.Colors.Count; i++)
                 {
-                    styleCache.Colors[i] = value[i];
+                    if (value.TryGetValue(ColorNames[i], out NVector4 v))
+                    {
+                        styleCache.Colors[i] = v;
+                    }
                 }
             }
         }
 
-        [JsonIgnore]
-        public float Alpha { get => style.Alpha; set { if (value != nullValuef) style.Alpha = value; } }
-        [JsonIgnore]
-        public float WindowRounding { get => style.WindowRounding; set { if (value != nullValuef) style.WindowRounding = value; } }
-        [JsonIgnore]
-        public float WindowBorderSize { get => style.WindowBorderSize; set { if (value != nullValuef) style.WindowBorderSize = value; } }
-        [JsonIgnore]
-        public NVector2 WindowPadding { get => style.WindowPadding; set { if (value != nullValuev2) style.WindowPadding = value; } }
-        [JsonIgnore]
-        public NVector2 WindowTitleAlign { get => style.WindowTitleAlign; set { if (value != nullValuev2) style.WindowTitleAlign = value; } }
-        [JsonIgnore]
-        public float GrabSize { get => style.GrabMinSize; set { if (value != nullValuef) style.GrabMinSize = value; } }
-        [JsonIgnore]
-        public float GrabRounding { get => style.GrabRounding; set { if (value != nullValuef) style.GrabRounding = value; } }
+        delegate ref float    FuncRefFloat();
+        delegate ref NVector2 FuncRefNVector2();
+        delegate ref NVector3 FuncRefNVector3();
+        delegate ref NVector4 FuncRefNVector4();
+        delegate ref bool     FuncRefBool();
 
-        public static float nullValuef = float.MaxValue;
-        public static NVector2 nullValuev2 = new NVector2(float.MaxValue);
-        public static NVector3 nullValuev3 = new NVector3(float.MaxValue);
-        public static NVector4 nullValuev4 = new NVector4(float.MaxValue);
+        [JsonIgnore]
+        public Dictionary<string, object> StyleData
+        {
+            get
+            {
+                ImGuiStylePtr styleCache = style;
+                PropertyInfo[] properties = typeof(ImGuiStylePtr).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+                Dictionary<string, object> data = new Dictionary<string, object>();
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    PropertyInfo property = properties[i];
+                    if (!property.CanRead)
+                        continue;
+
+                    object? o = property.GetValue(styleCache);
+
+                    if (o is null)
+                        continue;
+
+                    Type t = property.PropertyType;
+
+                    if (t != typeof(float).MakeByRefType()
+                        && t != typeof(NVector2).MakeByRefType()
+                        && t != typeof(NVector4).MakeByRefType()
+                        && t != typeof(bool).MakeByRefType())
+                        continue;
+
+                    data.Add(property.Name, o);
+                }
+
+                return data;
+            }
+            set
+            {
+                if (value is null)
+                    return;
+
+                ImGuiStylePtr styleCache = style;
+
+                foreach (KeyValuePair<string, object> kvp in value)
+                {
+                    PropertyInfo? property = typeof(ImGuiStylePtr).GetProperty(kvp.Key, BindingFlags.Instance | BindingFlags.Public);
+
+                    if (property is not null)
+                    {
+                        Type t = property.PropertyType;
+                        MethodInfo? getMethod = property.GetMethod;
+                        if (getMethod is null)
+                            continue;
+
+                        if (t == typeof(float).MakeByRefType())
+                        {
+                            float v = 0f;
+                            if (kvp.Value.GetType() == typeof(double))
+                                v = ((float)((double)kvp.Value));
+                            else
+                                v = (float)kvp.Value;
+                            getMethod.CreateDelegate<FuncRefFloat>(styleCache)() = v;
+                        }
+                        else if (t == typeof(NVector2).MakeByRefType())
+                        {
+                            getMethod.CreateDelegate<FuncRefNVector2>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<NVector2>();
+                        }
+                        else if (t == typeof(NVector3).MakeByRefType())
+                        {
+                            getMethod.CreateDelegate<FuncRefNVector3>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<NVector3>();
+                        }
+                        else if (t == typeof(NVector4).MakeByRefType())
+                        {
+                            getMethod.CreateDelegate<FuncRefNVector4>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<NVector4>();
+                        }
+                        else if (t == typeof(bool).MakeByRefType())
+                        {
+                            getMethod.CreateDelegate<FuncRefBool>(styleCache)() = (bool)kvp.Value;
+                        }
+                    }
+                }
+            }
+        }
 
         public void Set()
         {
             StyleColors = styleColors;
-            Alpha = alpha;
-            WindowRounding = windowRounding;
-            WindowBorderSize = windowBorderSize;
-            WindowPadding = windowPadding;
-            WindowTitleAlign = windowTitleAlign;
-            GrabSize = grabSize;
-            GrabRounding = grabRounding;
+            StyleData = styleData;
         }
 
         public void Get()
         {
             styleColors = StyleColors;
-            alpha = Alpha;
-            windowRounding = WindowRounding;
-            windowBorderSize = WindowBorderSize;
-            windowPadding = WindowPadding;
-            windowTitleAlign = WindowTitleAlign;
-            grabSize = GrabSize;
-            grabRounding = GrabRounding;
+            styleData = StyleData;
         }
 
-        public NVector4[] styleColors;
-        public float alpha;
-        public float windowRounding;
-        public float windowBorderSize;
-        public NVector2 windowPadding;
-        public NVector2 windowTitleAlign;
-        public float grabSize;
-        public float grabRounding;
+        public Dictionary<string, NVector4> styleColors;
+        public Dictionary<string, object> styleData;
 
         public ClientUIConfig()
         {
-            alpha = nullValuef;
-            windowRounding = nullValuef;
-            windowBorderSize = nullValuef;
-            windowPadding = nullValuev2;
-            windowTitleAlign = nullValuev2;
-            grabSize = nullValuef;
-            grabRounding = nullValuef;
+
         }
     }
 }

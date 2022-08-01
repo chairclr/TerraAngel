@@ -134,6 +134,14 @@
                  }
  
                  if (num >= 4)
+@@ -4486,6 +_,7 @@
+         }
+     }
+ 
++    static bool didResize = false;
+     public Main()
+     {
+         instance = this;
 @@ -4494,6 +_,16 @@
          Configuration.Load();
          graphics = new GraphicsDeviceManager(this as Game);
@@ -230,14 +238,6 @@
          _gameContentLoadProcess = LoadContent_Deferred();
      }
  
-@@ -8277,6 +_,7 @@
-         }
-     }
- 
-+    static bool didResize = false;
-     public static void stopMoonEvent()
-     {
-         _ = NPC.waveNumber;
 @@ -9867,7 +_,7 @@
              {
                  newMusic = 10;
@@ -600,14 +600,12 @@
          }
  
          Overlays.Scene.Draw(spriteBatch, RenderLayers.ForegroundWater);
-@@ -59441,8 +_,8 @@
+@@ -59441,8 +_,6 @@
          }
  
          instance.CameraModifiers.ApplyTo(ref screenPosition);
 -        screenPosition.X = (int)screenPosition.X;
-+        //screenPosition.X = (int)screenPosition.X;
 -        screenPosition.Y = (int)screenPosition.Y;
-+        //screenPosition.Y = (int)screenPosition.Y;
          ClampScreenPositionToWorld();
      }
  
@@ -750,14 +748,18 @@
              Lighting.Initialize();
              if (!drawToScreen && !_isResizingAndRemakingTargets)
              {
-@@ -63104,7 +_,10 @@
-             graphics.SynchronizeWithVerticalRetrace = true;
-             graphics.ApplyChanges();
+@@ -63128,7 +_,13 @@
+             FullscreenStartup();
          }
-+
-+
-     }
-+
  
-     public static void FixUIScale()
-     {
++        if (!Main.didResize)
++        {
++            SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
++            base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
+-        SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
++            SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
++        }
++        Main.didResize = false;
+     }
+ 
+     public static void OpenPlayerSelect(OnPlayerSelected method)

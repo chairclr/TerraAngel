@@ -41,6 +41,7 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Main>("DrawGore", DrawGoreHook);
             HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
             HookUtil.HookGen(Main.MouseText_DrawItemTooltip_GetLinesInfo, GetLinesInfoHook);
+            HookUtil.HookGen<Main>("DrawTiles", DrawTilesHook);
         }
 
         public delegate void GetLinesInfoDef(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine);
@@ -60,6 +61,16 @@ namespace TerraAngel.Hooks.Hooks
                 }
             }
         }
+
+        public static void DrawTilesHook(Action<Main, bool, bool, bool, int> orig, Main self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets, int waterStyleOverride)
+        {
+            Vector2 escreen = Main.screenPosition;
+            Main.screenPosition = Main.screenPosition.Floor() + Vector2.One;
+            Main.screenLastPosition = Main.screenPosition;
+            orig(self, solidLayer, forRenderTargets, intoRenderTargets, waterStyleOverride);
+            Main.screenPosition = escreen;
+        }
+
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
             fullBrightCache = CringeManager.GetCringe<FullBrightCringe>();
@@ -96,24 +107,27 @@ namespace TerraAngel.Hooks.Hooks
                 fullBright.Enabled = !fullBright.Enabled;
             }
 
-            FreecamCringe freecam = CringeManager.GetCringe<FreecamCringe>();
-            if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleFreecam))
+            if (!Main.gameMenu)
             {
-                freecam.Enabled = !freecam.Enabled;
-            }
-            if (freecam.Enabled)
-            {
-                ImGuiIOPtr io = ImGui.GetIO();
-                if (io.MouseClicked[1])
+                FreecamCringe freecam = CringeManager.GetCringe<FreecamCringe>();
+                if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleFreecam))
                 {
-                    freecamOriginPoint = Util.ScreenToWorld(Input.InputSystem.MousePosition);
+                    freecam.Enabled = !freecam.Enabled;
                 }
-                if (io.MouseDown[1])
+                if (freecam.Enabled)
                 {
-                    Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(Input.InputSystem.MousePosition);
-                    Main.screenPosition = Main.screenPosition + diff;
+                    ImGuiIOPtr io = ImGui.GetIO();
+                    if (io.MouseClicked[1])
+                    {
+                        freecamOriginPoint = Util.ScreenToWorld(Input.InputSystem.MousePosition);
+                    }
+                    if (io.MouseDown[1])
+                    {
+                        Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(Input.InputSystem.MousePosition);
+                        Main.screenPosition = Main.screenPosition + diff;
+                    }
+                    return;
                 }
-                return;
             }
             orig();
         }
