@@ -17,6 +17,9 @@ using TerraAngel;
 using System.Reflection;
 using Terraria.Localization;
 using System.Diagnostics;
+using System.IO;
+using TerraAngel.Utility;
+using System.Runtime.CompilerServices;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -70,6 +73,10 @@ namespace TerraAngel.Client.ClientWindows
         private string traceFilter = "";
         private bool upMessages = true;
         private bool downMessages = true;
+
+        private List<NetMessageAction> Actions = new List<NetMessageAction>();
+        private int selectedAction = 0;
+        private string[] actionNames = Util.EnumFancyNames<MessageActions>();
 
         private static List<NetPacketInfo>[] allPackets = new List<NetPacketInfo>[MessageID.Count];
         private static List<NetPacketInfo>[] sentPackets = new List<NetPacketInfo>[MessageID.Count];
@@ -142,16 +149,16 @@ namespace TerraAngel.Client.ClientWindows
                     ImGui.Text("Packets with traces:"); ImGui.SameLine();
                     unsafe
                     {
-                        ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##TraceFilter", ref traceFilter, 512, ImGuiInputTextFlags.CallbackCharFilter, (x) => 
-                        { 
-                            switch (x->EventFlag) 
-                            { 
+                        ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##TraceFilter", ref traceFilter, 512, ImGuiInputTextFlags.CallbackCharFilter, (x) =>
+                        {
+                            switch (x->EventFlag)
+                            {
                                 case ImGuiInputTextFlags.CallbackCharFilter:
                                     if (char.IsNumber((char)x->EventChar) || x->EventChar == ',' || x->EventChar == ' ') return 0;
                                     return 1;
                                     break;
-                            } 
-                            return 0; 
+                            }
+                            return 0;
                         }); ImGui.PopItemWidth();
                     }
                     MessagesToLogTraces = new HashSet<int>(traceFilter.Split(',').Select(x => { if (int.TryParse(x.Trim(), out int a)) { return a; } return -1; }).Where(x => x != -1));
@@ -222,7 +229,7 @@ namespace TerraAngel.Client.ClientWindows
                     }
                     ImGui.EndTabItem();
                 }
-                if (ImGui.BeginTabItem("Packet Sender"))
+                if (ImGui.BeginTabItem("Net Message Sender"))
                 {
                     bool isInMultiplayerGame = Main.netMode == 1 && Netplay.Connection.State != 0;
 
@@ -285,8 +292,74 @@ namespace TerraAngel.Client.ClientWindows
 
                     ImGui.EndTabItem();
                 }
-                if (ImGui.BeginTabItem("Raw Packet Sender"))
+                if (ImGui.BeginTabItem("Raw Message Sender"))
                 {
+                    if (ImGui.Button($"{Icon.Add}"))
+                    {
+                        Actions.Add(new NetMessageAction((MessageActions)selectedAction));
+                    }
+                    ImGui.SameLine(); ImGui.Combo("##ItemActionsAdd", ref selectedAction, actionNames, actionNames.Length);
+                    if (ImGui.BeginChild("RawMessageScrolling", NVector2.Zero, false, ImGuiWindowFlags.HorizontalScrollbar))
+                    {
+                        int size = 0;
+                        ImGui.NewLine();
+                        ImGui.Spacing();
+                        for (int i = 0; i < Actions.Count; i++)
+                        {
+                            if (ImGui.Button($"{Icon.Remove}##{i}"))
+                            {
+                                Actions.RemoveAt(i);
+                                continue;
+                            }
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted($"writer.Write(");
+                            ImGui.SameLine();
+                            ImGui.PushItemWidth(100f);
+                            unsafe
+                            {
+                                fixed (ulong* v = &Actions[i].Data)
+                                {
+                                    ImGui.InputScalar($"##ValueLmao{i}", Actions[i].GetActionAsImGuiType(), (IntPtr)v);
+                                }
+                            }
+                            ImGui.PopItemWidth();
+                            ImGui.SameLine();
+                            ImGui.TextUnformatted(")");
+                            ImGui.SameLine();
+                            ImGui.PushItemWidth(180f);
+                            if (ImGui.Combo($"##ItemActionsChange{i}", ref Actions[i].ActionInt, actionNames, actionNames.Length)) Actions[i].Data = 0;
+                            ImGui.PopItemWidth();
+
+                            size += Actions[i].GetActionSize();
+                        }
+
+
+                        ImGui.SetCursorPosY(0f);
+
+                        ImGui.BeginDisabled();
+                        ImGui.Button($"{Icon.Remove}##-1");
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted($"writer.Write(");
+                        ImGui.SameLine();
+                        ImGui.PushItemWidth(100f);
+                        unsafe
+                        {
+                            ImGui.InputScalar($"##ValueLmao-1", ImGuiDataType.S32, (IntPtr)(&size));
+                        }
+                        ImGui.PopItemWidth();
+                        ImGui.SameLine();
+                        ImGui.TextUnformatted(")");
+                        ImGui.SameLine();
+                        ImGui.PushItemWidth(180f);
+                        int mst = (int)MessageActions.WriteUnsignedShort;
+                        ImGui.Combo($"##ItemActionsChange-1", ref mst, actionNames, actionNames.Length);
+                        ImGui.PopItemWidth();
+                        ImGui.EndDisabled();
+
+                        ImGui.EndChild();
+                    }
+
+
                     ImGui.EndTabItem();
                 }
                 ImGui.EndTabBar();
@@ -358,5 +431,131 @@ namespace TerraAngel.Client.ClientWindows
             Number7 = number7;
             StackTrace = stackTrace;
         }
+    }
+    public class NetMessageAction
+    {
+        public MessageActions Action;
+        public ref int ActionInt
+        {
+            get
+            {
+                return ref Unsafe.As<MessageActions, int>(ref Action);
+            }
+        }
+        public ulong Data;
+
+        public NetMessageAction(MessageActions action)
+        {
+            Action = action;
+            Data = 0;
+        }
+        public NetMessageAction(MessageActions action, ValueType data)
+        {
+            Action = action;
+            Data = (ulong)data;
+        }
+
+        public void WriteToStream(BinaryWriter writer)
+        {
+            switch (Action)
+            {
+                case MessageActions.WriteByte:
+                    writer.Write((byte)Data);
+                    break;
+                case MessageActions.WriteSignedByte:
+                    writer.Write((sbyte)Data);
+                    break;
+                case MessageActions.WriteShort:
+                    writer.Write((short)Data);
+                    break;
+                case MessageActions.WriteUnsignedShort:
+                    writer.Write((ushort)Data);
+                    break;
+                case MessageActions.WriteInt:
+                    writer.Write((int)Data);
+                    break;
+                case MessageActions.WriteUnsignedInt:
+                    writer.Write((uint)Data);
+                    break;
+                case MessageActions.WriteFloat:
+                    writer.Write((float)Data);
+                    break;
+                case MessageActions.WriteDouble:
+                    writer.Write((double)Data);
+                    break;
+                case MessageActions.WriteLong:
+                    writer.Write((long)Data);
+                    break;
+                case MessageActions.WriteUnsignedLong:
+                    writer.Write((ulong)Data);
+                    break;
+            }
+        }
+
+        public ImGuiDataType GetActionAsImGuiType()
+        {
+            switch (Action)
+            {
+                case MessageActions.WriteByte:
+                    return ImGuiDataType.U8;
+                case MessageActions.WriteSignedByte:
+                    return ImGuiDataType.S8;
+                case MessageActions.WriteShort:
+                    return ImGuiDataType.S16;
+                case MessageActions.WriteUnsignedShort:
+                    return ImGuiDataType.U16;
+                case MessageActions.WriteInt:
+                    return ImGuiDataType.S32;
+                case MessageActions.WriteUnsignedInt:
+                    return ImGuiDataType.U32;
+                case MessageActions.WriteFloat:
+                    return ImGuiDataType.Float;
+                case MessageActions.WriteDouble:
+                    return ImGuiDataType.Double;
+                case MessageActions.WriteLong:
+                    return ImGuiDataType.S64;
+                case MessageActions.WriteUnsignedLong:
+                    return ImGuiDataType.U64;
+            }
+
+            return ImGuiDataType.U8;
+        }
+
+        public int GetActionSize()
+        {
+            switch (Action)
+            {
+                case MessageActions.WriteByte:
+                case MessageActions.WriteSignedByte:
+                    return 1;
+                case MessageActions.WriteShort:
+                case MessageActions.WriteUnsignedShort:
+                    return 2;
+                case MessageActions.WriteInt:
+                case MessageActions.WriteUnsignedInt:
+                case MessageActions.WriteFloat:
+                    return 4;
+                case MessageActions.WriteDouble:
+                case MessageActions.WriteLong:
+                case MessageActions.WriteUnsignedLong:
+                    return 8;
+            }
+
+            return 8;
+        }
+    }
+    public enum MessageActions
+    {
+        WriteByte,
+        WriteSignedByte,
+        WriteShort,
+        WriteUnsignedShort,
+        WriteInt,
+        WriteUnsignedInt,
+        WriteFloat,
+        WriteDouble,
+        WriteLong,
+        WriteUnsignedLong,
+
     }
 }
