@@ -217,6 +217,8 @@ namespace TerraAngel.Client.ClientWindows
                                 ImGui.Unindent(20f);
                             }
                         }
+
+                        ImGui.EndChild();
                     }
                     ImGui.EndTabItem();
                 }
@@ -283,6 +285,7 @@ namespace TerraAngel.Client.ClientWindows
 
                     ImGui.EndTabItem();
                 }
+                ImGui.EndTabBar();
             }
 
             ImGui.End();

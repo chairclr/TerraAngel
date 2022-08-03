@@ -376,3 +376,4 @@ build_log_*.txt
 
 !TerraAngelPatches/Terraria/LibNew/x64
 !TerraAngelPatches/Terraria/LibNew/x86
+TerraAngelPatches/Terraria/Properties/launchSettings.json

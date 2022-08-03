@@ -14,6 +14,8 @@ using TerraAngel.Client.Config;
 using TerraAngel;
 using TerraAngel.Cheat.Cringes;
 using ReLogic.Threading;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.GameContent.Liquid;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -42,6 +44,16 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
             HookUtil.HookGen(Main.MouseText_DrawItemTooltip_GetLinesInfo, GetLinesInfoHook);
             HookUtil.HookGen<Main>("DrawTiles", DrawTilesHook);
+            HookUtil.HookGen<Main>("DrawWater", DrawWaterHook);
+        }
+
+        public static void DrawWaterHook(Action<Main, bool, int, float> orig, Main self, bool bg, int Style, float Alpha)
+        {
+            Vector2 escreen = Main.screenPosition;
+            Main.screenPosition = Main.screenPosition.Floor();
+            Main.screenLastPosition = Main.screenPosition;
+            orig(self, bg, Style, Alpha);
+            Main.screenPosition = escreen;
         }
 
         public delegate void GetLinesInfoDef(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine);
@@ -65,7 +77,7 @@ namespace TerraAngel.Hooks.Hooks
         public static void DrawTilesHook(Action<Main, bool, bool, bool, int> orig, Main self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets, int waterStyleOverride)
         {
             Vector2 escreen = Main.screenPosition;
-            Main.screenPosition = Main.screenPosition.Floor() + Vector2.One;
+            Main.screenPosition = Main.screenPosition.Floor();
             Main.screenLastPosition = Main.screenPosition;
             orig(self, solidLayer, forRenderTargets, intoRenderTargets, waterStyleOverride);
             Main.screenPosition = escreen;

@@ -203,6 +203,7 @@ namespace TerraAngel.Client.ClientWindows
 
                     ImGui.EndTabItem();
                 }
+                ImGui.EndTabBar();
             }
         }
 
@@ -232,6 +233,7 @@ namespace TerraAngel.Client.ClientWindows
                     ImGui.EndTabItem();
                 }
                 
+                ImGui.EndTabBar();
             }
         }
 

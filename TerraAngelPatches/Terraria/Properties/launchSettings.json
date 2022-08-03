@@ -2,7 +2,7 @@
   "profiles": {
     "Terraria": {
       "commandName": "Project",
-      "nativeDebugging": true
+      "nativeDebugging": false
     }
   }
 }
