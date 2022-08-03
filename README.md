@@ -28,6 +28,10 @@ Then run `fast_start.bat` and wait for it to finish, it will take a few minutes
 
 If it finishes successfully, the client will be built in the src/TerraAngel/Terraria/bin/Release/net6.0/ folder
 
+![image](https://user-images.githubusercontent.com/87276335/182298612-c9aa34a2-9df7-4047-9a4f-a465c95419a1.png)
+![image](https://user-images.githubusercontent.com/87276335/182298616-e9e2299e-611c-4b7d-823e-b4d6ff828c42.png)
+
+
 <h2>
 Development
 </h2>
