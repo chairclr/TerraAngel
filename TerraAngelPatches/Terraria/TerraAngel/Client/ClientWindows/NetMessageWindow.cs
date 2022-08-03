@@ -285,6 +285,10 @@ namespace TerraAngel.Client.ClientWindows
 
                     ImGui.EndTabItem();
                 }
+                if (ImGui.BeginTabItem("Raw Packet Sender"))
+                {
+                    ImGui.EndTabItem();
+                }
                 ImGui.EndTabBar();
             }
 

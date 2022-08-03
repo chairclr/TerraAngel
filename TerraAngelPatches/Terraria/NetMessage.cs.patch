@@ -1,5 +1,287 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
+@@ -1625,281 +_,7 @@
+                     }
+                 }
+             }
+-            else if (remoteClient == -1)
+-            {
+-                switch (msgType)
+-                {
+-                    case 34:
+-                    case 69:
+-                        {
+-                            for (int num28 = 0; num28 < 256; num28++)
+-                            {
+-                                if (num28 != ignoreClient && buffer[num28].broadcast && Netplay.Clients[num28].IsConnected())
+-                                {
+-                                    try
+-                                    {
+-                                        buffer[num28].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                                        Netplay.Clients[num28].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[num28].ServerWriteCallBack);
+-                                    }
+-                                    catch
+-                                    {
+-                                    }
+-                                }
+-                            }
+-
+-                            break;
+-                        }
+-
+-                    case 20:
+-                        {
+-                            for (int num32 = 0; num32 < 256; num32++)
+-                            {
+-                                if (num32 != ignoreClient && buffer[num32].broadcast && Netplay.Clients[num32].IsConnected() && Netplay.Clients[num32].SectionRange((int)Math.Max(number3, number4), number, (int)number2))
+-                                {
+-                                    try
+-                                    {
+-                                        buffer[num32].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                                        Netplay.Clients[num32].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[num32].ServerWriteCallBack);
+-                                    }
+-                                    catch
+-                                    {
+-                                    }
+-                                }
+-                            }
+-
+-                            break;
+-                        }
+-
+-                    case 23:
+-                        {
+-                            NPC nPC4 = Main.npc[number];
+-                            for (int num33 = 0; num33 < 256; num33++)
+-                            {
+-                                if (num33 == ignoreClient || !buffer[num33].broadcast || !Netplay.Clients[num33].IsConnected())
+-                                {
+-                                    continue;
+-                                }
+-
+-                                bool flag6 = false;
+-                                if (nPC4.boss || nPC4.netAlways || nPC4.townNPC || !nPC4.active)
+-                                {
+-                                    flag6 = true;
+-                                }
+-                                else if (nPC4.netSkip <= 0)
+-                                {
+-                                    Rectangle rect5 = Main.player[num33].getRect();
+-                                    Rectangle rect6 = nPC4.getRect();
+-                                    rect6.X -= 2500;
+-                                    rect6.Y -= 2500;
+-                                    rect6.Width += 5000;
+-                                    rect6.Height += 5000;
+-                                    if (rect5.Intersects(rect6))
+-                                    {
+-                                        flag6 = true;
+-                                    }
+-                                }
+-                                else
+-                                {
+-                                    flag6 = true;
+-                                }
+-
+-                                if (flag6)
+-                                {
+-                                    try
+-                                    {
+-                                        buffer[num33].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                                        Netplay.Clients[num33].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[num33].ServerWriteCallBack);
+-                                    }
+-                                    catch
+-                                    {
+-                                    }
+-                                }
+-                            }
+-
+-                            nPC4.netSkip++;
+-                            if (nPC4.netSkip > 4)
+-                            {
+-                                nPC4.netSkip = 0;
+-                            }
+-
+-                            break;
+-                        }
+-
+-                    case 28:
+-                        {
+-                            NPC nPC3 = Main.npc[number];
+-                            for (int num30 = 0; num30 < 256; num30++)
+-                            {
+-                                if (num30 == ignoreClient || !buffer[num30].broadcast || !Netplay.Clients[num30].IsConnected())
+-                                {
+-                                    continue;
+-                                }
+-
+-                                bool flag5 = false;
+-                                if (nPC3.life <= 0)
+-                                {
+-                                    flag5 = true;
+-                                }
+-                                else
+-                                {
+-                                    Rectangle rect3 = Main.player[num30].getRect();
+-                                    Rectangle rect4 = nPC3.getRect();
+-                                    rect4.X -= 3000;
+-                                    rect4.Y -= 3000;
+-                                    rect4.Width += 6000;
+-                                    rect4.Height += 6000;
+-                                    if (rect3.Intersects(rect4))
+-                                    {
+-                                        flag5 = true;
+-                                    }
+-                                }
+-
+-                                if (flag5)
+-                                {
+-                                    try
+-                                    {
+-                                        buffer[num30].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                                        Netplay.Clients[num30].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[num30].ServerWriteCallBack);
+-                                    }
+-                                    catch
+-                                    {
+-                                    }
+-                                }
+-                            }
+-
+-                            break;
+-                        }
+-
+-                    case 13:
+-                        {
+-                            for (int num31 = 0; num31 < 256; num31++)
+-                            {
+-                                if (num31 != ignoreClient && buffer[num31].broadcast && Netplay.Clients[num31].IsConnected())
+-                                {
+-                                    try
+-                                    {
+-                                        buffer[num31].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                                        Netplay.Clients[num31].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[num31].ServerWriteCallBack);
+-                                    }
+-                                    catch
+-                                    {
+-                                    }
+-                                }
+-                            }
+-
+-                            Main.player[number].netSkip++;
+-                            if (Main.player[number].netSkip > 2)
+-                            {
+-                                Main.player[number].netSkip = 0;
+-                            }
+-
+-                            break;
+-                        }
+-
+-                    case 27:
+-                        {
+-                            Projectile projectile2 = Main.projectile[number];
+-                            for (int num29 = 0; num29 < 256; num29++)
+-                            {
+-                                if (num29 == ignoreClient || !buffer[num29].broadcast || !Netplay.Clients[num29].IsConnected())
+-                                {
+-                                    continue;
+-                                }
+-
+-                                bool flag4 = false;
+-                                if (projectile2.type == 12 || Main.projPet[projectile2.type] || projectile2.aiStyle == 11 || projectile2.netImportant)
+-                                {
+-                                    flag4 = true;
+-                                }
+-                                else
+-                                {
+-                                    Rectangle rect = Main.player[num29].getRect();
+-                                    Rectangle rect2 = projectile2.getRect();
+-                                    rect2.X -= 5000;
+-                                    rect2.Y -= 5000;
+-                                    rect2.Width += 10000;
+-                                    rect2.Height += 10000;
+-                                    if (rect.Intersects(rect2))
+-                                    {
+-                                        flag4 = true;
+-                                    }
+-                                }
+-
+-                                if (flag4)
+-                                {
+-                                    try
+-                                    {
+-                                        buffer[num29].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                                        Netplay.Clients[num29].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[num29].ServerWriteCallBack);
+-                                    }
+-                                    catch
+-                                    {
+-                                    }
+-                                }
+-                            }
+-
+-                            break;
+-                        }
+-
+-                    default:
+-                        {
+-                            for (int num27 = 0; num27 < 256; num27++)
+-                            {
+-                                if (num27 != ignoreClient && (buffer[num27].broadcast || (Netplay.Clients[num27].State >= 3 && msgType == 10)) && Netplay.Clients[num27].IsConnected())
+-                                {
+-                                    try
+-                                    {
+-                                        buffer[num27].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                                        Netplay.Clients[num27].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[num27].ServerWriteCallBack);
+-                                    }
+-                                    catch
+-                                    {
+-                                    }
+-                                }
+-                            }
+-
+-                            break;
+-                        }
+-                }
+-            }
+-            else if (Netplay.Clients[remoteClient].IsConnected())
+-            {
+-                try
+-                {
+-                    buffer[remoteClient].spamCount++;
+-                    Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num26);
+-                    Netplay.Clients[remoteClient].Socket.AsyncSend(buffer[num].writeBuffer, 0, num26, Netplay.Clients[remoteClient].ServerWriteCallBack);
+-                }
+-                catch
+-                {
+-                }
+-            }
+-
+-            if (Main.verboseNetplay)
+-            {
+-                for (int num34 = 0; num34 < num26; num34++)
+-                {
+-                }
+-
+-                for (int num35 = 0; num35 < num26; num35++)
+-                {
+-                    _ = buffer[num].writeBuffer[num35];
+-                }
+-            }
+-
+             buffer[num].writeLocked = false;
+-            if (msgType == 2 && Main.netMode == 2)
+-            {
+-                Netplay.Clients[num].PendingTermination = true;
+-                Netplay.Clients[num].PendingTerminationApproved = true;
+-            }
+         }
+     }
+ 
 @@ -2527,23 +_,33 @@
      {
          lock (buffer[i])
