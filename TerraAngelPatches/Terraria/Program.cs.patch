@@ -22,34 +22,27 @@
          Thread.CurrentThread.Name = "Main Thread";
          if (monoArgs)
          {
-@@ -186,18 +_,18 @@
+@@ -186,18 +_,22 @@
          SetupLogging();
          Platform.Get<IWindowService>().SetQuickEditEnabled(enabled: false);
          using Main main = new Main();
--        try
--        {
--            Lang.InitializeLegacyLocalization();
++#if !DEBUG
+         try
+         {
++#endif
+             Lang.InitializeLegacyLocalization();
 -            SocialAPI.Initialize();
--            LaunchInitializer.LoadParameters(main);
--            Main.OnEnginePreload += StartForceLoad;
--            main.Run();
--        }
--        catch (Exception e)
--        {
--            DisplayException(e);
--        }
-+        //try
-+        //{
-+        Lang.InitializeLegacyLocalization();
-+        //SocialAPI.Initialize();
-+        LaunchInitializer.LoadParameters(main);
-+        Main.OnEnginePreload += StartForceLoad;
-+        main.Run();
-+        //}
-+        //catch (Exception e)
-+        //{
-+        //    DisplayException(e);
-+        //}
++            //SocialAPI.Initialize();
+             LaunchInitializer.LoadParameters(main);
+             Main.OnEnginePreload += StartForceLoad;
+             main.Run();
++#if !DEBUG
+         }
+         catch (Exception e)
+         {
+             DisplayException(e);
+         }
++#endif
      }
  
      private static void TrySettingFNAToOpenGL(string[] args)
