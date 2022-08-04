@@ -157,7 +157,6 @@ namespace TerraAngel.Client.ClientWindows
             if (reclaimFocus)
                 ImGui.SetKeyboardFocusHere(-1);
 
-            ImGui.End();
 
 
             lock (CandidateLock)
@@ -177,6 +176,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
             }
 
+            ImGui.End();
             ImGui.PopFont();
         }
 
@@ -319,6 +319,19 @@ namespace TerraAngel.Client.ClientWindows
                 }
 
                 drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
+
+                if (ImGui.IsMouseHoveringRect(origin, origin + size))
+                {
+                    io.WantCaptureMouse = true;
+
+                    io.MouseDown[0] = false;
+                    io.MouseDown[1] = false;
+                    io.MouseDown[2] = false;
+
+                    ImGui.SetItemDefaultFocus();
+                    ImGui.SetKeyboardFocusHere(-1);
+                }
+
                 float offset = style.ItemSpacing.Y;
                 if (cadidatesFlipped)
                 {
@@ -476,10 +489,9 @@ namespace TerraAngel.Client.ClientWindows
                     origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
                 }
                 drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
+
+
                 float offset = style.ItemSpacing.Y;
-
-
-
                 void RenderCandidate(int i)
                 {
                     string s = GetCandidateText(i);
@@ -510,6 +522,22 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         RenderCandidate(i);
                     }
+                }
+
+                if (ImGui.IsMouseHoveringRect(origin, origin + size))
+                {
+                    io.WantCaptureMouse = true;
+
+                    io.MouseDown[0] = false;
+                    io.MouseDown[1] = false;
+                    io.MouseDown[2] = false;
+
+                    io.MouseClicked[0] = false;
+                    io.MouseClicked[1] = false;
+                    io.MouseClicked[2] = false;
+
+                    ImGui.SetItemDefaultFocus();
+                    ImGui.SetKeyboardFocusHere(-1);
                 }
             }
         }
@@ -670,7 +698,7 @@ namespace TerraAngel.Client.ClientWindows
                                 }
                             }
 
-                            if (ImGui.IsKeyPressed(ImGuiKey.Z, true))
+                            if (ImGui.IsKeyPressed(ImGuiKey.Y, true))
                             {
                                 if (undoStackPointer > 1 && undoStackPointer < undoStack.Count)
                                 {

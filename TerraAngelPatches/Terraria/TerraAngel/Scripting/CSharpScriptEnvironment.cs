@@ -149,6 +149,7 @@ namespace TerraAngel.Scripting
             return CSharpObjectFormatter.Instance.FormatObject(obj);
         }
 
+        private static char[] includes = new char[] { '.', ',' };
         public Task<List<CompletionItem>> GetCompletionAsync(string code, int cursorPosition)
         {
             return Task.Run(
@@ -172,8 +173,12 @@ namespace TerraAngel.Scripting
                         textFilter = rootNode.FindToken(cursorPosition - 1).Text;
                     }
 
+                    if (string.IsNullOrEmpty(textFilter)) return new List<CompletionItem>();
+                    if (textFilter.All(x => !char.IsLetter(x) && !includes.Contains(x))) return new List<CompletionItem>();
 
-                    return completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
+                    List<CompletionItem> l = completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
+
+                    return l;
                 });
         }
         public string GetChangedText(string code, CompletionItem item, int previousCursorPosition, out int cursorPosition)

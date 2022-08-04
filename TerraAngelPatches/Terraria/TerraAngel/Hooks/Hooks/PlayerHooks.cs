@@ -30,6 +30,7 @@ namespace TerraAngel.Hooks.Hooks
         {
             if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
             {
+                self.statLife = self.statLifeMax2;
                 if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket == 0)
                 {
                     CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket = 6;

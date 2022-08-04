@@ -36,7 +36,28 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<PlayerInput>("MouseInput", MouseInputHook);
             HookUtil.HookGen<PlayerInput>("UpdateInput", UpdateInputHook);
             HookUtil.HookGen<Main>("DrawInterface_41_InterfaceLogic4", InterfaceLogic4Hook);
+
+            foreach (PropertyInfo prop in typeof(TriggersSet).GetProperties())
+            {
+                if (prop.CanRead && prop.PropertyType == typeof(bool) && prop.GetMethod is not null)
+                {
+                    HookUtil.HookGen(prop.GetMethod, TriggerSetGetHook1);
+                }
+            }
         }
+        public static bool TriggerSetGetHook1(Func<TriggersSet, bool> orig, TriggersSet self)
+        {
+            if (ClientLoader.WantCaptureKeyboard)
+                return false;
+            return orig(self);
+        }
+        public static bool TriggerSetGetHook2(Func<TriggersSet, bool> orig, TriggersSet self)
+        {
+            if (ClientLoader.WantCaptureKeyboard || ClientLoader.WantCaptureMouse)
+                return false;
+            return orig(self);
+        }
+
         private static int lastCursorOverride = -1;
         public static void InterfaceLogic4Hook(Action orig)
         {

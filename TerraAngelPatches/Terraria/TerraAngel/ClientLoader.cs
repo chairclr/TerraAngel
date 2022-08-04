@@ -17,6 +17,8 @@ using TerraAngel.UI;
 using DiscordRPC;
 using System.Runtime.InteropServices;
 using ImGuiNET;
+using Terraria.Audio;
+using System.Diagnostics;
 
 namespace TerraAngel
 {
@@ -39,6 +41,7 @@ namespace TerraAngel
         public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
         public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
         public static string PluginsPath => Path.Combine(SavePath, "Plugins");
+        public static string TerrariaPath => Path.GetDirectoryName(typeof(Main).Assembly.Location);
         public static string AssetPath => "Assets";
         public static string NativeLibraryPath => "LibNew";
         public static string Platform => Environment.Is64BitProcess ? "x64" : "x86";
@@ -51,7 +54,7 @@ namespace TerraAngel
 
                 if (libraryName == "cimgui")
                 {
-                    if (!NativeLibrary.TryLoad($"{NativeLibraryPath}/{Platform}/ImGui/{libraryName}", out handle))
+                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/ImGui/{libraryName}", out handle))
                     {
                         throw new DllNotFoundException($"Could not load {libraryName}");
                     }
@@ -66,7 +69,7 @@ namespace TerraAngel
 
                 if (libraryName == "FAudio" || libraryName == "FNA3D" || libraryName == "libtheorafile" || libraryName == "SDL2")
                 {
-                    if (!NativeLibrary.TryLoad($"{NativeLibraryPath}/{Platform}/FNA/{libraryName}", out handle))
+                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/FNA/{libraryName}", out handle))
                     {
                         throw new DllNotFoundException($"Could not load {libraryName}");
                     }
@@ -81,7 +84,7 @@ namespace TerraAngel
 
                 if (libraryName == "steam_api" || libraryName == "steam_api64")
                 {
-                    if (!NativeLibrary.TryLoad($"{NativeLibraryPath}/{Platform}/Steamworks/{libraryName}", out handle))
+                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/Steamworks/{libraryName}", out handle))
                     {
                         throw new DllNotFoundException($"Could not load {libraryName}");
                     }
