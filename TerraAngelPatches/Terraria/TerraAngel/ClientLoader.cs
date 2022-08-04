@@ -46,7 +46,7 @@ namespace TerraAngel
         public static string NativeLibraryPath => "LibNew";
         public static string Platform => Environment.Is64BitProcess ? "x64" : "x86";
 
-        public static void LoadClient()
+        private static void LoadClientInteral()
         {
             NativeLibrary.SetDllImportResolver(typeof(ImGui).Assembly, (libraryName, assembly, searchPath) =>
             {
@@ -130,6 +130,22 @@ namespace TerraAngel
             {
                 InitDiscord();
             }
+        }
+
+        public static void LoadClient()
+        {
+#if !DEBUG
+            try
+            {
+#endif
+                LoadClientInteral();
+#if !DEBUG
+            }
+            catch (Exception e)
+            {
+                Program.DisplayException(e);
+            }
+#endif
         }
 
         public static void SetupImGuiRenderer(Game main)

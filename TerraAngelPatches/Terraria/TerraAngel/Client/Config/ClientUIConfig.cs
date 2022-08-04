@@ -32,7 +32,10 @@ namespace TerraAngel.Client.Config
         {
             get
             {
+                if (ImGui.GetCurrentContext() == IntPtr.Zero)
+                    return null;
                 ImGuiStylePtr styleCache = style;
+
 
                 Dictionary<string, NVector4> colors = new Dictionary<string, NVector4>(styleCache.Colors.Count);
 
@@ -45,6 +48,8 @@ namespace TerraAngel.Client.Config
             }
             set
             {
+                if (ImGui.GetCurrentContext() == IntPtr.Zero)
+                    return;
                 if (value is null)
                     return;
 
@@ -71,6 +76,8 @@ namespace TerraAngel.Client.Config
         {
             get
             {
+                if (ImGui.GetCurrentContext() == IntPtr.Zero)
+                    return null;
                 ImGuiStylePtr styleCache = style;
                 PropertyInfo[] properties = typeof(ImGuiStylePtr).GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
@@ -101,6 +108,8 @@ namespace TerraAngel.Client.Config
             }
             set
             {
+                if (ImGui.GetCurrentContext() == IntPtr.Zero)
+                    return;
                 if (value is null)
                     return;
 

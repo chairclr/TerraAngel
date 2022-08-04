@@ -46,6 +46,15 @@
      }
  
      private static void TrySettingFNAToOpenGL(string[] args)
+@@ -218,7 +_,7 @@
+         }
+     }
+ 
+-    private static void DisplayException(Exception e)
++    public static void DisplayException(Exception e)
+     {
+         try
+         {
 @@ -240,8 +_,7 @@
                  streamWriter.WriteLine(text);
                  streamWriter.WriteLine("");
