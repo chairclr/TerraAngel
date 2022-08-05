@@ -77,14 +77,17 @@ namespace TerraAngel.Client.ClientWindows
                                 if (espBoxes.NPCBoxes)
                                 {
                                     // as per request of an anonymous user, NPC net offset drawing
-                                    Vector2 minNetScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft);
-                                    Vector2 maxNetScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight);
-                                    drawList.AddRect(minNetScreenPos.ToNumerics(), maxNetScreenPos.ToNumerics(), espBoxes.NPCNetOffsetColor.PackedValue);
+                                    if (!currentNPC.position.HasNaNs())
+                                    {
+                                        Vector2 minNetScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft);
+                                        Vector2 maxNetScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight);
+                                        drawList.AddRect(minNetScreenPos.ToNumerics(), maxNetScreenPos.ToNumerics(), espBoxes.NPCNetOffsetColor.PackedValue);
 
 
-                                    Vector2 minScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft + currentNPC.netOffset);
-                                    Vector2 maxScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight + currentNPC.netOffset);
-                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.NPCColor.PackedValue);
+                                        Vector2 minScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft + currentNPC.netOffset);
+                                        Vector2 maxScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight + currentNPC.netOffset);
+                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.NPCColor.PackedValue);
+                                    }
 
                                 }
                             }
