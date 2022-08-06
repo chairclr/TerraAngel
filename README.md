@@ -97,6 +97,14 @@ Planned features
 - More console commands
   - Add keybind command to bind a console input to a key
 
+<h2>
+System Requirements
+</h2>
+
+Because TerraAngel uses FNA instead of XNA, not all devices are compatible
+
+- Windows 7 or greater
+- OpenGL 3.0+
 
 <h2>
 Contributing
