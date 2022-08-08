@@ -85,6 +85,9 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Discord Rich Presence")]
         public bool UseDiscordRPC = true;
 
+        [UIConfigElement("Tell server that you're using a modified client (Experimental)")]
+        public bool BroadcastPresence = false;
+
         [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
 
@@ -117,6 +120,7 @@ namespace TerraAngel.Client.Config
         public Color TracerColor = new Color(0f, 0f, 1f);
         public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);
         public Color OtherBoxPlayerColor = new Color(1f, 0f, 0f);
+        public Color OtherTerraAngelUserColor = new Color(1f, 0.5f, 0.3f);
         public Color NPCBoxColor = new Color(1f, 0f, 1f);
         public Color NPCNetOffsetBoxColor = new Color(0f, 0f, 0f);
         public Color ProjectileBoxColor = new Color(1f, 0f, 1f);

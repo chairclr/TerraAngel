@@ -24,6 +24,7 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Player>("Hurt", PlayerHurtHook);
             HookUtil.HookGen<Player>("KillMe", PlayerKillHook);
             HookUtil.HookGen<Player>("ResetEffects", PlayerResetEffectsHook);
+            HookUtil.HookGen<Player>("Spawn", PlayerSpawnHook);
         }
 
         public static double PlayerHurtHook(Func<Player, PlayerDeathReason, int, int, bool, bool, bool, int, double> orig, Player self, PlayerDeathReason damageSource, int Damage, int hitDirection, bool pvp, bool quiet, bool Crit, int cooldownCounter)
@@ -50,6 +51,7 @@ namespace TerraAngel.Hooks.Hooks
             }
             orig(self, damageSource, dmg, hitDirection, pvp);
         }
+        public static int presenceUpdateCount = 0;
         public static void PlayerResetEffectsHook(Action<Player> orig, Player self)
         {
             orig(self);
@@ -112,7 +114,23 @@ namespace TerraAngel.Hooks.Hooks
                         NetMessage.SendData(102, -1, -1, null, Main.myPlayer, 173, Main.LocalPlayer.position.X, Main.LocalPlayer.position.Y);
                     }
                 }
+
+                if (ClientLoader.Config.BroadcastPresence)
+                {
+                    presenceUpdateCount++;
+                    if (presenceUpdateCount == 60)
+                    {
+                        NetMessage.SendPlayerHurt(self.whoAmI, PlayerDeathReason.ByNPC(203), 1, 0, false, false, 0);
+                        NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, self.whoAmI);
+                    }
+                }
             }
+        }
+
+        public static void PlayerSpawnHook(Action<Player, PlayerSpawnContext> orig, Player self, PlayerSpawnContext context)
+        {
+            orig(self, context);
+            presenceUpdateCount = 0;
         }
     }
 }

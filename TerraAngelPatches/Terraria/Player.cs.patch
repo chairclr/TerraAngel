@@ -1,5 +1,13 @@
 --- src/Terraria/Terraria/Player.cs
 +++ src/TerraAngel/Terraria/Player.cs
+@@ -472,6 +_,7 @@
+         }
+     }
+ 
++    public bool TerraAngelUser = false;
+     public int emoteTime;
+     public CreativeUnlocksTracker creativeTracker;
+     private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
 @@ -18171,7 +_,7 @@
  
          int num = (int)(position.X + (float)(width / 2)) / 16;

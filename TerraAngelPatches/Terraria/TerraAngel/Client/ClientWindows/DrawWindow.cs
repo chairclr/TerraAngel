@@ -49,14 +49,15 @@ namespace TerraAngel.Client.ClientWindows
                                 {
                                     Vector2 minScreenPos = Util.WorldToScreenExact(currentPlayer.TopLeft);
                                     Vector2 maxScreenPos = Util.WorldToScreenExact(currentPlayer.BottomRight);
+
+                                    Color drawColor = espBoxes.OtherPlayerColor;
+
                                     if (currentPlayer.whoAmI == Main.myPlayer)
-                                    {
-                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.LocalPlayerColor.PackedValue);
-                                    }
-                                    else
-                                    {
-                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.OtherPlayerColor.PackedValue);
-                                    }
+                                        drawColor = espBoxes.LocalPlayerColor;
+                                    if (currentPlayer.TerraAngelUser)
+                                        drawColor = espBoxes.OtherTerraAngelUserColor;
+
+                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), drawColor.PackedValue);
                                 }
                                 if (espTracers.Enabled)
                                 {

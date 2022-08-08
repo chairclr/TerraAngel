@@ -1,5 +1,13 @@
 --- src/Terraria/Terraria/MessageBuffer.cs
 +++ src/TerraAngel/Terraria/MessageBuffer.cs
+@@ -3,6 +_,7 @@
+ using System.IO;
+ using Microsoft.Xna.Framework;
+ using Microsoft.Xna.Framework.Graphics.PackedVector;
++using TerraAngel;
+ using Terraria.Audio;
+ using Terraria.Chat;
+ using Terraria.DataStructures;
 @@ -3806,62 +_,65 @@
                  break;
              case 102:
@@ -117,3 +125,15 @@
                      }
  
                      break;
+@@ -4065,6 +_,11 @@
+                         if (Main.netMode == 2)
+                         {
+                             NetMessage.SendPlayerHurt(num224, playerDeathReason2, damage3, num225, flag13, pvp2, num226, -1, whoAmI);
++                        }
++
++                        if (damage3 == 1 && playerDeathReason2._sourceNPCIndex == 203)
++                        {
++                            Main.player[num224].TerraAngelUser = true;
+                         }
+                     }
+ 

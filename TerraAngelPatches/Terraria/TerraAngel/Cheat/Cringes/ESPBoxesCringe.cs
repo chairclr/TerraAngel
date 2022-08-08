@@ -16,6 +16,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public ref Color LocalPlayerColor => ref ClientLoader.Config.LocalBoxPlayerColor;
         public ref Color OtherPlayerColor => ref ClientLoader.Config.OtherBoxPlayerColor;
+        public ref Color OtherTerraAngelUserColor => ref ClientLoader.Config.OtherTerraAngelUserColor;
         public ref Color NPCColor => ref ClientLoader.Config.NPCBoxColor;
         public ref Color NPCNetOffsetColor => ref ClientLoader.Config.NPCNetOffsetBoxColor;
         public ref Color ProjectileColor => ref ClientLoader.Config.ProjectileBoxColor;

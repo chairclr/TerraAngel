@@ -1,5 +1,13 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
+@@ -3,6 +_,7 @@
+ using Ionic.Zlib;
+ using Microsoft.Xna.Framework;
+ using Microsoft.Xna.Framework.Graphics.PackedVector;
++using TerraAngel;
+ using Terraria.Chat;
+ using Terraria.DataStructures;
+ using Terraria.GameContent;
 @@ -1625,281 +_,7 @@
                      }
                  }

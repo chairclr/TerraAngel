@@ -33,7 +33,8 @@ namespace TerraAngel.Client
             }
 			LoadTerrariaFont(22f);
 			LoadTerrariaFont(18f);
-		}
+			LoadTerrariaFont(14f);
+        }
 
         public static void LoadTerrariaFont(float size, bool withoutSymbols = false)
         {

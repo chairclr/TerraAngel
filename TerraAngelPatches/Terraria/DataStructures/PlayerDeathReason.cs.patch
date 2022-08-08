@@ -1,0 +1,11 @@
+--- src/Terraria/Terraria/DataStructures/PlayerDeathReason.cs
++++ src/TerraAngel/Terraria/DataStructures/PlayerDeathReason.cs
+@@ -5,7 +_,7 @@
+ public class PlayerDeathReason
+ {
+     private int _sourcePlayerIndex = -1;
+-    private int _sourceNPCIndex = -1;
++    public int _sourceNPCIndex = -1;
+     private int _sourceProjectileIndex = -1;
+     private int _sourceOtherIndex = -1;
+     private int _sourceProjectileType;

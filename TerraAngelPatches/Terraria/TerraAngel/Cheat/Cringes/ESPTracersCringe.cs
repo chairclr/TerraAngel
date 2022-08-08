@@ -27,6 +27,7 @@ namespace TerraAngel.Cheat.Cringes
                 ESPBoxesCringe espBoxes = CringeManager.GetCringe<ESPBoxesCringe>();
                 ImGuiUtil.ColorEdit4("Local player box color", ref espBoxes.LocalPlayerColor);
                 ImGuiUtil.ColorEdit4("Other player box color", ref espBoxes.OtherPlayerColor);
+                ImGuiUtil.ColorEdit4("Other TerraAngel user box color", ref espBoxes.OtherTerraAngelUserColor);
                 ImGuiUtil.ColorEdit4("NPC box color", ref espBoxes.NPCColor);
                 ImGuiUtil.ColorEdit4("NPC net box color", ref espBoxes.NPCNetOffsetColor);
                 ImGuiUtil.ColorEdit4("Projectile box color", ref espBoxes.ProjectileColor);

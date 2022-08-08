@@ -226,7 +226,7 @@ namespace TerraAngel.Graphics
             DrawItem(drawList, id, center - v / 2f, v, count, countFontSize);
         }
 
-        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 18f)
+        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 14f)
         {
             if (ItemImages[id] == IntPtr.Zero)
             {
