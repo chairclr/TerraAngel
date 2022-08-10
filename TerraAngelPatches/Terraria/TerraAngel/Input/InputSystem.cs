@@ -154,6 +154,27 @@ namespace TerraAngel.Input
                 return mouseState.MiddleButton == ButtonState.Released && lastMouseState.MiddleButton == ButtonState.Pressed;
             }
         }
+        public static bool KeyCtrl
+        {
+            get
+            {
+                return InputSystem.IsKeyDown(Keys.LeftControl) | InputSystem.IsKeyDown(Keys.RightControl);
+            }
+        }
+        public static bool KeyAlt
+        {
+            get
+            {
+                return InputSystem.IsKeyDown(Keys.LeftAlt) | InputSystem.IsKeyDown(Keys.RightAlt);
+            }
+        }
+        public static bool KeyShift
+        {
+            get
+            {
+                return InputSystem.IsKeyDown(Keys.LeftShift) | InputSystem.IsKeyDown(Keys.RightShift);
+            }
+        }
 
         public static int ScrollDelta
         {

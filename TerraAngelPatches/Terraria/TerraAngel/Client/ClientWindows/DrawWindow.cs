@@ -231,6 +231,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
             }
 
+            CringeManager.Update();
             ImGui.PopClipRect();
             ImGui.End();
         }

@@ -15,7 +15,7 @@ namespace TerraAngel.Cheat.Cringes
     {
         public override string Name => "Noclip";
 
-        public override CringeTabs Tab => CringeTabs.MainCheats;
+        public override CringeTabs Tab => CringeTabs.MainCringes;
 
         public float NoClipSpeed = 20.8f;
         public int NoClipPlayerSyncTime = 2;

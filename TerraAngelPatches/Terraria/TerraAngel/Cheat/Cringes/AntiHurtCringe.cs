@@ -10,7 +10,7 @@ namespace TerraAngel.Cheat.Cringes
     {
         public override string Name => "Anti-hurt/Godmode";
 
-        public override CringeTabs Tab => CringeTabs.MainCheats;
+        public override CringeTabs Tab => CringeTabs.MainCringes;
 
         public int FramesSinceLastLifePacket = 0;
     }

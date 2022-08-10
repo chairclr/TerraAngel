@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TerraAngel
 {
-    class Sexer
+    public class Sexer
     {
         public const string SexerName = "DefaultSexer";
 

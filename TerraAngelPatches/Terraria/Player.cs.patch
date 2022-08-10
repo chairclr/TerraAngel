@@ -8,6 +8,15 @@
      public int emoteTime;
      public CreativeUnlocksTracker creativeTracker;
      private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
+@@ -16648,7 +_,7 @@
+                 }
+ 
+                 int num5 = tile.frameY / 22;
+-                if (num5 < 22)
++                if (num5 < 22 && num5 >= 0)
+                 {
+                     nearbyTorch[num5] = true;
+                     if (num5 == 17 && (tile.liquid == 0 || tile.liquidType() != 0))
 @@ -18171,7 +_,7 @@
  
          int num = (int)(position.X + (float)(width / 2)) / 16;
@@ -413,3 +422,12 @@
          numMinions = 0;
          slotsMinions = 0f;
          if (mount.Type != 8)
+@@ -39761,7 +_,7 @@
+         return num;
+     }
+ 
+-    private void Fishing_GetBait(out int baitPower, out int baitType)
++    public void Fishing_GetBait(out int baitPower, out int baitType)
+     {
+         baitPower = 0;
+         baitType = 0;

@@ -12,7 +12,7 @@ namespace TerraAngel.Cheat.Cringes
     {
         public override string Name => "Fullbright";
 
-        public override CringeTabs Tab => CringeTabs.LightingCheats;
+        public override CringeTabs Tab => CringeTabs.LightingCringes;
 
         public float Brightness = 0.8f;
 

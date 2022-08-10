@@ -220,13 +220,13 @@ namespace TerraAngel.Graphics
             return clicked;
         }
 
-        public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, int count = 0, float countFontSize = 18f)
+        public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, int count = 0, float countFontSize = 18f, float alpha = 1.0f)
         {
             Vector2 v = new Vector2(size);
-            DrawItem(drawList, id, center - v / 2f, v, count, countFontSize);
+            DrawItem(drawList, id, center - v / 2f, v, count, countFontSize, alpha);
         }
 
-        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 14f)
+        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 14f, float alpah = 1.0f)
         {
             if (ItemImages[id] == IntPtr.Zero)
             {
@@ -255,7 +255,7 @@ namespace TerraAngel.Graphics
                         }
                         Vector2 scaledEnd = (new Vector2(width, height) * num);
                         Vector2 start = position + (size / 2f) - scaledEnd / 2f;
-                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start.Floor() + scaledEnd.Floor()).ToNumerics());
+                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start.Floor() + scaledEnd.Floor()).ToNumerics(), NVector2.Zero, NVector2.One, new Color(1f, 1f, 1f, alpah).PackedValue);
                     }
                     else
                     {
@@ -274,7 +274,7 @@ namespace TerraAngel.Graphics
 
                         System.Numerics.Vector2 uvMin = rectStart / new System.Numerics.Vector2(value.Width, value.Height);
                         System.Numerics.Vector2 uvMax = rectEnd / new System.Numerics.Vector2(value.Width, value.Height);
-                        drawList.AddImage(ItemImages[id], position.Floor().ToNumerics(), (position.Floor() + scaledEnd.Floor()).ToNumerics(), uvMin, uvMax);
+                        drawList.AddImage(ItemImages[id], position.Floor().ToNumerics(), (position.Floor() + scaledEnd.Floor()).ToNumerics(), uvMin, uvMax, new Color(1f, 1f, 1f, alpah).PackedValue);
 
                     }
 
@@ -287,20 +287,20 @@ namespace TerraAngel.Graphics
 
                         // for shadow 
                         pos.X -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
 
                         pos.X += 2;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
 
                         pos.X -= 1;
                         pos.Y -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
 
                         pos.Y += 2f;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xff000000, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
 
                         pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f)).Floor();
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), 0xffffffff, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(1f, 1f, 1f, alpah).PackedValue, s);
                         ImGui.PopFont();
                     }
                 }
@@ -596,7 +596,7 @@ namespace TerraAngel.Graphics
                         offset.Y += font.FontSize;
                         offset.X = itemTagSpacingWidth;
 
-                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 22f);
+                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 18f, alpha);
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {
@@ -633,7 +633,7 @@ namespace TerraAngel.Graphics
 
                         offset.X += itemTagSpacingWidth;
 
-                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 22f);
+                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 18f, alpha);
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {

@@ -45,6 +45,7 @@ namespace TerraAngel.Hooks.Hooks
                 }
             }
         }
+
         public static bool TriggerSetGetHook1(Func<TriggersSet, bool> orig, TriggersSet self)
         {
             if (ClientLoader.WantCaptureKeyboard)

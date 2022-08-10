@@ -192,7 +192,6 @@ namespace TerraAngel.Client
                 plugin.Update();
             }
 
-            CringeManager.Update();
             base.AfterLayout();
         }
 

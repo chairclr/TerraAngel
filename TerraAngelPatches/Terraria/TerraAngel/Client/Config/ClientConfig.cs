@@ -130,6 +130,20 @@ namespace TerraAngel.Client.Config
         public bool ChatAutoScroll = true;
         public int framesForMessageToBeVisible = 600;
 
+        public bool AutoFishAcceptItems = true;
+        public bool AutoFishAcceptAllItems = true;
+        public bool AutoFishAcceptQuestFish = true;
+        public bool AutoFishAcceptCrates = true;
+        public bool AutoFishAcceptNormal = true;
+        public bool AutoFishAcceptCommon = true;
+        public bool AutoFishAcceptUncommon = true;
+        public bool AutoFishAcceptRare = true;
+        public bool AutoFishAcceptVeryRare = true;
+        public bool AutoFishAcceptLegendary = true;
+        public bool AutoFishAcceptNPCs = true;
+        public int AutoFishFrameCountRandomizationMin = 10;
+        public int AutoFishFrameCountRandomizationMax = 50;
+
         public ClientUIConfig UIConfig = new ClientUIConfig();
 
         [JsonIgnore]

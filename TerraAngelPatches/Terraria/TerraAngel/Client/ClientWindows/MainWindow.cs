@@ -65,7 +65,7 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         if (ImGui.BeginTabItem("Main Cheats"))
                         {
-                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.MainCheats))
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.MainCringes))
                             {
                                 cringe.DrawUI(io);
                             }
@@ -103,6 +103,14 @@ namespace TerraAngel.Client.ClientWindows
                             }
                             ImGui.EndTabItem();
                         }
+                        if (ImGui.BeginTabItem("Automation"))
+                        {
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.AutomationCringes))
+                            {
+                                cringe.DrawUI(io);
+                            }
+                            ImGui.EndTabItem();
+                        }
                         ImGui.EndTabBar();
                     }
                     ImGui.EndTabItem();
@@ -113,7 +121,7 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         if (ImGui.BeginTabItem("Lighting/Dust"))
                         {
-                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.LightingCheats))
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.LightingCringes))
                             {
                                 cringe.DrawUI(io);
                             }

@@ -10,6 +10,6 @@ namespace TerraAngel.Cheat.Cringes
     {
         public override string Name => "Freecam";
 
-        public override CringeTabs Tab => CringeTabs.MainCheats;
+        public override CringeTabs Tab => CringeTabs.MainCringes;
     }
 }

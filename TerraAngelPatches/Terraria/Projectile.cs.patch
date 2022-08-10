@@ -1,0 +1,11 @@
+--- src/Terraria/Terraria/Projectile.cs
++++ src/TerraAngel/Terraria/Projectile.cs
+@@ -16359,6 +_,8 @@
+             flag = true;
+         }
+ 
++        TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.AutoFishCringe>().FishingCheck(this, fisher);
++
+         if (!flag && fisher.inLava)
+         {
+             int num5 = 0;
