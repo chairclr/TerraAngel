@@ -142,6 +142,8 @@ namespace TerraAngel.Hooks.Hooks
                 }
             }
             orig();
+
+            Main.screenPosition.X = (int)Main.screenPosition.X;
         }
 
         private static FullBrightCringe fullBrightCache;
