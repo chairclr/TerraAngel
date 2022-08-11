@@ -24,121 +24,138 @@ namespace TerraAngel.Client.ClientWindows
         public override bool IsEnabled { get => true; }
         public override bool IsPartOfGlobalUI => false;
 
-
+        public bool IsRectOnScreen(NVector2 min, NVector2 max, NVector2 displaySize)
+        {
+            return (min.X > 0 || max.X > 0) && (min.X < displaySize.X || max.X < displaySize.X) && (min.Y > 0 || max.Y > 0) && (min.Y < displaySize.Y || max.X < displaySize.Y);
+        }
 
         public override void Draw(ImGuiIOPtr io)
         {
-            ImGui.Begin("DRAWWINDOW", ImGuiWindowFlags.NoMouseInputs | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground);
-            ImGui.PushClipRect(NVector2.Zero, io.DisplaySize, false);
-            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+            ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
             if (!Main.gameMenu)
             {
                 if (!Main.mapFullscreen)
                 {
-                    ESPBoxesCringe espBoxes = CringeManager.GetCringe<ESPBoxesCringe>();
-                    ESPTracersCringe espTracers = CringeManager.GetCringe<ESPTracersCringe>();
+                    ESPCringe esp = CringeManager.GetCringe<ESPCringe>();
                     Vector2 localPlayerCenter = Util.WorldToScreen(Main.LocalPlayer.Center);
-                    for (int i = 0; i < 1000; i++)
+                    if (esp.DrawAnyESP)
                     {
-                        if (i < 255)
+                        for (int i = 0; i < 1000; i++)
                         {
-                            if (Main.player[i].active)
+                            if (i < 255)
                             {
-                                Player currentPlayer = Main.player[i];
-                                if (espBoxes.PlayerBoxes)
+                                if (Main.player[i].active)
                                 {
-                                    Vector2 minScreenPos = Util.WorldToScreenExact(currentPlayer.TopLeft);
-                                    Vector2 maxScreenPos = Util.WorldToScreenExact(currentPlayer.BottomRight);
-
-                                    Color drawColor = espBoxes.OtherPlayerColor;
-
-                                    if (currentPlayer.whoAmI == Main.myPlayer)
-                                        drawColor = espBoxes.LocalPlayerColor;
-                                    if (currentPlayer.TerraAngelUser)
-                                        drawColor = espBoxes.OtherTerraAngelUserColor;
-
-                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), drawColor.PackedValue);
-                                }
-                                if (espTracers.Enabled)
-                                {
-                                    if (currentPlayer.whoAmI != Main.myPlayer)
+                                    Player currentPlayer = Main.player[i];
+                                    if (esp.PlayerBoxes)
                                     {
-                                        Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
+                                        Vector2 minScreenPos = Util.WorldToScreenExact(currentPlayer.TopLeft);
+                                        Vector2 maxScreenPos = Util.WorldToScreenExact(currentPlayer.BottomRight);
 
-                                        drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), espTracers.TracerColor.PackedValue);
+                                        Color drawColor = esp.OtherPlayerColor;
+
+                                        if (currentPlayer.whoAmI == Main.myPlayer)
+                                            drawColor = esp.LocalPlayerColor;
+                                        if (currentPlayer.TerraAngelUser)
+                                            drawColor = esp.OtherTerraAngelUserColor;
+
+                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), drawColor.PackedValue);
+                                    }
+                                    if (esp.PlayerTracers)
+                                    {
+                                        if (currentPlayer.whoAmI != Main.myPlayer)
+                                        {
+                                            Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
+
+                                            drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), esp.TracerColor.PackedValue);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if (i < 201)
-                        {
-                            if (Main.npc[i].active)
+                            if (i < 201)
                             {
-                                NPC currentNPC = Main.npc[i];
-                                if (espBoxes.NPCBoxes)
+                                if (Main.npc[i].active)
                                 {
-                                    // as per request of an anonymous user, NPC net offset drawing
-                                    if (!currentNPC.position.HasNaNs())
+                                    NPC currentNPC = Main.npc[i];
+                                    if (esp.NPCBoxes)
                                     {
-                                        Vector2 minNetScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft);
-                                        Vector2 maxNetScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight);
-                                        drawList.AddRect(minNetScreenPos.ToNumerics(), maxNetScreenPos.ToNumerics(), espBoxes.NPCNetOffsetColor.PackedValue);
+                                        // as per request of an anonymous user, NPC net offset drawing
+                                        if (!currentNPC.position.HasNaNs())
+                                        {
+                                            Vector2 minNetScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft);
+                                            Vector2 maxNetScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight);
+                                            drawList.AddRect(minNetScreenPos.ToNumerics(), maxNetScreenPos.ToNumerics(), esp.NPCNetOffsetColor.PackedValue);
 
 
-                                        Vector2 minScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft + currentNPC.netOffset);
-                                        Vector2 maxScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight + currentNPC.netOffset);
-                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.NPCColor.PackedValue);
+                                            Vector2 minScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft + currentNPC.netOffset);
+                                            Vector2 maxScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight + currentNPC.netOffset);
+                                            drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), esp.NPCColor.PackedValue);
+                                        }
+
                                     }
-
                                 }
                             }
-                        }
-                        if (Main.projectile[i].active)
-                        {
-                            Projectile currentProjectile = Main.projectile[i];
-                            if (espBoxes.ProjectileBoxes)
+                            if (i < 400)
                             {
-
-                                Rectangle myRect = new Rectangle((int)currentProjectile.position.X, (int)currentProjectile.position.Y, currentProjectile.width, currentProjectile.height);
-                                if (currentProjectile.type == 85 || currentProjectile.type == 101)
+                                if (Main.item[i].active && Main.item[i].stack > 0)
                                 {
-                                    int num = 30;
-                                    myRect.X -= num;
-                                    myRect.Y -= num;
-                                    myRect.Width += num * 2;
-                                    myRect.Height += num * 2;
+                                    Item currentItem = Main.item[i];
+                                    if (esp.ItemBoxes)
+                                    {
+                                        NVector2 minScreenPos = Util.WorldToScreenExact(currentItem.TopLeft).ToNumerics();
+                                        NVector2 maxScreenPos = Util.WorldToScreenExact(currentItem.BottomRight).ToNumerics();
+                                        // dont draw if its off screen lol
+                                        if (IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                        {
+                                            drawList.AddRect(minScreenPos, maxScreenPos, esp.ItemColor.PackedValue);
+                                        }
+                                    }
                                 }
-
-                                if (currentProjectile.type == 188)
+                            }
+                            if (Main.projectile[i].active)
+                            {
+                                Projectile currentProjectile = Main.projectile[i];
+                                if (esp.ProjectileBoxes)
                                 {
-                                    int num2 = 20;
-                                    myRect.X -= num2;
-                                    myRect.Y -= num2;
-                                    myRect.Width += num2 * 2;
-                                    myRect.Height += num2 * 2;
-                                }
 
-                                if (currentProjectile.aiStyle == 29)
-                                {
-                                    int num3 = 4;
-                                    myRect.X -= num3;
-                                    myRect.Y -= num3;
-                                    myRect.Width += num3 * 2;
-                                    myRect.Height += num3 * 2;
-                                }
+                                    Rectangle myRect = new Rectangle((int)currentProjectile.position.X, (int)currentProjectile.position.Y, currentProjectile.width, currentProjectile.height);
+                                    if (currentProjectile.type == 85 || currentProjectile.type == 101)
+                                    {
+                                        int num = 30;
+                                        myRect.X -= num;
+                                        myRect.Y -= num;
+                                        myRect.Width += num * 2;
+                                        myRect.Height += num * 2;
+                                    }
 
-                                Vector2 minScreenPos = Util.WorldToScreenExact(myRect.TopLeft());
-                                Vector2 maxScreenPos = Util.WorldToScreenExact(myRect.BottomRight());
+                                    if (currentProjectile.type == 188)
+                                    {
+                                        int num2 = 20;
+                                        myRect.X -= num2;
+                                        myRect.Y -= num2;
+                                        myRect.Width += num2 * 2;
+                                        myRect.Height += num2 * 2;
+                                    }
 
-                                
+                                    if (currentProjectile.aiStyle == 29)
+                                    {
+                                        int num3 = 4;
+                                        myRect.X -= num3;
+                                        myRect.Y -= num3;
+                                        myRect.Width += num3 * 2;
+                                        myRect.Height += num3 * 2;
+                                    }
 
-                                // dont draw if its off screen
-                                if (minScreenPos.X > 0 || minScreenPos.X < io.DisplaySize.X ||
-                                    minScreenPos.Y > 0 || minScreenPos.Y < io.DisplaySize.Y ||
-                                    maxScreenPos.X > 0 || maxScreenPos.X < io.DisplaySize.X ||
-                                    maxScreenPos.Y > 0 || maxScreenPos.Y < io.DisplaySize.Y)
-                                {
-                                    drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), espBoxes.ProjectileColor.PackedValue);
+                                    NVector2 minScreenPos = Util.WorldToScreenExact(myRect.TopLeft()).ToNumerics();
+                                    NVector2 maxScreenPos = Util.WorldToScreenExact(myRect.BottomRight()).ToNumerics();
+
+
+
+                                    // dont draw if its off screen
+                                        if (IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                        {
+                                        drawList.AddRect(minScreenPos, maxScreenPos, esp.ProjectileColor.PackedValue);
+                                    }
                                 }
                             }
                         }
@@ -171,8 +188,6 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
                     worldEdit?.DrawPreviewInMap(io, drawList);
-
-
                 }
 
                 {
@@ -230,10 +245,7 @@ namespace TerraAngel.Client.ClientWindows
                     }
                 }
             }
-
             CringeManager.Update();
-            ImGui.PopClipRect();
-            ImGui.End();
         }
 
     }

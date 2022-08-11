@@ -112,18 +112,15 @@ namespace TerraAngel
             CringeManager.GetCringe<AntiHurtCringe>().Enabled = Config.DefaultAntiHurt;
             CringeManager.GetCringe<InfiniteManaCringe>().Enabled = Config.DefaultInfiniteMana;
             CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = Config.DefaultInfiniteMinions;
-            CringeManager.GetCringe<ESPTracersCringe>().Enabled = Config.DefaultESPTracers;
-            CringeManager.GetCringe<ESPTracersCringe>().TracerColor = Config.TracerColor;
             CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = Config.DefaultShowHeldItem;
 
-            ESPBoxesCringe boxesCringe = CringeManager.GetCringe<ESPBoxesCringe>();
+            ESPCringe boxesCringe = CringeManager.GetCringe<ESPCringe>();
+            boxesCringe.DrawAnyESP = Config.DefaultDrawAnyESP;
             boxesCringe.NPCBoxes = Config.DefaultNPCBoxes;
             boxesCringe.ProjectileBoxes = Config.DefaultProjectileBoxes;
             boxesCringe.PlayerBoxes = Config.DefaultPlayerESPBoxes;
-            boxesCringe.LocalPlayerColor = Config.LocalBoxPlayerColor;
-            boxesCringe.OtherPlayerColor = Config.OtherBoxPlayerColor;
-            boxesCringe.NPCColor = Config.NPCBoxColor;
-            boxesCringe.ProjectileColor = Config.ProjectileBoxColor;
+            boxesCringe.ItemBoxes = Config.DefaultItemBoxes;
+            boxesCringe.PlayerTracers = Config.DefaultPlayerESPTracers;
 
 
             if (Config.UseDiscordRPC)

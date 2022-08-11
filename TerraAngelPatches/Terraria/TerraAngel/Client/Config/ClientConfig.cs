@@ -49,8 +49,11 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Default Infinite Minions")]
         public bool DefaultInfiniteMinions = true;
 
+        [UIConfigElement("Default Draw Any ESP")]
+        public bool DefaultDrawAnyESP = true;
+
         [UIConfigElement("Default Tracers")]
-        public bool DefaultESPTracers = false;
+        public bool DefaultPlayerESPTracers = false;
 
         [UIConfigElement("Default Player Hitboxes")]
         public bool DefaultPlayerESPBoxes = true;
@@ -60,6 +63,9 @@ namespace TerraAngel.Client.Config
 
         [UIConfigElement("Default Projectile Hitboxes")]
         public bool DefaultProjectileBoxes = false;
+
+        [UIConfigElement("Default Item Hitboxes")]
+        public bool DefaultItemBoxes = false;
 
         [UIConfigElement("Default Show Held Item")]
         public bool DefaultShowHeldItem = false;
@@ -90,6 +96,9 @@ namespace TerraAngel.Client.Config
 
         [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
+
+        [UIConfigElement("Toggle All ESP")]
+        public Keys ToggleDrawAnyESP = Keys.End;
 
         [UIConfigElement("Toggle stats window being movable")]
         public Keys ToggleStatsWindowMovability = Keys.NumPad5;
@@ -124,6 +133,7 @@ namespace TerraAngel.Client.Config
         public Color NPCBoxColor = new Color(1f, 0f, 1f);
         public Color NPCNetOffsetBoxColor = new Color(0f, 0f, 0f);
         public Color ProjectileBoxColor = new Color(1f, 0f, 1f);
+        public Color ItemBoxColor = new Color(0.9f, 0.2f, 0.6f);
 
         public float ChatWindowTransperencyActive = 0.5f;
         public float ChatWindowTransperencyInactive = 0.0f;
