@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using System.Reflection;
 using Terraria.ID;
+using NVector2 = System.Numerics.Vector2;
 
 namespace TerraAngel.Utility
 {
@@ -22,6 +23,11 @@ namespace TerraAngel.Utility
         public static FieldInfo[] itemIds = typeof(ItemID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(short) && ((short)x.GetRawConstantValue()) >= 0).ToArray();
         public static FieldInfo[] prefixIds = typeof(PrefixID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(int) && ((int)x.GetRawConstantValue()) >= 0).ToArray();
         public static FieldInfo[] npcIds = typeof(NPCID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(int) && ((int)x.GetRawConstantValue()) >= 0).ToArray();
+
+        public static bool IsRectOnScreen(NVector2 min, NVector2 max, NVector2 displaySize)
+        {
+            return (min.X > 0 || max.X > 0) && (min.X < displaySize.X || max.X < displaySize.X) && (min.Y > 0 || max.Y > 0) && (min.Y < displaySize.Y || max.X < displaySize.Y);
+        }
 
         public static string PrettyPrintBytes(long bytes, string format = "{0:F2}{1}")
         {

@@ -75,6 +75,7 @@ Other useful features
 - Item browser
 - Revealing the map
 - Tools for butchering NPCs
+- Projectile prediction
 - Actually good looking and customizable UI
 - World edit 
   - Tile brush

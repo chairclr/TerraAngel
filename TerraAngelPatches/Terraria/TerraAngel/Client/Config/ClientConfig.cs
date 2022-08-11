@@ -85,8 +85,17 @@ namespace TerraAngel.Client.Config
         [UIConfigElement("Console Auto Scroll")]
         public bool ConsoleAutoScroll = true;
 
-        [UIConfigElement("Show ID's In Tooltips")]
+        [UIConfigElement("Show IDs In Tooltips")]
         public bool ShowIDsInTooltips = true;
+
+        [UIConfigElement("Default Projectile Prediction")]
+        public bool DefaultDrawActiveProjectilePrediction = true;
+
+        [UIConfigElement("Default Projectile Prediction Draw Friendly")]
+        public bool DefaultDrawFriendlyProjectilePrediction = false;
+
+        [UIConfigElement("Default Projectile Prediction Draw Hostile")]
+        public bool DefaultDrawHostileProjectilePrediction = true;
 
         [UIConfigElement("Discord Rich Presence")]
         public bool UseDiscordRPC = true;
@@ -134,6 +143,8 @@ namespace TerraAngel.Client.Config
         public Color NPCNetOffsetBoxColor = new Color(0f, 0f, 0f);
         public Color ProjectileBoxColor = new Color(1f, 0f, 1f);
         public Color ItemBoxColor = new Color(0.9f, 0.2f, 0.6f);
+        public Color FriendlyProjectilePredictionDrawColor = new Color(0f, 1f, 0f);
+        public Color HostileProjectilePredictionDrawColor = new Color(1f, 0f, 0f);
 
         public float ChatWindowTransperencyActive = 0.5f;
         public float ChatWindowTransperencyInactive = 0.0f;

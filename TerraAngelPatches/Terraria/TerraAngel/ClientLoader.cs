@@ -122,6 +122,10 @@ namespace TerraAngel
             boxesCringe.ItemBoxes = Config.DefaultItemBoxes;
             boxesCringe.PlayerTracers = Config.DefaultPlayerESPTracers;
 
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = Config.DefaultDrawActiveProjectilePrediction;
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = Config.DefaultDrawFriendlyProjectilePrediction;
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = Config.DefaultDrawHostileProjectilePrediction;
+
 
             if (Config.UseDiscordRPC)
             {

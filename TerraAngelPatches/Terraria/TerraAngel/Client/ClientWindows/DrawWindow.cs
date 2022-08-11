@@ -24,10 +24,7 @@ namespace TerraAngel.Client.ClientWindows
         public override bool IsEnabled { get => true; }
         public override bool IsPartOfGlobalUI => false;
 
-        public bool IsRectOnScreen(NVector2 min, NVector2 max, NVector2 displaySize)
-        {
-            return (min.X > 0 || max.X > 0) && (min.X < displaySize.X || max.X < displaySize.X) && (min.Y > 0 || max.Y > 0) && (min.Y < displaySize.Y || max.X < displaySize.Y);
-        }
+        
 
         public override void Draw(ImGuiIOPtr io)
         {
@@ -105,7 +102,7 @@ namespace TerraAngel.Client.ClientWindows
                                         NVector2 minScreenPos = Util.WorldToScreenExact(currentItem.TopLeft).ToNumerics();
                                         NVector2 maxScreenPos = Util.WorldToScreenExact(currentItem.BottomRight).ToNumerics();
                                         // dont draw if its off screen lol
-                                        if (IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                        if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
                                         {
                                             drawList.AddRect(minScreenPos, maxScreenPos, esp.ItemColor.PackedValue);
                                         }
@@ -152,7 +149,7 @@ namespace TerraAngel.Client.ClientWindows
 
 
                                     // dont draw if its off screen
-                                        if (IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                        if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
                                         {
                                         drawList.AddRect(minScreenPos, maxScreenPos, esp.ProjectileColor.PackedValue);
                                     }
