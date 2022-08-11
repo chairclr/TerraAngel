@@ -145,6 +145,7 @@ namespace TerraAngel.Client.Config
         public Color ItemBoxColor = new Color(0.9f, 0.2f, 0.6f);
         public Color FriendlyProjectilePredictionDrawColor = new Color(0f, 1f, 0f);
         public Color HostileProjectilePredictionDrawColor = new Color(1f, 0f, 0f);
+        public int ProjectilePredictionMaxStepCount = 1500;
 
         public float ChatWindowTransperencyActive = 0.5f;
         public float ChatWindowTransperencyInactive = 0.0f;

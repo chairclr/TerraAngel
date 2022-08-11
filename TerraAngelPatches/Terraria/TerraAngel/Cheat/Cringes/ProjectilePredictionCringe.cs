@@ -32,6 +32,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public ref Color FriendlyDrawColor => ref ClientLoader.Config.FriendlyProjectilePredictionDrawColor;
         public ref Color HostileDrawColor => ref ClientLoader.Config.HostileProjectilePredictionDrawColor;
+        public ref int MaxStepCount => ref ClientLoader.Config.ProjectilePredictionMaxStepCount;
 
         public override void DrawUI(ImGuiIOPtr io)
         {
@@ -43,6 +44,7 @@ namespace TerraAngel.Cheat.Cringes
                 ImGui.Checkbox("Draw Hostile", ref DrawHostileProjectiles);
                 ImGuiUtil.ColorEdit4("Friendly Color", ref FriendlyDrawColor);
                 ImGuiUtil.ColorEdit4("Hostile Color", ref HostileDrawColor);
+                ImGui.SliderInt("Max Step Count", ref MaxStepCount, 100, 10000);
             }
         }
 
@@ -128,6 +130,10 @@ namespace TerraAngel.Cheat.Cringes
                             case ProjectileID.TorchGod:
                                 StraightPrediction(projectile, drawList);
                                 break;
+                            case ProjectileID.PulseBolt:
+                            case ProjectileID.MeteorShot:
+                                StraightBouncingPrediction(projectile, drawList);
+                                break;
                             default:
                                 {
                                     if (projectile.arrow)
@@ -147,7 +153,8 @@ namespace TerraAngel.Cheat.Cringes
             Vector2 position = projectile.position;
             Vector2 startPosition = position;
             Vector2 velocity = projectile.velocity;
-            for (int i = 0; i < projectile.timeLeft; i++)
+            int stepCount = Math.Min(projectile.timeLeft, MaxStepCount);
+            for (int i = 0; i < stepCount; i++)
             {
                 Vector2 tileVelocity = Collision.TileCollision(position, velocity, projectile.width, projectile.height, true, true);
                 bool flag = false;
@@ -171,6 +178,9 @@ namespace TerraAngel.Cheat.Cringes
 
                 position += velocity;
 
+                if (position.X < 0 || position.Y < 0 || position.X > Main.maxTilesX * 16f || position.Y > Main.maxTilesY * 16f)
+                    flag = true;
+
                 if (flag)
                     break;
             }
@@ -180,41 +190,82 @@ namespace TerraAngel.Cheat.Cringes
             drawList.AddLine(lastScreenPos, currentScreenPos, projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue);
         }
 
-        public void ArrowPrediction(Projectile projectile, ImDrawListPtr drawList)
+        public void StraightBouncingPrediction(Projectile projectile, ImDrawListPtr drawList)
         {
-            float ai0 = projectile.ai[0];
             Vector2 position = projectile.position;
-            Vector2 lastPosition = position;
+            Vector2 startPosition = position;
             Vector2 velocity = projectile.velocity;
-
-            int num3 = Math.Min(projectile.width, projectile.height);
-            if (num3 < 3) num3 = 3;
-            if (num3 > 16) num3 = 16;
-
+            int penetrate = projectile.penetrate;
             uint col = projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue;
-            NVector2 displaySize = ImGui.GetIO().DisplaySize;
-            for (int i = 0; i < projectile.timeLeft; i++)
+            bool flag = false;
+
+            int stepCount = Math.Min(projectile.timeLeft, MaxStepCount);
+            for (int i = 0; i < stepCount; i++)
             {
-                ai0 += 1f;
-                lastPosition = position;
-
-                if (ai0 >= 15f)
-                {
-                    ai0 = 15f;
-                    velocity.Y += 0.1f;
-                }
-
                 Vector2 tileVelocity = Collision.TileCollision(position, velocity, projectile.width, projectile.height, true, true);
-                bool flag = false;
                 if (tileVelocity != velocity)
-                    flag = true;
+                {
+                    bool f = false;
+                    if (tileVelocity.Y != velocity.Y)
+                    {
+                        f = true;
+                        velocity.Y = -velocity.Y;
+                    }
+                    else if (tileVelocity.X != velocity.X)
+                    {
+                        f = true;
+                        velocity.X = -velocity.X;
+                    }
+                    if (f)
+                    {
+
+                        NVector2 bounceLastScreenPos = Util.WorldToScreen(startPosition + (projectile.Size / 2f)).ToNumerics();
+                        NVector2 bounceCurrentScreenPos = Util.WorldToScreen(position + (projectile.Size / 2f)).ToNumerics();
+
+                        drawList.AddLine(bounceLastScreenPos, bounceCurrentScreenPos, col);
+
+                        startPosition = position;
+
+
+                        penetrate--;
+                        if (penetrate <= 0)
+                            flag = true;
+                    }
+                }
 
                 Vector4 slopeVelocity = Collision.SlopeCollision(position, velocity, projectile.width, projectile.height, 0f, fall: true);
 
                 if (position.X != slopeVelocity.X || position.Y != slopeVelocity.Y ||
                     velocity.X != slopeVelocity.Z || velocity.Y != slopeVelocity.W)
                 {
-                    flag = true;
+
+                    bool f = false;
+                    if (slopeVelocity.W != velocity.Y)
+                    {
+                        f = true;
+                        velocity.Y = -velocity.Y;
+                    }
+                    else if (slopeVelocity.Z != velocity.X)
+                    {
+                        f = true;
+                        velocity.X = -velocity.X;
+                    }
+
+                    if (f)
+                    {
+                        NVector2 bounceLastScreenPos = Util.WorldToScreen(startPosition + (projectile.Size / 2f)).ToNumerics();
+                        NVector2 bounceCurrentScreenPos = Util.WorldToScreen(position + (projectile.Size / 2f)).ToNumerics();
+
+                        drawList.AddLine(bounceLastScreenPos, bounceCurrentScreenPos, col);
+
+                        startPosition = position;
+
+
+                        penetrate--;
+                        if (penetrate <= 0)
+                            flag = true;
+                    }
+
                 }
 
                 Vector2 tempPos = position;
@@ -223,6 +274,153 @@ namespace TerraAngel.Cheat.Cringes
                 position = tempPos + (position - tempPos);
                 velocity.X = slopeVelocity.Z;
                 velocity.Y = slopeVelocity.W;
+
+                position += velocity;
+
+                if (position.X < 0 || position.Y < 0 || position.X > Main.maxTilesX * 16f || position.Y > Main.maxTilesY * 16f)
+                    flag = true;
+
+                if (flag)
+                    break;
+
+            }
+
+            if (!flag)
+            {
+                NVector2 lastScreenPos = Util.WorldToScreen(startPosition + (projectile.Size / 2f)).ToNumerics();
+                NVector2 currentScreenPos = Util.WorldToScreen(position + (projectile.Size / 2f)).ToNumerics();
+
+                drawList.AddLine(lastScreenPos, currentScreenPos, col);
+            }
+        }
+
+        public void ArrowPrediction(Projectile projectile, ImDrawListPtr drawList)
+        {
+            float ai0 = projectile.ai[0];
+            Vector2 position = projectile.position;
+            Vector2 lastPosition = position;
+            Vector2 velocity = projectile.velocity;
+
+            int someVelocityCap = Math.Min(projectile.width, projectile.height);
+            if (someVelocityCap < 3) someVelocityCap = 3;
+            if (someVelocityCap > 16) someVelocityCap = 16;
+
+            uint col = projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue;
+            NVector2 displaySize = ImGui.GetIO().DisplaySize;
+            int stepCount = Math.Min(projectile.timeLeft, MaxStepCount);
+            for (int i = 0; i < stepCount; i++)
+            {
+                ai0 += 1f;
+                lastPosition = position;
+                Vector2 lastVelocity = velocity;
+
+                if (ai0 >= 15f)
+                {
+                    ai0 = 15f;
+                    velocity.Y += 0.1f;
+                }
+
+                bool flag = false;
+
+                Vector2 tempPos = position;
+
+                float velocityLenSquared = velocity.LengthSquared();
+                if (velocityLenSquared > (someVelocityCap * someVelocityCap))
+                {
+                    float velocityLength = MathF.Sqrt(velocityLenSquared);
+                    Vector2 velocityDir = velocity / velocityLength;
+                    Vector2 trueVelocity = Vector2.Zero;
+
+                    int updateCount = 0;
+                    while (velocityLength > 0)
+                    {
+                        updateCount++;
+                        if (updateCount > 300)
+                        {
+                            break;
+                        }
+
+                        float currentVelocityCorrection = velocityLength;
+                        if (currentVelocityCorrection > someVelocityCap)
+                        {
+                            currentVelocityCorrection = someVelocityCap;
+                        }
+
+                        velocityLength -= currentVelocityCorrection;
+
+                        Vector2 correctedTileVelocity = Collision.TileCollision(tempPos, velocityDir * currentVelocityCorrection, projectile.width, projectile.height, true, true);
+                        if (correctedTileVelocity != velocityDir * currentVelocityCorrection)
+                            flag = true;
+                        tempPos += correctedTileVelocity;
+                        velocity = correctedTileVelocity;
+
+
+                        Vector4 slopeCorrectionVelocity = Collision.SlopeCollision(tempPos, velocity, projectile.width, projectile.height, 0f, fall: true);
+
+                        if (tempPos.X != slopeCorrectionVelocity.X || tempPos.Y != slopeCorrectionVelocity.Y ||
+                            velocity.X != slopeCorrectionVelocity.Z || velocity.Y != slopeCorrectionVelocity.W)
+                        {
+                            flag = true;
+                        }
+
+                        tempPos.X = slopeCorrectionVelocity.X;
+                        tempPos.Y = slopeCorrectionVelocity.Y;
+                        velocity.X = slopeCorrectionVelocity.Z;
+                        velocity.Y = slopeCorrectionVelocity.W;
+
+
+                        trueVelocity += velocity;
+                    }
+
+                    velocity = trueVelocity;
+
+
+
+                    if (Math.Abs(velocity.X - lastVelocity.X) < 0.0001f)
+                    {
+                        velocity.X = lastVelocity.X;
+                    }
+
+                    if (Math.Abs(velocity.Y - lastVelocity.Y) < 0.0001f)
+                    {
+                        velocity.Y = lastVelocity.Y;
+                    }
+
+                    Vector4 finalSlopCorrection = Collision.SlopeCollision(tempPos, velocity, projectile.width, projectile.height, 0f, fall: true);
+
+                    if (tempPos.X != finalSlopCorrection.X || tempPos.Y != finalSlopCorrection.Y ||
+                        velocity.X != finalSlopCorrection.Z || velocity.Y != finalSlopCorrection.W)
+                    {
+                        flag = true;
+                    }
+
+                    tempPos.X = finalSlopCorrection.X;
+                    tempPos.Y = finalSlopCorrection.Y;
+                    velocity.X = finalSlopCorrection.Z;
+                    velocity.Y = finalSlopCorrection.W;
+                }
+                else
+                {
+                    Vector2 tileVelocity = Collision.TileCollision(tempPos, velocity, projectile.width, projectile.height, true, true);
+                    if (tileVelocity != velocity)
+                        flag = true;
+
+                    Vector4 slopeVelocity = Collision.SlopeCollision(tempPos, velocity, projectile.width, projectile.height, 0f, fall: true);
+
+                    if (tempPos.X != slopeVelocity.X || tempPos.Y != slopeVelocity.Y ||
+                        velocity.X != slopeVelocity.Z || velocity.Y != slopeVelocity.W)
+                    {
+                        flag = true;
+                    }
+
+                    tempPos.X = slopeVelocity.X;
+                    tempPos.Y = slopeVelocity.Y;
+                    velocity.X = slopeVelocity.Z;
+                    velocity.Y = slopeVelocity.W;
+                }
+
+                if (position.X < 0 || position.Y < 0 || position.X > Main.maxTilesX * 16f || position.Y > Main.maxTilesY * 16f)
+                    flag = true;
 
                 position += velocity;
                 NVector2 lastScreenPos = Util.WorldToScreen(lastPosition + (projectile.Size / 2f)).ToNumerics();
