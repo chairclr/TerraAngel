@@ -64,12 +64,12 @@ namespace TerraAngel.Hooks.Hooks
             /// "please" - An anonymous user
             if (ClientLoader.Config.ShowIDsInTooltips)
             {
-                toolTipLine[0] += $" [{Util.itemIds[item.type].Name}/{item.type}]";
+                toolTipLine[0] += $" [{Util.ItemFields[item.type].Name}/{item.type}]";
                 if (item.prefix > 0)
                 {
                     int firstSpace = toolTipLine[0].IndexOf(' ');
                     firstSpace = firstSpace == - 1 ? toolTipLine[0].Length : firstSpace;
-                    toolTipLine[0] = toolTipLine[0].Insert(firstSpace, $" [{Util.prefixIds[item.prefix - 1].Name}/{item.prefix}]");
+                    toolTipLine[0] = toolTipLine[0].Insert(firstSpace, $" [{Util.PrefixFields[item.prefix - 1].Name}/{item.prefix}]");
                 }
             }
         }

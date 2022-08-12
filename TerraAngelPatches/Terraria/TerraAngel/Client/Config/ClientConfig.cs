@@ -135,6 +135,7 @@ namespace TerraAngel.Client.Config
 
 
 
+        public float FullBrightBrightness = 0.7f;
         public Color TracerColor = new Color(0f, 0f, 1f);
         public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);
         public Color OtherBoxPlayerColor = new Color(1f, 0f, 0f);

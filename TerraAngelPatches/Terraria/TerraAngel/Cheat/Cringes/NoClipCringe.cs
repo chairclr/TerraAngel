@@ -8,6 +8,8 @@ using Terraria;
 using Terraria.ID;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using TerraAngel.Utility;
+using TerraAngel.Input;
 
 namespace TerraAngel.Cheat.Cringes
 {
@@ -18,7 +20,7 @@ namespace TerraAngel.Cheat.Cringes
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
         public float NoClipSpeed = 20.8f;
-        public int NoClipPlayerSyncTime = 2;
+        public int NoClipPlayerSyncTime = 1;
 
         public override void DrawUI(ImGuiIOPtr io)
         {
@@ -68,11 +70,10 @@ namespace TerraAngel.Cheat.Cringes
                             self.position.X += NoClipSpeed;
                         }
                     }
-                    if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.TeleportToCursor))
+                    if (InputSystem.IsKeyPressed(ClientLoader.Config.TeleportToCursor))
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;
-                        Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorld(Input.InputSystem.MousePosition);
-                        Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
+                        Main.LocalPlayer.Teleport(Util.ScreenToWorld(InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
 
                         NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
 
@@ -95,11 +96,14 @@ namespace TerraAngel.Cheat.Cringes
                 if (ClientLoader.Config.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
                 {
                     Main.LocalPlayer.velocity = Vector2.Zero;
-                    Main.LocalPlayer.Bottom = Utility.Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition);
-                    if (!io.KeyCtrl)
-                        Main.LocalPlayer.Teleport(Main.LocalPlayer.position, TeleportationStyleID.RodOfDiscord);
-
-                    if (!io.KeyCtrl)
+                    if (io.KeyCtrl)
+                    {
+                        Main.LocalPlayer.Bottom = Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition);
+                    }
+                    else
+                    {
+                        Main.mapFullscreen = false;
+                        Main.LocalPlayer.Teleport(Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
                         if (ClientLoader.Config.TeleportSendRODPacket)
                         {
                             NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
@@ -109,11 +113,9 @@ namespace TerraAngel.Cheat.Cringes
                                 Main.LocalPlayer.position.Y,
                                 TeleportationStyleID.RodOfDiscord);
                         }
+                    }
 
                     NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-
-                    if (!io.KeyCtrl)
-                        Main.mapFullscreen = false;
                 }
             }
         }

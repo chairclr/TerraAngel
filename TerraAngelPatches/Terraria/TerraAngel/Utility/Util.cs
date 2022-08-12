@@ -20,9 +20,37 @@ namespace TerraAngel.Utility
     {
         private static string[] ByteSizeNames = { "b", "k", "m", "g", "t", "p" };
 
-        public static FieldInfo[] itemIds = typeof(ItemID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(short) && ((short)x.GetRawConstantValue()) >= 0).ToArray();
-        public static FieldInfo[] prefixIds = typeof(PrefixID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(int) && ((int)x.GetRawConstantValue()) >= 0).ToArray();
-        public static FieldInfo[] npcIds = typeof(NPCID).GetFields().Where(x => x.IsPublic && x.FieldType == typeof(int) && ((int)x.GetRawConstantValue()) >= 0).ToArray();
+        public static Dictionary<int, FieldInfo> ItemFields = 
+            GetRawConstantFields<ItemID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+
+        public static Dictionary<int, FieldInfo> PrefixFields = 
+            GetRawConstantFields<PrefixID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+
+        public static Dictionary<int, FieldInfo> NPCFields = 
+            GetRawConstantFields<NPCID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+
+        public static Dictionary<int, FieldInfo> MessageFields =
+            GetRawConstantFields<MessageID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+
+        public static Vector2 ScreenSize => new Vector2((float)Main.screenWidth, (float)Main.screenHeight);
+
+        public static IEnumerable<FieldInfo> GetRawConstantFields<T>()
+        {
+            return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType);
+        }
+        public static int UnboxRawFieldToInt(FieldInfo field)
+        {
+            dynamic? dyn = field.GetRawConstantValue();
+
+            if (dyn is null)
+                return 0;
+            return (int)dyn;
+        }
+
 
         public static bool IsRectOnScreen(NVector2 min, NVector2 max, NVector2 displaySize)
         {
@@ -43,23 +71,19 @@ namespace TerraAngel.Utility
 
         public static Vector2 ScreenToWorldFullscreenMap(Vector2 screenPoint)
         {
-            screenPoint.X += Main.mapFullscreenPos.X * Main.mapFullscreenScale;
-            screenPoint.Y += Main.mapFullscreenPos.Y * Main.mapFullscreenScale;
-            screenPoint.X -= Main.screenWidth / 2;
-            screenPoint.Y -= Main.screenHeight / 2;
-            float xScaled = (screenPoint.X / Main.mapFullscreenScale) * 16;
-            float yScaled = (screenPoint.Y / Main.mapFullscreenScale) * 16;
-            return new Vector2(xScaled, yScaled);
+            screenPoint += Main.mapFullscreenPos * Main.mapFullscreenScale;
+            screenPoint -= ScreenSize / 2f;
+            screenPoint /= Main.mapFullscreenScale;
+            screenPoint *= 16f;
+            return screenPoint;
         }
         public static Vector2 WorldToScreenFullscreenMap(Vector2 worldPoint)
         {
-            float xScaled = (worldPoint.X * Main.mapFullscreenScale) / 16;
-            float yScaled = (worldPoint.Y * Main.mapFullscreenScale) / 16;
-            xScaled -= Main.mapFullscreenPos.X * Main.mapFullscreenScale;
-            yScaled -= Main.mapFullscreenPos.Y * Main.mapFullscreenScale;
-            xScaled += Main.screenWidth / 2;
-            yScaled += Main.screenHeight / 2;
-            return new Vector2(xScaled, yScaled);
+            worldPoint *= Main.mapFullscreenScale;
+            worldPoint /= 16f;
+            worldPoint -= Main.mapFullscreenPos * Main.mapFullscreenScale;
+            worldPoint += ScreenSize / 2f;
+            return worldPoint;
         }
 
         public static Vector2 WorldToScreen(Vector2 worldPosition)

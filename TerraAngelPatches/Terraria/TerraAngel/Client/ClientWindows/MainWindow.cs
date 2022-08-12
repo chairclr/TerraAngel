@@ -119,14 +119,6 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     if (ImGui.BeginTabBar("VisualBar"))
                     {
-                        if (ImGui.BeginTabItem("Lighting/Dust"))
-                        {
-                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.LightingCringes))
-                            {
-                                cringe.DrawUI(io);
-                            }
-                            ImGui.EndTabItem();
-                        }
                         if (ImGui.BeginTabItem("Utility/ESP"))
                         {
                             foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.VisualUtility))
@@ -161,6 +153,14 @@ namespace TerraAngel.Client.ClientWindows
                                     ClientLoader.Console.WriteLine("Map Revealed");
                                     Main.refreshMap = true;
                                 });
+                            }
+                            ImGui.EndTabItem();
+                        }
+                        if (ImGui.BeginTabItem("Lighting/Dust"))
+                        {
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.LightingCringes))
+                            {
+                                cringe.DrawUI(io);
                             }
                             ImGui.EndTabItem();
                         }

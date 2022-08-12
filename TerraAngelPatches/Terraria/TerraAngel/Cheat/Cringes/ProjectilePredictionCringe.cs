@@ -172,7 +172,6 @@ namespace TerraAngel.Cheat.Cringes
                 Vector2 tempPos = position;
                 tempPos.X = slopeVelocity.X;
                 tempPos.Y = slopeVelocity.Y;
-                position = tempPos + (position - tempPos);
                 velocity.X = slopeVelocity.Z;
                 velocity.Y = slopeVelocity.W;
 

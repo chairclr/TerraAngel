@@ -81,7 +81,7 @@ namespace TerraAngel.Cheat.Cringes
             {
                 if (hasSpecialPosition)
                 {
-                    ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+                    ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
                     drawList.AddCircleFilled(Util.WorldToScreen(specialPosition).ToNumerics(), 10f, Color.Red.PackedValue);
 
                     if (InputSystem.KeyCtrl && InputSystem.KeyAlt)
@@ -136,7 +136,7 @@ namespace TerraAngel.Cheat.Cringes
                                     Main.mouseX = (int)specialPosition.X - (int)Main.screenPosition.X;
                                     Main.mouseY = (int)specialPosition.Y - (int)Main.screenPosition.Y;
                                 }
-                                Main.LocalPlayer.ItemCheck(0);
+                                Main.LocalPlayer.ItemCheck(Main.LocalPlayer.HeldItem.useStyle);
                                 NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
 
                                 Main.mouseX = mx;
@@ -159,7 +159,7 @@ namespace TerraAngel.Cheat.Cringes
                 bool wantToCatch = false;
                 if (fish.rolledItemDrop > 0)
                 {
-                    ClientLoader.Console.WriteLine($"Fish: {Utility.Util.itemIds[fish.rolledItemDrop].Name}");
+                    ClientLoader.Console.WriteLine($"Fish: {Utility.Util.ItemFields[fish.rolledItemDrop].Name}");
                     if (AcceptItems)
                     {
                         if (!fish.crate && fish.questFish == -1 && !fish.common && !fish.uncommon && !fish.rare && !fish.veryrare && !fish.legendary && AcceptNormal)
@@ -207,7 +207,7 @@ namespace TerraAngel.Cheat.Cringes
 
                 if (fish.rolledEnemySpawn > 0)
                 {
-                    ClientLoader.Console.WriteLine($"NPC: {Utility.Util.npcIds[fish.rolledEnemySpawn].Name}");
+                    ClientLoader.Console.WriteLine($"NPC: {Utility.Util.NPCFields[fish.rolledEnemySpawn].Name}");
                     if (AcceptNPCs)
                     {
                         wantToCatch = true;

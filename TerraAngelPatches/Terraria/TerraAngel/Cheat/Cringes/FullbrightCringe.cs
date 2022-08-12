@@ -14,7 +14,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public override CringeTabs Tab => CringeTabs.LightingCringes;
 
-        public float Brightness = 0.8f;
+        public ref float Brightness => ref ClientLoader.Config.FullBrightBrightness;
 
         public override void DrawUI(ImGuiIOPtr io)
         {

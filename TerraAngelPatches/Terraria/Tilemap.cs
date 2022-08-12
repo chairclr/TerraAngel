@@ -12,7 +12,7 @@ namespace Terraria
         public readonly ushort Width;
         public readonly ushort Height;
 
-        public readonly Tile[,] tiles;
+        public readonly Tile?[,] tiles;
 
         public Tilemap(int width, int height)
         {
@@ -22,18 +22,18 @@ namespace Terraria
             tiles = new Tile[Width, Height];
         }
 
-        public Tile this[int x, int y]
+        public Tile? this[int x, int y]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if ((uint)x >= Width || (uint)y >= Height)
+                if (x < 0 || y < 0 || x > Width || y > Height)
                 {
                     return null;
                 }
                 return tiles[x, y];
             }
-            internal set
+            set
             {
                 tiles[x, y] = value;
             }
