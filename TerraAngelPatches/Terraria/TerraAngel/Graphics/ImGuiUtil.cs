@@ -179,11 +179,15 @@ namespace TerraAngel.Graphics
                     {
                         if (ImGui.IsMouseHoveringRect(min, max))
                         {
-                            ImGui.BeginTooltip();
-                            Item i = new Item();
-                            i.SetDefaults(id);
-                            ImGuiUtil.TextColored(Lang.GetItemName(id).ToString(), ItemRarity.GetColor(i.rare));
-                            ImGui.EndTooltip();
+                            // relogic code?
+                            try
+                            {
+                                ImGuiItemTooltip(ContentSamples.ItemsByType[id]);
+                            }
+                            catch
+                            {
+
+                            }
                         }
                     }
                     if (count != 0)
@@ -269,11 +273,10 @@ namespace TerraAngel.Graphics
                             num = ((width <= height) ? (size.X / (float)height) : (size.Y / (float)width));
                         }
                         Vector2 scaledEnd = (new Vector2(width, height) * num);
-                        System.Numerics.Vector2 rectStart = new System.Numerics.Vector2(animationRect.X, animationRect.Y);
-                        System.Numerics.Vector2 rectEnd = new System.Numerics.Vector2(animationRect.X + width, animationRect.Y + height);
-
-                        System.Numerics.Vector2 uvMin = rectStart / new System.Numerics.Vector2(value.Width, value.Height);
-                        System.Numerics.Vector2 uvMax = rectEnd / new System.Numerics.Vector2(value.Width, value.Height);
+                        NVector2 rectStart = new NVector2(animationRect.X, animationRect.Y);
+                        NVector2 rectEnd = new NVector2(animationRect.X + width, animationRect.Y + height);
+                        NVector2 uvMin = rectStart / new NVector2(value.Width, value.Height);
+                        NVector2 uvMax = rectEnd / new NVector2(value.Width, value.Height);
                         drawList.AddImage(ItemImages[id], position.Floor().ToNumerics(), (position.Floor() + scaledEnd.Floor()).ToNumerics(), uvMin, uvMax, new Color(1f, 1f, 1f, alpah).PackedValue);
 
                     }
@@ -438,6 +441,31 @@ namespace TerraAngel.Graphics
             return textSize;
         }
 
+        public static void ImGuiItemTooltip(Item item)
+        {
+            ImGui.BeginTooltip();
+
+            int yoyoLogo = 0;
+            int researchLine = 0;
+            int numLines = 1;
+            string[] array = new string[30];
+            bool[] goodPrefixLine = new bool[30];
+            bool[] badPrefixLine = new bool[30];
+
+            Main.MouseText_DrawItemTooltip_GetLinesInfo(item, ref yoyoLogo, ref researchLine, item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
+
+            for (int i = 0; i < numLines; i++)
+            {
+                Color color = Color.White;
+                if (i == 0) color = ItemRarity.GetColor(item.rare);
+                if (goodPrefixLine[i]) color = new Color(117, 185, 117);
+                if (badPrefixLine[i]) color = new Color(185, 117, 117);
+                TextColored(array[i], color);
+            }
+
+            ImGui.EndTooltip();
+        }
+
         public static bool WrappedSelectableWithTextBorder(string text, float wrapWidth, Color borderColor)
         {
             NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
@@ -528,29 +556,7 @@ namespace TerraAngel.Graphics
                             ItemTagHandler.ItemSnippet snippet = (ItemTagHandler.ItemSnippet)tags[i];
                             if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                             {
-                                ImGui.BeginTooltip();
-
-                                int yoyoLogo = 0;
-                                int researchLine = 0;
-                                int numLines = 1;
-                                string[] array = new string[30];
-                                bool[] goodPrefixLine = new bool[30];
-                                bool[] badPrefixLine = new bool[30];
-
-                                Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
-
-                                for (int k = 0; k < numLines; k++)
-                                {
-                                    Color color = Color.White;
-                                    if (k == 0) color = snippet.Color;
-                                    if (goodPrefixLine[k]) color = new Color(117, 185, 117);
-                                    if (badPrefixLine[k]) color = new Color(185, 117, 117);
-                                    TextColored(array[k], color);
-                                }
-
-
-                                ImGui.EndTooltip();
-
+                                ImGuiItemTooltip(snippet._item);
                                 ImGui.GetIO().WantCaptureMouse = true;
                             }
                         }
@@ -600,28 +606,7 @@ namespace TerraAngel.Graphics
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {
-                            ImGui.BeginTooltip();
-
-                            int yoyoLogo = 0;
-                            int researchLine = 0;
-                            int numLines = 1;
-                            string[] array = new string[30];
-                            bool[] goodPrefixLine = new bool[30];
-                            bool[] badPrefixLine = new bool[30];
-
-                            Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
-
-                            for (int k = 0; k < numLines; k++)
-                            {
-                                Color color = Color.White;
-                                if (k == 0) color = snippet.Color;
-                                if (goodPrefixLine[k]) color = new Color(117, 185, 117);
-                                if (badPrefixLine[k]) color = new Color(185, 117, 117);
-                                TextColored(array[k], color);
-                            }
-
-
-                            ImGui.EndTooltip();
+                            ImGuiItemTooltip(snippet._item);
                             ImGui.GetIO().WantCaptureMouse = true;
                         }
 
@@ -637,28 +622,7 @@ namespace TerraAngel.Graphics
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {
-                            ImGui.BeginTooltip();
-
-                            int yoyoLogo = 0;
-                            int researchLine = 0;
-                            int numLines = 1;
-                            string[] array = new string[30];
-                            bool[] goodPrefixLine = new bool[30];
-                            bool[] badPrefixLine = new bool[30];
-
-                            Main.MouseText_DrawItemTooltip_GetLinesInfo(snippet._item, ref yoyoLogo, ref researchLine, snippet._item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
-
-                            for (int k = 0; k < numLines; k++)
-                            {
-                                Color color = Color.White;
-                                if (k == 0) color = snippet.Color;
-                                if (goodPrefixLine[k]) color = new Color(117, 185, 117);
-                                if (badPrefixLine[k]) color = new Color(185, 117, 117);
-                                TextColored(array[k], color);
-                            }
-
-
-                            ImGui.EndTooltip();
+                            ImGuiItemTooltip(snippet._item);
                             ImGui.GetIO().WantCaptureMouse = true;
                         }
                         offset.X += wordSize.X + itemTagSpacingWidth;

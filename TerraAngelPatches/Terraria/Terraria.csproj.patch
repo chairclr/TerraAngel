@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,135 @@
+@@ -3,40 +_,144 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -108,6 +108,15 @@
 +
 +
 +  <ItemGroup>
++    <None Update="Assets\AndyBold.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="Assets\FallbackFont.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="Assets\FiraCode.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
 +    <None Update="Assets\IconFont.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>

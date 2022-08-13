@@ -31,7 +31,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override void Draw(ImGuiIOPtr io)
         {
-            ImGui.PushFont(ClientAssets.GetMonospaceFont(16));
+            ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
             NVector2 windowSize = io.DisplaySize / new NVector2(3f, 2f);
             

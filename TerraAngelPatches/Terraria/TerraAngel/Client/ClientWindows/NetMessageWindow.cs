@@ -113,7 +113,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override void Draw(ImGuiIOPtr io)
         {
-            ImGui.PushFont(ClientAssets.GetMonospaceFont(16));
+            ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
             bool open = IsEnabled;
             ImGui.Begin("Net Debugger", ref open, ImGuiWindowFlags.MenuBar);
             IsEnabled = open;
@@ -407,15 +407,15 @@ namespace TerraAngel.Client.ClientWindows
 
     public struct NetPacketInfo
     {
-        public int   Type;
-        public int   Number1;
+        public int Type;
+        public int Number1;
         public float Number2;
         public float Number3;
         public float Number4;
-        public int   Number5;
-        public int   Number6;
-        public int   Number7;
-        public bool  Sent;
+        public int Number5;
+        public int Number6;
+        public int Number7;
+        public bool Sent;
         public string StackTrace;
 
         public NetPacketInfo(int type, bool sent, int number1, float number2, float number3, float number4, int number5, int number6, int number7, string stackTrace = "")

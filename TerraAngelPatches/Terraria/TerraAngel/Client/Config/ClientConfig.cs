@@ -152,6 +152,7 @@ namespace TerraAngel.Client.Config
         public float ChatWindowTransperencyInactive = 0.0f;
         public bool ChatAutoScroll = true;
         public int framesForMessageToBeVisible = 600;
+        public bool ChatVanillaInvetoryBehavior = true;
 
         public bool AutoFishAcceptItems = true;
         public bool AutoFishAcceptAllItems = true;

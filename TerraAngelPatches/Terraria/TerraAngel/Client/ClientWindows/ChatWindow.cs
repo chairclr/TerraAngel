@@ -11,6 +11,7 @@ using Terraria.ID;
 using NVector2 = System.Numerics.Vector2;
 using Terraria.UI.Chat;
 using Terraria.GameContent.UI.Chat;
+using TerraAngel.Utility;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -30,6 +31,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public bool IsChatting = false;
         public bool ScrollToBottom = false;
+        public bool ReclaimFocus = false;
 
         private bool chatLocked = true;
         private bool justOpened = false;
@@ -86,6 +88,15 @@ namespace TerraAngel.Client.ClientWindows
                 if (Input.InputSystem.IsKeyDown(Keys.Escape))
                 {
                     ClosePlayerChat();
+
+                    if (ClientLoader.Config.ChatVanillaInvetoryBehavior)
+                    {
+                        Main.playerInventory = !Main.playerInventory;
+                        if (Main.playerInventory)
+                        {
+                            SoundEngine.PlaySound(SoundID.MenuOpen);
+                        }
+                    }
                 }
             }
 
@@ -148,6 +159,7 @@ namespace TerraAngel.Client.ClientWindows
                     ImGui.Text($"Chat {(chatLocked ? "Locked" : "Unlocked")}");
                     ImGui.EndTooltip();
                 }
+
                 if (ImGui.Button($"{Icon.ClearAll}")) ChatItems.Clear();
                 if (ImGui.IsItemHovered())
                 {
@@ -155,7 +167,7 @@ namespace TerraAngel.Client.ClientWindows
                     ImGui.Text("Clear Chat");
                     ImGui.EndTooltip();
                 }
-                if (ImGui.Button($"{Icon.DebugRestart}")) resetPosition = true;
+                if (ImGui.Button($"{Icon.Refresh}")) resetPosition = true;
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -258,8 +270,9 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 ImGui.PopItemWidth();
 
-                if (justOpened)
+                if (justOpened || ReclaimFocus)
                 {
+                    ReclaimFocus = false;
                     ImGui.SetItemDefaultFocus();
                     ImGui.SetKeyboardFocusHere(-1);
                 }
@@ -272,14 +285,30 @@ namespace TerraAngel.Client.ClientWindows
 
             if (IsChatting)
             {
-                if (!justOpened && chatBoxFocus && Input.InputSystem.IsKeyPressed(Keys.Enter))
+                if (!justOpened && Input.InputSystem.IsKeyPressed(Keys.Enter))
                 {
-                    ClosePlayerChat();
-                    if (!string.IsNullOrEmpty(ChatText))
+                    if (chatBoxFocus)
                     {
-                        ChatHelper.SendChatMessageFromClient(new ChatMessage(Utility.Util.EscapeString(ChatText)));
-                        ChatText = "";
-                        ScrollToBottom = true;
+                        ClosePlayerChat();
+                        if (!string.IsNullOrEmpty(ChatText))
+                        {
+                            ChatMessage message = ChatManager.Commands.CreateOutgoingMessage(Util.EscapeString(ChatText));
+
+                            if (Main.netMode == 1)
+                            {
+                                ChatHelper.SendChatMessageFromClient(message);
+                            }
+                            else if (Main.netMode == 0)
+                            {
+                                ChatManager.Commands.ProcessIncomingMessage(message, Main.myPlayer);
+                            }
+                            ChatText = "";
+                            ScrollToBottom = true;
+                        }
+                    }
+                    else
+                    {
+                        ReclaimFocus = true;
                     }
                 }
             }

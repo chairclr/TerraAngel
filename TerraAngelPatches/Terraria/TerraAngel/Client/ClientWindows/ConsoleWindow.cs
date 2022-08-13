@@ -73,7 +73,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override void Draw(ImGuiIOPtr io)
         {
-            ImGui.PushFont(ClientAssets.GetMonospaceFont(18));
+            ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
             ImGuiStylePtr style = ImGui.GetStyle();
 
@@ -149,8 +149,8 @@ namespace TerraAngel.Client.ClientWindows
 
                     reclaimFocus = true;
                 }
-                 minInput = ImGui.GetItemRectMin();
-                 maxInput = ImGui.GetItemRectMax();
+                minInput = ImGui.GetItemRectMin();
+                maxInput = ImGui.GetItemRectMax();
             }
 
             ImGui.SetItemDefaultFocus();
@@ -838,7 +838,7 @@ namespace TerraAngel.Client.ClientWindows
         public static void SetConsoleInitialCommands(ConsoleWindow console)
         {
             console.AddCommand(
-                "clear", 
+                "clear",
                 (x) =>
                 {
                     console.ClearConsole();
