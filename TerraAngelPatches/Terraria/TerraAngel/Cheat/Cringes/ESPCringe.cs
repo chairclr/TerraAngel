@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
+using TerraAngel.Client.Config;
 using TerraAngel.Graphics;
 
 namespace TerraAngel.Cheat.Cringes
@@ -14,14 +15,14 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "ESP Boxes";
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
-        public ref Color LocalPlayerColor => ref ClientLoader.Config.LocalBoxPlayerColor;
-        public ref Color OtherPlayerColor => ref ClientLoader.Config.OtherBoxPlayerColor;
-        public ref Color OtherTerraAngelUserColor => ref ClientLoader.Config.OtherTerraAngelUserColor;
-        public ref Color NPCColor => ref ClientLoader.Config.NPCBoxColor;
-        public ref Color NPCNetOffsetColor => ref ClientLoader.Config.NPCNetOffsetBoxColor;
-        public ref Color ProjectileColor => ref ClientLoader.Config.ProjectileBoxColor;
-        public ref Color ItemColor => ref ClientLoader.Config.ItemBoxColor;
-        public ref Color TracerColor => ref ClientLoader.Config.TracerColor;
+        public ref Color LocalPlayerColor => ref ClientConfig.Settings.LocalBoxPlayerColor;
+        public ref Color OtherPlayerColor => ref ClientConfig.Settings.OtherBoxPlayerColor;
+        public ref Color OtherTerraAngelUserColor => ref ClientConfig.Settings.OtherTerraAngelUserColor;
+        public ref Color NPCColor => ref ClientConfig.Settings.NPCBoxColor;
+        public ref Color NPCNetOffsetColor => ref ClientConfig.Settings.NPCNetOffsetBoxColor;
+        public ref Color ProjectileColor => ref ClientConfig.Settings.ProjectileBoxColor;
+        public ref Color ItemColor => ref ClientConfig.Settings.ItemBoxColor;
+        public ref Color TracerColor => ref ClientConfig.Settings.TracerColor;
 
         public bool DrawAnyESP = true;
         public bool PlayerBoxes = false;

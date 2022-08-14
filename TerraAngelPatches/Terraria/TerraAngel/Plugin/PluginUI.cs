@@ -172,7 +172,7 @@ namespace TerraAngel.Plugin
 
 		void ReloadButton(UIMouseEvent evt, UIElement listeningElement)
 		{
-			ClientConfig.WriteToFile(ClientLoader.Config);
+			ClientConfig.WriteToFile();
 			PluginLoader.UnloadPlugins();
 			PluginLoader.LoadPlugins();
 			NeedsUpdate = true;

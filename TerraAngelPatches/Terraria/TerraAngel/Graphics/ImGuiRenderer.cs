@@ -46,30 +46,27 @@ namespace TerraAngel.Graphics
 
         // Graphics
         public GraphicsDevice GraphicsDevice;
-
         public BasicEffect ImGuiShader;
+        public IntPtr? FontTextureId;
+        public Dictionary<IntPtr, Texture2D> LoadedTextures;
+        
         private RasterizerState RasterizerState;
-
-        private byte[] VertexData;
+        private long TextureId;
+        
         private VertexBuffer VertexBuffer;
+        private byte[] VertexData;
         private int VertexBufferSize;
-
-        private byte[] IndexData;
+        
         private IndexBuffer IndexBuffer;
+        private byte[] IndexData;
         private int IndexBufferSize;
 
-        // Textures
-        public Dictionary<IntPtr, Texture2D> LoadedTextures;
-
-        private long TextureId;
-        public IntPtr? FontTextureId;
-
-        // Input
         private int ScrollWheelValue;
         private List<int> keyRemappings = new List<int>();
 
-        // DeltaTime
         private DateTime lastTime = DateTime.UtcNow;
+
+        private Queue<Action> preDrawActionQueue = new Queue<Action>(5);
 
         public TerraImGuiRenderer(Game game)
         {
@@ -132,7 +129,6 @@ namespace TerraAngel.Graphics
 
             io.Fonts.AddFontDefault();
             Client.ClientAssets.LoadFonts(ImGui.GetIO());
-            
         }
 
         public virtual IntPtr BindTexture(Texture2D texture)
@@ -153,6 +149,10 @@ namespace TerraAngel.Graphics
             ImGui.GetIO().DeltaTime = (float)(DateTime.UtcNow - lastTime).TotalSeconds;
             lastTime = DateTime.UtcNow;
             UpdateInput(gameTime);
+
+            while (preDrawActionQueue.Count > 0)
+                preDrawActionQueue.Dequeue()?.Invoke();
+
             ImGui.NewFrame();
         }
         public virtual void AfterLayout()
@@ -213,8 +213,8 @@ namespace TerraAngel.Graphics
 
 
             io.KeyShift = (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)) && _game.IsActive;
-            io.KeyCtrl = (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl)) && _game.IsActive;
-            io.KeyAlt = (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt)) && _game.IsActive;
+            io.KeyCtrl =  (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl)) && _game.IsActive;
+            io.KeyAlt =   (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt)) && _game.IsActive;
             io.KeySuper = (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftWindows) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightWindows)) && _game.IsActive;
 
             io.DisplaySize = new System.Numerics.Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
@@ -356,6 +356,11 @@ namespace TerraAngel.Graphics
 
                 vtxOffset += cmdList.VtxBuffer.Size;
             }
+        }
+
+        public void EnqueuePreDrawAction(Action action)
+        {
+            preDrawActionQueue.Enqueue(action);
         }
     }
 }

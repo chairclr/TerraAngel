@@ -112,7 +112,7 @@ namespace TerraAngel.Client.Config
 				NeedsUpdate = false;
 				settingsList.Clear();
 				settingsTextList.Clear();
-				settingsTextList = ClientLoader.Config.GetUITexts();
+				settingsTextList = ClientConfig.Settings.GetUITexts();
 
                 for (int i = 0; i < settingsTextList.Count; i++)
 				{

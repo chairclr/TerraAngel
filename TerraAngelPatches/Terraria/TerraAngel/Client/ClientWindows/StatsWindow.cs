@@ -14,6 +14,8 @@ using Terraria;
 using TerraAngel.Utility;
 using Microsoft.Xna.Framework;
 using System.Reflection;
+using TerraAngel.Client.Config;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -26,7 +28,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override bool DefaultEnabled => true;
 
-        public override bool IsEnabled { get => ClientLoader.Config.ShowStatsWindow; }
+        public override bool IsEnabled { get => ClientConfig.Settings.ShowStatsWindow; }
 
         public override string Title => "Stat Window";
         public override bool IsPartOfGlobalUI => false;
@@ -84,10 +86,10 @@ namespace TerraAngel.Client.ClientWindows
 
         private bool moveStatWindow = false;
 
-
+        private bool decreaseTransperency = false;
         public override void Draw(ImGuiIOPtr io)
         {
-            if (InputSystem.IsKeyPressed(ClientLoader.Config.ToggleStatsWindowMovability))
+            if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleStatsWindowMovability))
                 moveStatWindow = !moveStatWindow;
 
             ImGuiWindowFlags flags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.AlwaysAutoResize;
@@ -98,6 +100,10 @@ namespace TerraAngel.Client.ClientWindows
             {
                 ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0.3f, 0.5f, 0.3f, 0.8f));
                 ImGui.PushStyleColor(ImGuiCol.WindowBg, new System.Numerics.Vector4(0.3f, 0.5f, 0.3f, 0.8f));
+            }
+            if (decreaseTransperency)
+            {
+                ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ClientConfig.Settings.StatsWindowHoveredTransperency);
             }
 
 
@@ -120,12 +126,20 @@ namespace TerraAngel.Client.ClientWindows
             if (!isInMultiplayerGame) kilobytesDownString = kilobytesUpString = packetsDownString = packetsUpString = "N/A";
 
 
-            ImGuiUtil.TextColored($"Packets \t{Icon.ArrowUp}{packetsUpString,7} / {Icon.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
+            ImGuiUtil.TextColored($"Packets\t{Icon.ArrowUp}{packetsUpString,7} / {Icon.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
 
-            ImGuiUtil.TextColored($"Bytes   \t{Icon.ArrowUp}{kilobytesUpString,7} / {Icon.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
+            ImGuiUtil.TextColored($"Bytes  \t{Icon.ArrowUp}{kilobytesUpString,7} / {Icon.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
 
             ImGui.PopFont();
+            if (decreaseTransperency)
+            {
+                ImGui.PopStyleVar();
+                decreaseTransperency = false;
+            }
+            if (ImGui.IsMouseHoveringRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize()))
+                decreaseTransperency = true;
             ImGui.End();
+
             if (moveStatWindow)
             {
                 ImGui.PopStyleColor(2);

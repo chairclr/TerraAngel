@@ -141,7 +141,7 @@ namespace TerraAngel.Client
             colors[(int)ImGuiCol.NavWindowingDimBg] = new System.Numerics.Vector4(1.00f, 0.00f, 0.00f, 0.20f);
             colors[(int)ImGuiCol.ModalWindowDimBg] = new System.Numerics.Vector4(1.00f, 0.00f, 0.00f, 0.35f);
 
-            ClientLoader.Config.UIConfig.Set();
+            ClientConfig.Settings.UIConfig.Set();
         }
 
         public void Update(GameTime time)
@@ -167,7 +167,7 @@ namespace TerraAngel.Client
             updateCount++;
             if (updateCount % 600 == 0)
             {
-                ClientConfig.WriteToFile(ClientLoader.Config);
+                ClientConfig.WriteToFile();
             }
 
             RealFNAIme.blocking = ImGui.GetIO().WantCaptureKeyboard || ImGui.GetIO().WantTextInput;
@@ -177,12 +177,12 @@ namespace TerraAngel.Client
                 CringeManager.LoadedTileSections = null;
             }
 
-            if (!ClientLoader.Config.UseDiscordRPC && ClientLoader.DiscordClient is not null)
+            if (!ClientConfig.Settings.UseDiscordRPC && ClientLoader.DiscordClient is not null)
             {
                 ClientLoader.DiscordClient.Dispose();
                 ClientLoader.DiscordClient = null;
             }
-            if (ClientLoader.Config.UseDiscordRPC && ClientLoader.DiscordClient is null)
+            if (ClientConfig.Settings.UseDiscordRPC && ClientLoader.DiscordClient is null)
             {
                 ClientLoader.InitDiscord();
             }
@@ -199,7 +199,7 @@ namespace TerraAngel.Client
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
-            if (InputSystem.IsKeyPressed(ClientLoader.Config.ToggleUIVisibility))
+            if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleUIVisibility))
                 GlobalUIState = !GlobalUIState;
             for (int i = 0; i < ClientWindows.Count; i++)
             {

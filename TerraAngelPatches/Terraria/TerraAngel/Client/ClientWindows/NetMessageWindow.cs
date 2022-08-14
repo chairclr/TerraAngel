@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.IO;
 using TerraAngel.Utility;
 using System.Runtime.CompilerServices;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -31,7 +32,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override string Title => "Net Debugger";
 
-        public override Keys ToggleKey => ClientLoader.Config.ToggleNetDebugger;
+        public override Keys ToggleKey => ClientConfig.Settings.ToggleNetDebugger;
         public override bool IsPartOfGlobalUI => false;
 
 

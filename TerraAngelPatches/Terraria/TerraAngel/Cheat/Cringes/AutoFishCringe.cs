@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using TerraAngel.Client.Config;
 using TerraAngel.Hooks;
 using TerraAngel.Input;
 using TerraAngel.Utility;
@@ -21,19 +22,19 @@ namespace TerraAngel.Cheat.Cringes
 
         public override CringeTabs Tab => CringeTabs.AutomationCringes;
 
-        public ref bool AcceptItems => ref ClientLoader.Config.AutoFishAcceptItems;
-        public ref bool AcceptAllItems => ref ClientLoader.Config.AutoFishAcceptAllItems;
-        public ref bool AcceptQuestFish => ref ClientLoader.Config.AutoFishAcceptQuestFish;
-        public ref bool AcceptCrates => ref ClientLoader.Config.AutoFishAcceptCrates;
-        public ref bool AcceptNormal => ref ClientLoader.Config.AutoFishAcceptNormal;
-        public ref bool AcceptCommon => ref ClientLoader.Config.AutoFishAcceptCommon;
-        public ref bool AcceptUncommon => ref ClientLoader.Config.AutoFishAcceptUncommon;
-        public ref bool AcceptRare => ref ClientLoader.Config.AutoFishAcceptRare;
-        public ref bool AcceptVeryRare => ref ClientLoader.Config.AutoFishAcceptVeryRare;
-        public ref bool AcceptLegendary => ref ClientLoader.Config.AutoFishAcceptLegendary;
-        public ref bool AcceptNPCs => ref ClientLoader.Config.AutoFishAcceptNPCs;
-        private ref int frameCountRandomizationMin => ref ClientLoader.Config.AutoFishFrameCountRandomizationMin;
-        private ref int frameCountRandomizationMax => ref ClientLoader.Config.AutoFishFrameCountRandomizationMax;
+        public ref bool AcceptItems => ref ClientConfig.Settings.AutoFishAcceptItems;
+        public ref bool AcceptAllItems => ref ClientConfig.Settings.AutoFishAcceptAllItems;
+        public ref bool AcceptQuestFish => ref ClientConfig.Settings.AutoFishAcceptQuestFish;
+        public ref bool AcceptCrates => ref ClientConfig.Settings.AutoFishAcceptCrates;
+        public ref bool AcceptNormal => ref ClientConfig.Settings.AutoFishAcceptNormal;
+        public ref bool AcceptCommon => ref ClientConfig.Settings.AutoFishAcceptCommon;
+        public ref bool AcceptUncommon => ref ClientConfig.Settings.AutoFishAcceptUncommon;
+        public ref bool AcceptRare => ref ClientConfig.Settings.AutoFishAcceptRare;
+        public ref bool AcceptVeryRare => ref ClientConfig.Settings.AutoFishAcceptVeryRare;
+        public ref bool AcceptLegendary => ref ClientConfig.Settings.AutoFishAcceptLegendary;
+        public ref bool AcceptNPCs => ref ClientConfig.Settings.AutoFishAcceptNPCs;
+        private ref int frameCountRandomizationMin => ref ClientConfig.Settings.AutoFishFrameCountRandomizationMin;
+        private ref int frameCountRandomizationMax => ref ClientConfig.Settings.AutoFishFrameCountRandomizationMax;
 
         private int frameCountBeforeActualPullFish = 0;
         private int frameCountBeforeActualCast = 0;

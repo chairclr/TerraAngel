@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using TerraAngel.Utility;
 using TerraAngel.Input;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Cheat.Cringes
 {
@@ -43,7 +44,7 @@ namespace TerraAngel.Cheat.Cringes
             {
                 Player self = Main.LocalPlayer;
 
-                if (Input.InputSystem.IsKeyPressed(ClientLoader.Config.ToggleNoclip))
+                if (Input.InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleNoclip))
                 {
                     Enabled = !Enabled;
                 }
@@ -70,14 +71,14 @@ namespace TerraAngel.Cheat.Cringes
                             self.position.X += NoClipSpeed;
                         }
                     }
-                    if (InputSystem.IsKeyPressed(ClientLoader.Config.TeleportToCursor))
+                    if (InputSystem.IsKeyPressed(ClientConfig.Settings.TeleportToCursor))
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;
                         Main.LocalPlayer.Teleport(Util.ScreenToWorld(InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
 
                         NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
 
-                        if (ClientLoader.Config.TeleportSendRODPacket)
+                        if (ClientConfig.Settings.TeleportSendRODPacket)
                         {
                             NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
                                 0,
@@ -93,7 +94,7 @@ namespace TerraAngel.Cheat.Cringes
             }
             else
             {
-                if (ClientLoader.Config.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
+                if (ClientConfig.Settings.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
                 {
                     Main.LocalPlayer.velocity = Vector2.Zero;
                     if (io.KeyCtrl)
@@ -104,7 +105,7 @@ namespace TerraAngel.Cheat.Cringes
                     {
                         Main.mapFullscreen = false;
                         Main.LocalPlayer.Teleport(Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
-                        if (ClientLoader.Config.TeleportSendRODPacket)
+                        if (ClientConfig.Settings.TeleportSendRODPacket)
                         {
                             NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
                                 0,

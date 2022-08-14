@@ -12,6 +12,7 @@ using NVector2 = System.Numerics.Vector2;
 using Terraria.UI.Chat;
 using Terraria.GameContent.UI.Chat;
 using TerraAngel.Utility;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -89,7 +90,7 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     ClosePlayerChat();
 
-                    if (ClientLoader.Config.ChatVanillaInvetoryBehavior)
+                    if (ClientConfig.Settings.ChatVanillaInvetoryBehavior)
                     {
                         Main.playerInventory = !Main.playerInventory;
                         if (Main.playerInventory)
@@ -111,7 +112,7 @@ namespace TerraAngel.Client.ClientWindows
                 return new Color(colors[(int)col].X, colors[(int)col].Y, colors[(int)col].X, a);
             }
 
-            float transperency = IsChatting ? ClientLoader.Config.ChatWindowTransperencyActive : ClientLoader.Config.ChatWindowTransperencyInactive;
+            float transperency = IsChatting ? ClientConfig.Settings.ChatWindowTransperencyActive : ClientConfig.Settings.ChatWindowTransperencyInactive;
             Color bgColor = colorWithAlpha(ImGuiCol.WindowBg, transperency);
             Color titleColorActive = colorWithAlpha(ImGuiCol.TitleBgActive, transperency);
             Color borderColor = colorWithAlpha(ImGuiCol.Border, transperency);
@@ -199,7 +200,7 @@ namespace TerraAngel.Client.ClientWindows
                         NVector2 textSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
 
                         bool showMessageFade = false;
-                        if (item.TimeMessageHasBeenVisible < ClientLoader.Config.framesForMessageToBeVisible + 60)
+                        if (item.TimeMessageHasBeenVisible < ClientConfig.Settings.framesForMessageToBeVisible + 60)
                         {
                             showMessageFade = true;
                             item.TimeMessageHasBeenVisible++;
@@ -207,9 +208,9 @@ namespace TerraAngel.Client.ClientWindows
                         
                         if (ImGui.IsRectVisible(textSize) && (IsChatting || showMessageFade))
                         {
-                            if (!IsChatting && showMessageFade && item.TimeMessageHasBeenVisible > (ClientLoader.Config.framesForMessageToBeVisible))
+                            if (!IsChatting && showMessageFade && item.TimeMessageHasBeenVisible > (ClientConfig.Settings.framesForMessageToBeVisible))
                             {
-                                float alpha = 1.0f - ((float)(item.TimeMessageHasBeenVisible - ClientLoader.Config.framesForMessageToBeVisible) / 60f);
+                                float alpha = 1.0f - ((float)(item.TimeMessageHasBeenVisible - ClientConfig.Settings.framesForMessageToBeVisible) / 60f);
                                 if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, new Color(0f, 0f, 0f), textSize, alpha))
                                 {
                                     ImGui.SetClipboardText(item.OriginalText);
@@ -232,10 +233,10 @@ namespace TerraAngel.Client.ClientWindows
 
                 autoScrollFixPrevMaxY = autoScrollFixMaxY;
                 autoScrollFixMaxY = ImGui.GetScrollMaxY();
-                if (ScrollToBottom || (ClientLoader.Config.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || (autoScrollFix && autoScrollFixMaxY > autoScrollFixPrevMaxY))) || !IsChatting || justOpened)
+                if (ScrollToBottom || (ClientConfig.Settings.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || (autoScrollFix && autoScrollFixMaxY > autoScrollFixPrevMaxY))) || !IsChatting || justOpened)
                 {
                     autoScrollFix = false;
-                    if (ClientLoader.Config.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY()))
+                    if (ClientConfig.Settings.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY()))
                         autoScrollFix = true;
                     ImGui.SetScrollY(ImGui.GetScrollMaxY());
                 }

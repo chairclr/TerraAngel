@@ -303,6 +303,24 @@
          }
  
          chatMonitor.Update();
+@@ -17801,7 +_,7 @@
+                     {
+                         toolTipLine[numLines] = Lang.tip[13].Value;
+                     }
+-
++                    toolTipLine[numLines] += $" [{item.useAnimation}/{(item.useAnimation / 60f):F2}s{(item.useAnimation != item.useTime ? $" {item.useTime}/{(item.useTime / 60f):F2}s" : "")}]";
+                     numLines++;
+                 }
+ 
+@@ -17858,6 +_,8 @@
+                     toolTipLine[numLines] = Lang.tip[22].Value;
+                 }
+ 
++                toolTipLine[numLines] += $" [{num6:F2}]";
++
+                 numLines++;
+             }
+ 
 @@ -18344,6 +_,7 @@
                      toolTipLine[numLines] = "+4" + Lang.tip[47].Value;
                      preFixLine[numLines] = true;

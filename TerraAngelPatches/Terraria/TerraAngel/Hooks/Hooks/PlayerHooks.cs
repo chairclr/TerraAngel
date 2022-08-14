@@ -115,7 +115,7 @@ namespace TerraAngel.Hooks.Hooks
                     }
                 }
 
-                if (ClientLoader.Config.BroadcastPresence)
+                if (ClientConfig.Settings.BroadcastPresence)
                 {
                     presenceUpdateCount++;
                     if (presenceUpdateCount == 60)

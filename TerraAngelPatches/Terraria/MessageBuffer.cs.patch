@@ -12,7 +12,7 @@
                  break;
              case 102:
                  {
-+                    if (!TerraAngel.ClientLoader.Config.DisableNebulaLagPacket)
++                    if (!TerraAngel.Client.Config.ClientConfig.Settings.DisableNebulaLagPacket)
 +                    {
 -                    int num48 = reader.ReadByte();
 +                        int num48 = reader.ReadByte();

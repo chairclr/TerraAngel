@@ -165,7 +165,7 @@ namespace TerraAngel.Client
                 }
             }
 
-            // TerraRenderer.QueueTaskForNextPredraw(() => { LoadMonospaceFont(size); TerraRenderer.renderer.RebuildFontAtlas(); });
+            ClientLoader.MainRenderer?.EnqueuePreDrawAction(() => { LoadMonospaceFont(size); ClientLoader.MainRenderer?.RebuildFontAtlas(); });
 
             return MonospaceFonts[closestFontSize];
         }
@@ -188,7 +188,7 @@ namespace TerraAngel.Client
                 }
             }
 
-            // TerraRenderer.QueueTaskForNextPredraw(() => { LoadTerrariaFont(size); TerraRenderer.renderer.RebuildFontAtlas(); });
+            ClientLoader.MainRenderer?.EnqueuePreDrawAction(() => { LoadTerrariaFont(size); ClientLoader.MainRenderer?.RebuildFontAtlas(); });
 
             return TerrariaFonts[closestFontSize];
         }

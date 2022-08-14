@@ -27,6 +27,7 @@ using TerraAngel.Utility;
 using System.Reflection;
 using System.ComponentModel;
 using TerraAngel.Graphics;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -38,7 +39,7 @@ namespace TerraAngel.Client.ClientWindows
 
         public override bool DefaultEnabled => true;
 
-        public override bool IsEnabled => ClientLoader.Config.ShowConsoleWindow;
+        public override bool IsEnabled => ClientConfig.Settings.ShowConsoleWindow;
 
         public override bool IsToggleable => true;
 
@@ -121,7 +122,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
             }
             ImGui.PopStyleVar();
-            if (ScrollToBottom || (ClientLoader.Config.ConsoleAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())))
+            if (ScrollToBottom || (ClientConfig.Settings.ConsoleAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())))
                 ImGui.SetScrollY(ImGui.GetScrollMaxY() * 2);
 
             ImGui.EndChild();
@@ -144,7 +145,7 @@ namespace TerraAngel.Client.ClientWindows
                         ExecuteAndParseCommand(consoleInput);
                         consoleInput = "";
 
-                        if (ClientLoader.Config.ConsoleAutoScroll) ScrollToBottom = true;
+                        if (ClientConfig.Settings.ConsoleAutoScroll) ScrollToBottom = true;
                     }
 
                     reclaimFocus = true;

@@ -31,7 +31,6 @@ namespace TerraAngel
         public static ConfigUI ConfigUI = new ConfigUI();
         public static PluginUI PluginUI = new PluginUI();
         public static ResolutionUI ResolutionUI = new ResolutionUI();
-        public static ClientConfig Config = new ClientConfig();
         public static DiscordRpcClient? DiscordClient;
         public static ImGuiNET.ImGuiIOPtr? ImGuiIO => (ImGuiNET.ImGui.GetIO().NativePtr == null ? null : ImGuiNET.ImGui.GetIO());
         public static bool WantCaptureMouse => ImGuiIO?.WantCaptureMouse ?? false;
@@ -95,7 +94,7 @@ namespace TerraAngel
 
             GameHooks.Generate();
 
-            Config = ClientConfig.ReadFromFile();
+            ClientConfig.ReadFromFile();
 
             Type[] cringeTypes = typeof(Cringe).Assembly.GetTypes().Where(x =>
                                                                         !x.IsAbstract &&
@@ -109,25 +108,25 @@ namespace TerraAngel
 
             CringeManager.SortTabs();
 
-            CringeManager.GetCringe<AntiHurtCringe>().Enabled = Config.DefaultAntiHurt;
-            CringeManager.GetCringe<InfiniteManaCringe>().Enabled = Config.DefaultInfiniteMana;
-            CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = Config.DefaultInfiniteMinions;
-            CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = Config.DefaultShowHeldItem;
+            CringeManager.GetCringe<AntiHurtCringe>().Enabled = ClientConfig.Settings.DefaultAntiHurt;
+            CringeManager.GetCringe<InfiniteManaCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMana;
+            CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMinions;
+            CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = ClientConfig.Settings.DefaultShowHeldItem;
 
             ESPCringe boxesCringe = CringeManager.GetCringe<ESPCringe>();
-            boxesCringe.DrawAnyESP = Config.DefaultDrawAnyESP;
-            boxesCringe.NPCBoxes = Config.DefaultNPCBoxes;
-            boxesCringe.ProjectileBoxes = Config.DefaultProjectileBoxes;
-            boxesCringe.PlayerBoxes = Config.DefaultPlayerESPBoxes;
-            boxesCringe.ItemBoxes = Config.DefaultItemBoxes;
-            boxesCringe.PlayerTracers = Config.DefaultPlayerESPTracers;
+            boxesCringe.DrawAnyESP = ClientConfig.Settings.DefaultDrawAnyESP;
+            boxesCringe.NPCBoxes = ClientConfig.Settings.DefaultNPCBoxes;
+            boxesCringe.ProjectileBoxes = ClientConfig.Settings.DefaultProjectileBoxes;
+            boxesCringe.PlayerBoxes = ClientConfig.Settings.DefaultPlayerESPBoxes;
+            boxesCringe.ItemBoxes = ClientConfig.Settings.DefaultItemBoxes;
+            boxesCringe.PlayerTracers = ClientConfig.Settings.DefaultPlayerESPTracers;
 
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = Config.DefaultDrawActiveProjectilePrediction;
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = Config.DefaultDrawFriendlyProjectilePrediction;
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = Config.DefaultDrawHostileProjectilePrediction;
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = ClientConfig.Settings.DefaultDrawActiveProjectilePrediction;
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = ClientConfig.Settings.DefaultDrawFriendlyProjectilePrediction;
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = ClientConfig.Settings.DefaultDrawHostileProjectilePrediction;
 
 
-            if (Config.UseDiscordRPC)
+            if (ClientConfig.Settings.UseDiscordRPC)
             {
                 InitDiscord();
             }
@@ -155,7 +154,7 @@ namespace TerraAngel
             {
                 SetupRenderer = true;
                 MainRenderer = new ClientRenderer(main);
-                Config.PluginsToEnable = Config.pluginsToEnable;
+                ClientConfig.Settings.PluginsToEnable = ClientConfig.Settings.pluginsToEnable;
             }
         }
 

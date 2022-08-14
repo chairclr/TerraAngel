@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImGuiNET;
+using TerraAngel.Client.Config;
 using Terraria;
 
 namespace TerraAngel.Cheat.Cringes
@@ -14,7 +15,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public override CringeTabs Tab => CringeTabs.LightingCringes;
 
-        public ref float Brightness => ref ClientLoader.Config.FullBrightBrightness;
+        public ref float Brightness => ref ClientConfig.Settings.FullBrightBrightness;
 
         public override void DrawUI(ImGuiIOPtr io)
         {

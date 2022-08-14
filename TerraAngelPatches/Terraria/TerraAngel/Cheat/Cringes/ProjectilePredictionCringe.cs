@@ -7,6 +7,7 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Client.ClientWindows;
+using TerraAngel.Client.Config;
 using TerraAngel.Graphics;
 using TerraAngel.Hooks;
 using TerraAngel.Input;
@@ -30,9 +31,9 @@ namespace TerraAngel.Cheat.Cringes
         public bool DrawFriendlyProjectiles = false;
         public bool DrawHostileProjectiles = true;
 
-        public ref Color FriendlyDrawColor => ref ClientLoader.Config.FriendlyProjectilePredictionDrawColor;
-        public ref Color HostileDrawColor => ref ClientLoader.Config.HostileProjectilePredictionDrawColor;
-        public ref int MaxStepCount => ref ClientLoader.Config.ProjectilePredictionMaxStepCount;
+        public ref Color FriendlyDrawColor => ref ClientConfig.Settings.FriendlyProjectilePredictionDrawColor;
+        public ref Color HostileDrawColor => ref ClientConfig.Settings.HostileProjectilePredictionDrawColor;
+        public ref int MaxStepCount => ref ClientConfig.Settings.ProjectilePredictionMaxStepCount;
 
         public override void DrawUI(ImGuiIOPtr io)
         {

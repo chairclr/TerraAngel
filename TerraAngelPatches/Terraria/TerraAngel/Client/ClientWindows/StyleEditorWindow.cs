@@ -16,6 +16,7 @@ using TerraAngel.WorldEdits;
 using TerraAngel;
 using TerraAngel.Cheat.Cringes;
 using TerraAngel.Utility;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -25,7 +26,7 @@ namespace TerraAngel.Client.ClientWindows
         public override bool IsPartOfGlobalUI => true;
         public override bool IsToggleable => true;
         public override string Title => "Style Editor";
-        public override Keys ToggleKey => ClientLoader.Config.ToggleStyleEditor;
+        public override Keys ToggleKey => ClientConfig.Settings.ToggleStyleEditor;
 
         public static string[] ColorNames = Util.EnumFancyNames<ImGuiCol>();
 

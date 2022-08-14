@@ -13,6 +13,7 @@ using Terraria;
 using System.Reflection;
 using Terraria.ID;
 using NVector2 = System.Numerics.Vector2;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace TerraAngel.Utility
 {
@@ -21,30 +22,58 @@ namespace TerraAngel.Utility
         private static string[] ByteSizeNames = { "b", "k", "m", "g", "t", "p" };
 
         public static Dictionary<int, FieldInfo> ItemFields = 
-            GetRawConstantFields<ItemID>()
+            GetPublicValueTypeFields<ItemID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+        
+        public static Dictionary<int, FieldInfo> TileFields = 
+            GetPublicValueTypeFields<TileID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+
+        public static Dictionary<int, FieldInfo> WallFields =
+            GetPublicValueTypeFields<WallID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
         public static Dictionary<int, FieldInfo> PrefixFields = 
-            GetRawConstantFields<PrefixID>()
+            GetPublicValueTypeFields<PrefixID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
         public static Dictionary<int, FieldInfo> NPCFields = 
-            GetRawConstantFields<NPCID>()
+            GetPublicValueTypeFields<NPCID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+
+        public static Dictionary<int, FieldInfo> ProjectileFields =
+            GetPublicValueTypeFields<ProjectileID>()
+            .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+
+        public static Dictionary<int, FieldInfo> AmmoFields =
+            typeof(AmmoID).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType)
+            .ToDictionary(x => UnboxStaticFieldToInt(x), x => x);
+
+        public static Dictionary<int, FieldInfo> BuffFields =
+            GetPublicValueTypeFields<BuffID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
         public static Dictionary<int, FieldInfo> MessageFields =
-            GetRawConstantFields<MessageID>()
+            GetPublicValueTypeFields<MessageID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
         public static Vector2 ScreenSize => new Vector2((float)Main.screenWidth, (float)Main.screenHeight);
 
-        public static IEnumerable<FieldInfo> GetRawConstantFields<T>()
+        public static IEnumerable<FieldInfo> GetPublicValueTypeFields<T>()
         {
             return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType);
         }
         public static int UnboxRawFieldToInt(FieldInfo field)
         {
             dynamic? dyn = field.GetRawConstantValue();
+
+            if (dyn is null)
+                return 0;
+            return (int)dyn;
+        }
+        public static int UnboxStaticFieldToInt(FieldInfo field)
+        {
+            dynamic? dyn = field.GetValue(null);
 
             if (dyn is null)
                 return 0;
@@ -200,6 +229,8 @@ namespace TerraAngel.Utility
             }
         }
 
+        
+
         public static object GetDefault(Type type)
         {
             if (type.IsValueType)
@@ -274,7 +305,15 @@ namespace TerraAngel.Utility
             return Util.ColorDistance(x, y);
         }
     }
-
+    public static class ListExtensions
+    {
+        public static string StringSum<T>(this List<T> e, Func<T, string> predicate)
+        {
+            string s = "";
+            e.ForEach((x) => s += predicate(x));
+            return s;
+        }
+    }
     public class ValueStore : DynamicObject
     {
         public Dictionary<string, object?> Values = new Dictionary<string, object?>();

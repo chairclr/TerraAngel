@@ -460,7 +460,7 @@ namespace TerraAngel.Graphics
                 if (i == 0) color = ItemRarity.GetColor(item.rare);
                 if (goodPrefixLine[i]) color = new Color(117, 185, 117);
                 if (badPrefixLine[i]) color = new Color(185, 117, 117);
-                TextColored(array[i], color);
+                TextColored(ChatManager.ParseMessage(array[i], color).StringSum(x => x.Text), color);
             }
 
             ImGui.EndTooltip();

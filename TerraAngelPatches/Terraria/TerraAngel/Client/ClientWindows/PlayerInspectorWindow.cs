@@ -14,6 +14,7 @@ using TerraAngel.WorldEdits;
 using Terraria.ID;
 using TerraAngel;
 using NVector2 = System.Numerics.Vector2;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -103,7 +104,7 @@ namespace TerraAngel.Client.ClientWindows
         {
             if (!Main.mapFullscreen)
             {
-                if (ClientLoader.Config.RightClickOnPlayerToInspect)
+                if (ClientConfig.Settings.RightClickOnPlayerToInspect)
                 {
                     for (int i = 0; i < 255; i++)
                     {

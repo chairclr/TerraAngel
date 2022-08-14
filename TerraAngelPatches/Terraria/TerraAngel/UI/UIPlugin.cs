@@ -79,7 +79,7 @@ namespace TerraAngel.UI
                 this.otherText.SetText(valueGet() ? "Enabled" : "Disabled");
                 SoundEngine.PlaySound(SoundID.MenuTick);
 
-                ClientConfig.WriteToFile(ClientLoader.Config);
+                ClientConfig.WriteToFile();
 
                 if (valueGet() != PluginLoader.LoadedPlugins.Any(x => x.PluginPath == pluginPath))
                 {

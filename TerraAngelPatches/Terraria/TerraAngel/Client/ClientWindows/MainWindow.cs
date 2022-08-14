@@ -15,12 +15,13 @@ using TerraAngel.Graphics;
 using TerraAngel.WorldEdits;
 using TerraAngel;
 using TerraAngel.Cheat.Cringes;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
     public class MainWindow : ClientWindow
     {
-        public override Keys ToggleKey => ClientLoader.Config.ToggleUIVisibility;
+        public override Keys ToggleKey => ClientConfig.Settings.ToggleUIVisibility;
 
         public override bool DefaultEnabled => true;
 

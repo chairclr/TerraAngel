@@ -19,6 +19,7 @@ using TerraAngel.ID;
 using TerraAngel.Net;
 using TerraAngel.Input;
 using TerraAngel.Utility;
+using TerraAngel.Client.Config;
 
 namespace TerraAngel.WorldEdits
 {
@@ -38,7 +39,7 @@ namespace TerraAngel.WorldEdits
         {
             Vector2 worldMouse = Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition);
             Vector2 tileMouse = (worldMouse / 16f).Floor();
-            if (InputSystem.IsKeyPressed(ClientLoader.Config.WorldEditSelectKey))
+            if (InputSystem.IsKeyPressed(ClientConfig.Settings.WorldEditSelectKey))
             {
                 isCopying = true;
 
@@ -47,12 +48,12 @@ namespace TerraAngel.WorldEdits
 
             if (isCopying)
             {
-                if (InputSystem.IsKeyDown(ClientLoader.Config.WorldEditSelectKey))
+                if (InputSystem.IsKeyDown(ClientConfig.Settings.WorldEditSelectKey))
                 {
                     drawList.DrawTileRect(startSelectTile, tileMouse, new Color(1f, 0f, 0f, 0.5f).PackedValue);
                 }
 
-                if (InputSystem.IsKeyUp(ClientLoader.Config.WorldEditSelectKey))
+                if (InputSystem.IsKeyUp(ClientConfig.Settings.WorldEditSelectKey))
                 {
                     isCopying = false;
                     Copy(startSelectTile, tileMouse);
@@ -70,7 +71,7 @@ namespace TerraAngel.WorldEdits
         {
             Vector2 worldMouse = Util.ScreenToWorld(InputSystem.MousePosition);
             Vector2 tileMouse = (worldMouse / 16f).Floor();
-            if (InputSystem.IsKeyPressed(ClientLoader.Config.WorldEditSelectKey))
+            if (InputSystem.IsKeyPressed(ClientConfig.Settings.WorldEditSelectKey))
             {
                 isCopying = true;
 
@@ -79,12 +80,12 @@ namespace TerraAngel.WorldEdits
 
             if (isCopying)
             {
-                if (InputSystem.IsKeyDown(ClientLoader.Config.WorldEditSelectKey))
+                if (InputSystem.IsKeyDown(ClientConfig.Settings.WorldEditSelectKey))
                 {
                     drawList.DrawTileRect(startSelectTile, tileMouse, new Color(1f, 0f, 0f, 0.5f).PackedValue);
                 }
 
-                if (InputSystem.IsKeyUp(ClientLoader.Config.WorldEditSelectKey))
+                if (InputSystem.IsKeyUp(ClientConfig.Settings.WorldEditSelectKey))
                 {
                     isCopying = false;
                     Copy(startSelectTile, tileMouse);
