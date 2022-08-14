@@ -41,6 +41,7 @@ namespace TerraAngel.Client
 
         public static int updateCount = 0;
 
+        public bool ShowMetricsWindow = false;
         public bool GlobalUIState = true;
 
 
@@ -219,6 +220,11 @@ namespace TerraAngel.Client
                     else
                         window.OnDisable();
                 }
+            }
+
+            if (ShowMetricsWindow)
+            {
+                ImGui.ShowMetricsWindow(ref ShowMetricsWindow);
             }
         }
 

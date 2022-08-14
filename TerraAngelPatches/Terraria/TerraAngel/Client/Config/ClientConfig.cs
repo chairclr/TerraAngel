@@ -137,7 +137,16 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("World Edit Select")]
             public Keys WorldEditSelectKey = Keys.F;
 
+            [UIConfigElement("Save Console History")]
+            public bool PreserveConsoleHistory = true;
+            [UIConfigElement("Save Console State")]
+            public bool ConsoleSaveInReplMode = true;
+            public int ConsoleHistoryLimit = 5000;
 
+            public List<string>? ConsoleHistorySave = new List<string>();
+
+            [JsonIgnore]
+            public List<string> ConsoleHistory = new List<string>();
 
             public float FullBrightBrightness = 0.7f;
             public Color TracerColor = new Color(0f, 0f, 1f);
@@ -173,6 +182,7 @@ namespace TerraAngel.Client.Config
             public int AutoFishFrameCountRandomizationMax = 50;
 
             public float StatsWindowHoveredTransperency = 0.65f;
+            public bool ConsoleInReplMode = false;
 
             public ClientUIConfig UIConfig = new ClientUIConfig();
 
@@ -248,6 +258,8 @@ namespace TerraAngel.Client.Config
             {
                 Settings.pluginsToEnable = Settings.PluginsToEnable;
                 Settings.UIConfig.Get();
+                if (Settings.PreserveConsoleHistory)
+                    Settings.ConsoleHistorySave = Settings.ConsoleHistory;
 
                 string s = JsonConvert.SerializeObject(Settings, new JsonSerializerSettings() { Formatting = Formatting.Indented });
                 Utility.Util.CreateParentDirectory(ClientLoader.ConfigPath);
@@ -258,6 +270,8 @@ namespace TerraAngel.Client.Config
                     fs.Write(bytes);
                     fs.Close();
                 }
+
+                Settings.ConsoleHistorySave = null;
             }
         }
 
@@ -277,7 +291,12 @@ namespace TerraAngel.Client.Config
                     s = Encoding.UTF8.GetString(buffer);
                     fs.Close();
                 }
-                Settings = JsonConvert.DeserializeObject<Config>(s);
+                Settings = JsonConvert.DeserializeObject<Config>(s) ?? new Config();
+
+                if (Settings.PreserveConsoleHistory && Settings.ConsoleHistorySave is not null)
+                    Settings.ConsoleHistory = Settings.ConsoleHistorySave;
+                else
+                    Settings.ConsoleHistorySave = null;
             }
         }
     }

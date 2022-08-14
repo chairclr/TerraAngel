@@ -46,12 +46,12 @@ namespace TerraAngel.Client.ClientWindows
         public override string Title => "Console";
 
         public Dictionary<string, ConsoleCommand> ConsoleCommands = new Dictionary<string, ConsoleCommand>();
-        public List<string> ConsoleHistory = new List<string>();
         public List<ConsoleElement> ConsoleItems = new List<ConsoleElement>();
+        public ref List<string> ConsoleHistory => ref ClientConfig.Settings.ConsoleHistory;
         private List<UndoState> undoStack = new List<UndoState>() { new UndoState(0, "") };
         private int undoStackPointer = 1;
 
-        public bool ScriptMode = false;
+        public ref bool ScriptMode => ref ClientConfig.Settings.ConsoleInReplMode;
 
         private object ConsoleLock = new object();
         public bool ScrollToBottom = false;
@@ -220,6 +220,9 @@ namespace TerraAngel.Client.ClientWindows
                     break;
                 }
             }
+            if (ConsoleHistory.Count > ClientConfig.Settings.ConsoleHistoryLimit)
+                ConsoleHistory.RemoveRange(0, ConsoleHistory.Count - ClientConfig.Settings.ConsoleHistoryLimit);
+
             ConsoleHistory.Add(message);
 
             if (ScriptMode)

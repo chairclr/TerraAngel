@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,144 @@
+@@ -3,40 +_,150 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -114,6 +114,9 @@
 +    <None Update="Assets\FallbackFont.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
++    <None Update="Assets\FallbackFont2.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
 +    <None Update="Assets\FiraCode.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
@@ -124,6 +127,9 @@
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="Assets\RussianGlyphFont.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="Assets\Symbola.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="Assets\TerrariaFont.ttf">

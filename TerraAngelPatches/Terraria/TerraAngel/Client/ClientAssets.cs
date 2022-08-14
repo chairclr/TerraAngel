@@ -17,7 +17,7 @@ namespace TerraAngel.Client
         public static string TerrariaFontName => $"{ClientLoader.AssetPath}/AndyBold.ttf";
         public static string MonoFontName => $"{ClientLoader.AssetPath}/FiraCode.ttf";
         public static string IconFontName => $"{ClientLoader.AssetPath}/IconFont.ttf";
-        public static string FallbackFontName => $"{ClientLoader.AssetPath}/FallbackFont.ttf";
+        public static string FallbackFontName => $"{ClientLoader.AssetPath}/Symbola.ttf";
 
         public static void LoadFonts(ImGuiIOPtr io)
         {
@@ -30,9 +30,9 @@ namespace TerraAngel.Client
 
         public static void LoadTerrariaFont(float size, bool withoutSymbols = false)
         {
-            TerrariaFonts.Add(size, LoadFont(TerrariaFontName, size, 0x0020, 0x007F, 0x2000, 0x22FF));
+            TerrariaFonts.Add(size, LoadFont(TerrariaFontName, size, 0x0020, 0x007F));
 
-            LoadFont(FallbackFontName, size, true, 0x0400, 0x04FF);
+            LoadFont(FallbackFontName, size, true, Vector2.Zero, Vector2.Zero, 0f, float.MaxValue, 2f, 0x0400, 0x04FF, 0x2320, 0x2330, 0x2000, 0x2020);
 
             if (!withoutSymbols)
             {
@@ -41,7 +41,8 @@ namespace TerraAngel.Client
         }
         public static void LoadMonospaceFont(float size, bool withoutSymbols = false)
         {
-            MonospaceFonts.Add(size, LoadFont(MonoFontName, size, 0x0020, 0x007F, 0x0400, 0x04FF, 0x2000, 0x22FF));
+            MonospaceFonts.Add(size, LoadFont(MonoFontName, size, 0x0020, 0x007F, 0x0400, 0x04FF, 0x2020, 0x22FF));
+            LoadFont(FallbackFontName, size, true, Vector2.Zero, Vector2.Zero, 0f, float.MaxValue, 2f, 0x2320, 0x2330, 0x2000, 0x2020);
 
             if (!withoutSymbols)
             {
