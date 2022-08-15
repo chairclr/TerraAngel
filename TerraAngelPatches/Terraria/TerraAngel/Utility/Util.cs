@@ -14,6 +14,7 @@ using System.Reflection;
 using Terraria.ID;
 using NVector2 = System.Numerics.Vector2;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using System.Runtime.CompilerServices;
 
 namespace TerraAngel.Utility
 {
@@ -251,6 +252,59 @@ namespace TerraAngel.Utility
 
             }
             return value;
+        }
+        public static int CompareStringDist(string s, string t)
+        {
+            if (string.IsNullOrEmpty(t))
+            {
+                throw new ArgumentNullException(t, "String Cannot Be Null Or Empty");
+            }
+
+            int n = s.Length;
+            int m = t.Length;
+
+            if (n == 0)
+            {
+                return m;
+            }
+
+            if (m == 0)
+            {
+                return n;
+            }
+
+            int[] p = new int[n + 1];
+            int[] d = new int[n + 1];
+
+            int i;
+            int j;
+
+            for (i = 0; i <= n; i++)
+            {
+                p[i] = i;
+            }
+
+            for (j = 1; j <= m; j++)
+            {
+                char tJ = t[j - 1]; 
+                d[0] = j;
+
+                for (i = 1; i <= n; i++)
+                {
+                    int cost = s[i - 1] == tJ ? 0 : 1; 
+                                                                     
+                    d[i] = Math.Min(Math.Min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
+                }
+
+                int[] dPlaceholder = p; //placeholder to assist in swapping p and d
+                p = d;
+                d = dPlaceholder;
+
+            }
+
+            // our last action in the above loop was to switch d and p, so p now 
+            // actually has the most recent cost counts
+            return p[n];
         }
 
     }

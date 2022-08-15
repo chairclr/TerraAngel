@@ -1,25 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
-using System.Reflection;
-using System.Threading;
-using Microsoft.CodeAnalysis.CSharp;
-using TerraAngel;
-using MonoMod;
-using MonoMod.RuntimeDetour;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using Terraria;
+using TerraAngel.Utility;
 
 namespace TerraAngel.Scripting
 {
@@ -178,6 +173,9 @@ namespace TerraAngel.Scripting
 
                     List<CompletionItem> l = completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
 
+                    if (l.Any(x => x.SortText == textFilter))
+                        return new List<CompletionItem>();
+
                     return l;
                 });
         }
@@ -199,7 +197,7 @@ namespace TerraAngel.Scripting
 
                 if (completion is null)
                 {
-                cursorPosition = previousCursorPosition;
+                    cursorPosition = previousCursorPosition;
                     return code;
                 }
 
@@ -278,6 +276,36 @@ namespace TerraAngel.Scripting
 
             scriptDocument = scriptWorkspace?.CurrentSolution.GetDocument(scriptDocumentId);
             scriptProject = scriptDocument?.Project;
+        }
+
+
+        private List<CompletionItem> FilterCompletionItems(Document document, ImmutableArray<CompletionItem> items, string textFilter)
+        {
+            if (string.IsNullOrWhiteSpace(textFilter))
+                return new List<CompletionItem>();
+
+            string lowerTextFilter = textFilter.ToLower();
+
+            int d(string s)
+            {
+                return Math.Min(Util.CompareStringDist(s.ToLower(), textFilter), Util.CompareStringDist(s, textFilter));
+            }
+
+
+            List<CompletionItem> filteredItems = new List<CompletionItem>(items.Length);
+
+            for (int i = 0; i < items.Length; i++)
+            {
+                int dist = d(items[i].SortText);
+                if (dist == 0)
+                    return new List<CompletionItem>();
+                if (dist < 14)
+                    filteredItems.Add(items[i]);
+            }
+
+            filteredItems.Sort((x, y) => d(x.SortText.ToLower()).CompareTo(d(y.SortText.ToLower())));
+
+            return filteredItems;
         }
     }
 }

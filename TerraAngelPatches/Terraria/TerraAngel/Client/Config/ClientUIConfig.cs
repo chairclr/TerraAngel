@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup;
 using ImGuiNET;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using NVector2 = System.Numerics.Vector2;
 using NVector3 = System.Numerics.Vector3;
 using NVector4 = System.Numerics.Vector4;
-using TerraAngel.Utility;
 
 namespace TerraAngel.Client.Config
 {
@@ -65,11 +55,11 @@ namespace TerraAngel.Client.Config
             }
         }
 
-        delegate ref float    FuncRefFloat();
+        delegate ref float FuncRefFloat();
         delegate ref NVector2 FuncRefNVector2();
         delegate ref NVector3 FuncRefNVector3();
         delegate ref NVector4 FuncRefNVector4();
-        delegate ref bool     FuncRefBool();
+        delegate ref bool FuncRefBool();
 
         [JsonIgnore]
         public Dictionary<string, object> StyleData
