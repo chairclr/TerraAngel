@@ -221,11 +221,9 @@ namespace TerraAngel.Client.Config
 
             public List<UIElement> GetUITexts()
             {
-                List<UIElement> elements = new List<UIElement>();
+                SortedList<string, UIElement> elements = new SortedList<string, UIElement>();
 
                 List<FieldInfo> fields = typeof(Config).GetFields(BindingFlags.Public | BindingFlags.Instance).ToList();
-
-                fields.Sort((x, y) => x.Name.CompareTo(y.Name));
 
                 for (int i = 0; i < fields.Count; i++)
                 {
@@ -237,17 +235,17 @@ namespace TerraAngel.Client.Config
 
                         if (field.FieldType == typeof(bool))
                         {
-                            elements.Add(new UITextCheckbox(name, () => (bool)field.GetValue(this), (x) => field.SetValue(this, x)));
+                            elements.Add(name, new UITextCheckbox(name, () => (bool)(field.GetValue(this) ?? false), (x) => field.SetValue(this, x)));
                         }
                         else if (field.FieldType == typeof(Keys))
                         {
-                            elements.Add(new UIKeySelect(name, () => (Keys)field.GetValue(this), (x) => field.SetValue(this, x)));
+                            elements.Add("\uFFFF" + name, new UIKeySelect(name, () => (Keys)(field.GetValue(this) ?? Keys.None), (x) => field.SetValue(this, x)));
                         }
                     }
                 }
 
 
-                return elements;
+                return elements.Values.ToList();
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TerraAngel.Input;
@@ -51,6 +52,8 @@ namespace TerraAngel.Client.Config
                 Top = { Pixels = 8 },
                 ListPadding = 5f
             };
+
+            settingsList.ManualSortMethod = (x) => { };
 
             panel.Append(settingsList);
 
