@@ -27,7 +27,7 @@ namespace Terraria
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if (x < 0 || y < 0 || x > Width || y > Height)
+                if (x < 0 || y < 0 || x >= Width || y >= Height)
                 {
                     return null;
                 }
