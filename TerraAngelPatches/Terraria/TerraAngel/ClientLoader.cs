@@ -114,6 +114,11 @@ namespace TerraAngel
             CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = ClientConfig.Settings.DefaultShowHeldItem;
             CringeManager.GetCringe<InfiniteReachCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteReach;
 
+
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = ClientConfig.Settings.DefaultDrawActiveProjectilePrediction;
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = ClientConfig.Settings.DefaultDrawFriendlyProjectilePrediction;
+            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = ClientConfig.Settings.DefaultDrawHostileProjectilePrediction;
+
             ESPCringe boxesCringe = CringeManager.GetCringe<ESPCringe>();
             boxesCringe.DrawAnyESP = ClientConfig.Settings.DefaultDrawAnyESP;
             boxesCringe.NPCBoxes = ClientConfig.Settings.DefaultNPCBoxes;
@@ -121,11 +126,6 @@ namespace TerraAngel
             boxesCringe.PlayerBoxes = ClientConfig.Settings.DefaultPlayerESPBoxes;
             boxesCringe.ItemBoxes = ClientConfig.Settings.DefaultItemBoxes;
             boxesCringe.PlayerTracers = ClientConfig.Settings.DefaultPlayerESPTracers;
-
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = ClientConfig.Settings.DefaultDrawActiveProjectilePrediction;
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = ClientConfig.Settings.DefaultDrawFriendlyProjectilePrediction;
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = ClientConfig.Settings.DefaultDrawHostileProjectilePrediction;
-
 
             if (ClientConfig.Settings.UseDiscordRPC)
             {
@@ -176,14 +176,6 @@ namespace TerraAngel
                     LargeImageKey = "angel-icon",
                     LargeImageText = "TerraAngel Client",
                 },
-                Buttons = new Button[]
-                {
-                        new Button()
-                        {
-                            Label = "View GitHub",
-                            Url = "https://github.com/CEO-Chair/TerraAngel/"
-                        }
-                }
             });
         }
 
