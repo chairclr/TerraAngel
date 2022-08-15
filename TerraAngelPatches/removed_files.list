@@ -152,4 +152,4 @@ ReLogic\Peripherals\RGB\SteelSeries\IGameSenseUpdater.cs
 ReLogic\Peripherals\RGB\SteelSeries\SteelSeriesDeviceGroup.cs
 ReLogic\Peripherals\RGB\SteelSeries\SteelSeriesEventRelay.cs
 ReLogic\Peripherals\RGB\SteelSeries\SteelSeriesKeyboard.cs
-ReLogic\Peripherals\RGB\SteelSeries\SteelSeriesSecondaryDeviceByZo.cs
+ReLogic\Peripherals\RGB\SteelSeries\SteelSeriesSecondaryDeviceByZone.cs
