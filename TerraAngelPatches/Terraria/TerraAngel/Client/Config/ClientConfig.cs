@@ -74,6 +74,9 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Default Show Held Item")]
             public bool DefaultShowHeldItem = false;
 
+            [UIConfigElement("Default Infinite Reach")]
+            public bool DefaultInfiniteReach = false;
+
             [UIConfigElement("Send Rod of Discord packet when teleporting")]
             public bool TeleportSendRODPacket = true;
 

@@ -112,6 +112,7 @@ namespace TerraAngel
             CringeManager.GetCringe<InfiniteManaCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMana;
             CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMinions;
             CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = ClientConfig.Settings.DefaultShowHeldItem;
+            CringeManager.GetCringe<InfiniteReachCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteReach;
 
             ESPCringe boxesCringe = CringeManager.GetCringe<ESPCringe>();
             boxesCringe.DrawAnyESP = ClientConfig.Settings.DefaultDrawAnyESP;
