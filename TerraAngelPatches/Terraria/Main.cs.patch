@@ -608,13 +608,13 @@
              }
  
 -            TimeLogger.DetailedDrawTime(26);
-+            if (!Main.didResize)
-+            {
-+                SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
-+                base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
-+                SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
-+            }
-+            Main.didResize = false;
++            SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
++            w = Utils.Clamp(w, minScreenW, maxScreenW);
++            h = Utils.Clamp(h, minScreenH, maxScreenH);
++            SDL2.SDL.SDL_SetWindowSize(instance.Window.Handle, w, h);
++            base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
++            SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
++            graphics.ApplyChanges();
          }
  
          Overlays.Scene.Draw(spriteBatch, RenderLayers.ForegroundWater);
@@ -627,15 +627,17 @@
          ClampScreenPositionToWorld();
      }
  
-@@ -62940,15 +_,19 @@
+@@ -62939,16 +_,21 @@
+ 
      public static void SetDisplayMode(int width, int height, bool fullscreen)
      {
++
          bool flag = false;
 -        Form form = (Form)Control.FromHandle(instance.Window.Handle);
 -        screenMaximized = form.WindowState == FormWindowState.Maximized;
 +        IntPtr window = Main.instance.Window.Handle;
 +        uint flags = SDL2.SDL.SDL_GetWindowFlags(window);
-+
++        CacheSupportedDisplaySizes();
 +        screenMaximized = (flags & (uint)SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_MAXIMIZED) != 0;
 +
          if (screenBorderless && screenMaximized && !graphics.IsFullScreen)
@@ -770,14 +772,13 @@
              FullscreenStartup();
          }
  
-+        if (!Main.didResize)
-+        {
-+            SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
-+            base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
--        SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
-+            SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
-+        }
-+        Main.didResize = false;
++        SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
++        w = Utils.Clamp(w, minScreenW, maxScreenW);
++        h = Utils.Clamp(h, minScreenH, maxScreenH);
++        SDL2.SDL.SDL_SetWindowSize(instance.Window.Handle, w, h);
++        base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
+         SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
++        graphics.ApplyChanges();
      }
  
      public static void OpenPlayerSelect(OnPlayerSelected method)
