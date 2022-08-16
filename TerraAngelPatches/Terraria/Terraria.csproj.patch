@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,150 @@
+@@ -3,40 +_,152 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -15,6 +15,9 @@
 +  <PropertyGroup>
 +    <ApplicationIcon>app.ico</ApplicationIcon>
 +    <Win32Resource />
++  </PropertyGroup>
++  <PropertyGroup>
++    <LargeAddressAware>true</LargeAddressAware>
 +  </PropertyGroup>
 +
 +  <!-- Libraries part of Terraria -->
@@ -79,21 +82,14 @@
 -    <EmbeddedResource Include="Microsoft/**" />
 +  </ItemGroup>
 +
-+  <Target Name="EditBin" AfterTargets="Build">
-+    <PropertyGroup>
-+      <EditBinOpts>/largeaddressaware</EditBinOpts>
-+      <DumpBin>/headers</DumpBin>
-+    </PropertyGroup>
-+
-+    <Message Text="Applying editbin $(EditBinOpts)" Importance="high" />
-+    <Exec Command="..\largeaddresstool\editbin $(EditBinOpts) &quot;$(TargetPath)&quot;" />
-+    <Message Text="Checking headers with dumpbin." Importance="high" />
-+    <Exec Command="..\largeaddresstool\dumpbin $(DumpBin) &quot;$(TargetPath)&quot; | findstr &quot;large&quot;" />
++  <Target Name="FixOutputs" AfterTargets="Build">
++    <Delete Files="$(OutDir)Steamworks.NET.dll" />
 +  </Target>
 +
 +
 +  <ItemGroup>
 +    <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
++    <PackageReference Include="LargeAddressAware" Version="1.0.6" />
 +    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.2.0" />
 +    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.2.0" />
 +    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.2.0" />
@@ -150,7 +146,10 @@
 +    <None Update="LibNew\x64\ImGui\cimgui.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\Steamworks\steam_api.dll">
++    <None Update="LibNew\x64\Steamworks\Steamworks.NET.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x64\Steamworks\steam_api64.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="LibNew\x86\FNA\FAudio.dll">
@@ -166,6 +165,9 @@
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="LibNew\x86\ImGui\cimgui.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\x86\Steamworks\Steamworks.NET.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="LibNew\x86\Steamworks\steam_api.dll">

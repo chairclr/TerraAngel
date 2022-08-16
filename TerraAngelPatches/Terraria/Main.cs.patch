@@ -68,6 +68,15 @@
      public static bool gameMenu = true;
      public static bool menuBGChangedDay = false;
      public static bool menuBGChangedNight = false;
+@@ -1032,7 +_,7 @@
+     public static float exitScale = 0.8f;
+     public static bool mouseReforge;
+     public static float reforgeScale = 0.8f;
+-    public static Player clientPlayer = new Player();
++    public static Player clientPlayer = new Player();//{ get => Main.LocalPlayer; set { } }
+     public static string getIP = defaultIP;
+     public static string getPort = Convert.ToString(Netplay.ListenPort);
+     public static bool menuMultiplayer;
 @@ -1168,7 +_,7 @@
      private float logoScale = 1f;
      private float logoScaleDirection = 1f;
@@ -238,6 +247,15 @@
          _gameContentLoadProcess = LoadContent_Deferred();
      }
  
+@@ -9838,7 +_,7 @@
+         {
+             newMusic = (dayTime ? 42 : 15);
+         }
+-        else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
++        else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] != null && tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
+         {
+             newMusic = 26;
+         }
 @@ -9867,7 +_,7 @@
              {
                  newMusic = 10;

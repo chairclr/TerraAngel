@@ -25,14 +25,14 @@
                              int type6 = 90;
                              float num50 = 0f;
                              float num51 = (float)Math.PI / 15f;
-@@ -3848,6 +_,7 @@
-                                     type6 = 88;
-                                     break;
+@@ -3859,6 +_,7 @@
+                                 num52 = (Main.dust[num55].fadeIn = num52 + num53);
+                                 Main.dust[num55].velocity += vector3 * 1.5f;
                              }
 +                            }
+                         }
  
-                             for (int num54 = 0; (float)num54 < value3.Length() / 6f; num54++)
-                             {
+                         player4.NebulaLevelup(num49);
 @@ -4065,6 +_,11 @@
                          if (Main.netMode == 2)
                          {

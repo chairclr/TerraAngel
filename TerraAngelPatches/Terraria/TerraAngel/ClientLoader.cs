@@ -40,7 +40,7 @@ namespace TerraAngel
         public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
         public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
         public static string PluginsPath => Path.Combine(SavePath, "Plugins");
-        public static string TerrariaPath => Path.GetDirectoryName(typeof(Main).Assembly.Location);
+        public static string TerrariaPath => Path.GetDirectoryName(typeof(Main).Assembly.Location)!;
         public static string AssetPath => "Assets";
         public static string NativeLibraryPath => "LibNew";
         public static string Platform => Environment.Is64BitProcess ? "x64" : "x86";
@@ -139,6 +139,14 @@ namespace TerraAngel
             try
             {
 #endif
+                AppDomain.CurrentDomain.AssemblyResolve += (sender, sargs) =>
+                {
+                    if (sargs.Name.StartsWith("Steamworks.NET"))
+                    {
+                        return Assembly.LoadFrom($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/Steamworks/Steamworks.NET.dll");
+                    }
+                    return null;
+                };
                 LoadClientInteral();
 #if !DEBUG
             }

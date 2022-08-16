@@ -102,7 +102,7 @@ namespace TerraAngel.Hooks.Hooks
                 if (Client.ClientWindows.NetMessageWindow.MessagesToLogTraces.Contains(msgType))
                 {
                     stackTrace = new StackTrace(2, true).ToString();
-                    
+
                 }
                 Client.ClientWindows.NetMessageWindow.AddPacket(new Client.ClientWindows.NetPacketInfo(msgType, true, number, number2, number3, number4, number5, number6, number7, stackTrace));
             }
