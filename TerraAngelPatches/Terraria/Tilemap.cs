@@ -28,7 +28,6 @@ namespace Terraria
                 {
                     return null;
                 }
-                ClientLoader.Console.WriteLine("L");
                 return new Tile(TileHeap + (x + (y * Width)));
             }
             set
