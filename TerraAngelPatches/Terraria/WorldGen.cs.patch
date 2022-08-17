@@ -1,0 +1,11 @@
+--- src/Terraria/Terraria/WorldGen.cs
++++ src/TerraAngel/Terraria/WorldGen.cs
+@@ -3352,7 +_,7 @@
+                 Main.statusText = Lang.gen[46].Value + " " + (int)(num * 100f + 1f) + "%";
+                 for (int k = 0; k < lastMaxTilesY; k++)
+                 {
+-                    Main.tile[j, k] = null;
++                    Main.tile[j, k].ClearEverything();
+                 }
+             }
+         }

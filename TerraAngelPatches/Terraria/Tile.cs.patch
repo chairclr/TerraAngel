@@ -1,26 +1,66 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,20 @@
+@@ -1,18 +_,22 @@
 +using System.Runtime.InteropServices;
  using Microsoft.Xna.Framework;
  using Terraria.DataStructures;
  
  namespace Terraria;
-+[StructLayout(LayoutKind.Sequential, Pack = 8)]
- public class Tile
+-public class Tile
++public unsafe class Tile
  {
-     public ushort type;
-     public ushort wall;
+-    public ushort type;
+-    public ushort wall;
 -    public byte liquid;
-+    public short frameX;
-+    public short frameY;
-     public short sTileHeader;
-+    public byte liquid;
-     public byte bTileHeader;
-     public byte bTileHeader2;
-     public byte bTileHeader3;
+-    public short sTileHeader;
+-    public byte bTileHeader;
+-    public byte bTileHeader2;
+-    public byte bTileHeader3;
 -    public short frameX;
 -    public short frameY;
++    public TileData* Data;
++
++
++    public ref ushort type => ref Data->type;
++    public ref ushort wall => ref Data->wall;
++    public ref short frameX => ref Data->frameX;
++    public ref short frameY => ref Data->frameY;
++    public ref short sTileHeader => ref Data->sTileHeader;
++    public ref byte liquid => ref Data->liquid;
++    public ref byte bTileHeader => ref Data->bTileHeader;
++    public ref byte bTileHeader2 => ref Data->bTileHeader2;
++    public ref byte bTileHeader3 => ref Data->bTileHeader3;
      public const int Type_Solid = 0;
      public const int Type_Halfbrick = 1;
      public const int Type_SlopeDownRight = 2;
+@@ -91,6 +_,11 @@
+         }
+     }
+ 
++    public Tile(TileData* data)
++    {
++        Data = data;
++    }
++
+     public object Clone()
+     {
+         return MemberwiseClone();
+@@ -731,4 +_,18 @@
+     {
+         return "Tile Type:" + type + " Active:" + active() + " Wall:" + wall + " Slope:" + slope() + " fX:" + frameX + " fY:" + frameY;
+     }
++}
++
++
++public struct TileData
++{
++    public ushort type;
++    public ushort wall;
++    public short frameX;
++    public short frameY;
++    public short sTileHeader;
++    public byte liquid;
++    public byte bTileHeader;
++    public byte bTileHeader2;
++    public byte bTileHeader3;
+ }
