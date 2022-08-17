@@ -1,29 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using TerraAngel;
 
 namespace Terraria
 {
-    public unsafe class Tilemap
+    public unsafe class Tilemap : IDisposable
     {
         public readonly ushort Width;
         public readonly ushort Height;
-
-        //public readonly Tile?[,] tiles;
-
-        public readonly TileData* tiles;
+        public readonly TileData* TileHeap;
 
         public Tilemap(int width, int height)
         {
             Width = (ushort)width;
             Height = (ushort)height;
 
-            //tiles = new Tile[Width, Height];
-            tiles = (TileData*)Marshal.AllocHGlobal(Width * Height * sizeof(TileData));
+            TileHeap = (TileData*)Marshal.AllocHGlobal(Width * Height * sizeof(TileData));
         }
 
         public Tile? this[int x, int y]
@@ -35,15 +28,19 @@ namespace Terraria
                 {
                     return null;
                 }
-                return new Tile(tiles + (x + (y * Width)));
+                ClientLoader.Console.WriteLine("L");
+                return new Tile(TileHeap + (x + (y * Width)));
             }
             set
             {
-                //tiles[x, y] = value;
-                //
-                //tiles[x + (y * Width)] = value.Data;
-                Buffer.MemoryCopy(value.Data, tiles + (x + (y * Width)), sizeof(TileData), sizeof(TileData));
+                // im not sure why this even is here? can we get rid of this?
+                *(TileHeap + (x + (y * Width))) = *value.Data;
             }
+        }
+
+        public void Dispose()
+        {
+            Marshal.FreeHGlobal((IntPtr)TileHeap);
         }
     }
 }
