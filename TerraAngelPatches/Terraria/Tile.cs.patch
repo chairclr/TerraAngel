@@ -1,13 +1,14 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,20 @@
+@@ -1,18 +_,21 @@
++using System.Runtime.CompilerServices;
 +using System.Runtime.InteropServices;
  using Microsoft.Xna.Framework;
  using Terraria.DataStructures;
  
  namespace Terraria;
 -public class Tile
-+public unsafe class Tile
++public unsafe struct Tile
  {
 -    public ushort type;
 -    public ushort wall;
@@ -31,7 +32,7 @@
      public const int Type_Solid = 0;
      public const int Type_Halfbrick = 1;
      public const int Type_SlopeDownRight = 2;
-@@ -52,15 +_,19 @@
+@@ -52,33 +_,35 @@
  
      public Tile()
      {
@@ -46,39 +47,67 @@
 -        frameY = 0;
 +        Data = null;
 +    }
-+
-+    public static bool operator ==(Tile rhs, object? lhs)
-+    {
-+        if (lhs == null && rhs.Data == null)
-+            return true;
-+        return rhs.Data->Equals(lhs);
-+    }
-+
-+    public static bool operator !=(Tile rhs, object? lhs)
-+    {
-+        return !(rhs == lhs);
-     }
- 
-     public Tile(Tile copy)
-@@ -91,6 +_,11 @@
-         }
-     }
- 
 +    public Tile(TileData* data)
 +    {
 +        Data = data;
 +    }
 +
-     public object Clone()
++    public static implicit operator Tile(ImplicitHack? o)
++    {
++        return new Tile();
++    }
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public static bool operator ==(Tile rhs, object lhs) => lhs == null && rhs.Data == null;
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public static bool operator !=(Tile rhs, object lhs) => !(lhs == null && rhs.Data == null);
++    public class ImplicitHack
++    {
++
+     }
+ 
+     public Tile(Tile copy)
      {
-         return MemberwiseClone();
-@@ -731,4 +_,18 @@
+         if (copy == null)
+         {
+-            type = 0;
+-            wall = 0;
+-            liquid = 0;
+-            sTileHeader = 0;
+-            bTileHeader = 0;
+-            bTileHeader2 = 0;
+-            bTileHeader3 = 0;
+-            frameX = 0;
+-            frameY = 0;
++            Data = null;
+         }
+         else
+         {
++            Data = null;
+             type = copy.type;
+             wall = copy.wall;
+             liquid = copy.liquid;
+@@ -119,15 +_,7 @@
+ 
+     public void CopyFrom(Tile from)
+     {
+-        type = from.type;
+-        wall = from.wall;
+-        liquid = from.liquid;
+-        sTileHeader = from.sTileHeader;
+-        bTileHeader = from.bTileHeader;
+-        bTileHeader2 = from.bTileHeader2;
+-        bTileHeader3 = from.bTileHeader3;
+-        frameX = from.frameX;
+-        frameY = from.frameY;
++        *Data = *from.Data;
+     }
+ 
+     public bool isTheSameAs(Tile compTile)
+@@ -731,4 +_,16 @@
      {
          return "Tile Type:" + type + " Active:" + active() + " Wall:" + wall + " Slope:" + slope() + " fX:" + frameX + " fY:" + frameY;
      }
 +}
-+
-+
 +public struct TileData
 +{
 +    public ushort type;

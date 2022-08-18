@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 using TerraAngel;
 
 namespace Terraria
@@ -19,16 +20,20 @@ namespace Terraria
             TileHeap = (TileData*)Marshal.AllocHGlobal(Width * Height * sizeof(TileData));
         }
 
-        public Tile? this[int x, int y]
+        [ThreadStatic]
+        private static Tile swapTile = new Tile();
+
+        public Tile this[int x, int y]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
                 if (x < 0 || y < 0 || x >= Width || y >= Height)
                 {
-                    return null;
+                    return new Tile();
                 }
-                return new Tile(TileHeap + (x + (y * Width)));
+                swapTile.Data = TileHeap + (x + (y * Width));
+                return swapTile;
             }
             set
             {

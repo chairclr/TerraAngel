@@ -8,6 +8,26 @@
  using Terraria.Audio;
  using Terraria.Chat;
  using Terraria.DataStructures;
+@@ -2569,8 +_,8 @@
+                         Main.tile[num87, num88] = new Tile();
+                     }
+ 
+-                    lock (Main.tile[num87, num88])
+-                    {
++                    //lock (Main.tile[num87, num88])
++                    //{
+                         Main.tile[num87, num88].liquid = liquid;
+                         Main.tile[num87, num88].liquidType(liquidType);
+                         if (Main.netMode == 2)
+@@ -2579,7 +_,7 @@
+                         }
+ 
+                         break;
+-                    }
++                    //}
+                 }
+ 
+             case 49:
 @@ -3806,6 +_,7 @@
                  break;
              case 102:

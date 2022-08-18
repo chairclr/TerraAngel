@@ -91,7 +91,7 @@ namespace TerraAngel.WorldEdits
             return result;
         }
 
-        public void DrawDetailed(TileSection section, Vector2 origin, Vector2 clipRectMin, Vector2 clipRectMax)
+        public unsafe void DrawDetailed(TileSection section, Vector2 origin, Vector2 clipRectMin, Vector2 clipRectMax)
         {
             if (section.Width < 1 || section.Height < 1 || section.Tiles is null)
                 return;
@@ -109,7 +109,7 @@ namespace TerraAngel.WorldEdits
             {
                 for (int y = 0; y < section.Height; y++)
                 {
-                    if (section.Tiles[x, y] is null)
+                    if (section.Tiles[x, y].Data == null)
                         continue;
 
                     if ((x * 16 + origin.X + 16f) < clipRectMin.X || (x + origin.X) > clipRectMax.X ||
@@ -141,7 +141,7 @@ namespace TerraAngel.WorldEdits
             sb.End();
         }
 
-        public void DrawPrimitive(TileSection section, Vector2 origin, Vector2 clipRectMin, Vector2 clipRectMax)
+        public unsafe void DrawPrimitive(TileSection section, Vector2 origin, Vector2 clipRectMin, Vector2 clipRectMax)
         {
             if (section.Width < 1 || section.Height < 1 || section.Tiles is null)
                 return;
@@ -157,7 +157,7 @@ namespace TerraAngel.WorldEdits
             {
                 for (int y = 0; y < section.Height; y++)
                 {
-                    if (section.Tiles[x, y] is null)
+                    if (section.Tiles[x, y].Data == null)
                         continue;
 
                     if ((x * 16 + origin.X + 16f) < clipRectMin.X || (x + origin.X) > clipRectMax.X ||
@@ -181,7 +181,7 @@ namespace TerraAngel.WorldEdits
             sb.End();
         }
 
-        public void DrawPrimitiveMap(TileSection section, Vector2 worldPoint, Vector2 clipRectMin, Vector2 clipRectMax)
+        public unsafe void DrawPrimitiveMap(TileSection section, Vector2 worldPoint, Vector2 clipRectMin, Vector2 clipRectMax)
         {
             if (section.Width < 1 || section.Height < 1 || section.Tiles is null)
                 return;
@@ -195,7 +195,7 @@ namespace TerraAngel.WorldEdits
             {
                 for (int y = 0; y < section.Height; y++)
                 {
-                    if (section.Tiles[x, y] is null)
+                    if (section.Tiles[x, y].Data == null)
                         continue;
 
                     Vector2 worldCoords = Util.WorldToScreenFullscreenMap(worldPoint + new Vector2(x * 16f, y * 16f));

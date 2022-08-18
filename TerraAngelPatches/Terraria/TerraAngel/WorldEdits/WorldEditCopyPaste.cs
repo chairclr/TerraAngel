@@ -146,10 +146,10 @@ namespace TerraAngel.WorldEdits
                             if (!WorldGen.InWorld(ox + x, oy + y))
                                 continue;
 
-                            Tile? tile = Main.tile[ox + x, oy + y];
-                            Tile? copiedTile = CopiedSection.Tiles?[x, y];
+                            Tile tile = Main.tile[ox + x, oy + y];
+                            Tile copiedTile = CopiedSection.Tiles[x, y];
 
-                            if (tile is null || copiedTile is null)
+                            if (tile == null || copiedTile == null)
                                 continue;
 
                             if (!(Main.tileSolid[copiedTile.type] &&
@@ -176,10 +176,10 @@ namespace TerraAngel.WorldEdits
                             if (!WorldGen.InWorld(ox + x, oy + y))
                                 continue;
 
-                            Tile? tile = Main.tile[ox + x, oy + y];
-                            Tile? copiedTile = CopiedSection.Tiles?[x, y];
+                            Tile tile = Main.tile[ox + x, oy + y];
+                            Tile copiedTile = CopiedSection.Tiles[x, y];
 
-                            if (tile is null || copiedTile is null)
+                            if (tile == null || copiedTile == null)
                                 continue;
 
                             if ((Main.tileSolid[copiedTile.type] &&
