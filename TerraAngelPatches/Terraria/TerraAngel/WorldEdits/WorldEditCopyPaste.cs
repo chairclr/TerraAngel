@@ -230,14 +230,14 @@ namespace TerraAngel.WorldEdits
             float width = endTile.X - startTile.X;
             float height = endTile.Y - startTile.Y;
 
-            for (int x = ((int)startTile.X); x < ((int)endTile.X); x++)
-            {
-                for (int y = ((int)startTile.Y); y < ((int)endTile.Y); y++)
-                {
-                    WorldGen.SquareTileFrame(x, y);
-                    WorldGen.SquareWallFrame(x, y);
-                }
-            }
+            //for (int x = ((int)startTile.X); x < ((int)endTile.X); x++)
+            //{
+            //    for (int y = ((int)startTile.Y); y < ((int)endTile.Y); y++)
+            //    {
+            //        WorldGen.SquareTileFrame(x, y);
+            //        WorldGen.SquareWallFrame(x, y);
+            //    }
+            //}
 
             CopiedSection = new TileSection(((int)startTile.X), ((int)startTile.Y), ((int)width), ((int)height));
         }

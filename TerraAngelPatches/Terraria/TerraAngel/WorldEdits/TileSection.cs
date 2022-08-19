@@ -18,11 +18,11 @@ namespace TerraAngel.WorldEdits
         public int Width;
         public int Height;
 
-        public Tile[,]? Tiles;
+        public NativeTileMap? Tiles;
 
         public TileSection(int width, int height)
         {
-            Tiles = new Tile[width, height];
+            Tiles = new NativeTileMap(width, height);
             Width = width;
             Height = height;
         }
@@ -31,7 +31,7 @@ namespace TerraAngel.WorldEdits
         {
 
         }
-        public TileSection(Tilemap copyFrom, int x, int y, int width, int height)
+        public TileSection(NativeTileMap copyFrom, int x, int y, int width, int height)
         {
             // do a gay little switch around so that width and height can be negative
             if (width < 0)
@@ -45,13 +45,13 @@ namespace TerraAngel.WorldEdits
                 height = -height;
             }
 
-            Tiles = new Tile[width, height];
+            Tiles = new NativeTileMap(width, height);
 
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    Tiles[i, j] = new Tile(copyFrom[x + i, y + j]);
+                    Tiles[i, j].CopyFrom(copyFrom[x + i, y + j]);
                 }
             }
 
@@ -59,9 +59,10 @@ namespace TerraAngel.WorldEdits
             Height = height;
         }
 
-
-
-        
+        ~TileSection()
+        {
+            Tiles?.Dispose();
+        }
     }
 
     public class TileSectionRenderer

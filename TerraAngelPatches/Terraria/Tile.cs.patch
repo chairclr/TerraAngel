@@ -19,7 +19,7 @@
 -    public byte bTileHeader3;
 -    public short frameX;
 -    public short frameY;
-+    public TileData* Data;
++    public readonly TileData* Data;
 +    public ref ushort type => ref Data->type;
 +    public ref ushort wall => ref Data->wall;
 +    public ref short frameX => ref Data->frameX;
@@ -32,7 +32,7 @@
      public const int Type_Solid = 0;
      public const int Type_Halfbrick = 1;
      public const int Type_SlopeDownRight = 2;
-@@ -52,33 +_,35 @@
+@@ -52,48 +_,23 @@
  
      public Tile()
      {
@@ -45,13 +45,45 @@
 -        bTileHeader3 = 0;
 -        frameX = 0;
 -        frameY = 0;
+-    }
+-
+-    public Tile(Tile copy)
+-    {
+-        if (copy == null)
+-        {
+-            type = 0;
+-            wall = 0;
+-            liquid = 0;
+-            sTileHeader = 0;
+-            bTileHeader = 0;
+-            bTileHeader2 = 0;
+-            bTileHeader3 = 0;
+-            frameX = 0;
+-            frameY = 0;
+-        }
+-        else
+-        {
+-            type = copy.type;
+-            wall = copy.wall;
+-            liquid = copy.liquid;
+-            sTileHeader = copy.sTileHeader;
+-            bTileHeader = copy.bTileHeader;
+-            bTileHeader2 = copy.bTileHeader2;
+-            bTileHeader3 = copy.bTileHeader3;
+-            frameX = copy.frameX;
+-            frameY = copy.frameY;
+-        }
+-    }
+-
+-    public object Clone()
+-    {
+-        return MemberwiseClone();
 +        Data = null;
 +    }
 +    public Tile(TileData* data)
 +    {
 +        Data = data;
 +    }
-+
 +    public static implicit operator Tile(ImplicitHack? o)
 +    {
 +        return new Tile();
@@ -65,27 +97,7 @@
 +
      }
  
-     public Tile(Tile copy)
-     {
-         if (copy == null)
-         {
--            type = 0;
--            wall = 0;
--            liquid = 0;
--            sTileHeader = 0;
--            bTileHeader = 0;
--            bTileHeader2 = 0;
--            bTileHeader3 = 0;
--            frameX = 0;
--            frameY = 0;
-+            Data = null;
-         }
-         else
-         {
-+            Data = null;
-             type = copy.type;
-             wall = copy.wall;
-             liquid = copy.liquid;
+     public void ClearEverything()
 @@ -119,15 +_,7 @@
  
      public void CopyFrom(Tile from)

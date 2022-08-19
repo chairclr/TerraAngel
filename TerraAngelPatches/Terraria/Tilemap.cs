@@ -6,34 +6,35 @@ using TerraAngel;
 
 namespace Terraria
 {
-    public unsafe class Tilemap : IDisposable
+    public unsafe class NativeTileMap : IDisposable
     {
-        public readonly ushort Width;
-        public readonly ushort Height;
+        public readonly uint Width;
+        public readonly uint Height;
+        public readonly long HeapSize;
         public readonly TileData* TileHeap;
 
-        public Tilemap(int width, int height)
+        public NativeTileMap(int width, int height)
         {
-            Width = (ushort)width;
-            Height = (ushort)height;
+            Width = (uint)width;
+            Height = (uint)height;
+            HeapSize = Width * Height * sizeof(TileData);
 
-            TileHeap = (TileData*)Marshal.AllocHGlobal(Width * Height * sizeof(TileData));
+            TileHeap = (TileData*)Marshal.AllocHGlobal((IntPtr)HeapSize);
+
+            // tell the GC that we just allocated a bunch of unmanaged memory
+            GC.AddMemoryPressure(HeapSize);
         }
-
-        [ThreadStatic]
-        private static Tile swapTile = new Tile();
 
         public Tile this[int x, int y]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if (x < 0 || y < 0 || x >= Width || y >= Height)
-                {
-                    return new Tile();
+                if ((uint)x > Width || (uint)y > Height)
+                { 
+                    throw new IndexOutOfRangeException();
                 }
-                swapTile.Data = TileHeap + (x + (y * Width));
-                return swapTile;
+                return new Tile(TileHeap + (x + (y * Width)));
             }
             set
             {
@@ -44,6 +45,7 @@ namespace Terraria
 
         public void Dispose()
         {
+            GC.RemoveMemoryPressure(HeapSize);
             Marshal.FreeHGlobal((IntPtr)TileHeap);
         }
     }
