@@ -81,8 +81,19 @@ namespace TerraAngel.Hooks.Hooks
                     float kb = 0.0f;
                     Main.LocalPlayer.PickAmmo(item, ref projectileType, ref shootSpeed, ref cs, ref dm, ref kb, out _, true);
 
-                    toolTipLine[numLines] = $"[a:[Projectile: {Util.ProjectileFields[projectileType].Name}/{projectileType}]]";
-                    numLines++;
+                    if (Util.ProjectileFields.ContainsKey(projectileType))
+                    {
+                        toolTipLine[numLines] = $"[a:[Projectile: {Util.ProjectileFields[projectileType].Name}/{projectileType}]]";
+                        numLines++;
+                    }
+                    else
+                    {
+                        if (item.shoot > 0 && item.shoot < ProjectileID.Count && Util.ProjectileFields.ContainsKey(item.shoot))
+                        {
+                            toolTipLine[numLines] = $"[a:[Projectile: {Util.ProjectileFields[item.shoot].Name}/{item.shoot}]]";
+                            numLines++;
+                        }
+                    }
                 }
                 else
                 {

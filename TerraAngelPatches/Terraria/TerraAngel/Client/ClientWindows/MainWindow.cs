@@ -16,6 +16,7 @@ using TerraAngel.WorldEdits;
 using TerraAngel;
 using TerraAngel.Cheat.Cringes;
 using TerraAngel.Client.Config;
+using System.Diagnostics;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -126,32 +127,20 @@ namespace TerraAngel.Client.ClientWindows
                             {
                                 cringe.DrawUI(io);
                             }
-                            
+
                             if (ImGui.Button("Reveal Map"))
                             {
-                                int xlen = Main.Map.MaxWidth;
-                                int ylen = Main.Map.MaxHeight;
-                                Task.Run(async () =>
+                                Task.Run(() =>
                                 {
-                                    ClientLoader.Console.WriteLine("Revealing map");
-                                    lock (Main.tile)
+                                    int xlen = Main.Map.MaxWidth;
+                                    int ylen = Main.Map.MaxHeight;
+                                    for (int x = 0; x < xlen; x++)
                                     {
-                                        for (int x = 0; x < xlen; x++)
+                                        for (int y = 0; y < ylen; y++)
                                         {
-                                            for (int y = 0; y < ylen; y++)
-                                            {
-                                                if (Main.tile[x, y] != null && (x - 1 < 0 || Main.tile[x - 1, y] != null) && (x + 1 > xlen || Main.tile[x + 1, y] != null) && (y - 1 < 0 || Main.tile[x, y - 1] != null) && (y + 1 > ylen || Main.tile[x, y + 1] != null))
-                                                {
-                                                    Main.Map.Update(x, y, 255);
-                                                }
-                                            }
-                                            if (x % Main.maxTilesX == Main.maxTilesX / 2)
-                                            {
-                                                ClientLoader.Console.WriteLine("50% revealed");
-                                            }
+                                            Main.Map.Update(x, y, 255);
                                         }
                                     }
-                                    ClientLoader.Console.WriteLine("Map Revealed");
                                     Main.refreshMap = true;
                                 });
                             }

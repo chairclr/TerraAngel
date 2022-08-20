@@ -1,0 +1,17 @@
+--- src/Terraria/Terraria/Framing.cs
++++ src/TerraAngel/Terraria/Framing.cs
+@@ -410,10 +_,10 @@
+ 
+     public static Tile GetTileSafely(int i, int j)
+     {
+-        if (!WorldGen.InWorld(i, j))
+-        {
+-            return new Tile();
+-        }
++        //if (!WorldGen.InWorld(i, j))
++        //{
++        //    return new Tile();
++        //}
+ 
+         Tile tile = Main.tile[i, j];
+         if (tile == null)

@@ -166,11 +166,8 @@ namespace TerraAngel.Graphics
             ImGuiIOPtr io = ImGui.GetIO();
             io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
 
-            byte[] pixels = new byte[width * height * bytesPerPixel];
-            unsafe { Marshal.Copy(new IntPtr(pixelData), pixels, 0, pixels.Length); }
-
             Texture2D tex2d = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
-            tex2d.SetData(pixels);
+            tex2d.SetDataPointerEXT(0, null, (IntPtr)pixelData, width * height * bytesPerPixel);
 
             if (FontTextureId.HasValue) UnbindTexture(FontTextureId.Value);
 

@@ -32,7 +32,7 @@ namespace TerraAngel
         public static PluginUI PluginUI = new PluginUI();
         public static ResolutionUI ResolutionUI = new ResolutionUI();
         public static DiscordRpcClient? DiscordClient;
-        public static ImGuiNET.ImGuiIOPtr? ImGuiIO => (ImGuiNET.ImGui.GetIO().NativePtr == null ? null : ImGuiNET.ImGui.GetIO());
+        public static ImGuiIOPtr? ImGuiIO => (ImGui.GetIO().NativePtr == null ? null : ImGui.GetIO());
         public static bool WantCaptureMouse => ImGuiIO?.WantCaptureMouse ?? false;
         public static bool WantCaptureKeyboard => ImGuiIO?.WantCaptureKeyboard ?? false;
 
@@ -42,8 +42,8 @@ namespace TerraAngel
         public static string PluginsPath => Path.Combine(SavePath, "Plugins");
         public static string TerrariaPath => Path.GetDirectoryName(typeof(Main).Assembly.Location)!;
         public static string AssetPath => "Assets";
-        public static string NativeLibraryPath => "LibNew";
-        public static string Platform => Environment.Is64BitProcess ? "x64" : "x86";
+        public static string NewLibraryPath => "LibNew";
+        public static string ArchitectureString => Environment.Is64BitProcess ? "x64" : "x86";
 
         private static void LoadClientInteral()
         {
@@ -53,7 +53,7 @@ namespace TerraAngel
 
                 if (libraryName == "cimgui")
                 {
-                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/ImGui/{libraryName}", out handle))
+                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NewLibraryPath}/{ArchitectureString}/ImGui/{libraryName}", out handle))
                     {
                         throw new DllNotFoundException($"Could not load {libraryName}");
                     }
@@ -68,7 +68,7 @@ namespace TerraAngel
 
                 if (libraryName == "FAudio" || libraryName == "FNA3D" || libraryName == "libtheorafile" || libraryName == "SDL2")
                 {
-                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/FNA/{libraryName}", out handle))
+                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NewLibraryPath}/{ArchitectureString}/FNA/{libraryName}", out handle))
                     {
                         throw new DllNotFoundException($"Could not load {libraryName}");
                     }
@@ -83,7 +83,7 @@ namespace TerraAngel
 
                 if (libraryName == "steam_api" || libraryName == "steam_api64")
                 {
-                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/Steamworks/{libraryName}", out handle))
+                    if (!NativeLibrary.TryLoad($"{TerrariaPath}/{NewLibraryPath}/{ArchitectureString}/Steamworks/{libraryName}", out handle))
                     {
                         throw new DllNotFoundException($"Could not load {libraryName}");
                     }
@@ -143,7 +143,7 @@ namespace TerraAngel
                 {
                     if (sargs.Name.StartsWith("Steamworks.NET"))
                     {
-                        return Assembly.LoadFrom($"{TerrariaPath}/{NativeLibraryPath}/{Platform}/Steamworks/Steamworks.NET.dll");
+                        return Assembly.LoadFrom($"{TerrariaPath}/{NewLibraryPath}/{ArchitectureString}/Steamworks/Steamworks.NET.dll");
                     }
                     return null;
                 };

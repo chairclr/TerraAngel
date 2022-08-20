@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,152 @@
+@@ -3,40 +_,138 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -18,6 +18,7 @@
 +  </PropertyGroup>
 +  <PropertyGroup>
 +    <LargeAddressAware>true</LargeAddressAware>
++    <PlatformTarget>AnyCPU</PlatformTarget>
 +  </PropertyGroup>
 +
 +  <!-- Libraries part of Terraria -->
@@ -107,28 +108,13 @@
 +    <None Update="Assets\AndyBold.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="Assets\FallbackFont.ttf">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Assets\FallbackFont2.ttf">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
 +    <None Update="Assets\FiraCode.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="Assets\IconFont.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="Assets\MonoFont.ttf">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Assets\RussianGlyphFont.ttf">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
 +    <None Update="Assets\Symbola.ttf">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Assets\TerrariaFont.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="LibNew\x64\FNA\FAudio.dll">

@@ -30,7 +30,7 @@
              CheckCrackedBrickBreak();
          }
  
-+        if (!TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.NoClipCringe>().Enabled || i != Main.myPlayer)
++        if ((!TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && (TerraAngel.Cheat.CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)))
 +        {
          SlopeDownMovement();
          bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;

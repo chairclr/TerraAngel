@@ -16,3 +16,11 @@
      }
  
      public void SpawnWithHigherTime(int timeMult)
+@@ -91925,6 +_,7 @@
+ 
+     private void UpdateCollision()
+     {
++        if (!(TerraAngel.Cheat.CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)) return;
+         Collision_WalkDownSlopes();
+         bool lava = Collision_LavaCollision();
+         lava = Collision_WaterCollision(lava);
