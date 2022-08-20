@@ -92,7 +92,7 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Console Auto Scroll")]
             public bool ConsoleAutoScroll = true;
 
-            [UIConfigElement("Clear chat on world changes")]
+            [UIConfigElement("Clear chat on world changes")]  
             public bool ClearChatThroughWorldChanges = false;
 
             [UIConfigElement("Clear chat input on close")]
