@@ -32,7 +32,7 @@
      public const int Type_Solid = 0;
      public const int Type_Halfbrick = 1;
      public const int Type_SlopeDownRight = 2;
-@@ -52,48 +_,23 @@
+@@ -52,49 +_,31 @@
  
      public Tile()
      {
@@ -78,6 +78,7 @@
 -    public object Clone()
 -    {
 -        return MemberwiseClone();
+-    }
 +        Data = null;
 +    }
 +    public Tile(TileData* data)
@@ -95,9 +96,17 @@
 +    public class ImplicitHack
 +    {
 +
-     }
++    }
++
++    public int GetX() => (int)((Data - Main.tile.TileHeap) % Main.tile.Width);
++    public int GetX(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) % tileMap.Width);
++
++    public int GetY() => (int)((Data - Main.tile.TileHeap) / Main.tile.Width);
++    public int GetY(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) / tileMap.Width);
++
  
      public void ClearEverything()
+     {
 @@ -119,15 +_,7 @@
  
      public void CopyFrom(Tile from)

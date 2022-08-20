@@ -193,6 +193,11 @@ namespace TerraAngel.Client
                 plugin.Update();
             }
 
+            if (ClientConfig.Settings.ClearChatThroughWorldChanges && Main.gameMenu)
+            {
+                ClientLoader.ChatWindow?.ChatItems.Clear();
+            }
+
             base.AfterLayout();
         }
 

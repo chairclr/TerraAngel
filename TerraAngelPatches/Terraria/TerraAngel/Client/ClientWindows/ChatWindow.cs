@@ -46,7 +46,9 @@ namespace TerraAngel.Client.ClientWindows
 
         private object ChatLock = new object();
 
-        public List<ChatItem> ChatItems = new List<ChatItem>();
+        public List<ChatItem> ChatItems = new List<ChatItem>(100);
+        public List<string> ChatHistory = new List<string>(100);
+        private int historyPos = -1;
 
         public class ChatItem
         {
@@ -256,10 +258,38 @@ namespace TerraAngel.Client.ClientWindows
                 ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
                 unsafe
                 {
-                    ImGui.InputText("##consoleInput", ref ChatText, 512, ImGuiInputTextFlags.CallbackAlways,
+                    ImGui.InputText("##consoleInput", ref ChatText, 512, ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackHistory,
                         (x) =>
                         {
                             ImGuiInputTextCallbackDataPtr data = x;
+                            switch (data.EventFlag)
+                            {
+                                case ImGuiInputTextFlags.CallbackHistory:
+                                    {
+                                        int prev_history_pos = historyPos;
+                                        if (data.EventKey == ImGuiKey.UpArrow)
+                                        {
+                                            if (historyPos == -1)
+                                                historyPos = ChatHistory.Count - 1;
+                                            else if (historyPos > 0)
+                                                historyPos--;
+                                        }
+                                        else if (data.EventKey == ImGuiKey.DownArrow)
+                                        {
+                                            if (historyPos != -1)
+                                                if (++historyPos >= ChatHistory.Count)
+                                                    historyPos = -1;
+                                        }
+
+                                        if (prev_history_pos != historyPos)
+                                        {
+                                            string history_str = (historyPos >= 0) ? ChatHistory[historyPos] : "";
+                                            data.DeleteChars(0, data.BufTextLen);
+                                            data.InsertChars(0, history_str);
+                                        }
+                                    }
+                                    break;
+                            }
                             chatBoxFocus = true;
                             if (textToAppend.Length > 0)
                             {
@@ -303,6 +333,20 @@ namespace TerraAngel.Client.ClientWindows
                             {
                                 ChatManager.Commands.ProcessIncomingMessage(message, Main.myPlayer);
                             }
+
+                            for (int i = ChatHistory.Count - 1; i >= 0; i--)
+                            {
+                                if (ChatHistory[i] == ChatText)
+                                {
+                                    ChatHistory.RemoveAt(i);
+                                    break;
+                                }
+                            }
+
+                            if (ChatHistory.Count > ClientConfig.Settings.ChatHistoryLimit)
+                                ChatHistory.RemoveRange(0, ChatHistory.Count - ClientConfig.Settings.ChatHistoryLimit);
+
+                            ChatHistory.Add(ChatText);
                             ChatText = "";
                             ScrollToBottom = true;
                         }
@@ -348,6 +392,9 @@ namespace TerraAngel.Client.ClientWindows
             IsChatting = false;
             justClosed = true;
             SoundEngine.PlaySound(SoundID.MenuClose);
+
+            if (ClientConfig.Settings.ClearChatInputOnClose)
+                ChatText = "";
         }
 
         public void WriteLine(string message, Color color)

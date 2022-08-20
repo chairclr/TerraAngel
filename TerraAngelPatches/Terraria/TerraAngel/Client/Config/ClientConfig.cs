@@ -92,6 +92,12 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Console Auto Scroll")]
             public bool ConsoleAutoScroll = true;
 
+            [UIConfigElement("Clear chat on world changes")]
+            public bool ClearChatThroughWorldChanges = false;
+
+            [UIConfigElement("Clear chat input on close")]
+            public bool ClearChatInputOnClose = false;
+
             [UIConfigElement("Default Projectile Prediction")]
             public bool DefaultDrawActiveProjectilePrediction = true;
 
@@ -145,6 +151,7 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Save Console State")]
             public bool ConsoleSaveInReplMode = true;
             public int ConsoleHistoryLimit = 5000;
+            public int ChatHistoryLimit = 3000;
 
             public List<string>? ConsoleHistorySave = new List<string>();
 

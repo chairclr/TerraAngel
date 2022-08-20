@@ -161,6 +161,7 @@ namespace TerraAngel.WorldEdits
         }
 
         private int currentPlayerCreateTile;
+        private int currentPlayerCreateStyle;
         private int currentPlayerCreateWall;
         private bool needsResetPlayerPosition = false;
         
@@ -168,6 +169,7 @@ namespace TerraAngel.WorldEdits
         {
             lastTeleportPosition = Main.LocalPlayer.position;
             currentPlayerCreateTile = Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem].createTile;
+            currentPlayerCreateStyle = Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem].placeStyle;
             currentPlayerCreateWall = Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem].createWall;
             needsResetPlayerPosition = false;
 
@@ -210,10 +212,10 @@ namespace TerraAngel.WorldEdits
                     KillTile(tile, x, y);
                     break;
                 case TileEditActions.Place:
-                    PlaceTile(tile, currentPlayerCreateTile, x, y, false);
+                    PlaceTile(tile, currentPlayerCreateTile, currentPlayerCreateStyle, x, y, false);
                     break;
                 case TileEditActions.Replace:
-                    PlaceTile(tile, currentPlayerCreateTile, x, y, true);
+                    PlaceTile(tile, currentPlayerCreateTile, currentPlayerCreateStyle, x, y, true);
                     break;
             }
 
@@ -264,7 +266,7 @@ namespace TerraAngel.WorldEdits
                     WorldGen.SquareTileFrame(x, y);
             }
         }
-        public void PlaceTile(Tile tile, int otherType, int x, int y, bool replace)
+        public void PlaceTile(Tile tile, int otherType, int otherStyle, int x, int y, bool replace)
         {
             if (!tile.active() || (replace && tile.type != otherType))
             {
@@ -278,8 +280,9 @@ namespace TerraAngel.WorldEdits
                 }
                 tile.active(true);
                 tile.type = (ushort)otherType;
+                WorldGen.PlaceTile(x, y, tile.type, true, true, style: otherStyle);
 
-                NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.PlaceTile, number2: x, number3: y, number4: otherType);
+                NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.PlaceTile, number2: x, number3: y, number4: otherType, number5: otherStyle);
 
                 if (sqaureFrame)
                     WorldGen.SquareTileFrame(x, y);

@@ -30,7 +30,7 @@ namespace Terraria
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if ((uint)x > Width || (uint)y > Height)
+                if ((uint)x >= Width || (uint)y >= Height)
                 { 
                     throw new IndexOutOfRangeException();
                 }
@@ -41,6 +41,11 @@ namespace Terraria
                 // im not sure why this even is here? can we get rid of this?
                 *(TileHeap + (x + (y * Width))) = *value.Data;
             }
+        }
+
+        public void ResetHeap()
+        {
+            Unsafe.InitBlockUnaligned(TileHeap, 0, (uint)HeapSize);
         }
 
         public void Dispose()
