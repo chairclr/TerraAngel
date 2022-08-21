@@ -8,16 +8,22 @@ namespace TerraAngel
 {
     public class Sexer
     {
-        public const string SexerName = "DefaultSexer";
+        public static readonly string DefaultSexerName = "DefaultSexer";
 
-        public static Sexer CreateSexer()
+        public readonly string SexerName;
+
+        public static Sexer CreateDefaultSexer()
         {
             return new Sexer();
         }
 
         public Sexer()
         {
-
+            SexerName = DefaultSexerName;
+        }
+        public Sexer(string name)
+        {
+            SexerName = name;
         }
     }
 }

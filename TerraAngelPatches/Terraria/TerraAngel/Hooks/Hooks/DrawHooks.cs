@@ -86,7 +86,7 @@ namespace TerraAngel.Hooks.Hooks
                 }
                 else
                 {
-                    if (item.shoot > 0 && item.shoot < ProjectileID.Count && Util.ProjectileFields.ContainsKey(item.shoot))
+                    if (item.shoot > 0 && item.shoot < ProjectileID.Count && Util.ProjectileFields.ContainsKey(item.shoot) && !Util.AmmoFields.ContainsKey(item.ammo))
                     {
                         toolTipLine[numLines] = $"[a:[Projectile: {Util.ProjectileFields[item.shoot].Name}/{item.shoot}]]";
                         numLines++;

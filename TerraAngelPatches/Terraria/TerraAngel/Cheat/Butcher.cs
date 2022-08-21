@@ -12,10 +12,10 @@ namespace TerraAngel.Cheat
         {
             for (int i = 0; i < Main.npc.Length; i++)
             {
-                NPC nPC = Main.npc[i];
-                if (nPC.active && !nPC.friendly && nPC.type != NPCID.TargetDummy)
+                NPC npc = Main.npc[i];
+                if (npc.active && !npc.friendly && npc.type != NPCID.TargetDummy)
                 {
-                    ButcherNPC(nPC, damage, hitCount);
+                    ButcherNPC(npc, damage, hitCount);
                 }
             }
         }
@@ -23,10 +23,10 @@ namespace TerraAngel.Cheat
         {
             for (int i = 0; i < Main.npc.Length; i++)
             {
-                NPC nPC = Main.npc[i];
-                if (nPC.active && nPC.type != NPCID.TargetDummy)
+                NPC npc = Main.npc[i];
+                if (npc.active && npc.friendly && npc.type != NPCID.TargetDummy)
                 {
-                    ButcherNPC(nPC, damage, hitCount);
+                    ButcherNPC(npc, damage, hitCount);
                 }
             }
         }
