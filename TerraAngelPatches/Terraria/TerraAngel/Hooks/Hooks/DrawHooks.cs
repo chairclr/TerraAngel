@@ -145,11 +145,11 @@ namespace TerraAngel.Hooks.Hooks
 
         public static void DrawTilesHook(Action<Main, bool, bool, bool, int> orig, Main self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets, int waterStyleOverride)
         {
-            Vector2 escreen = Main.screenPosition;
-            Main.screenPosition = Main.screenPosition.Floor();
-            Main.screenLastPosition = Main.screenPosition;
+
+            float lsp = Main.screenPosition.Y;
+            Main.screenPosition.Y = fixedScreenY;
             orig(self, solidLayer, forRenderTargets, intoRenderTargets, waterStyleOverride);
-            Main.screenPosition = escreen;
+            Main.screenPosition.Y = lsp;
         }
 
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
@@ -180,6 +180,7 @@ namespace TerraAngel.Hooks.Hooks
             return orig(smart);
         }
         private static Vector2 freecamOriginPoint;
+        private static int fixedScreenY;
         public static int SpectateOverride = -1;
         public static void UpdateCameraHook(Action orig)
         {
@@ -236,6 +237,7 @@ namespace TerraAngel.Hooks.Hooks
             }
 
             Main.screenPosition.X = (int)Main.screenPosition.X;
+            fixedScreenY = (int)Main.screenPosition.Y;
         }
 
         private static FullBrightCringe fullBrightCache;

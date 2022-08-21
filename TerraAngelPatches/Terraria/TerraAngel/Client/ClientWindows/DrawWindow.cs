@@ -156,6 +156,36 @@ namespace TerraAngel.Client.ClientWindows
                                 }
                             }
                         }
+
+                        if (esp.ShowTileSections)
+                        {
+                            if (CringeManager.LoadedTileSections != null)
+                            {
+                                for (int xs = 0; xs < Main.maxSectionsX; xs++)
+                                {
+                                    for (int ys = 0; ys < Main.maxSectionsY; ys++)
+                                    {
+                                        Color col = new Color(1f, 1, 0f);
+                                        if (!CringeManager.LoadedTileSections[xs, ys])
+                                        {
+                                            col = new Color(1f, 0f, 0f);
+                                        }
+
+                                        Vector2 worldCoords = new Vector2(xs * 200 * 16, ys * 150 * 16);
+                                        Vector2 worldCoords2 = new Vector2((xs + 1) * 200 * 16, (ys + 1) * 150 * 16);
+
+                                        if (Main.mapFullscreen)
+                                        {
+                                            drawList.AddRect(Util.WorldToScreenFullscreenMap(worldCoords).ToNumerics(), Util.WorldToScreenFullscreenMap(worldCoords2).ToNumerics(), col.PackedValue);
+                                        }
+                                        else
+                                        {
+                                            drawList.AddRect(Util.WorldToScreen(worldCoords).ToNumerics(), Util.WorldToScreen(worldCoords2).ToNumerics(), col.PackedValue);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
@@ -208,36 +238,6 @@ namespace TerraAngel.Client.ClientWindows
                         else if (Input.InputSystem.MiddleMousePressed)
                         {
                             worldEdit.Edit(mousePos);
-                        }
-                    }
-                }
-
-                if (CringeManager.GetCringe<ShowTileSectionsCringe>().Enabled)
-                {
-                    if (CringeManager.LoadedTileSections != null)
-                    {
-                        for (int xs = 0; xs < Main.maxSectionsX; xs++)
-                        {
-                            for (int ys = 0; ys < Main.maxSectionsY; ys++)
-                            {
-                                Color col = new Color(1f, 1, 0f);
-                                if (!CringeManager.LoadedTileSections[xs, ys])
-                                {
-                                    col = new Color(1f, 0f, 0f);
-                                }
-
-                                Vector2 worldCoords = new Vector2(xs * 200 * 16, ys * 150 * 16);
-                                Vector2 worldCoords2 = new Vector2((xs + 1) * 200 * 16, (ys + 1) * 150 * 16);
-
-                                if (Main.mapFullscreen)
-                                {
-                                    drawList.AddRect(Util.WorldToScreenFullscreenMap(worldCoords).ToNumerics(), Util.WorldToScreenFullscreenMap(worldCoords2).ToNumerics(), col.PackedValue);
-                                }
-                                else
-                                {
-                                    drawList.AddRect(Util.WorldToScreen(worldCoords).ToNumerics(), Util.WorldToScreen(worldCoords2).ToNumerics(), col.PackedValue);
-                                }
-                            }
                         }
                     }
                 }

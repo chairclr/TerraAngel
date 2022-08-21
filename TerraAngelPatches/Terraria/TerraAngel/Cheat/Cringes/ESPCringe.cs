@@ -30,6 +30,7 @@ namespace TerraAngel.Cheat.Cringes
         public bool NPCBoxes = false;
         public bool ProjectileBoxes = false;
         public bool ItemBoxes = false;
+        public bool ShowTileSections = false;
 
         public override void DrawUI(ImGuiIOPtr io)
         {
@@ -41,6 +42,7 @@ namespace TerraAngel.Cheat.Cringes
                 ImGui.Checkbox("NPC hitboxes", ref NPCBoxes);
                 ImGui.Checkbox("Projectile hitboxes", ref ProjectileBoxes);
                 ImGui.Checkbox("Item hitboxes", ref ItemBoxes);
+                ImGui.Checkbox("Tile Sections", ref ShowTileSections);
                 if (ImGui.CollapsingHeader("ESP settings"))
                 {
                     ImGuiUtil.ColorEdit4("Local player box color", ref LocalPlayerColor);
@@ -59,7 +61,7 @@ namespace TerraAngel.Cheat.Cringes
         {
             base.Update();
 
-            if (Input.InputSystem.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.End))
+            if (Input.InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleDrawAnyESP))
                 DrawAnyESP = !DrawAnyESP;
         }
     }
