@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,21 @@
+@@ -1,18 +_,42 @@
 +using System.Runtime.CompilerServices;
 +using System.Runtime.InteropServices;
  using Microsoft.Xna.Framework;
@@ -29,13 +29,36 @@
 +    public ref byte bTileHeader => ref Data->bTileHeader;
 +    public ref byte bTileHeader2 => ref Data->bTileHeader2;
 +    public ref byte bTileHeader3 => ref Data->bTileHeader3;
++    public Tile()
++    {
++        Data = null;
++    }
++    public Tile(TileData* data)
++    {
++        Data = data;
++    }
++    public static implicit operator Tile(ImplicitHack? o)
++    {
++        return new Tile();
++    }
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public static bool operator ==(Tile rhs, object lhs) => lhs == null && rhs.Data == null;
++    [MethodImpl(MethodImplOptions.AggressiveInlining)]
++    public static bool operator !=(Tile rhs, object lhs) => !(lhs == null && rhs.Data == null);
++    public class ImplicitHack { }
++    public int GetX() => (int)((Data - Main.tile.TileHeap) % Main.tile.Width);
++    public int GetX(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) % tileMap.Width);
++    public int GetY() => (int)((Data - Main.tile.TileHeap) / Main.tile.Width);
++    public int GetY(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) / tileMap.Width);
      public const int Type_Solid = 0;
      public const int Type_Halfbrick = 1;
      public const int Type_SlopeDownRight = 2;
-@@ -52,49 +_,31 @@
+@@ -50,52 +_,6 @@
+         }
+     }
  
-     public Tile()
-     {
+-    public Tile()
+-    {
 -        type = 0;
 -        wall = 0;
 -        liquid = 0;
@@ -79,34 +102,10 @@
 -    {
 -        return MemberwiseClone();
 -    }
-+        Data = null;
-+    }
-+    public Tile(TileData* data)
-+    {
-+        Data = data;
-+    }
-+    public static implicit operator Tile(ImplicitHack? o)
-+    {
-+        return new Tile();
-+    }
-+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-+    public static bool operator ==(Tile rhs, object lhs) => lhs == null && rhs.Data == null;
-+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-+    public static bool operator !=(Tile rhs, object lhs) => !(lhs == null && rhs.Data == null);
-+    public class ImplicitHack
-+    {
-+
-+    }
-+
-+    public int GetX() => (int)((Data - Main.tile.TileHeap) % Main.tile.Width);
-+    public int GetX(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) % tileMap.Width);
-+
-+    public int GetY() => (int)((Data - Main.tile.TileHeap) / Main.tile.Width);
-+    public int GetY(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) / tileMap.Width);
-+
- 
+-
      public void ClearEverything()
      {
+         type = 0;
 @@ -119,15 +_,7 @@
  
      public void CopyFrom(Tile from)
@@ -124,20 +123,3 @@
      }
  
      public bool isTheSameAs(Tile compTile)
-@@ -731,4 +_,16 @@
-     {
-         return "Tile Type:" + type + " Active:" + active() + " Wall:" + wall + " Slope:" + slope() + " fX:" + frameX + " fY:" + frameY;
-     }
-+}
-+public struct TileData
-+{
-+    public ushort type;
-+    public ushort wall;
-+    public short frameX;
-+    public short frameY;
-+    public short sTileHeader;
-+    public byte liquid;
-+    public byte bTileHeader;
-+    public byte bTileHeader2;
-+    public byte bTileHeader3;
- }

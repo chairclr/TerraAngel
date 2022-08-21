@@ -26,7 +26,7 @@
          {
              return;
          }
-@@ -26485,12 +_,14 @@
+@@ -26485,6 +_,8 @@
              CheckCrackedBrickBreak();
          }
  
@@ -35,15 +35,6 @@
          SlopeDownMovement();
          bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
          if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
--        {
--            Collision.StepDown(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, waterWalk || waterWalk2);
--        }
-+            {
-+                Collision.StepDown(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, waterWalk || waterWalk2);
-+            }
- 
-         if (gravDir == -1f)
-         {
 @@ -26695,6 +_,7 @@
  
          PressurePlateHelper.UpdatePlayerPosition(this);

@@ -1,6 +1,17 @@
 Terraria\GameContent\ChromaHotkeyPainter.cs
 Terraria\Initializers\ChromaInitializer.cs
 Terraria\Net\WeGameAddress.cs
+ReLogic\Localization\IME\WindowsIme.cs
+ReLogic\OS\Linux\Clipboard.cs
+ReLogic\OS\Linux\WindowService.cs
+ReLogic\OS\OSX\Clipboard.cs
+ReLogic\OS\OSX\WindowService.cs
+ReLogic\OS\Windows\Clipboard.cs
+ReLogic\OS\Windows\NativeMethods.cs
+ReLogic\OS\Windows\STATaskInvoker.cs
+ReLogic\OS\Windows\WindowService.cs
+ReLogic\OS\Windows\WindowsMessage.cs
+ReLogic\OS\Windows\WindowsMessageHook.cs
 ReLogic\Peripherals\RGB\ARgbGameValueTracker.cs
 ReLogic\Peripherals\RGB\BlendMode.cs
 ReLogic\Peripherals\RGB\ChromaCondition.cs
@@ -107,6 +118,8 @@ Terraria\Social\WeGame\WeGameFriendListInfo.cs
 Terraria\Social\WeGame\WeGameHelper.cs
 Terraria\Social\WeGame\WeGameP2PReader.cs
 Terraria\Social\WeGame\WeGameP2PWriter.cs
+ReLogic\Localization\IME\Windows\Imm.cs
+ReLogic\Localization\IME\Windows\NativeMethods.cs
 ReLogic\Peripherals\RGB\Corsair\CorsairAccessMode.cs
 ReLogic\Peripherals\RGB\Corsair\CorsairDeviceCaps.cs
 ReLogic\Peripherals\RGB\Corsair\CorsairDeviceGroup.cs

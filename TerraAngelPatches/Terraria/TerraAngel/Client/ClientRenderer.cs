@@ -171,8 +171,6 @@ namespace TerraAngel.Client
                 ClientConfig.WriteToFile();
             }
 
-            RealFNAIme.blocking = ImGui.GetIO().WantCaptureKeyboard || ImGui.GetIO().WantTextInput;
-
             if (Netplay.Connection.State <= 3 && CringeManager.LoadedTileSections != null)
             {
                 CringeManager.LoadedTileSections = null;

@@ -57,35 +57,16 @@
      public static int LogicCheckScreenWidth = 1920;
      public static int LogicCheckScreenHeight = 1200;
      private static WorldPreparationState _worldPreparationState = WorldPreparationState.AwaitingData;
-@@ -985,9 +_,7 @@
+@@ -985,9 +_,6 @@
      private static float backSpaceRate;
      public static string motd = "";
      public static bool toggleFullscreen;
 -    public static int numDisplayModes;
-+    //public static int numDisplayModes;
 -    public static int[] displayWidth = new int[99];
 -    public static int[] displayHeight = new int[99];
      public static bool gameMenu = true;
      public static bool menuBGChangedDay = false;
      public static bool menuBGChangedNight = false;
-@@ -1032,7 +_,7 @@
-     public static float exitScale = 0.8f;
-     public static bool mouseReforge;
-     public static float reforgeScale = 0.8f;
--    public static Player clientPlayer = new Player();
-+    public static Player clientPlayer = new Player();//{ get => Main.LocalPlayer; set { } }
-     public static string getIP = defaultIP;
-     public static string getPort = Convert.ToString(Netplay.ListenPort);
-     public static bool menuMultiplayer;
-@@ -1168,7 +_,7 @@
-     private float logoScale = 1f;
-     private float logoScaleDirection = 1f;
-     private float logoScaleSpeed = 1f;
--    private static int maxMenuItems = 16;
-+    private static int maxMenuItems = 17;
-     private float[] menuItemScale = new float[maxMenuItems];
-     private int focusMenu = -1;
-     private int selectedMenu = -1;
 @@ -2425,7 +_,6 @@
          Configuration.Clear();
          Configuration.Put("ResetDefaultUIScale", false);
@@ -139,19 +120,11 @@
                  if (num >= 91 && binaryReader.ReadBoolean())
                  {
 -                    ((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
-+                    //((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
++                    SDL2.SDL.SDL_MaximizeWindow(base.Window.Handle);
                  }
  
                  if (num >= 4)
-@@ -4486,6 +_,7 @@
-         }
-     }
- 
-+    static bool didResize = false;
-     public Main()
-     {
-         instance = this;
-@@ -4494,6 +_,16 @@
+@@ -4494,6 +_,15 @@
          Configuration.Load();
          graphics = new GraphicsDeviceManager(this as Game);
          base.Content.RootDirectory = "Content";
@@ -162,7 +135,6 @@
 +            {
 +                SDL2.SDL.SDL_GetWindowSize(Window.Handle, out int w, out int h);
 +                SetResolution(w, h);
-+                didResize = true;
 +            }
 +        };
      }
@@ -247,21 +219,12 @@
          _gameContentLoadProcess = LoadContent_Deferred();
      }
  
-@@ -9838,7 +_,7 @@
-         {
-             newMusic = (dayTime ? 42 : 15);
-         }
--        else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
-+        else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] != null && tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
-         {
-             newMusic = 26;
-         }
 @@ -9867,7 +_,7 @@
              {
                  newMusic = 10;
              }
 -            else
-+            else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] != null && tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
++            else if (tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)].wall == 87)
              {
                  newMusic = 8;
              }
@@ -283,7 +246,7 @@
              if (superFast)
              {
                  base.IsFixedTimeStep = false;
-@@ -14222,14 +_,6 @@
+@@ -14222,10 +_,7 @@
  
              UpdateOldNPCShop();
              hasFocus = base.IsActive;
@@ -291,13 +254,10 @@
 -            bool num2 = form.WindowState == FormWindowState.Minimized;
 -            bool flag = Form.ActiveForm == form;
 -            hasFocus |= flag;
--            if (num2)
--            {
--                hasFocus = false;
--            }
- 
-             if (!hasFocus && netMode == 0)
++            bool num2 = (SDL2.SDL.SDL_GetWindowFlags(base.Window.Handle) & (uint)SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_MINIMIZED) == 1;
+             if (num2)
              {
+                 hasFocus = false;
 @@ -14391,10 +_,8 @@
          {
              DoUpdateInWorld(_worldUpdateTimeTester);
@@ -326,16 +286,15 @@
                          toolTipLine[numLines] = Lang.tip[13].Value;
                      }
 -
-+                    toolTipLine[numLines] += $" [{item.useAnimation}/{(item.useAnimation / 60f):F2}s{(item.useAnimation != item.useTime ? $" {item.useTime}/{(item.useTime / 60f):F2}s" : "")}]";
++                    if (TerraAngel.Client.Config.ClientConfig.Settings.ShowDetailedItemTooltip) toolTipLine[numLines] += $" [{item.useAnimation}/{(item.useAnimation / 60f):F2}s{(item.useAnimation != item.useTime ? $" {item.useTime}/{(item.useTime / 60f):F2}s" : "")}]";
                      numLines++;
                  }
  
-@@ -17858,6 +_,8 @@
+@@ -17858,6 +_,7 @@
                      toolTipLine[numLines] = Lang.tip[22].Value;
                  }
  
-+                toolTipLine[numLines] += $" [{num6:F2}]";
-+
++                if (TerraAngel.Client.Config.ClientConfig.Settings.ShowDetailedItemTooltip) toolTipLine[numLines] += $" [{num6:F2}]";
                  numLines++;
              }
  
@@ -614,7 +573,7 @@
  
      private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)
      {
-+        if (!WorldGen.InWorld((int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)) || tile[(int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)] == null)
++        if (!WorldGen.InWorld((int)(player[myPlayer].Center.X / 16f), (int)(player[myPlayer].Center.Y / 16f)))
 +        {
 +            return;
 +        }

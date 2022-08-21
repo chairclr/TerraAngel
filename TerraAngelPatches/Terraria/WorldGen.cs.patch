@@ -45,3 +45,11 @@
          }
  
          for (int n = 0; n < Main.countsAsHostForGameplay.Length; n++)
+@@ -75066,6 +_,7 @@
+         {
+             for (int j = 0; j < height; j++)
+             {
++                if (!WorldGen.InWorld(x + i, y + j)) continue;
+                 Tile tile = Main.tile[x + i, y + j];
+                 if (tile == null)
+                 {

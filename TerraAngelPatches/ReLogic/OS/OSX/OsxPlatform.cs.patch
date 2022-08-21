@@ -1,19 +1,20 @@
 --- src/Terraria/ReLogic/OS/OSX/OsxPlatform.cs
 +++ src/TerraAngel/ReLogic/OS/OSX/OsxPlatform.cs
-@@ -6,7 +_,7 @@
+@@ -6,14 +_,14 @@
  {
      public OsxPlatform() : base(PlatformType.OSX)
      {
 -        RegisterService((IClipboard)new Clipboard());
-+            RegisterService((IClipboard)new FNAClipboard());
++        RegisterService((IClipboard)new FNAClipboard());
          RegisterService((IPathService)new PathService());
-         RegisterService((IWindowService)new WindowService());
+-        RegisterService((IWindowService)new WindowService());
++        RegisterService((IWindowService)new ReLogic.OS.FNA.FNAWindow());
          RegisterService((IImeService)new UnsupportedPlatformIme());
-@@ -14,6 +_,6 @@
+     }
  
      public override void InitializeClientServices(IntPtr windowHandle)
      {
 -        RegisterService((IImeService)new FnaIme());
-+            RegisterService((IImeService)new TerraAngel.Input.RealFNAIme());
++        RegisterService((IImeService)new ReLogic.OS.FNA.FNAInputIme());
      }
  }
