@@ -290,6 +290,51 @@
          }
      }
  
+@@ -2302,9 +_,9 @@
+         DecompressTileBlock_Inner(binaryReader, xStart, yStart, width, height);
+     }
+ 
+-    public static void DecompressTileBlock_Inner(BinaryReader reader, int xStart, int yStart, int width, int height)
++    public unsafe static void DecompressTileBlock_Inner(BinaryReader reader, int xStart, int yStart, int width, int height)
+     {
+-        Tile tile = null;
++        Tile tile = new Tile();
+         int num = 0;
+         for (int i = yStart; i < yStart + height; i++)
+         {
+@@ -2313,30 +_,14 @@
+                 if (num != 0)
+                 {
+                     num--;
+-                    if (Main.tile[j, i] == null)
+-                    {
+-                        Main.tile[j, i] = new Tile(tile);
+-                    }
+-                    else
+-                    {
+-                        Main.tile[j, i].CopyFrom(tile);
++                    Main.tile[j, i].CopyFrom(tile);
+-                    }
+-
+                     continue;
+                 }
+ 
+                 byte b;
+                 byte b2 = (b = 0);
+                 tile = Main.tile[j, i];
+-                if (tile == null)
+-                {
+-                    tile = new Tile();
+-                    Main.tile[j, i] = tile;
+-                }
+-                else
+-                {
+-                    tile.ClearEverything();
++                tile.ClearEverything();
+-                }
+ 
+                 byte b3 = reader.ReadByte();
+                 if ((b3 & 1) == 1)
 @@ -2527,23 +_,33 @@
      {
          lock (buffer[i])

@@ -411,7 +411,19 @@ namespace TerraAngel.Graphics
                         if (string.IsNullOrEmpty(words[j]))
                             continue;
 
+
                         float wordWidth = ImGui.CalcTextSize(words[j]).X;
+
+                        if (words[j] == "\n" && wordWidth == 0)
+                        {
+                            spaceLeft = wrapWidth - wordWidth;
+
+                            offset.Y += font.FontSize;
+                            offset.X = 0;
+                            offset.X = wordWidth;
+                            textSize.X = MathF.Max(textSize.X, offset.X);
+                            textSize.Y = MathF.Max(textSize.Y, offset.Y);
+                        }
 
                         if (wordWidth == 0)
                             continue;
@@ -525,6 +537,17 @@ namespace TerraAngel.Graphics
                         continue;
 
                     NVector2 wordSize = ImGui.CalcTextSize(words[j]);
+
+                    if (words[i] == "\n" && wordSize.X == 0)
+                    {
+                        spaceLeft = wrapWidth - wordSize.X;
+
+                        offset.Y += font.FontSize;
+                        offset.X = 0;
+                        offset.X = wordSize.X;
+                        textSize.X = MathF.Max(textSize.X, offset.X);
+                        textSize.Y = MathF.Max(textSize.Y, offset.Y);
+                    }
 
                     if (wordSize.X == 0)
                         continue;
@@ -645,6 +668,17 @@ namespace TerraAngel.Graphics
                             continue;
 
                         NVector2 wordSize = ImGui.CalcTextSize(words[j]);
+
+                        if (words[j] == "\n" && wordSize.X == 0)
+                        {
+                            spaceLeft = wrapWidth - wordSize.X;
+
+                            offset.Y += font.FontSize;
+                            offset.X = 0;
+                            offset.X = wordSize.X;
+                            textSize.X = MathF.Max(textSize.X, offset.X);
+                            textSize.Y = MathF.Max(textSize.Y, offset.Y);
+                        }
 
                         if (wordSize.X == 0)
                             continue;

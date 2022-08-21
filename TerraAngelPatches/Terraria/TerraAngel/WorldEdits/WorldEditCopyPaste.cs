@@ -146,10 +146,10 @@ namespace TerraAngel.WorldEdits
                             if (!WorldGen.InWorld(ox + x, oy + y))
                                 continue;
 
-                            Tile? tile = Main.tile[ox + x, oy + y];
-                            Tile? copiedTile = CopiedSection.Tiles?[x, y];
+                            Tile tile = Main.tile[ox + x, oy + y];
+                            Tile copiedTile = CopiedSection.Tiles[x, y];
 
-                            if (tile is null || copiedTile is null)
+                            if (tile == null || copiedTile == null)
                                 continue;
 
                             if (!(Main.tileSolid[copiedTile.type] &&
@@ -176,10 +176,10 @@ namespace TerraAngel.WorldEdits
                             if (!WorldGen.InWorld(ox + x, oy + y))
                                 continue;
 
-                            Tile? tile = Main.tile[ox + x, oy + y];
-                            Tile? copiedTile = CopiedSection.Tiles?[x, y];
+                            Tile tile = Main.tile[ox + x, oy + y];
+                            Tile copiedTile = CopiedSection.Tiles[x, y];
 
-                            if (tile is null || copiedTile is null)
+                            if (tile == null || copiedTile == null)
                                 continue;
 
                             if ((Main.tileSolid[copiedTile.type] &&
@@ -230,14 +230,14 @@ namespace TerraAngel.WorldEdits
             float width = endTile.X - startTile.X;
             float height = endTile.Y - startTile.Y;
 
-            for (int x = ((int)startTile.X); x < ((int)endTile.X); x++)
-            {
-                for (int y = ((int)startTile.Y); y < ((int)endTile.Y); y++)
-                {
-                    WorldGen.SquareTileFrame(x, y);
-                    WorldGen.SquareWallFrame(x, y);
-                }
-            }
+            //for (int x = ((int)startTile.X); x < ((int)endTile.X); x++)
+            //{
+            //    for (int y = ((int)startTile.Y); y < ((int)endTile.Y); y++)
+            //    {
+            //        WorldGen.SquareTileFrame(x, y);
+            //        WorldGen.SquareWallFrame(x, y);
+            //    }
+            //}
 
             CopiedSection = new TileSection(((int)startTile.X), ((int)startTile.Y), ((int)width), ((int)height));
         }

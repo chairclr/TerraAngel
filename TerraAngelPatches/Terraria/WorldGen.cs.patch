@@ -1,0 +1,47 @@
+--- src/Terraria/Terraria/WorldGen.cs
++++ src/TerraAngel/Terraria/WorldGen.cs
+@@ -3346,15 +_,9 @@
+         LiquidBuffer.numLiquidBuffer = 0;
+         if (Main.netMode == 1 || lastMaxTilesX > Main.maxTilesX || lastMaxTilesY > Main.maxTilesY)
+         {
+-            for (int j = 0; j < lastMaxTilesX; j++)
+-            {
+-                float num = (float)j / (float)lastMaxTilesX;
+-                Main.statusText = Lang.gen[46].Value + " " + (int)(num * 100f + 1f) + "%";
+-                for (int k = 0; k < lastMaxTilesY; k++)
+-                {
+-                    Main.tile[j, k] = null;
+-                }
+-            }
++            Main.statusText = Lang.gen[46].Value + "0%";
++            Main.tile.ResetHeap();
++            Main.statusText = Lang.gen[46].Value + "100%";
+         }
+ 
+         lastMaxTilesX = Main.maxTilesX;
+@@ -3366,22 +_,9 @@
+ 
+         if (Main.netMode != 1)
+         {
+-            for (int l = 0; l < Main.maxTilesX; l++)
+-            {
+-                float num2 = (float)l / (float)Main.maxTilesX;
+-                Main.statusText = Lang.gen[47].Value + " " + (int)(num2 * 100f + 1f) + "%";
+-                for (int m = 0; m < Main.maxTilesY; m++)
+-                {
+-                    if (Main.tile[l, m] == null)
+-                    {
+-                        Main.tile[l, m] = new Tile();
+-                    }
+-                    else
+-                    {
+-                        Main.tile[l, m].ClearEverything();
+-                    }
+-                }
+-            }
++            Main.statusText = Lang.gen[46].Value + "0%";
++            Main.tile.ResetHeap();
++            Main.statusText = Lang.gen[46].Value + "100%";
+         }
+ 
+         for (int n = 0; n < Main.countsAsHostForGameplay.Length; n++)

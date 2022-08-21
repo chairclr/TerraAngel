@@ -5,7 +5,7 @@
      private Color[] _waveMask = new Color[1];
      private float _frameState;
 -    private static Tile[,] Tiles => Main.tile;
-+    private static Tilemap Tiles => Main.tile;
++    private static NativeTileMap Tiles => Main.tile;
      public event Action<Color[], Rectangle> WaveFilters;
      public static void LoadContent()
      {

@@ -69,6 +69,7 @@ Other useful features
 </h3>
 
 - Complete re-write of the chat UI
+![Terraria_1660961693](https://user-images.githubusercontent.com/87276335/185725363-591a1d7b-a264-4a46-bfb2-96578c8ad6a3.gif)
 - Anti-Hurt/Godmode
 - Fullbright
 - Noclip
@@ -82,6 +83,7 @@ Other useful features
     - Basic tile manipulation
     - Basic liquid manipluation
 - Switch from the decades old Microsoft XNA framework to use FNA (significant performance boost)
+- Re-write of how the game stores tiles (game uses 400~500mb less memory)
 - Viewing other players inventories
 - Many bugfixes for vanilla
 

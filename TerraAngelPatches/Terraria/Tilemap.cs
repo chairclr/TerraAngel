@@ -1,42 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Threading;
+using TerraAngel;
 
 namespace Terraria
 {
-    public class Tilemap
+    public unsafe class NativeTileMap : IDisposable
     {
-        public readonly ushort Width;
-        public readonly ushort Height;
+        public readonly uint Width;
+        public readonly uint Height;
+        public readonly long HeapSize;
+        public readonly TileData* TileHeap;
 
-        public readonly Tile?[,] tiles;
-
-        public Tilemap(int width, int height)
+        public NativeTileMap(int width, int height)
         {
-            Width = (ushort)width;
-            Height = (ushort)height;
+            Width = (uint)width;
+            Height = (uint)height;
+            HeapSize = Width * Height * sizeof(TileData);
 
-            tiles = new Tile[Width, Height];
+            TileHeap = (TileData*)Marshal.AllocHGlobal((IntPtr)HeapSize);
+
+            // tell the GC that we just allocated a bunch of unmanaged memory
+            GC.AddMemoryPressure(HeapSize);
         }
 
-        public Tile? this[int x, int y]
+        public Tile this[int x, int y]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if (x < 0 || y < 0 || x >= Width || y >= Height)
-                {
-                    return null;
+                if ((uint)x >= Width || (uint)y >= Height)
+                { 
+                    throw new IndexOutOfRangeException();
                 }
-                return tiles[x, y];
+                return new Tile(TileHeap + (x + (y * Width)));
             }
             set
             {
-                tiles[x, y] = value;
+                // im not sure why this even is here? can we get rid of this?
+                *(TileHeap + (x + (y * Width))) = *value.Data;
             }
+        }
+
+        public void ResetHeap()
+        {
+            Unsafe.InitBlockUnaligned(TileHeap, 0, (uint)HeapSize);
+        }
+
+        public void Dispose()
+        {
+            GC.RemoveMemoryPressure(HeapSize);
+            Marshal.FreeHGlobal((IntPtr)TileHeap);
         }
     }
 }

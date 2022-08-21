@@ -32,7 +32,7 @@ namespace TerraAngel.Client
         {
             TerrariaFonts.Add(size, LoadFont(TerrariaFontName, size, 0x0020, 0x007F));
 
-            LoadFont(FallbackFontName, size, true, Vector2.Zero, Vector2.Zero, 0f, float.MaxValue, 2f, 0x0400, 0x04FF, 0x2320, 0x2330, 0x2000, 0x2020);
+            LoadFont(FallbackFontName, size, true, Vector2.Zero, Vector2.Zero, 0f, float.MaxValue, 2f, 0x0080, 0x00FF, 0x0400, 0x04FF, 0x2320, 0x2330, 0x2000, 0x2020);
 
             if (!withoutSymbols)
             {
@@ -41,7 +41,7 @@ namespace TerraAngel.Client
         }
         public static void LoadMonospaceFont(float size, bool withoutSymbols = false)
         {
-            MonospaceFonts.Add(size, LoadFont(MonoFontName, size, 0x0020, 0x007F, 0x0400, 0x04FF, 0x2020, 0x22FF));
+            MonospaceFonts.Add(size, LoadFont(MonoFontName, size, 0x0020, 0x00FF, 0x0400, 0x04FF, 0x2020, 0x22FF));
             LoadFont(FallbackFontName, size, true, Vector2.Zero, Vector2.Zero, 0f, float.MaxValue, 2f, 0x2320, 0x2330, 0x2000, 0x2020);
 
             if (!withoutSymbols)
