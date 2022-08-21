@@ -180,6 +180,7 @@ namespace TerraAngel.Hooks.Hooks
             return orig(smart);
         }
         private static Vector2 freecamOriginPoint;
+        public static int SpectateOverride = -1;
         public static void UpdateCameraHook(Action orig)
         {
             FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
@@ -210,7 +211,29 @@ namespace TerraAngel.Hooks.Hooks
                     return;
                 }
             }
+
+            if (Main.gameMenu || Main.LocalPlayer.controlUp ||
+                Main.LocalPlayer.controlLeft ||
+                Main.LocalPlayer.controlDown ||
+                Main.LocalPlayer.controlRight ||
+                Main.LocalPlayer.controlJump ||
+                Main.LocalPlayer.controlUseTile ||
+                Main.LocalPlayer.controlThrow ||
+                Main.LocalPlayer.controlHook ||
+                Main.LocalPlayer.controlMount)
+                SpectateOverride = -1;
+
+            int temp = Main.myPlayer;
+            if (!Main.gameMenu)
+            {
+                if (SpectateOverride > -1)
+                    Main.myPlayer = SpectateOverride;
+            }
             orig();
+            if (!Main.gameMenu)
+            {
+                Main.myPlayer = temp;
+            }
 
             Main.screenPosition.X = (int)Main.screenPosition.X;
         }

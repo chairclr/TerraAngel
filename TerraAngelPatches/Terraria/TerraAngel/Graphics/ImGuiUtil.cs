@@ -81,11 +81,17 @@ namespace TerraAngel.Graphics
         private static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
         public static bool ItemButton(int id, string uid, out Vector2 min, out Vector2 max, out bool visible, bool showTooltip = true, bool clickToCopy = false, int count = 0, bool isSelected = false)
         {
-            return ItemButton(id, uid, new Vector2(32, 32), out min, out max, out visible, showTooltip, clickToCopy, count, isSelected);
+            return ItemButton(ContentSamples.ItemsByType[id], uid, new Vector2(32, 32), out min, out max, out visible, showTooltip, clickToCopy, count, isSelected);
         }
         public static bool ItemButton(int id, string uid, Vector2 size, out Vector2 buttonMin, out Vector2 buttonMax, out bool visible, bool showTooltip = true, bool clickToCopy = false, int count = 0, bool isSelected = false)
         {
-            System.Numerics.Vector2 drawSize = size.ToNumerics();
+            return ItemButton(ContentSamples.ItemsByType[id], uid, size, out buttonMin, out buttonMax, out visible, showTooltip, clickToCopy, count, isSelected);
+        }
+        public static bool ItemButton(Item item, string uid, Vector2 size, out Vector2 buttonMin, out Vector2 buttonMax, out bool visible, bool showTooltip = true, bool clickToCopy = false, int count = 0, bool isSelected = false)
+        {
+            int id = item.type;
+            
+            NVector2 drawSize = size.ToNumerics();
             ImGuiStylePtr style = ImGui.GetStyle();
             ImGui.PushID(uid);
             bool clicked = false;
@@ -109,8 +115,8 @@ namespace TerraAngel.Graphics
                     }
                 }
             }
-            System.Numerics.Vector2 min = ImGui.GetItemRectMin();
-            System.Numerics.Vector2 max = ImGui.GetItemRectMax();
+            NVector2 min = ImGui.GetItemRectMin();
+            NVector2 max = ImGui.GetItemRectMax();
             ImGui.PopID();
 
             visible = false;
@@ -147,8 +153,8 @@ namespace TerraAngel.Graphics
                             {
                                 num = ((width <= height) ? (drawSize.X / (float)height) : (drawSize.Y / (float)width));
                             }
-                            System.Numerics.Vector2 scaledEnd = (new System.Numerics.Vector2(width, height) * num);
-                            System.Numerics.Vector2 start = (min + max) / 2 - scaledEnd / 2;
+                            NVector2 scaledEnd = (new NVector2(width, height) * num);
+                            NVector2 start = (min + max) / 2 - scaledEnd / 2;
                             drawList.AddImage(ItemImages[id], start, start + scaledEnd);
                         }
                         else
@@ -162,27 +168,27 @@ namespace TerraAngel.Graphics
                             {
                                 num = ((width <= height) ? (drawSize.X / (float)height) : (drawSize.Y / (float)width));
                             }
-                            System.Numerics.Vector2 scaledEnd = (new System.Numerics.Vector2(width, height) * num);
-                            System.Numerics.Vector2 start = (min + max) / 2 - scaledEnd / 2;
+                            NVector2 scaledEnd = (new NVector2(width, height) * num);
+                            NVector2 start = (min + max) / 2 - scaledEnd / 2;
 
-                            System.Numerics.Vector2 rectStart = new System.Numerics.Vector2(animationRect.X, animationRect.Y);
-                            System.Numerics.Vector2 rectEnd = new System.Numerics.Vector2(animationRect.X + width, animationRect.Y + height);
+                            NVector2 rectStart = new NVector2(animationRect.X, animationRect.Y);
+                            NVector2 rectEnd = new NVector2(animationRect.X + width, animationRect.Y + height);
 
-                            System.Numerics.Vector2 uvMin = rectStart / new System.Numerics.Vector2(value.Width, value.Height);
-                            System.Numerics.Vector2 uvMax = rectEnd / new System.Numerics.Vector2(value.Width, value.Height);
+                            NVector2 uvMin = rectStart / new NVector2(value.Width, value.Height);
+                            NVector2 uvMax = rectEnd / new NVector2(value.Width, value.Height);
                             drawList.AddImage(ItemImages[id], start, start + scaledEnd, uvMin, uvMax);
 
                         }
                     }
 
-                    if (showTooltip)
+                    if (showTooltip && id != ItemID.None)
                     {
                         if (ImGui.IsMouseHoveringRect(min, max))
                         {
                             // relogic code?
                             try
                             {
-                                ImGuiItemTooltip(ContentSamples.ItemsByType[id]);
+                                ImGuiItemTooltip(item);
                             }
                             catch
                             {
@@ -194,7 +200,7 @@ namespace TerraAngel.Graphics
                     {
                         string s = count.ToString();
                         ImFontPtr font = Client.ClientAssets.GetTerrariaFont(18f);
-                        System.Numerics.Vector2 pos = min + (max - min) / 2;
+                        NVector2 pos = min + (max - min) / 2;
                         ImGui.PushFont(font);
                         pos.X -= ImGui.CalcTextSize(s).X / 2;
 

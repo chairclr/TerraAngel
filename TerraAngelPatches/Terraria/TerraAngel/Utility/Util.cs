@@ -60,6 +60,7 @@ namespace TerraAngel.Utility
 
         public static Vector2 ScreenSize => new Vector2((float)Main.screenWidth, (float)Main.screenHeight);
 
+        
         public static IEnumerable<FieldInfo> GetPublicValueTypeFields<T>()
         {
             return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType);
@@ -366,6 +367,13 @@ namespace TerraAngel.Utility
             string s = "";
             e.ForEach((x) => s += predicate(x));
             return s;
+        }
+    }
+    public static class StringExtensions
+    {
+        public static string Truncate(this string value, int maxChars)
+        {
+            return value.Length <= maxChars ? value : value.Substring(0, maxChars) + "...";
         }
     }
     public class ValueStore : DynamicObject

@@ -146,6 +146,9 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("World Edit Select")]
             public Keys WorldEditSelectKey = Keys.F;
 
+            [UIConfigElement("Show Player Inspector")]
+            public Keys ShowPlayerInspector = Keys.NumPad7;
+
             [UIConfigElement("Save Console History")]
             public bool PreserveConsoleHistory = true;
             [UIConfigElement("Save Console State")]
