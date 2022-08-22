@@ -176,18 +176,14 @@ namespace TerraAngel.Graphics
             io.Fonts.SetTexID(FontTextureId.Value);
             io.Fonts.ClearTexData();
         }
-        protected virtual BasicEffect UpdateEffect(Texture2D texture, IntPtr specialEffect)
+        protected virtual void UpdateEffect(Texture2D texture, IntPtr specialEffect)
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
-            ImGuiShader.World = Matrix.Identity;
-            ImGuiShader.View = Matrix.Identity;
             ImGuiShader.Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
             ImGuiShader.TextureEnabled = true;
-            ImGuiShader.Texture = texture;
             ImGuiShader.VertexColorEnabled = true;
-
-            return ImGuiShader;
+            ImGuiShader.Texture = texture;
         }
         protected virtual void UpdateInput(GameTime gameTime)
         {
@@ -198,21 +194,21 @@ namespace TerraAngel.Graphics
 
             for (int i = 0; i < 256; i++)
             {
-                io.KeysDown[i] = keyboard.IsKeyDown((Keys)i);
+                io.KeysDown[i] = keyboard.IsKeyDown((Keys)i) && _game.IsActive;
             }
 
             for (int i = 0; i < keyRemappings.Count; i++)
             {
-                io.KeysDown[keyRemappings[i]] = keyboard.IsKeyDown((Keys)keyRemappings[i]);
+                io.KeysDown[keyRemappings[i]] = keyboard.IsKeyDown((Keys)keyRemappings[i]) && _game.IsActive;
             }
 
 
 
 
-            io.KeyShift = (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift)) && _game.IsActive;
-            io.KeyCtrl =  (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl)) && _game.IsActive;
-            io.KeyAlt =   (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt)) && _game.IsActive;
-            io.KeySuper = (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftWindows) || keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightWindows)) && _game.IsActive;
+            io.KeyShift = (keyboard.IsKeyDown(Keys.LeftShift)   || keyboard.IsKeyDown(Keys.RightShift))   && _game.IsActive;
+            io.KeyCtrl =  (keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl)) && _game.IsActive;
+            io.KeyAlt =   (keyboard.IsKeyDown(Keys.LeftAlt)     || keyboard.IsKeyDown(Keys.RightAlt))     && _game.IsActive;
+            io.KeySuper = (keyboard.IsKeyDown(Keys.LeftWindows) || keyboard.IsKeyDown(Keys.RightWindows)) && _game.IsActive;
 
             io.DisplaySize = new System.Numerics.Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
             io.DisplayFramebufferScale = new System.Numerics.Vector2(1f, 1f);
@@ -306,6 +302,8 @@ namespace TerraAngel.Graphics
         {
             GraphicsDevice.SetVertexBuffer(VertexBuffer);
             GraphicsDevice.Indices = IndexBuffer;
+            EffectPass pass = ImGuiShader.CurrentTechnique.Passes[0];
+
 
             int vtxOffset = 0;
             int idxOffset = 0;
@@ -332,21 +330,18 @@ namespace TerraAngel.Graphics
                         (int)(drawCmd.ClipRect.W - drawCmd.ClipRect.Y)
                     );
 
-                    Effect effect = UpdateEffect(cmdTexture, drawCmd.TextureId);
+                    UpdateEffect(cmdTexture, drawCmd.TextureId);
+                    pass.Apply();
 
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
 
-                        GraphicsDevice.DrawIndexedPrimitives(
-                            primitiveType: PrimitiveType.TriangleList,
-                            baseVertex: vtxOffset,
-                            minVertexIndex: 0,
-                            numVertices: cmdList.VtxBuffer.Size,
-                            startIndex: idxOffset,
-                            primitiveCount: (int)drawCmd.ElemCount / 3
-                        );
-                    }
+                    GraphicsDevice.DrawIndexedPrimitives(
+                        primitiveType: PrimitiveType.TriangleList,
+                        baseVertex: vtxOffset,
+                        minVertexIndex: 0,
+                        numVertices: cmdList.VtxBuffer.Size,
+                        startIndex: idxOffset,
+                        primitiveCount: (int)drawCmd.ElemCount / 3
+                    );
 
                     idxOffset += (int)drawCmd.ElemCount;
                 }

@@ -36,6 +36,14 @@ namespace TerraAngel.Graphics
             ImGui.TextUnformatted(text);
             ImGui.PopStyleColor();
         }
+        public static void ColorEdit3(string label, ref Color color)
+        {
+            System.Numerics.Vector3 v3c = color.ToVector3().ToNumerics();
+            if (ImGui.ColorEdit3(label, ref v3c))
+            {
+                color = new Color(v3c.X, v3c.Y, v3c.Z, (color.A / 255f  ));
+            }
+        }
         public static void ColorEdit4(string label, ref Color color)
         {
             System.Numerics.Vector4 v4c = color.ToVector4().ToNumerics();
@@ -79,23 +87,21 @@ namespace TerraAngel.Graphics
         }
 
         private static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
-        public static bool ItemButton(int id, string uid, out Vector2 min, out Vector2 max, out bool visible, bool showTooltip = true, bool clickToCopy = false, int count = 0, bool isSelected = false)
+        public static bool ItemButton(int id, string uid, bool showTooltip = true, bool clickToCopy = false, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
         {
-            return ItemButton(ContentSamples.ItemsByType[id], uid, new Vector2(32, 32), out min, out max, out visible, showTooltip, clickToCopy, count, isSelected);
+            return ItemButton(ContentSamples.ItemsByType[id], uid, new Vector2(32, 32), showTooltip, clickToCopy, isSelected, margin, 18f, alpha);
         }
-        public static bool ItemButton(int id, string uid, Vector2 size, out Vector2 buttonMin, out Vector2 buttonMax, out bool visible, bool showTooltip = true, bool clickToCopy = false, int count = 0, bool isSelected = false)
+        public static bool ItemButton(int id, string uid, Vector2 size, bool showTooltip = true, bool clickToCopy = false, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
         {
-            return ItemButton(ContentSamples.ItemsByType[id], uid, size, out buttonMin, out buttonMax, out visible, showTooltip, clickToCopy, count, isSelected);
+            return ItemButton(ContentSamples.ItemsByType[id], uid, size, showTooltip, clickToCopy, isSelected, margin, 18f, alpha);
         }
-        public static bool ItemButton(Item item, string uid, Vector2 size, out Vector2 buttonMin, out Vector2 buttonMax, out bool visible, bool showTooltip = true, bool clickToCopy = false, int count = 0, bool isSelected = false)
+        public static bool ItemButton(Item item, string uid, Vector2 size, bool showTooltip = true, bool clickToCopy = false, bool isSelected = false, float margin = 6f, float countFontSize = 18f, float alpha = 1.0f)
         {
             int id = item.type;
-            
             NVector2 drawSize = size.ToNumerics();
-            ImGuiStylePtr style = ImGui.GetStyle();
             ImGui.PushID(uid);
             bool clicked = false;
-            if (ImGui.Button("", drawSize + style.ItemSpacing))
+            if (ImGui.Button("", drawSize + new NVector2(margin)))
             {
                 clicked = true;
                 if (clickToCopy)
@@ -104,13 +110,13 @@ namespace TerraAngel.Graphics
                     if (Main.mouseItem.type == 0)
                     {
                         Main.mouseItem.SetDefaults(id);
-                        if (count == 0)
+                        if (item.stack <= 1)
                         {
                             Main.mouseItem.stack = Main.mouseItem.maxStack;
                         }
                         else
                         {
-                            Main.mouseItem.stack = count;
+                            Main.mouseItem.stack = item.stack;
                         }
                     }
                 }
@@ -119,7 +125,6 @@ namespace TerraAngel.Graphics
             NVector2 max = ImGui.GetItemRectMax();
             ImGui.PopID();
 
-            visible = false;
             if (ImGui.IsRectVisible(min, max))
             {
                 ImDrawListPtr drawList = ImGui.GetWindowDrawList();
@@ -127,117 +132,48 @@ namespace TerraAngel.Graphics
                 {
                     drawList.AddRectFilledMultiColor(min, max, 0xFF1de5ff, 0xFFa4ffff, 0xFF1de5ff, 0xFF00b4ff);
                 }
-                visible = true;
-                if (ItemImages[id] == IntPtr.Zero)
+
+                drawList.DrawItem(item, (min).ToXNA() + new Vector2(margin) / 2f, size, countFontSize, alpha);
+
+                if (showTooltip && id != ItemID.None)
                 {
-                    ItemImages[id] = (IntPtr)(-1);
-                    lock (ItemsToLoad)
+                    if (ImGui.IsMouseHoveringRect(min, max))
                     {
-                        ItemsToLoad[itemPtr] = id;
-                        itemPtr++;
-                    }
-                }
-                if (ItemImages[id] != (IntPtr)(-1))
-                {
-                    Texture2D value = TextureAssets.Item[id].Value;
-                    if (TextureAssets.Item[id].IsLoaded)
-                    {
-                        bool animated = Main.itemAnimations[id] != null;
-
-                        if (!animated)
+                        // relogic code?
+                        try
                         {
-                            int width = value.Width;
-                            int height = value.Height;
-                            float num = 1f;
-                            if ((float)width > drawSize.X || (float)height > drawSize.Y)
-                            {
-                                num = ((width <= height) ? (drawSize.X / (float)height) : (drawSize.Y / (float)width));
-                            }
-                            NVector2 scaledEnd = (new NVector2(width, height) * num);
-                            NVector2 start = (min + max) / 2 - scaledEnd / 2;
-                            drawList.AddImage(ItemImages[id], start, start + scaledEnd);
+                            ImGuiItemTooltip(item);
                         }
-                        else
+                        catch
                         {
-                            Rectangle animationRect = Main.itemAnimations[id].GetFrame(value);
-
-                            int width = animationRect.Width;
-                            int height = animationRect.Height;
-                            float num = 1f;
-                            if ((float)width > drawSize.X || (float)height > drawSize.Y)
-                            {
-                                num = ((width <= height) ? (drawSize.X / (float)height) : (drawSize.Y / (float)width));
-                            }
-                            NVector2 scaledEnd = (new NVector2(width, height) * num);
-                            NVector2 start = (min + max) / 2 - scaledEnd / 2;
-
-                            NVector2 rectStart = new NVector2(animationRect.X, animationRect.Y);
-                            NVector2 rectEnd = new NVector2(animationRect.X + width, animationRect.Y + height);
-
-                            NVector2 uvMin = rectStart / new NVector2(value.Width, value.Height);
-                            NVector2 uvMax = rectEnd / new NVector2(value.Width, value.Height);
-                            drawList.AddImage(ItemImages[id], start, start + scaledEnd, uvMin, uvMax);
 
                         }
-                    }
-
-                    if (showTooltip && id != ItemID.None)
-                    {
-                        if (ImGui.IsMouseHoveringRect(min, max))
-                        {
-                            // relogic code?
-                            try
-                            {
-                                ImGuiItemTooltip(item);
-                            }
-                            catch
-                            {
-
-                            }
-                        }
-                    }
-                    if (count != 0)
-                    {
-                        string s = count.ToString();
-                        ImFontPtr font = Client.ClientAssets.GetTerrariaFont(18f);
-                        NVector2 pos = min + (max - min) / 2;
-                        ImGui.PushFont(font);
-                        pos.X -= ImGui.CalcTextSize(s).X / 2;
-
-                        // for shadow 
-                        pos.X -= 1;
-                        drawList.AddText(font, font.FontSize, pos, 0xff000000, s);
-
-                        pos.X += 2;
-                        drawList.AddText(font, font.FontSize, pos, 0xff000000, s);
-
-                        pos.X -= 1;
-                        pos.Y -= 1;
-                        drawList.AddText(font, font.FontSize, pos, 0xff000000, s);
-
-                        pos.Y += 2f;
-                        drawList.AddText(font, font.FontSize, pos, 0xff000000, s);
-
-                        pos = min + (max - min) / 2;
-                        pos.X -= ImGui.CalcTextSize(s).X / 2;
-                        drawList.AddText(font, font.FontSize, pos, 0xffffffff, s);
-                        ImGui.PopFont();
                     }
                 }
             }
-            buttonMin = min.ToXNA();
-            buttonMax = max.ToXNA();
             return clicked;
         }
 
-        public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, int count = 0, float countFontSize = 18f, float alpha = 1.0f)
+        public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
         {
             Vector2 v = new Vector2(size);
-            DrawItem(drawList, id, center - v / 2f, v, count, countFontSize, alpha);
+            DrawItem(drawList, id, center - v / 2f, v, countFontSize, alpha);
         }
 
-        public static void DrawItem(ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, int count = 0, float countFontSize = 14f, float alpah = 1.0f)
+        public static void DrawItemCentered(ImDrawListPtr drawList, Item item, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
         {
+            Vector2 v = new Vector2(size);
+            DrawItem(drawList, item, center - v / 2f, v, countFontSize, alpha);
+        }
+
+        public static void DrawItem(this ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
+        {
+            DrawItem(drawList, ContentSamples.ItemsByType[id], position, size, countFontSize, alpah);
+        }
+
+        public static void DrawItem(this ImDrawListPtr drawList, Item item, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
+        {
+            int id = item.type;
             if (ItemImages[id] == IntPtr.Zero)
             {
                 ItemImages[id] = (IntPtr)(-1);
@@ -254,62 +190,65 @@ namespace TerraAngel.Graphics
                 {
                     bool animated = Main.itemAnimations[id] != null;
 
-                    if (!animated)
-                    {
-                        int width = value.Width;
-                        int height = value.Height;
-                        float num = 1f;
-                        if ((float)width > size.X || (float)height > size.Y)
-                        {
-                            num = ((width <= height) ? (size.X / (float)height) : (size.Y / (float)width));
-                        }
-                        Vector2 scaledEnd = (new Vector2(width, height) * num);
-                        Vector2 start = position + (size / 2f) - scaledEnd / 2f;
-                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start.Floor() + scaledEnd.Floor()).ToNumerics(), NVector2.Zero, NVector2.One, new Color(1f, 1f, 1f, alpah).PackedValue);
-                    }
-                    else
+                    if (animated)
                     {
                         Rectangle animationRect = Main.itemAnimations[id].GetFrame(value);
 
                         int width = animationRect.Width;
                         int height = animationRect.Height;
                         float num = 1f;
-                        if ((float)width > size.X || (float)height > size.Y)
+                        if (width > size.X || height > size.Y)
                         {
-                            num = ((width <= height) ? (size.X / (float)height) : (size.Y / (float)width));
+                            num = ((width <= height) ? (size.X / height) : (size.Y / width));
                         }
-                        Vector2 scaledEnd = (new Vector2(width, height) * num);
                         NVector2 rectStart = new NVector2(animationRect.X, animationRect.Y);
                         NVector2 rectEnd = new NVector2(animationRect.X + width, animationRect.Y + height);
                         NVector2 uvMin = rectStart / new NVector2(value.Width, value.Height);
                         NVector2 uvMax = rectEnd / new NVector2(value.Width, value.Height);
-                        drawList.AddImage(ItemImages[id], position.Floor().ToNumerics(), (position.Floor() + scaledEnd.Floor()).ToNumerics(), uvMin, uvMax, new Color(1f, 1f, 1f, alpah).PackedValue);
 
+
+                        Vector2 scaledSize = (new Vector2(width, height) * num);
+                        Vector2 start = position + (size / 2f) - scaledSize / 2f;
+
+                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), uvMin, uvMax, Color.White.WithAlpha(alpah).PackedValue);
+                    }
+                    else
+                    {
+                        int width = value.Width;
+                        int height = value.Height;
+                        float num = 1f;
+                        if (width > size.X || height > size.Y)
+                        {
+                            num = ((width <= height) ? (size.X / height) : (size.Y / width));
+                        }
+                        Vector2 scaledSize = (new Vector2(width, height) * num);
+                        Vector2 start = position + (size / 2f) - scaledSize / 2f;
+                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), NVector2.Zero, NVector2.One, Color.White.WithAlpha(alpah).PackedValue);
                     }
 
-                    if (count != 0)
+                    if (item.stack > 1)
                     {
-                        string s = count.ToString();
+                        string s = item.stack.ToString();
                         ImFontPtr font = Client.ClientAssets.GetTerrariaFont(countFontSize);
                         ImGui.PushFont(font);
-                        Vector2 pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f)).Floor();
+                        Vector2 pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
 
                         // for shadow 
                         pos.X -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.X += 2;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.X -= 1;
                         pos.Y -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.Y += 2f;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(0f, 0f, 0f, alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
 
-                        pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f)).Floor();
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), new Color(1f, 1f, 1f, alpah).PackedValue, s);
+                        pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.White.WithAlpha(alpah).PackedValue, s);
                         ImGui.PopFont();
                     }
                 }
@@ -364,11 +303,6 @@ namespace TerraAngel.Graphics
             ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
         }
 
-        static char[] lengths = (new int[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 3, 4, 0 }).Select(x => (char)x).ToArray();
-        static int[] masks = { 0x00, 0x7f, 0x1f, 0x0f, 0x07 };
-        static uint[] mins = { 0x400000, 0, 0x80, 0x800, 0x10000 };
-        static int[] shiftc = { 0, 18, 12, 6, 0 };
-        static int[] shifte = { 0, 6, 4, 2, 0 };
         public unsafe static NVector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)
         {
             ImFontPtr font = ImGui.GetFont();
@@ -631,7 +565,7 @@ namespace TerraAngel.Graphics
                         offset.Y += font.FontSize;
                         offset.X = itemTagSpacingWidth;
 
-                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 18f, alpha);
+                        DrawItemCentered(drawList, snippet._item, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, 18f, alpha);
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {
@@ -647,7 +581,7 @@ namespace TerraAngel.Graphics
 
                         offset.X += itemTagSpacingWidth;
 
-                        DrawItemCentered(drawList, snippet._item.type, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, snippet._item.stack == 1 ? 0 : snippet._item.stack, 18f, alpha);
+                        DrawItemCentered(drawList, snippet._item, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, 18f, alpha);
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {

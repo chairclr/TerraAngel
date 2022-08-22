@@ -15,6 +15,7 @@ using Terraria.ID;
 using NVector2 = System.Numerics.Vector2;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System.Runtime.CompilerServices;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace TerraAngel.Utility
 {
@@ -358,6 +359,23 @@ namespace TerraAngel.Utility
         public static float Distance(this Color x, Color y)
         {
             return Util.ColorDistance(x, y);
+        }
+
+        public static Color WithAlpha(this Color x, float alpha)
+        {
+            return new Color(x.R, x.G, x.B, alpha);
+        }
+        public static Color WithRed(this Color x, float r)
+        {
+            return new Color((int)(r * 255f), x.G, x.B, x.A);
+        }
+        public static Color WithGreen(this Color x, float g)
+        {
+            return new Color(x.R, (int)(g * 255f), x.B, x.A);
+        }
+        public static Color WithBlue(this Color x, float b)
+        {
+            return new Color(x.R, x.G, (int)(b * 255f), x.A);
         }
     }
     public static class ListExtensions

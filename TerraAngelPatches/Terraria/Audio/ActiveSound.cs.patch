@@ -25,3 +25,12 @@
      }
  
      public ActiveSound(SoundStyle style)
+@@ -66,7 +_,7 @@
+ 
+     public void Update()
+     {
+-        if (Sound != null)
++        if (Sound != null && !Sound.IsDisposed)
+         {
+             Vector2 value = Main.screenPosition + new Vector2(Main.screenWidth / 2, Main.screenHeight / 2);
+             float num = 1f;

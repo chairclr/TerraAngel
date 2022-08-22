@@ -35,6 +35,9 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("ProcessArea", LightingProcessAreaHook);
             HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("ProcessArea", LegacyLightingProcessAreaHook);
 
+            HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("AddLight", LightingAddLightHook);
+            HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("AddLight", LegacyLightingAddLightHook);
+
             HookUtil.HookGen(Dust.NewDust, NewDustHook);
             HookUtil.HookGen(Dust.UpdateDust, UpdateDustHook);
             HookUtil.HookGen<Main>("DrawDust", DrawDustHook);
@@ -209,6 +212,7 @@ namespace TerraAngel.Hooks.Hooks
                         Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(Input.InputSystem.MousePosition);
                         Main.screenPosition = Main.screenPosition + diff;
                     }
+                    fixedScreenY = (int)Main.screenPosition.Y;
                     return;
                 }
             }
@@ -282,9 +286,6 @@ namespace TerraAngel.Hooks.Hooks
                     }
                 });
 
-                Main.updateMap = true;
-
-
                 return;
             }
             orig(self, area);
@@ -318,6 +319,18 @@ namespace TerraAngel.Hooks.Hooks
                 return;
             }
             orig(self, area);
+        }
+        private static void LightingAddLightHook(Action<Terraria.Graphics.Light.LightingEngine, int, int, Vector3> orig, Terraria.Graphics.Light.LightingEngine self, int x, int y, Vector3 color)
+        {
+            if (fullBrightCache.Enabled)
+                return;
+            orig(self, x, y, color);
+        }
+        private static void LegacyLightingAddLightHook(Action<Terraria.Graphics.Light.LegacyLighting, int, int, Vector3> orig, Terraria.Graphics.Light.LegacyLighting self, int x, int y, Vector3 color)
+        {
+            if (fullBrightCache.Enabled)
+                return;
+            orig(self, x, y, color);
         }
 
         public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)

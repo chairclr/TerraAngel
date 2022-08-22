@@ -45,13 +45,13 @@ namespace TerraAngel.Client.Config
             public bool ShowConsoleWindow = true;
 
             [UIConfigElement("Default Anti-Hurt")]
-            public bool DefaultAntiHurt = true;
+            public bool DefaultAntiHurt = false;
 
             [UIConfigElement("Default Infinite Mana")]
-            public bool DefaultInfiniteMana = true;
+            public bool DefaultInfiniteMana = false;
 
             [UIConfigElement("Default Infinite Minions")]
-            public bool DefaultInfiniteMinions = true;
+            public bool DefaultInfiniteMinions = false;
 
             [UIConfigElement("Default Draw Any ESP")]
             public bool DefaultDrawAnyESP = true;
@@ -153,6 +153,7 @@ namespace TerraAngel.Client.Config
             public bool PreserveConsoleHistory = true;
             [UIConfigElement("Save Console State")]
             public bool ConsoleSaveInReplMode = true;
+
             public int ConsoleHistoryLimit = 5000;
             public int ChatHistoryLimit = 3000;
 

@@ -2,15 +2,15 @@
 using System.Dynamic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TerraAngel.Client.Config;
 using TerraAngel.Input;
-using TerraAngel.UI;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
 
-namespace TerraAngel.Client.Config
+namespace TerraAngel.UI
 {
     public class ConfigUI : UIState, IHaveBackButtonCommand
     {

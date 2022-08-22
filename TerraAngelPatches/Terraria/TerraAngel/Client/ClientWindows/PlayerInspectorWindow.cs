@@ -153,9 +153,13 @@ namespace TerraAngel.Client.ClientWindows
                     ImGuiStylePtr style = ImGui.GetStyle();
                     float sy = ImGui.GetCursorPos().Y;
                     int c = 0;
+
+
+                    ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4f));
+
                     for (int i = 0; i < 50; i++)
                     {
-                        ImGuiUtil.ItemButton(player.inventory[i], $"pii{i}", new Vector2(24, 24), out _, out _, out _, showToolTip, false, player.inventory[i].stack == 1 ? 0 : player.inventory[i].stack, player.selectedItem == i);
+                        ImGuiUtil.ItemButton(player.inventory[i], $"pii{i}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == i);
                         
                         if ((i + 1) % 10 != 0)
                         {
@@ -169,9 +173,9 @@ namespace TerraAngel.Client.ClientWindows
                                 if (c < 4)
                                 {
                                     ImGui.SameLine();
-                                    ImGuiUtil.ItemButton(player.inventory[50 + c], $"pii{i}", new Vector2(24, 24), out _, out _, out _, showToolTip, false, player.inventory[50 + c].stack == 1 ? 0 : player.inventory[50 + c].stack, player.selectedItem == 50 + c);
+                                    ImGuiUtil.ItemButton(player.inventory[50 + c], $"piic50{i}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == 50 + c);
                                     ImGui.SameLine();
-                                    ImGuiUtil.ItemButton(player.inventory[54 + c], $"pii{i}", new Vector2(24, 24), out _, out _, out _, showToolTip, false, player.inventory[54 + c].stack == 1 ? 0 : player.inventory[54 + c].stack, player.selectedItem == 54 + c);
+                                    ImGuiUtil.ItemButton(player.inventory[54 + c], $"piic54{i}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == 54 + c);
                                 }
                                 c++;
                             }
@@ -180,14 +184,20 @@ namespace TerraAngel.Client.ClientWindows
                         if (i == 9)
                         {
                             ImGui.SameLine();
-                            ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 24 + style.ItemSpacing.X * 2);
-                            ImGuiUtil.ItemButton(player.inventory[58], $"piim{58}", new Vector2(24, 24), out _, out _, out _, showToolTip, false, player.inventory[58].stack == 1 ? 0 : player.inventory[58].stack, false);
+                            ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 26f + style.ItemSpacing.X * 2);
+                            ImGuiUtil.ItemButton(player.inventory[58], $"piim{58}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == 50 + c);
                         }
                     }
 
+                    ImGui.SameLine();
+
+                    NVector2 cPos = ImGui.GetCursorPos();
+
+                    ImGui.NewLine();
+
                     NVector2 lastCursorPos = ImGui.GetCursorPos();
 
-                    float minx = MathF.Max((24f + style.ItemSpacing.X * 2f) * 12f + style.ItemSpacing.X, (ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X) - ((24f + style.ItemSpacing.X) * 3f + style.ItemSpacing.X));
+                    float minx = MathF.Max(cPos.X, (ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X) - ((26f + style.ItemSpacing.X) * 3f + style.ItemSpacing.X));
                     int ti = 0;
                     for (int i = 0; i < 10; i++)
                     {
@@ -195,16 +205,18 @@ namespace TerraAngel.Client.ClientWindows
                         if (i == 9 && !player.CanMasterModeAccessoryBeShown()) continue;
 
 
-                        ImGui.SetCursorPos(new NVector2(minx, sy + (24f + style.ItemSpacing.X) * ti));
+                        ImGui.SetCursorPos(new NVector2(minx, sy + (26f + style.ItemSpacing.X) * ti));
 
-                        ImGuiUtil.ItemButton(player.dye[i], $"piid{i}", new Vector2(24, 24), out _, out _, out _, showToolTip, false, player.dye[i].stack == 1 ? 0 : player.dye[i].stack, false);
+                        ImGuiUtil.ItemButton(player.dye[i], $"piid{i}", new Vector2(26f), showToolTip);
                         ImGui.SameLine();
-                        ImGuiUtil.ItemButton(player.armor[i + 10], $"piia{i + 10}", new Vector2(24, 24), out _, out _, out _, showToolTip, false, player.armor[i + 10].stack == 1 ? 0 : player.armor[i + 10].stack, false);
+                        ImGuiUtil.ItemButton(player.armor[i + 10], $"piia{i + 10}", new Vector2(26f), showToolTip);
                         ImGui.SameLine();
-                        ImGuiUtil.ItemButton(player.armor[i], $"piia{i}", new Vector2(24, 24), out _, out _, out _, showToolTip, false, player.armor[i].stack == 1 ? 0 : player.armor[i].stack, false);
+                        ImGuiUtil.ItemButton(player.armor[i], $"piia{i}", new Vector2(26f), showToolTip);
 
                         ti++;
                     }
+
+                    ImGui.PopStyleVar();
 
                     ImGui.SetCursorPos(lastCursorPos);
                 }

@@ -31,11 +31,12 @@ namespace TerraAngel.Cheat
             if (ImGui.BeginChild("ItemBrowserScrolling"))
             {
                 float windowMaxX = ImGui.GetWindowPos().X + ImGui.GetWindowContentRegionMax().X;
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new System.Numerics.Vector2(4f));
                 for (int i = 1; i < Terraria.ID.ItemID.Count; i++)
                 {
                     if (searchEmpty || itemNames[i].ToLower().Contains(itemSearch.ToLower()))
                     {
-                        if (ImGuiUtil.ItemButton(i, $"ibi{i}", out _, out Vector2 max, out _, true))
+                        if (ImGuiUtil.ItemButton(i, $"ibi{i}", true, true))
                         {
                             switch ((ItemGiveMode)currentItemGiveMode)
                             {
@@ -63,11 +64,12 @@ namespace TerraAngel.Cheat
                         }
 
                         // Maximize number of item buttons you can see
-                        float nextButtonX = max.X + style.ItemSpacing.X + itemDrawSize.X;
+                        float nextButtonX = ImGui.GetItemRectMax().X + style.ItemSpacing.X + itemDrawSize.X;
                         if (i + 1 < Terraria.ID.ItemID.Count && nextButtonX < windowMaxX)
                             ImGui.SameLine();
                     }
                 }
+                ImGui.PopStyleVar();
                 ImGui.EndChild();
             }
         }

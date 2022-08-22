@@ -132,6 +132,7 @@ namespace TerraAngel.Client.ClientWindows
                             {
                                 Task.Run(() =>
                                 {
+                                    Stopwatch watch = Stopwatch.StartNew();
                                     int xlen = Main.Map.MaxWidth;
                                     int ylen = Main.Map.MaxHeight;
                                     for (int x = 0; x < xlen; x++)
@@ -141,6 +142,8 @@ namespace TerraAngel.Client.ClientWindows
                                             Main.Map.Update(x, y, 255);
                                         }
                                     }
+                                    watch.Stop();
+                                    ClientLoader.Console.WriteLine($"Map took {watch.Elapsed.Milliseconds}ms");
                                     Main.refreshMap = true;
                                 });
                             }
