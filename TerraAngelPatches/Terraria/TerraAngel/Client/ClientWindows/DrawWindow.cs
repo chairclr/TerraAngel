@@ -14,6 +14,7 @@ using TerraAngel.WorldEdits;
 using Terraria.ID;
 using TerraAngel;
 using NVector2 = System.Numerics.Vector2;
+using TerraAngel.Input;
 
 namespace TerraAngel.Client.ClientWindows
 {

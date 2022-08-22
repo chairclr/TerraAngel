@@ -24,6 +24,7 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Player>("Hurt", PlayerHurtHook);
             HookUtil.HookGen<Player>("KillMe", PlayerKillHook);
             HookUtil.HookGen<Player>("ResetEffects", PlayerResetEffectsHook);
+            HookUtil.HookGen<Player>("ItemCheckWrapped", PlayerItemCheckHook);
             HookUtil.HookGen<Player>("Spawn", PlayerSpawnHook);
         }
 
@@ -50,6 +51,12 @@ namespace TerraAngel.Hooks.Hooks
                 return;
             }
             orig(self, damageSource, dmg, hitDirection, pvp);
+        }
+        public static void PlayerItemCheckHook(Action<Player, int> orig, Player self, int i)
+        {
+            if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AutoAttackCringe>().PlayerUpdate())
+                return;
+            orig(self, i);
         }
         public static int presenceUpdateCount = 0;
         public static void PlayerResetEffectsHook(Action<Player> orig, Player self)

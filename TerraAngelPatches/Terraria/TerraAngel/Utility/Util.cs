@@ -348,6 +348,11 @@ namespace TerraAngel.Utility
         {
             return new Vector2(MathF.Round(vec.X), MathF.Round(vec.Y));
         }
+        public static Vector2 Normalized(this Vector2 vec)
+        {
+            vec.Normalize();
+            return vec;
+        }
     }
     public static class ColorExtensions
     {

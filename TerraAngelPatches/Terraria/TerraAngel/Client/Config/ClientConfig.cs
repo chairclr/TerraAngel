@@ -162,6 +162,9 @@ namespace TerraAngel.Client.Config
             [JsonIgnore]
             public List<string> ConsoleHistory = new List<string>();
 
+            public bool PartialBrightDefaultValue = false;
+            public float PartialBrightSolidExtraLight = 0.3f;
+            public float PartialBrightAirExtraLight = 0.065f;
             public float FullBrightBrightness = 0.7f;
             public Color TracerColor = new Color(0f, 0f, 1f);
             public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);
@@ -194,6 +197,12 @@ namespace TerraAngel.Client.Config
             public bool AutoFishAcceptNPCs = true;
             public int AutoFishFrameCountRandomizationMin = 10;
             public int AutoFishFrameCountRandomizationMax = 50;
+
+            public bool AutoAttackTargetBosses = true;
+            public bool AutoAttackFavorBosses = true;
+            public bool AutoAttackTargetHostileNPCs = true;
+            public bool AutoAttackRequireLineOfSight = true;
+            public float AutoAttackMinTargetRange = 800f;
 
             public float StatsWindowHoveredTransperency = 0.65f;
             public bool ConsoleInReplMode = false;

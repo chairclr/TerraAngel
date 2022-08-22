@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.Xna.Framework;
-using MonoMod.RuntimeDetour;
-using Terraria;
 using ImGuiNET;
-using ReLogic.OS;
-using Terraria.DataStructures;
-using Terraria.ID;
-using TerraAngel.Cheat;
-using TerraAngel.Hooks;
-using TerraAngel.Utility;
-using TerraAngel.Client.Config;
-using TerraAngel;
-using TerraAngel.Cheat.Cringes;
+using Microsoft.Xna.Framework;
 using ReLogic.Threading;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent.Liquid;
+using TerraAngel.Cheat;
+using TerraAngel.Cheat.Cringes;
+using TerraAngel.Client.Config;
+using TerraAngel.Utility;
+using Terraria;
+using Terraria.Graphics.Light;
+using Terraria.ID;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -29,14 +23,16 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen(Main.DrawThickCursor, DrawThickCursorHook);
             HookUtil.HookGen<Main>("DoDraw_UpdateCameraPosition", UpdateCameraHook);
 
-            HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("GetColor", LightingHook);
-            HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("GetColor", LegacyLightingHook);
+            HookUtil.HookGen<LightingEngine>("GetColor", LightingHook);
+            HookUtil.HookGen<LegacyLighting>("GetColor", LegacyLightingHook);
 
-            HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("ProcessArea", LightingProcessAreaHook);
-            HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("ProcessArea", LegacyLightingProcessAreaHook);
+            HookUtil.HookGen<LightingEngine>("ProcessArea", LightingProcessAreaHook);
+            HookUtil.HookGen<LegacyLighting>("ProcessArea", LegacyLightingProcessAreaHook);
 
-            HookUtil.HookGen<Terraria.Graphics.Light.LightingEngine>("AddLight", LightingAddLightHook);
-            HookUtil.HookGen<Terraria.Graphics.Light.LegacyLighting>("AddLight", LegacyLightingAddLightHook);
+            HookUtil.HookGen<LightingEngine>("AddLight", LightingAddLightHook);
+            HookUtil.HookGen<LegacyLighting>("AddLight", LegacyLightingAddLightHook);
+
+            HookUtil.HookGen<LightingEngine>("UpdateLightDecay", LightingUpdateLightDecay);
 
             HookUtil.HookGen(Dust.NewDust, NewDustHook);
             HookUtil.HookGen(Dust.UpdateDust, UpdateDustHook);
@@ -71,7 +67,7 @@ namespace TerraAngel.Hooks.Hooks
                 if (item.prefix > 0)
                 {
                     int firstSpace = toolTipLine[0].IndexOf(' ');
-                    firstSpace = firstSpace == - 1 ? toolTipLine[0].Length : firstSpace;
+                    firstSpace = firstSpace == -1 ? toolTipLine[0].Length : firstSpace;
                     toolTipLine[0] = toolTipLine[0].Insert(firstSpace, $" [{Util.PrefixFields[item.prefix].Name}/{item.prefix}]");
                 }
 
@@ -245,7 +241,7 @@ namespace TerraAngel.Hooks.Hooks
         }
 
         private static FullBrightCringe fullBrightCache;
-        private static Vector3 LightingHook(Func<Terraria.Graphics.Light.LightingEngine, int, int, Vector3> orig, Terraria.Graphics.Light.LightingEngine self, int x, int y)
+        private static Vector3 LightingHook(Func<LightingEngine, int, int, Vector3> orig, LightingEngine self, int x, int y)
         {
             if (fullBrightCache.Enabled)
             {
@@ -253,7 +249,7 @@ namespace TerraAngel.Hooks.Hooks
             }
             return orig(self, x, y);
         }
-        private static Vector3 LegacyLightingHook(Func<Terraria.Graphics.Light.LegacyLighting, int, int, Vector3> orig, Terraria.Graphics.Light.LegacyLighting self, int x, int y)
+        private static Vector3 LegacyLightingHook(Func<LegacyLighting, int, int, Vector3> orig, LegacyLighting self, int x, int y)
         {
             if (fullBrightCache.Enabled)
             {
@@ -261,7 +257,7 @@ namespace TerraAngel.Hooks.Hooks
             }
             return orig(self, x, y);
         }
-        private static void LightingProcessAreaHook(Action<Terraria.Graphics.Light.LightingEngine, Rectangle> orig, Terraria.Graphics.Light.LightingEngine self, Rectangle area)
+        private static void LightingProcessAreaHook(Action<LightingEngine, Rectangle> orig, LightingEngine self, Rectangle area)
         {
             if (fullBrightCache.Enabled)
             {
@@ -290,7 +286,7 @@ namespace TerraAngel.Hooks.Hooks
             }
             orig(self, area);
         }
-        private static void LegacyLightingProcessAreaHook(Action<Terraria.Graphics.Light.LegacyLighting, Rectangle> orig, Terraria.Graphics.Light.LegacyLighting self, Rectangle area)
+        private static void LegacyLightingProcessAreaHook(Action<LegacyLighting, Rectangle> orig, LegacyLighting self, Rectangle area)
         {
             if (fullBrightCache.Enabled)
             {
@@ -320,54 +316,68 @@ namespace TerraAngel.Hooks.Hooks
             }
             orig(self, area);
         }
-        private static void LightingAddLightHook(Action<Terraria.Graphics.Light.LightingEngine, int, int, Vector3> orig, Terraria.Graphics.Light.LightingEngine self, int x, int y, Vector3 color)
+        private static void LightingAddLightHook(Action<LightingEngine, int, int, Vector3> orig, LightingEngine self, int x, int y, Vector3 color)
         {
             if (fullBrightCache.Enabled)
                 return;
             orig(self, x, y, color);
         }
-        private static void LegacyLightingAddLightHook(Action<Terraria.Graphics.Light.LegacyLighting, int, int, Vector3> orig, Terraria.Graphics.Light.LegacyLighting self, int x, int y, Vector3 color)
+        private static void LegacyLightingAddLightHook(Action<LegacyLighting, int, int, Vector3> orig, LegacyLighting self, int x, int y, Vector3 color)
         {
             if (fullBrightCache.Enabled)
                 return;
             orig(self, x, y, color);
+        }
+
+        private static void LightingUpdateLightDecay(Action<LightingEngine> orig, LightingEngine self)
+        {
+            orig(self);
+
+            if (fullBrightCache.PartialBright)
+            {
+                LightMap? workingLightMap = (LightMap?)typeof(LightingEngine).GetField("_workingLightMap", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(self);
+                if (workingLightMap == null)
+                    return;
+                workingLightMap.LightDecayThroughAir *= fullBrightCache.ExtraAirBrightness + 1f;
+                workingLightMap.LightDecayThroughSolid *= fullBrightCache.ExtraSolidBrightness + 1f;
+            }
         }
 
         public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
         {
             if (CringeManager.GetCringe<NoDustCringe>().Enabled)
                 return 6000;
-            return orig( Position,  Width,  Height,  Type,  SpeedX,  SpeedY,  Alpha,  newColor,  Scale);
+            return orig(Position, Width, Height, Type, SpeedX, SpeedY, Alpha, newColor, Scale);
         }
         public static void UpdateDustHook(Action orig)
         {
             if (CringeManager.GetCringe<NoDustCringe>().Enabled)
-                    return;
+                return;
             orig();
         }
         public static void DrawDustHook(Action<Main> orig, Main self)
         {
             if (CringeManager.GetCringe<NoDustCringe>().Enabled)
-                    return;
+                return;
             orig(self);
         }
 
         public static int NewGoreHook(Func<Vector2, Vector2, int, float, int> orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             if (CringeManager.GetCringe<NoDustCringe>().Enabled)
-                    return 600;
+                return 600;
             return orig(Position, Velocity, Type, Scale);
         }
         public static void DrawGoreHook(Action<Main> orig, Main self)
         {
             if (CringeManager.GetCringe<NoGoreCringe>().Enabled)
-                    return;
+                return;
             orig(self);
         }
         public static void DrawGoreBehindHook(Action<Main> orig, Main self)
         {
             if (CringeManager.GetCringe<NoGoreCringe>().Enabled)
-                    return;
+                return;
             orig(self);
         }
     }

@@ -118,6 +118,7 @@ namespace TerraAngel
             CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = ClientConfig.Settings.DefaultDrawActiveProjectilePrediction;
             CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = ClientConfig.Settings.DefaultDrawFriendlyProjectilePrediction;
             CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = ClientConfig.Settings.DefaultDrawHostileProjectilePrediction;
+            CringeManager.GetCringe<FullBrightCringe>().PartialBright = ClientConfig.Settings.PartialBrightDefaultValue;
 
             ESPCringe boxesCringe = CringeManager.GetCringe<ESPCringe>();
             boxesCringe.DrawAnyESP = ClientConfig.Settings.DefaultDrawAnyESP;
