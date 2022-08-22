@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImGuiNET;
+using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using TerraAngel.Client.Config;
+using TerraAngel.Graphics;
 using TerraAngel.Utility;
 using Terraria;
 using Terraria.ID;
@@ -19,10 +21,10 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "Auto-Attack";
         public override CringeTabs Tab => CringeTabs.AutomationCringes;
 
-        public ref bool TargetBosses => ref ClientConfig.Settings.AutoAttackTargetBosses;
         public ref bool FavorBosses => ref ClientConfig.Settings.AutoAttackFavorBosses;
         public ref bool TargetHostileNPCs => ref ClientConfig.Settings.AutoAttackTargetHostileNPCs;
         public ref bool RequireLineOfSight => ref ClientConfig.Settings.AutoAttackRequireLineOfSight;
+        public ref bool VelocityPrediction => ref ClientConfig.Settings.AutoAttackVelocityPrediction;
 
         public ref float MinAttackRange => ref ClientConfig.Settings.AutoAttackMinTargetRange;
 
@@ -52,20 +54,24 @@ namespace TerraAngel.Cheat.Cringes
                     }
 
                     ImGui.Checkbox("Require Line of Sight", ref RequireLineOfSight);
-                    ImGui.Checkbox("[wip] Target Hostile NPCs", ref TargetHostileNPCs);
-                    ImGui.Checkbox("[wip] Target Bosses", ref TargetBosses);
-                    ImGui.Checkbox("[wip] Favor Bosses", ref FavorBosses);
+                    ImGui.Checkbox("Velocity Prediction", ref VelocityPrediction);
 
                     ImGui.Unindent(20f);
                 }
             }
         }
+
+        public Vector2 TargetPoint = Vector2.Zero;
+        public bool wantToShoot = false;
+        public bool LockedOnToTarget = false;
         public override void Update()
         {
             ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
-
-            if (Enabled)
+            if (Enabled && !Main.gameMenu)
             {
+                Vector2 correctedPlayerCenter = Main.LocalPlayer.RotatedRelativePoint(Main.LocalPlayer.MountedCenter, reverseRotation: true);
+                float minDist = float.MaxValue;
+
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC npc = Main.npc[i];
@@ -75,93 +81,65 @@ namespace TerraAngel.Cheat.Cringes
                         if (npc.friendly)
                             continue;
 
+                        if (!TargetHostileNPCs)
+                            continue;
+
                         if (npc.immortal || npc.dontTakeDamage)
                             continue;
 
-                        Vector2 correctedPlayerCenter = Main.LocalPlayer.RotatedRelativePoint(Main.LocalPlayer.MountedCenter, reverseRotation: true);
                         float distToPlayer = correctedPlayerCenter.Distance(npc.Center);
 
                         if (distToPlayer > MinAttackRange)
                             continue;
 
+                        RaycastData raycast = Raycast.Cast(correctedPlayerCenter, (npc.Center - correctedPlayerCenter).Normalized(), distToPlayer + 1f);
                         if (RequireLineOfSight)
                         {
-
-                            RaycastData raycast = Raycast.Cast(correctedPlayerCenter, (npc.Center - correctedPlayerCenter).Normalized(), distToPlayer + 1f);
-
-                            drawList.AddLine(Util.WorldToScreen(correctedPlayerCenter).ToNumerics(), Util.WorldToScreen(raycast.IntersectionPoint).ToNumerics(), Color.Red.PackedValue);
-
                             if (raycast.Intersects)
                             {
                                 continue;
                             }
                         }
 
-                        drawList.AddCircleFilled(Util.WorldToScreen(npc.Center).ToNumerics(), 5f, Color.Red.PackedValue);
-                        break;
+                        Vector2 targetPoint = npc.Center;
+                        if (VelocityPrediction)
+                        {
+                            float sp = CalcPlayerShootSpeed();
+                            if (sp > 0 && (npc.velocity.X != 0 || npc.velocity.Y != 0))
+                            {
+                                float ttt = (raycast.Distance / sp) / 4f;
+                                RaycastData tttCorrection = Raycast.Cast(npc.Center, (npc.velocity * ttt).Normalized(), (npc.velocity * ttt).Length() + 0.1f);
+                                targetPoint = tttCorrection.IntersectionPoint;
+                            }
+                        }
+
+                        float d = targetPoint.DistanceSQ(correctedPlayerCenter);
+                        if (d < minDist)
+                        {
+                            TargetPoint = targetPoint;
+                            LockedOnToTarget = true;
+                            minDist = d;
+                        }
                     }
                 }
+                if (!Main.mapFullscreen && LockedOnToTarget) drawList.AddCircleFilled(Util.WorldToScreen(TargetPoint).ToNumerics(), 5f, Color.Red.PackedValue);
             }
         }
 
-        public bool PlayerUpdate()
+        public float CalcPlayerShootSpeed()
         {
-            if (Enabled)
+            int projectileType = Main.LocalPlayer.HeldItem.shoot;
+            float shootSpeed = Main.LocalPlayer.HeldItem.shootSpeed;
+
+            if (Main.LocalPlayer.HeldItem.useAmmo > 0)
             {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    NPC npc = Main.npc[i];
-
-                    if (npc.active)
-                    {
-                        if (npc.friendly)
-                            continue;
-
-                        if (npc.immortal || npc.dontTakeDamage)
-                            continue;
-
-                        Vector2 correctedPlayerCenter = Main.LocalPlayer.RotatedRelativePoint(Main.LocalPlayer.MountedCenter, reverseRotation: true);
-                        float distToPlayer = correctedPlayerCenter.Distance(npc.Center);
-
-                        if (distToPlayer > MinAttackRange)
-                            continue;
-
-                        if (RequireLineOfSight)
-                        {
-
-                            RaycastData raycast = Raycast.Cast(correctedPlayerCenter, (npc.Center - correctedPlayerCenter).Normalized(), distToPlayer + 1f);
-
-                            //drawList.AddLine(Util.WorldToScreen(correctedPlayerCenter).ToNumerics(), Util.WorldToScreen(raycast.IntersectionPoint).ToNumerics(), Color.Red.PackedValue);
-
-                            if (raycast.Intersects)
-                            {
-                                continue;
-                            }
-                        }
-
-
-                        int mx = Main.mouseX;
-                        int my = Main.mouseY;
-
-                        Main.mouseX = (int)npc.Center.X - (int)Main.screenPosition.X;
-                        Main.mouseY = (int)npc.Center.Y - (int)Main.screenPosition.Y;
-
-                        Main.LocalPlayer.controlUseItem = true;
-                        bool arc = Main.LocalPlayer.HeldItem.autoReuse;
-                        Main.LocalPlayer.HeldItem.autoReuse = true;
-                        Main.LocalPlayer.ItemCheck(Main.LocalPlayer.whoAmI);
-                        Main.LocalPlayer.HeldItem.autoReuse = arc;
-                        NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-                        Main.mouseX = mx;
-                        Main.mouseY = my;
-
-                        return true;
-                        //drawList.AddCircleFilled(Util.WorldToScreen(npc.Center).ToNumerics(), 5f, Color.Red.PackedValue);
-                        break;
-                    }
-                }
+                bool cs = true;
+                int dm = 0;
+                float kb = 0.0f;
+                Main.LocalPlayer.PickAmmo(Main.LocalPlayer.HeldItem, ref projectileType, ref shootSpeed, ref cs, ref dm, ref kb, out _, true);
             }
-            return false;
+
+            return shootSpeed;
         }
     }
 }

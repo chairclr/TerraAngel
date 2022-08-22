@@ -2,7 +2,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.Xna.Framework;
 using TerraAngel;
+using TerraAngel.Utility;
+using NVector2 = System.Numerics.Vector2;
 
 namespace Terraria
 {
@@ -30,7 +33,7 @@ namespace Terraria
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if ((uint)x >= Width || (uint)y >= Height)
+                if ((uint)x > Width || (uint)y > Height)
                 { 
                     throw new IndexOutOfRangeException();
                 }
@@ -38,8 +41,31 @@ namespace Terraria
             }
             set
             {
-                // im not sure why this even is here? can we get rid of this?
+                if ((uint)x > Width || (uint)y > Height)
+                {
+                    throw new IndexOutOfRangeException();
+                }
                 *(TileHeap + (x + (y * Width))) = *value.Data;
+            }
+        }
+        public Tile this[Vector2i position]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+            get
+            {
+                if ((uint)position.X > Width || (uint)position.Y > Height)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                return new Tile(TileHeap + (position.X + (position.Y * Width)));
+            }
+            set
+            {
+                if ((uint)position.X > Width || (uint)position.Y > Height)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                *(TileHeap + (position.X + (position.Y * Width))) = *value.Data;
             }
         }
 
@@ -52,6 +78,18 @@ namespace Terraria
         {
             GC.RemoveMemoryPressure(HeapSize);
             Marshal.FreeHGlobal((IntPtr)TileHeap);
+        }
+        public bool InWorld(NVector2 position) => InWorld((int)position.X, (int)position.Y);
+        public bool InWorld(Vector2 position) => InWorld((int)position.X, (int)position.Y);
+        public bool InWorld(Point position) => InWorld(position.X, position.Y);
+        public bool InWorld(Vector2i position) => InWorld(position.X, position.Y);
+        public bool InWorld(int x, int y)
+        {
+            if ((uint)x > Width || (uint)y > Height)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

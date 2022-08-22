@@ -92,13 +92,9 @@ Planned features
 </h2>
 
 - Re-write of the multiplayer UI
-- Aimbot/Enemy prediction
-- World edit features for cut-copy-paste
-- More customization options for the clients UI
 - Syntax highlighting for the C# [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)
 - Better completion for the console
 - More console commands
-  - Add keybind command to bind a console input to a key
 
 <h2>
 System Requirements

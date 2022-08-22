@@ -14,6 +14,7 @@ using TerraAngel.Hooks;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Net;
 using TerraAngel.Client.Config;
+using TerraAngel.Utility;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -54,8 +55,29 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void PlayerItemCheckHook(Action<Player, int> orig, Player self, int i)
         {
-            if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AutoAttackCringe>().PlayerUpdate())
+            if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AutoAttackCringe>().Enabled)
+            {
+
+                int mx = Main.mouseX;
+                int my = Main.mouseY;
+
+
+                if (CringeManager.GetCringe<AutoAttackCringe>().LockedOnToTarget)
+                {
+                    Vector2 point = Util.WorldToScreen(CringeManager.GetCringe<AutoAttackCringe>().TargetPoint);
+
+                    CringeManager.GetCringe<AutoAttackCringe>().LockedOnToTarget = false;
+                    Main.mouseX = (int)point.X;
+                    Main.mouseY = (int)point.Y;
+                }
+
+                orig(self, i);
+
+                Main.mouseX = mx;
+                Main.mouseY = my;
+
                 return;
+            }
             orig(self, i);
         }
         public static int presenceUpdateCount = 0;

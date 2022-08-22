@@ -198,10 +198,10 @@ namespace TerraAngel.Client.Config
             public int AutoFishFrameCountRandomizationMin = 10;
             public int AutoFishFrameCountRandomizationMax = 50;
 
-            public bool AutoAttackTargetBosses = true;
             public bool AutoAttackFavorBosses = true;
             public bool AutoAttackTargetHostileNPCs = true;
             public bool AutoAttackRequireLineOfSight = true;
+            public bool AutoAttackVelocityPrediction = true;
             public float AutoAttackMinTargetRange = 800f;
 
             public float StatsWindowHoveredTransperency = 0.65f;
