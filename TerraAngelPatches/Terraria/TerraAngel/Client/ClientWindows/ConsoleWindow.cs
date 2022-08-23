@@ -7,7 +7,6 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Terraria;
-using NVector2 = System.Numerics.Vector2;
 using System;
 using System.Collections.Generic;
 using System.Composition.Hosting;

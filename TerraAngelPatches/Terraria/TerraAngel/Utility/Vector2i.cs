@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using NVector2 = System.Numerics.Vector2;
 
 namespace TerraAngel.Utility
 {

@@ -8,7 +8,7 @@ using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.GameInput;
 using Terraria.ID;
-using NVector2 = System.Numerics.Vector2;
+
 using Terraria.UI.Chat;
 using Terraria.GameContent.UI.Chat;
 using TerraAngel.Utility;

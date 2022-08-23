@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using ImGuiNET;
 using Newtonsoft.Json;
-using NVector2 = System.Numerics.Vector2;
-using NVector3 = System.Numerics.Vector3;
-using NVector4 = System.Numerics.Vector4;
+
 
 namespace TerraAngel.Client.Config
 {

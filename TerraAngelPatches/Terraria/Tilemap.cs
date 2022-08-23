@@ -5,7 +5,6 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using TerraAngel;
 using TerraAngel.Utility;
-using NVector2 = System.Numerics.Vector2;
 
 namespace Terraria
 {

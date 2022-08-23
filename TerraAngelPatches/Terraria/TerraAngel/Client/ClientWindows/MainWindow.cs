@@ -1,22 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using ImGuiNET;
-using TerraAngel.Hooks;
 using Microsoft.Xna.Framework.Input;
-using NVector2 = System.Numerics.Vector2;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using TerraAngel.Cheat;
-using TerraAngel.Graphics;
 using TerraAngel.WorldEdits;
-using TerraAngel;
-using TerraAngel.Cheat.Cringes;
-using TerraAngel.Client.Config;
-using System.Diagnostics;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -36,7 +21,7 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
             NVector2 windowSize = io.DisplaySize / new NVector2(3f, 2f);
-            
+
             ImGui.SetNextWindowPos(new NVector2(0, io.DisplaySize.Y - windowSize.Y), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
 
@@ -181,7 +166,7 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     ClientLoader.MainRenderer.CurrentWorldEditIndex = -1;
                 }
-                
+
                 if (ImGui.BeginTabItem("Misc"))
                 {
                     if (ImGui.Checkbox("Nebula Spam", ref CringeManager.NebulaSpam))
@@ -219,7 +204,8 @@ namespace TerraAngel.Client.ClientWindows
                     if (ImGui.Button("Click to reveal"))
                     {
                         framesToShowUUIDFor = 600;
-                    } ImGui.SameLine();
+                    }
+                    ImGui.SameLine();
                     if (ImGui.Button("Click to copy"))
                     {
                         ImGui.SetClipboardText(Main.clientUUID);
@@ -233,7 +219,7 @@ namespace TerraAngel.Client.ClientWindows
 
                     ImGui.EndTabItem();
                 }
-                
+
                 ImGui.EndTabBar();
             }
         }

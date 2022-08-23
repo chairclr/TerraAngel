@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,138 @@
+@@ -3,40 +_,139 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -19,6 +19,7 @@
 +  <PropertyGroup>
 +    <LargeAddressAware>true</LargeAddressAware>
 +    <PlatformTarget>AnyCPU</PlatformTarget>
++    <ImplicitUsings>disable</ImplicitUsings>
 +  </PropertyGroup>
 +
 +  <!-- Libraries part of Terraria -->

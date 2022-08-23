@@ -15,7 +15,6 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using TerraAngel.Utility;
 using Terraria.GameContent.UI;
-using NVector2 = System.Numerics.Vector2;
 using Terraria.UI.Chat;
 using System.Text.RegularExpressions;
 using Terraria.GameContent.UI.Chat;

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using ImGuiNET;
 using TerraAngel.Hooks;
 using Microsoft.Xna.Framework.Input;
-using NVector2 = System.Numerics.Vector2;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;

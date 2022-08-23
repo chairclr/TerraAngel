@@ -27,7 +27,7 @@ namespace TerraAngel.Cheat.Cringes
         public ref bool VelocityPrediction => ref ClientConfig.Settings.AutoAttackVelocityPrediction;
 
         public ref float MinAttackRange => ref ClientConfig.Settings.AutoAttackMinTargetRange;
-
+        public ref float VelocityPrectionScaling => ref ClientConfig.Settings.AutoAttackVelocityPredictionScaling;
 
 
         public override void DrawUI(ImGuiIOPtr io)
@@ -55,6 +55,11 @@ namespace TerraAngel.Cheat.Cringes
 
                     ImGui.Checkbox("Require Line of Sight", ref RequireLineOfSight);
                     ImGui.Checkbox("Velocity Prediction", ref VelocityPrediction);
+                    if (VelocityPrediction)
+                    {
+                        ImGui.SliderFloat("Prediction Scaling", ref VelocityPrectionScaling, 1f, 30f);
+                        
+                    }
 
                     ImGui.Unindent(20f);
                 }
@@ -107,7 +112,7 @@ namespace TerraAngel.Cheat.Cringes
                             float sp = CalcPlayerShootSpeed();
                             if (sp > 0 && (npc.velocity.X != 0 || npc.velocity.Y != 0))
                             {
-                                float ttt = (raycast.Distance / sp) / 4f;
+                                float ttt = (raycast.Distance / sp) * VelocityPrectionScaling;
                                 RaycastData tttCorrection = Raycast.Cast(npc.Center, (npc.velocity * ttt).Normalized(), (npc.velocity * ttt).Length() + 0.1f);
                                 targetPoint = tttCorrection.IntersectionPoint;
                             }

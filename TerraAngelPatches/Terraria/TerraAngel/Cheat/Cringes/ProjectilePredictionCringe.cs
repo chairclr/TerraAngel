@@ -15,7 +15,6 @@ using TerraAngel.Utility;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using NVector2 = System.Numerics.Vector2;
 
 
 namespace TerraAngel.Cheat.Cringes

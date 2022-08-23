@@ -1,0 +1,18 @@
+﻿global using ImGuiNET;
+global using Microsoft.Xna.Framework;
+global using Microsoft.Xna.Framework.Graphics;
+global using TerraAngel;
+global using TerraAngel.Cheat;
+global using TerraAngel.Cheat.Cringes;
+global using TerraAngel.Client.Config;
+global using TerraAngel.Graphics;
+global using TerraAngel.Hooks;
+global using TerraAngel.Input;
+global using TerraAngel.Utility;
+global using Terraria;
+global using Terraria.ID;
+global using NVector2 = System.Numerics.Vector2;
+global using NVector3 = System.Numerics.Vector3;
+global using NVector4 = System.Numerics.Vector4;
+global using NRectangle = System.Drawing.Rectangle;
+global using Rectangle = Microsoft.Xna.Framework.Rectangle;

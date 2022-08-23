@@ -202,6 +202,7 @@ namespace TerraAngel.Client.Config
             public bool AutoAttackTargetHostileNPCs = true;
             public bool AutoAttackRequireLineOfSight = true;
             public bool AutoAttackVelocityPrediction = true;
+            public float AutoAttackVelocityPredictionScaling = 0.2269f;
             public float AutoAttackMinTargetRange = 800f;
 
             public float StatsWindowHoveredTransperency = 0.65f;

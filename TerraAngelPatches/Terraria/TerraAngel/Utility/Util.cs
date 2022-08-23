@@ -12,7 +12,6 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using System.Reflection;
 using Terraria.ID;
-using NVector2 = System.Numerics.Vector2;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.Elfie.Serialization;

@@ -13,7 +13,6 @@ using TerraAngel.Graphics;
 using TerraAngel.WorldEdits;
 using Terraria.ID;
 using TerraAngel;
-using NVector2 = System.Numerics.Vector2;
 using TerraAngel.Client.Config;
 using Microsoft.Xna.Framework.Input;
 using Terraria.Map;
