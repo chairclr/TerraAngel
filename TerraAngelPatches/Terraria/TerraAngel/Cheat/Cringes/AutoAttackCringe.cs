@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using ImGuiNET;
@@ -100,7 +101,7 @@ namespace TerraAngel.Cheat.Cringes
                         RaycastData raycast = Raycast.Cast(correctedPlayerCenter, (npc.Center - correctedPlayerCenter).Normalized(), distToPlayer + 1f);
                         if (RequireLineOfSight)
                         {
-                            if (raycast.Intersects)
+                            if (raycast.Hit)
                             {
                                 continue;
                             }
@@ -114,7 +115,7 @@ namespace TerraAngel.Cheat.Cringes
                             {
                                 float ttt = (raycast.Distance / sp) * VelocityPrectionScaling;
                                 RaycastData tttCorrection = Raycast.Cast(npc.Center, (npc.velocity * ttt).Normalized(), (npc.velocity * ttt).Length() + 0.1f);
-                                targetPoint = tttCorrection.IntersectionPoint;
+                                targetPoint = tttCorrection.End;
                             }
                         }
 

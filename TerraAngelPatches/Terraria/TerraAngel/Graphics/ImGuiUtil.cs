@@ -155,7 +155,7 @@ namespace TerraAngel.Graphics
 
         public static void DrawRay(this ImDrawListPtr drawList, RaycastData data, uint col)
         {
-            drawList.AddLine(Util.WorldToScreen(data.Origin).ToNumerics(), Util.WorldToScreen(data.IntersectionPoint).ToNumerics(), col);
+            drawList.AddLine(Util.WorldToScreen(data.Origin).ToNumerics(), Util.WorldToScreen(data.End).ToNumerics(), col);
         }
         public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
         {

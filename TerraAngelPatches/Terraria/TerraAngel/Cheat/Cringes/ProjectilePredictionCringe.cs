@@ -151,42 +151,16 @@ namespace TerraAngel.Cheat.Cringes
         public void StraightPrediction(Projectile projectile, ImDrawListPtr drawList)
         {
             Vector2 position = projectile.position;
-            Vector2 startPosition = position;
             Vector2 velocity = projectile.velocity;
-            int stepCount = Math.Min(projectile.timeLeft, MaxStepCount);
-            for (int i = 0; i < stepCount; i++)
-            {
-                Vector2 tileVelocity = Collision.TileCollision(position, velocity, projectile.width, projectile.height, true, true);
-                bool flag = false;
-                if (tileVelocity != velocity)
-                    flag = true;
+            float maxDistance = (velocity * projectile.timeLeft).Length();
+            RaycastData ray1 = Raycast.Cast(position, velocity.Normalized(), maxDistance);
+            RaycastData ray2 = Raycast.Cast(position + projectile.Size, velocity.Normalized(), maxDistance);
+            RaycastData ray;
 
-                Vector4 slopeVelocity = Collision.SlopeCollision(position, velocity, projectile.width, projectile.height, 0f, fall: true);
+            if (ray1.Distance <= ray2.Distance) ray = ray1;
+            else ray = ray2;
 
-                if (position.X != slopeVelocity.X || position.Y != slopeVelocity.Y ||
-                    velocity.X != slopeVelocity.Z || velocity.Y != slopeVelocity.W)
-                {
-                    flag = true;
-                }
-
-                Vector2 tempPos = position;
-                tempPos.X = slopeVelocity.X;
-                tempPos.Y = slopeVelocity.Y;
-                velocity.X = slopeVelocity.Z;
-                velocity.Y = slopeVelocity.W;
-
-                position += velocity;
-
-                if (position.X < 0 || position.Y < 0 || position.X > Main.maxTilesX * 16f || position.Y > Main.maxTilesY * 16f)
-                    flag = true;
-
-                if (flag)
-                    break;
-            }
-
-            NVector2 lastScreenPos = Util.WorldToScreen(startPosition + (projectile.Size / 2f)).ToNumerics();
-            NVector2 currentScreenPos = Util.WorldToScreen(position + (projectile.Size / 2f)).ToNumerics();
-            drawList.AddLine(lastScreenPos, currentScreenPos, projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue);
+            drawList.AddLine(Util.WorldToScreen(projectile.Center).ToNumerics(), Util.WorldToScreen(projectile.Center + ray.Direction * ray.Distance).ToNumerics(), projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue);
         }
 
         public void StraightBouncingPrediction(Projectile projectile, ImDrawListPtr drawList)
