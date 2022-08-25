@@ -1,24 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using TerraAngel.Hooks;
-using TerraAngel.Graphics;
-using TerraAngel.Input;
-using TerraAngel.Client;
-using TerraAngel.Client.Config;
-using TerraAngel.Client.ClientWindows;
-using System;
+﻿using System;
 using System.IO;
-using TerraAngel.Plugin;
-using Terraria;
-using TerraAngel.Cheat;
-using TerraAngel.Cheat.Cringes;
-using System.Reflection;
 using System.Linq;
-using TerraAngel.UI;
-using DiscordRPC;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using ImGuiNET;
-using Terraria.Audio;
-using System.Diagnostics;
+using DiscordRPC;
+using TerraAngel.Client;
+using TerraAngel.Client.ClientWindows;
+using TerraAngel.Plugin;
+using TerraAngel.UI;
 
 namespace TerraAngel
 {
@@ -44,6 +33,35 @@ namespace TerraAngel
         public static string AssetPath => "Assets";
         public static string NewLibraryPath => "LibNew";
         public static string ArchitectureString => Environment.Is64BitProcess ? "x64" : "x86";
+        public static string ContentFolder
+        {
+            get
+            {
+                string localCopyFolder = Path.Combine(TerrariaPath, "Content");
+                if (Directory.Exists(localCopyFolder))
+                {
+                    return localCopyFolder;
+                }
+
+                string defaultContentPath = @"C:\Program Files (x86)\Steam\steamapps\common\Terraria\Content";
+                if (Directory.Exists(defaultContentPath))
+                {
+                    return defaultContentPath;
+                }
+
+                if (ClientSteamUtils.TryFindTerrariaDirectory(out string foundSteamPath))
+                {
+                    foundSteamPath = Path.Combine(foundSteamPath, "Content");
+                    if (Directory.Exists(foundSteamPath))
+                    {
+                        return foundSteamPath;
+                    }
+                }
+
+                throw new FileNotFoundException("Could not find Content folder. Try copying the Content folder from your Terraria install to where the client is.");
+            }
+        }
+
 
         private static void LoadClientInteral()
         {

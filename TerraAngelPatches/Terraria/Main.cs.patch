@@ -211,6 +211,14 @@
      }
  
      public static void LoadTestLog(string logname)
+@@ -8109,6 +_,7 @@
+         Assets = base.Services.Get<IAssetRepository>();
+         Assets.AssetLoadFailHandler = OnceFailedLoadingAnAsset;
+         mapSectionTexture = new RenderTarget2D(base.GraphicsDevice, 200, 150);
++        base.Content.RootDirectory = ClientLoader.ContentFolder;
+         ShaderContentManager = new ContentManager(base.Content.ServiceProvider, base.Content.RootDirectory);
+         PixelShaderRef.Value = ShaderContentManager.Load<Effect>("PixelShader");
+         VertexPixelShaderRef.Value = ShaderContentManager.Load<Effect>("PixelShader");
 @@ -8137,7 +_,6 @@
  
          AssetSourceController.UseResourcePacks(AssetInitializer.CreateResourcePackList(base.Services));
