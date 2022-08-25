@@ -114,34 +114,37 @@ public class Program
         }
 
         bool failed = false;
-        if (!Directory.Exists(TerrariaPath))
+        if (Decomp || AutoStart)
         {
-            try
+            if (!Directory.Exists(TerrariaPath))
             {
-                if (SteamUtils.TryFindTerrariaDirectory(out string terrariaPath))
+                try
                 {
-                    TerrariaPath = terrariaPath;
+                    if (SteamUtils.TryFindTerrariaDirectory(out string terrariaPath))
+                    {
+                        TerrariaPath = terrariaPath;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.ToString());
                 }
             }
-            catch (Exception ex)
+
+            if (!Directory.Exists(TerrariaPath))
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("Could not find Terraria path");
+                Console.Write("Enter your terraria path: ");
+                TerrariaPath = Console.ReadLine() ?? "";
             }
-        }
 
-        if (!Directory.Exists(TerrariaPath))
-        {
-            Console.WriteLine("Could not find Terraria path");
-            Console.Write("Enter your terraria path: ");
-            TerrariaPath = Console.ReadLine() ?? "";
-        }
+            if (!Directory.Exists(TerrariaPath))
+            {
+                Console.WriteLine("hi tomat");
 
-        if (!Directory.Exists(TerrariaPath))
-        {
-            Console.WriteLine("hi tomat");
-
-            failed = true;
+                failed = true;
+            }
         }
 
         try
