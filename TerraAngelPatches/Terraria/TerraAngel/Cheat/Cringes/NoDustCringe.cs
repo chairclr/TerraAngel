@@ -11,5 +11,8 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "No dust";
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
+
+        [DefaultConfigValue("DefaultNoDust")]
+        public override ref bool Enabled => ref base.Enabled;
     }
 }

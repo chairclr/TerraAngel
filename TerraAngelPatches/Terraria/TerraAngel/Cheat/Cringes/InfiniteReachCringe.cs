@@ -11,5 +11,8 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "Infinite reach";
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
+
+        [DefaultConfigValue("DefaultInfiniteReach")]
+        public override ref bool Enabled => ref base.Enabled;
     }
 }

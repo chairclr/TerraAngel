@@ -24,12 +24,25 @@ namespace TerraAngel.Cheat.Cringes
         public ref Color ItemColor => ref ClientConfig.Settings.ItemBoxColor;
         public ref Color TracerColor => ref ClientConfig.Settings.TracerColor;
 
+        [DefaultConfigValue("DefaultDrawAnyESP")]
         public bool DrawAnyESP = true;
+
+        [DefaultConfigValue("DefaultPlayerESPBoxes")]
         public bool PlayerBoxes = false;
+
+        [DefaultConfigValue("DefaultPlayerESPTracers")]
         public bool PlayerTracers = false;
+
+        [DefaultConfigValue("DefaultNPCBoxes")]
         public bool NPCBoxes = false;
+
+        [DefaultConfigValue("DefaultProjectileBoxes")]
         public bool ProjectileBoxes = false;
+
+        [DefaultConfigValue("DefaultItemBoxes")]
         public bool ItemBoxes = false;
+
+        [DefaultConfigValue("DefaultTileSections")]
         public bool ShowTileSections = false;
 
         public override void DrawUI(ImGuiIOPtr io)

@@ -12,6 +12,9 @@ namespace TerraAngel.Cheat.Cringes
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
+        [DefaultConfigValue("DefaultAntiHurt")]
+        public override ref bool Enabled => ref base.Enabled;
+
         public int FramesSinceLastLifePacket = 0;
     }
 }

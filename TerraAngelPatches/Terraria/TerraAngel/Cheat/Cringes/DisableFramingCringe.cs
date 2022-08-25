@@ -11,5 +11,8 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "Disable tile framing";
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
+
+        [DefaultConfigValue("DefaultDisableTileFraming")]
+        public override ref bool Enabled => ref base.Enabled;
     }
 }

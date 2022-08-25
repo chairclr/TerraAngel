@@ -11,5 +11,8 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "No gore";
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
+
+        [DefaultConfigValue("DefaultNoGore")]
+        public override ref bool Enabled => ref base.Enabled;
     }
 }

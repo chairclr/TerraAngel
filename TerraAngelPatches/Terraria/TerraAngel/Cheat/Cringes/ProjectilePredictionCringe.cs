@@ -26,8 +26,14 @@ namespace TerraAngel.Cheat.Cringes
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
         public bool DrawPlayerProjectilePrediction = false;
+
+        [DefaultConfigValue("DefaultDrawActiveProjectilePrediction")]
         public bool DrawActiveProjectilePrediction = true;
+
+        [DefaultConfigValue("DefaultDrawFriendlyProjectilePrediction")]
         public bool DrawFriendlyProjectiles = false;
+
+        [DefaultConfigValue("DefaultDrawHostileProjectilePrediction")]
         public bool DrawHostileProjectiles = true;
 
         public ref Color FriendlyDrawColor => ref ClientConfig.Settings.FriendlyProjectilePredictionDrawColor;

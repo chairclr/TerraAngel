@@ -11,5 +11,8 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "Infinite minions";
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
+
+        [DefaultConfigValue("DefaultInfiniteMinions")]
+        public override ref bool Enabled => ref base.Enabled;
     }
 }

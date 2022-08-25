@@ -17,6 +17,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public ref float Brightness => ref ClientConfig.Settings.FullBrightBrightness;
 
+        [DefaultConfigValue("PartialBrightDefaultValue")]
         public bool PartialBright = false;
         public ref float ExtraAirBrightness => ref ClientConfig.Settings.PartialBrightAirExtraLight;
         public ref float ExtraSolidBrightness => ref ClientConfig.Settings.PartialBrightSolidExtraLight;

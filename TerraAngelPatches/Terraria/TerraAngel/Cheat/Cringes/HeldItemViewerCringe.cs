@@ -11,5 +11,8 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "Show held item";
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
+
+        [DefaultConfigValue("DefaultShowHeldItem")]
+        public override ref bool Enabled => ref base.Enabled;
     }
 }

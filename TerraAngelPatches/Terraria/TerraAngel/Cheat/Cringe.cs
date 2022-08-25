@@ -10,7 +10,8 @@ namespace TerraAngel.Cheat
     public abstract class Cringe
     {
         private bool lastEnabled;
-        public bool Enabled;
+        private bool enabled;
+        public virtual ref bool Enabled { get => ref enabled; }
         public virtual string Name => GetType().Name;
         public virtual CringeTabs Tab => CringeTabs.None;
 

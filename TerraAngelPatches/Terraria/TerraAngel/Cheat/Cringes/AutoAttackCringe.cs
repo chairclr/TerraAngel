@@ -18,7 +18,6 @@ namespace TerraAngel.Cheat.Cringes
 {
     public class AutoAttackCringe : Cringe
     {
-
         public override string Name => "Auto-Attack";
         public override CringeTabs Tab => CringeTabs.AutomationCringes;
 

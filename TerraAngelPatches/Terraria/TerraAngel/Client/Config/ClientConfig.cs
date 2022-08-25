@@ -18,9 +18,15 @@ using System.Reflection;
 using TerraAngel.Cheat;
 using System.Runtime.Serialization;
 using TerraAngel;
+using static System.Net.Mime.MediaTypeNames;
+using static TerraAngel.Client.Config.ClientConfig;
+using Terraria.GameContent;
+using MonoMod.Utils;
+using Microsoft.DiaSymReader;
 
 namespace TerraAngel.Client.Config
 {
+    
     public class ClientConfig
     {
         [AttributeUsage(AttributeTargets.Field, Inherited = false)]
@@ -53,22 +59,22 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Default Infinite Minions")]
             public bool DefaultInfiniteMinions = false;
 
-            [UIConfigElement("Default Draw Any ESP")]
-            public bool DefaultDrawAnyESP = true;
+            [UIConfigElement("Default ESP Draw Any")]
+            public bool DefaultDrawAnyESP = false;
 
-            [UIConfigElement("Default Tracers")]
+            [UIConfigElement("Default ESP Tracers")]
             public bool DefaultPlayerESPTracers = false;
 
-            [UIConfigElement("Default Player Hitboxes")]
+            [UIConfigElement("Default ESP Player Hitboxes")]
             public bool DefaultPlayerESPBoxes = true;
 
-            [UIConfigElement("Default NPC Hitboxes")]
+            [UIConfigElement("Default ESP NPC Hitboxes")]
             public bool DefaultNPCBoxes = false;
 
-            [UIConfigElement("Default Projectile Hitboxes")]
+            [UIConfigElement("Default ESP Projectile Hitboxes")]
             public bool DefaultProjectileBoxes = false;
 
-            [UIConfigElement("Default Item Hitboxes")]
+            [UIConfigElement("Default ESP Item Hitboxes")]
             public bool DefaultItemBoxes = false;
 
             [UIConfigElement("Default Show Held Item")]
@@ -122,6 +128,21 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Show Detailed Item Tooltip")]
             public bool ShowDetailedItemTooltip = true;
 
+            [UIConfigElement("Save Console History")]
+            public bool PreserveConsoleHistory = true;
+
+            [UIConfigElement("Save Console State")]
+            public bool ConsoleSaveInReplMode = true;
+
+            [UIConfigElement("Chat Replicates Vanilla Behavior")]
+            public bool ChatVanillaInvetoryBehavior = true;
+
+            [UIConfigElement("Default Disable Tile Framing")]
+            public bool DefaultDisableTileFraming = false;
+
+            [UIConfigElement("Default ESP Tile Sections")]
+            public bool DefaultTileSections = false;
+
             [UIConfigElement("Toggle UI")]
             public Keys ToggleUIVisibility = Keys.OemTilde;
 
@@ -155,13 +176,6 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Show Player Inspector")]
             public Keys ShowPlayerInspector = Keys.NumPad7;
 
-            [UIConfigElement("Save Console History")]
-            public bool PreserveConsoleHistory = true;
-            [UIConfigElement("Save Console State")]
-            public bool ConsoleSaveInReplMode = true;
-
-            [UIConfigElement("Chat Replicates Vanilla Behavior")]
-            public bool ChatVanillaInvetoryBehavior = true;
 
             public int ConsoleHistoryLimit = 5000;
             public int ChatHistoryLimit = 3000;
@@ -327,6 +341,81 @@ namespace TerraAngel.Client.Config
                     Settings.ConsoleHistory = Settings.ConsoleHistorySave;
                 else
                     Settings.ConsoleHistorySave = null;
+            }
+        }
+
+        delegate ref float FuncRefFloat();
+        delegate ref NVector2 FuncRefNVector2();
+        delegate ref NVector3 FuncRefNVector3();
+        delegate ref NVector4 FuncRefNVector4();
+        delegate ref bool FuncRefBool();
+        public static void SetDefaultCringeValues(Cringe cringe)
+        {
+            Type type = cringe.GetType();
+            foreach (FieldInfo field in type.GetFields().Where(x => Attribute.IsDefined(x, typeof(DefaultConfigValueAttribute))))
+            {
+                DefaultConfigValueAttribute? value = (DefaultConfigValueAttribute?)Attribute.GetCustomAttribute(field, typeof(DefaultConfigValueAttribute));
+                if (value is null) throw new NullReferenceException("No attribute L");
+
+                FieldInfo? configField = typeof(Config).GetField(value.FieldName, BindingFlags.Public | BindingFlags.Instance);
+                if (configField is null) throw new Exception($"Could not find field {value.FieldName}");
+
+                field.SetValue(cringe, configField.GetValue(Settings));
+            }
+
+            foreach (PropertyInfo property in type.GetProperties().Where(x => Attribute.IsDefined(x, typeof(DefaultConfigValueAttribute))))
+            {
+                bool refType = false;
+                if (!property.CanWrite)
+                {
+                    if (property.CanRead && property.GetMethod is not null && property.GetMethod.ReturnType.IsByRef)
+                    {
+                        refType = true;
+                    }
+                    else
+                    {
+                        throw new Exception($"Property {property.Name} cannot be written to");
+                    }
+                }
+
+                DefaultConfigValueAttribute? value = (DefaultConfigValueAttribute?)Attribute.GetCustomAttribute(property, typeof(DefaultConfigValueAttribute));
+                if (value is null) throw new NullReferenceException("No attribute L");
+
+                FieldInfo? configField = typeof(Config).GetField(value.FieldName, BindingFlags.Public | BindingFlags.Instance);
+                if (configField is null) throw new Exception($"Could not find field {value.FieldName}");
+
+                if (!refType) property.SetValue(cringe, configField.GetValue(Settings));
+
+                // this is a shitty solution to the problem of dotnet not having an easy way to set ref properties :(
+                else
+                {
+                    object? obj = configField.GetValue(Settings);
+                    Type t = property.PropertyType;
+                    MethodInfo? getMethod = property.GetMethod;
+                    if (getMethod is null)
+                        continue;
+
+                    if (t == typeof(float).MakeByRefType())
+                    {
+                        getMethod.CreateDelegate<FuncRefFloat>(cringe)() = (float)obj;
+                    }
+                    else if (t == typeof(NVector2).MakeByRefType())
+                    {
+                        getMethod.CreateDelegate<FuncRefNVector2>(cringe)() = (NVector2)obj;
+                    }
+                    else if (t == typeof(NVector3).MakeByRefType())
+                    {
+                        getMethod.CreateDelegate<FuncRefNVector3>(cringe)() = (NVector3)obj;
+                    }
+                    else if (t == typeof(NVector4).MakeByRefType())
+                    {
+                        getMethod.CreateDelegate<FuncRefNVector4>(cringe)() = (NVector4)obj;
+                    }
+                    else if (t == typeof(bool).MakeByRefType())
+                    {
+                        getMethod.CreateDelegate<FuncRefBool>(cringe)() = (bool)obj;
+                    }
+                }
             }
         }
     }

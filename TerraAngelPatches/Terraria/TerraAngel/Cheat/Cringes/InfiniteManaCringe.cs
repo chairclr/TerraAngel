@@ -11,5 +11,8 @@ namespace TerraAngel.Cheat.Cringes
         public override string Name => "Infinite mana";
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
+
+        [DefaultConfigValue("DefaultInfiniteMana")]
+        public override ref bool Enabled => ref base.Enabled;
     }
 }

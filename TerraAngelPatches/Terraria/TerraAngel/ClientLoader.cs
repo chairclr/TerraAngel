@@ -122,30 +122,31 @@ namespace TerraAngel
             {
                 Type type = cringeTypes[i];
                 CringeManager.AddCringe(type);
+                ClientConfig.SetDefaultCringeValues(CringeManager.GetCringe(type));
             }
 
             CringeManager.SortTabs();
 
-            CringeManager.GetCringe<AntiHurtCringe>().Enabled = ClientConfig.Settings.DefaultAntiHurt;
-            CringeManager.GetCringe<InfiniteManaCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMana;
-            CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMinions;
-            CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = ClientConfig.Settings.DefaultShowHeldItem;
-            CringeManager.GetCringe<InfiniteReachCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteReach;
-            CringeManager.GetCringe<NoGoreCringe>().Enabled = ClientConfig.Settings.DefaultNoGore;
-            CringeManager.GetCringe<NoDustCringe>().Enabled = ClientConfig.Settings.DefaultNoDust;
-
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = ClientConfig.Settings.DefaultDrawActiveProjectilePrediction;
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = ClientConfig.Settings.DefaultDrawFriendlyProjectilePrediction;
-            CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = ClientConfig.Settings.DefaultDrawHostileProjectilePrediction;
-            CringeManager.GetCringe<FullBrightCringe>().PartialBright = ClientConfig.Settings.PartialBrightDefaultValue;
-
-            ESPCringe boxesCringe = CringeManager.GetCringe<ESPCringe>();
-            boxesCringe.DrawAnyESP = ClientConfig.Settings.DefaultDrawAnyESP;
-            boxesCringe.NPCBoxes = ClientConfig.Settings.DefaultNPCBoxes;
-            boxesCringe.ProjectileBoxes = ClientConfig.Settings.DefaultProjectileBoxes;
-            boxesCringe.PlayerBoxes = ClientConfig.Settings.DefaultPlayerESPBoxes;
-            boxesCringe.ItemBoxes = ClientConfig.Settings.DefaultItemBoxes;
-            boxesCringe.PlayerTracers = ClientConfig.Settings.DefaultPlayerESPTracers;
+            //CringeManager.GetCringe<AntiHurtCringe>().Enabled = ClientConfig.Settings.DefaultAntiHurt;
+            //CringeManager.GetCringe<InfiniteManaCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMana;
+            //CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMinions;
+            //CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = ClientConfig.Settings.DefaultShowHeldItem;
+            //CringeManager.GetCringe<InfiniteReachCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteReach;
+            //CringeManager.GetCringe<NoGoreCringe>().Enabled = ClientConfig.Settings.DefaultNoGore;
+            //CringeManager.GetCringe<NoDustCringe>().Enabled = ClientConfig.Settings.DefaultNoDust;
+            //
+            //CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = ClientConfig.Settings.DefaultDrawActiveProjectilePrediction;
+            //CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = ClientConfig.Settings.DefaultDrawFriendlyProjectilePrediction;
+            //CringeManager.GetCringe<ProjectilePredictionCringe>().DrawHostileProjectiles = ClientConfig.Settings.DefaultDrawHostileProjectilePrediction;
+            //CringeManager.GetCringe<FullBrightCringe>().PartialBright = ClientConfig.Settings.PartialBrightDefaultValue;
+            //
+            //ESPCringe boxesCringe = CringeManager.GetCringe<ESPCringe>();
+            //boxesCringe.DrawAnyESP = ClientConfig.Settings.DefaultDrawAnyESP;
+            //boxesCringe.NPCBoxes = ClientConfig.Settings.DefaultNPCBoxes;
+            //boxesCringe.ProjectileBoxes = ClientConfig.Settings.DefaultProjectileBoxes;
+            //boxesCringe.PlayerBoxes = ClientConfig.Settings.DefaultPlayerESPBoxes;
+            //boxesCringe.ItemBoxes = ClientConfig.Settings.DefaultItemBoxes;
+            //boxesCringe.PlayerTracers = ClientConfig.Settings.DefaultPlayerESPTracers;
 
             if (ClientConfig.Settings.UseDiscordRPC)
             {
