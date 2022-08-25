@@ -1,0 +1,77 @@
+--- src/Terraria/Terraria/GameContent/Drawing/TileDrawing.cs
++++ src/TerraAngel/Terraria/GameContent/Drawing/TileDrawing.cs
+@@ -133,10 +_,6 @@
+             for (int j = firstTileX - 2; j < lastTileX + 2; j++)
+             {
+                 Tile tile = Main.tile[j, i];
+-                if (tile == null)
+-                {
+-                    continue;
+-                }
+ 
+                 if (tile.active())
+                 {
+@@ -371,20 +_,12 @@
+             for (int j = firstTileX - 2; j < lastTileX + 2; j++)
+             {
+                 Tile tile = Main.tile[j, i];
+-                if (tile == null)
+-                {
+-                    tile = new Tile();
+-                    Main.tile[j, i] = tile;
+-                    Main.mapTime += 60;
+-                }
+-                else
+-                {
+-                    if (!tile.active() || IsTileDrawLayerSolid(tile.type) != solidLayer)
+-                    {
+-                        continue;
+-                    }
+-
+                     ushort type = tile.type;
++                    if (!tile.active() || IsTileDrawLayerSolid(type) != solidLayer)
++                    {
++                        continue;
++                    }
++
+                     short frameX = tile.frameX;
+                     short frameY = tile.frameY;
+                     if (!TextureAssets.Tile[type].IsLoaded)
+@@ -587,7 +_,6 @@
+                     }
+ 
+                     DrawSingleTile(value, solidLayer, waterStyleOverride, unscaledPosition, vector, j, i);
+-                }
+             }
+         }
+ 
+@@ -663,7 +_,7 @@
+         drawData.tileFrameX = drawData.tileCache.frameX;
+         drawData.tileFrameY = drawData.tileCache.frameY;
+         drawData.tileLight = Lighting.GetColor(tileX, tileY);
+-        if (drawData.tileCache.liquid > 0 && drawData.tileCache.type == 518)
++        if (drawData.tileCache.type == 518 && drawData.tileCache.liquid > 0)
+         {
+             return;
+         }
+@@ -671,7 +_,6 @@
+         GetTileDrawData(tileX, tileY, drawData.tileCache, drawData.typeCache, ref drawData.tileFrameX, ref drawData.tileFrameY, out drawData.tileWidth, out drawData.tileHeight, out drawData.tileTop, out drawData.halfBrickHeight, out drawData.addFrX, out drawData.addFrY, out drawData.tileSpriteEffect, out drawData.glowTexture, out drawData.glowSourceRect, out drawData.glowColor);
+         drawData.drawTexture = GetTileDrawTexture(drawData.tileCache, tileX, tileY);
+         Texture2D highlightTexture = null;
+-        Rectangle empty = Rectangle.Empty;
+         Color highlightColor = Color.Transparent;
+         if (TileID.Sets.HasOutlines[drawData.typeCache])
+         {
+@@ -1010,10 +_,10 @@
+ 
+         if (highlightTexture != null)
+         {
+-            empty = new Rectangle(drawData.tileFrameX + drawData.addFrX, drawData.tileFrameY + drawData.addFrY, drawData.tileWidth, drawData.tileHeight);
++            Rectangle rect = new Rectangle(drawData.tileFrameX + drawData.addFrX, drawData.tileFrameY + drawData.addFrY, drawData.tileWidth, drawData.tileHeight);
+             int num12 = 0;
+             int num13 = 0;
+-            Main.spriteBatch.Draw(highlightTexture, new Vector2((float)(tileX * 16 - (int)screenPosition.X) - ((float)drawData.tileWidth - 16f) / 2f + (float)num12, tileY * 16 - (int)screenPosition.Y + drawData.tileTop + num13) + screenOffset, empty, highlightColor, 0f, _zero, 1f, drawData.tileSpriteEffect, 0f);
++            Main.spriteBatch.Draw(highlightTexture, new Vector2((float)(tileX * 16 - (int)screenPosition.X) - ((float)drawData.tileWidth - 16f) / 2f + (float)num12, tileY * 16 - (int)screenPosition.Y + drawData.tileTop + num13) + screenOffset, rect, highlightColor, 0f, _zero, 1f, drawData.tileSpriteEffect, 0f);
+         }
+     }
+ 
