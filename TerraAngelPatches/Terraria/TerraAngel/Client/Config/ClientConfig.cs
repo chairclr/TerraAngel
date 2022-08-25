@@ -154,6 +154,9 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Save Console State")]
             public bool ConsoleSaveInReplMode = true;
 
+            [UIConfigElement("Chat Replicates Vanilla Behavior")]
+            public bool ChatVanillaInvetoryBehavior = true;
+
             public int ConsoleHistoryLimit = 5000;
             public int ChatHistoryLimit = 3000;
 
@@ -182,7 +185,6 @@ namespace TerraAngel.Client.Config
             public float ChatWindowTransperencyInactive = 0.0f;
             public bool ChatAutoScroll = true;
             public int framesForMessageToBeVisible = 600;
-            public bool ChatVanillaInvetoryBehavior = true;
 
             public bool AutoFishAcceptItems = true;
             public bool AutoFishAcceptAllItems = true;

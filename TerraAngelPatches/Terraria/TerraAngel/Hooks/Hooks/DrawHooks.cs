@@ -48,11 +48,7 @@ namespace TerraAngel.Hooks.Hooks
 
         public static void DrawWaterHook(Action<Main, bool, int, float> orig, Main self, bool bg, int Style, float Alpha)
         {
-            Vector2 escreen = Main.screenPosition;
-            Main.screenPosition = Main.screenPosition.Floor();
-            Main.screenLastPosition = Main.screenPosition;
             orig(self, bg, Style, Alpha);
-            Main.screenPosition = escreen;
         }
 
         public delegate void GetLinesInfoDef(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine);
@@ -144,11 +140,10 @@ namespace TerraAngel.Hooks.Hooks
 
         public static void DrawTilesHook(Action<Main, bool, bool, bool, int> orig, Main self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets, int waterStyleOverride)
         {
-
-            float lsp = Main.screenPosition.Y;
-            Main.screenPosition.Y = fixedScreenY;
+            //float lsp = Main.screenPosition.Y;
+            //Main.screenPosition.Y = fixedScreenY;
             orig(self, solidLayer, forRenderTargets, intoRenderTargets, waterStyleOverride);
-            Main.screenPosition.Y = lsp;
+            //Main.screenPosition.Y = lsp;
         }
 
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
@@ -184,7 +179,7 @@ namespace TerraAngel.Hooks.Hooks
         public static void UpdateCameraHook(Action orig)
         {
             FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
-            if (Input.InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleFullbright))
+            if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleFullbright))
             {
                 fullBright.Enabled = !fullBright.Enabled;
             }
@@ -192,7 +187,7 @@ namespace TerraAngel.Hooks.Hooks
             if (!Main.gameMenu)
             {
                 FreecamCringe freecam = CringeManager.GetCringe<FreecamCringe>();
-                if (Input.InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleFreecam))
+                if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleFreecam))
                 {
                     freecam.Enabled = !freecam.Enabled;
                 }
@@ -236,8 +231,8 @@ namespace TerraAngel.Hooks.Hooks
                 Main.myPlayer = temp;
             }
 
-            Main.screenPosition.X = (int)Main.screenPosition.X;
-            fixedScreenY = (int)Main.screenPosition.Y;
+            //Main.screenPosition.X = (int)Main.screenPosition.X;
+            //fixedScreenY = (int)Main.screenPosition.Y;
         }
 
         private static FullBrightCringe fullBrightCache;

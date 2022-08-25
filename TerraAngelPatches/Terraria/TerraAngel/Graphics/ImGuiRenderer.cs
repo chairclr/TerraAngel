@@ -228,6 +228,10 @@ namespace TerraAngel.Graphics
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers
             Viewport lastViewport = GraphicsDevice.Viewport;
             Rectangle lastScissorBox = GraphicsDevice.ScissorRectangle;
+            SamplerState lastSamplerState = GraphicsDevice.SamplerStates[0];
+            BlendState lastBlendState = GraphicsDevice.BlendState;
+            RasterizerState lastRasterizerState = GraphicsDevice.RasterizerState;
+            Viewport lastViewPort = GraphicsDevice.Viewport;
 
             GraphicsDevice.BlendFactor = Color.White;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
@@ -248,6 +252,10 @@ namespace TerraAngel.Graphics
             // Restore modified state
             GraphicsDevice.Viewport = lastViewport;
             GraphicsDevice.ScissorRectangle = lastScissorBox;
+            GraphicsDevice.SamplerStates[0] = lastSamplerState;
+            GraphicsDevice.BlendState = lastBlendState;
+            GraphicsDevice.RasterizerState = lastRasterizerState;
+            GraphicsDevice.Viewport = lastViewPort;
         }
         private unsafe void UpdateBuffers(ImDrawDataPtr drawData)
         {

@@ -113,7 +113,7 @@ namespace TerraAngel.Client.ClientWindows
             ImGui.Begin("##StatWindow", flags);
             ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
-            ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v2.0");
+            ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v2.1");
 
             ImGui.TextUnformatted($"FPS {io.Framerate:F1}");
 

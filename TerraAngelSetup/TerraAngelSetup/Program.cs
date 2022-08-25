@@ -113,29 +113,39 @@ public class Program
             }
         }
 
+        bool failed = false;
+        if (!Directory.Exists(TerrariaPath))
+        {
+            try
+            {
+                if (SteamUtils.TryFindTerrariaDirectory(out string terrariaPath))
+                {
+                    TerrariaPath = terrariaPath;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        if (!Directory.Exists(TerrariaPath))
+        {
+            Console.WriteLine("Could not find Terraria path");
+            Console.Write("Enter your terraria path: ");
+            TerrariaPath = Console.ReadLine() ?? "";
+        }
+
+        if (!Directory.Exists(TerrariaPath))
+        {
+            Console.WriteLine("hi tomat");
+
+            failed = true;
+        }
 
         try
         {
-            if (!Directory.Exists(TerrariaPath))
-            {
-                TerrariaPath = @"G:\Program Files (x86)\Steam\steamapps\common\Terraria";
-                if (!Directory.Exists(TerrariaPath))
-                {
-                    TerrariaPath = @"E:\Program Files (x86)\Steam\steamapps\common\Terraria";
-                    if (!Directory.Exists(TerrariaPath))
-                    {
-                        TerrariaPath = @"D:\Program Files (x86)\Steam\steamapps\common\Terraria";
-                        if (!Directory.Exists(TerrariaPath))
-                        {
-                            if (!SteamUtils.TryFindTerrariaDirectory(out TerrariaPath))
-                            {
-                                Console.WriteLine("Could not find Terraria path");
-                            }
-                        }
-                    }
-                }
-            }
-
             if (Decomp || AutoStart)
             {
                 DecompileTerraria();
@@ -181,6 +191,13 @@ public class Program
         {
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.ToString());
+            failed = true;
+        }
+
+        if (AutoStart || failed)
+        {
+            Console.Write("Press enter to exit...");
+            Console.ReadLine();
         }
     }
     public static void DecompileTerraria()

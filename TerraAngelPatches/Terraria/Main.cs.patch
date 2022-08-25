@@ -580,6 +580,41 @@
          Asset<Texture2D> asset = TextureAssets.MapBGs[0];
          int num = -1;
          Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+@@ -58301,6 +_,9 @@
+         {
+             waterfallManager.FindWaterfalls();
+             TimeLogger.DetailedDrawTime(2);
++            Vector2 vec = Main.screenPosition;
++            screenPosition.X = (int)Main.screenPosition.X;
++            screenPosition.Y = (int)Main.screenPosition.Y;
+             if (renderNow)
+             {
+                 screenLastPosition = screenPosition;
+@@ -58335,14 +_,14 @@
+                     sceneTilePos.Y = screenPosition.Y - (float)offScreenRange;
+                 }
+ 
+-                if (renderCount == 3)
++                if (renderCount == (Lighting.LegacyEngine.Mode == 0 ? 2 : 3))
+                 {
+                     RenderTiles2();
+                     sceneTile2Pos.X = screenPosition.X - (float)offScreenRange;
+                     sceneTile2Pos.Y = screenPosition.Y - (float)offScreenRange;
+                 }
+ 
+-                if (renderCount == 3)
++                if (renderCount == (Lighting.LegacyEngine.Mode == 0 ? 0 : 3))
+                 {
+                     RenderWalls();
+                     sceneWallPos.X = screenPosition.X - (float)offScreenRange;
+@@ -58401,6 +_,7 @@
+                     sceneWaterPos.Y = screenPosition.Y - (float)offScreenRange;
+                 }
+             }
++            Main.screenPosition = vec;
+         }
+ 
+         if (!loadMap)
 @@ -58862,7 +_,13 @@
                  DrawWires();
              }
