@@ -107,6 +107,12 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Default Projectile Prediction Draw Hostile")]
             public bool DefaultDrawHostileProjectilePrediction = true;
 
+            [UIConfigElement("Default No Gore")]
+            public bool DefaultNoGore = false;
+
+            [UIConfigElement("Default No Dust")]
+            public bool DefaultNoDust = false;
+
             [UIConfigElement("Discord Rich Presence")]
             public bool UseDiscordRPC = true;
 

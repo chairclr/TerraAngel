@@ -131,7 +131,8 @@ namespace TerraAngel
             CringeManager.GetCringe<InfiniteMinionCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteMinions;
             CringeManager.GetCringe<HeldItemViewerCringe>().Enabled = ClientConfig.Settings.DefaultShowHeldItem;
             CringeManager.GetCringe<InfiniteReachCringe>().Enabled = ClientConfig.Settings.DefaultInfiniteReach;
-
+            CringeManager.GetCringe<NoGoreCringe>().Enabled = ClientConfig.Settings.DefaultNoGore;
+            CringeManager.GetCringe<NoDustCringe>().Enabled = ClientConfig.Settings.DefaultNoDust;
 
             CringeManager.GetCringe<ProjectilePredictionCringe>().DrawActiveProjectilePrediction = ClientConfig.Settings.DefaultDrawActiveProjectilePrediction;
             CringeManager.GetCringe<ProjectilePredictionCringe>().DrawFriendlyProjectiles = ClientConfig.Settings.DefaultDrawFriendlyProjectilePrediction;
