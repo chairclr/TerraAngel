@@ -297,8 +297,8 @@ public class Program
 
         public readonly static string TerrariaManifestFile = $"appmanifest_{TerrariaAppId}.acf";
 
-        private readonly static Regex SteamLibraryFoldersRegex = new(@"""(\d+)""[^\S\r\n]+""(.+)""", RegexOptions.Compiled);
-        private readonly static Regex SteamManifestInstallDirRegex = new(@"""installdir""[^\S\r\n]+""([^\r\n]+)""", RegexOptions.Compiled);
+        private readonly static Regex SteamLibraryFoldersRegex = new Regex(@"^\s+""(path)""\s+""(.+)""", RegexOptions.Compiled);
+        private readonly static Regex SteamManifestInstallDirRegex = new Regex(@"""installdir""[^\S\r\n]+""([^\r\n]+)""", RegexOptions.Compiled);
 
         public static bool TryFindTerrariaDirectory(out string path)
         {
@@ -316,7 +316,8 @@ public class Program
         {
             string steamApps = Path.Combine(steamDirectory, "steamapps");
 
-            var libraries = new List<string>() {
+            List<string> libraries = new List<string>
+            {
                 steamApps
             };
 
@@ -324,17 +325,20 @@ public class Program
 
             if (File.Exists(libraryFoldersFile))
             {
-                string contents = File.ReadAllText(libraryFoldersFile);
+                string[] contents = File.ReadAllLines(libraryFoldersFile);
 
-                var matches = SteamLibraryFoldersRegex.Matches(contents);
-
-                foreach (Match match in matches)
+                for (int i = 0; i < contents.Length; i++)
                 {
-                    string directory = Path.Combine(match.Groups[2].Value.Replace(@"\\", @"\"), "steamapps");
+                    MatchCollection matches = SteamLibraryFoldersRegex.Matches(contents[i]);
 
-                    if (Directory.Exists(directory))
+                    foreach (Match match in matches)
                     {
-                        libraries.Add(directory);
+                        string directory = Path.Combine(match.Groups[2].Value.Replace(@"\\", @"\"), "steamapps");
+
+                        if (Directory.Exists(directory))
+                        {
+                            libraries.Add(directory);
+                        }
                     }
                 }
             }
