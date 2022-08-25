@@ -126,8 +126,8 @@ namespace TerraAngel.Client.ClientWindows
             NVector2 windowSize = new NVector2(io.DisplaySize.X - 690, 240);
             NVector2 windowPosition = new NVector2(88f, io.DisplaySize.Y - windowSize.Y);
 
-            ImGui.SetNextWindowPos(windowPosition, ImGuiCond.Appearing);
-            ImGui.SetNextWindowSize(windowSize, ImGuiCond.Appearing);
+            ImGui.SetNextWindowPos(windowPosition, ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
 
             if (resetPosition)
             {
@@ -316,11 +316,10 @@ namespace TerraAngel.Client.ClientWindows
 
             if (IsChatting)
             {
-                if (!justOpened && Input.InputSystem.IsKeyPressed(Keys.Enter))
+                if (!justOpened && InputSystem.IsKeyPressed(Keys.Enter))
                 {
                     if (chatBoxFocus)
                     {
-                        ClosePlayerChat();
                         if (!string.IsNullOrEmpty(ChatText))
                         {
                             ChatMessage message = ChatManager.Commands.CreateOutgoingMessage(Util.EscapeString(ChatText));
@@ -350,6 +349,7 @@ namespace TerraAngel.Client.ClientWindows
                             ChatText = "";
                             ScrollToBottom = true;
                         }
+                        ClosePlayerChat();
                     }
                     else
                     {

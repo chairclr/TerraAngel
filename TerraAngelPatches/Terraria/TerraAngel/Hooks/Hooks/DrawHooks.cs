@@ -338,40 +338,44 @@ namespace TerraAngel.Hooks.Hooks
             }
         }
 
+        private static NoDustCringe? noDustCache;
         public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
         {
-            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
+            if (noDustCache?.Enabled ?? false)
                 return 6000;
             return orig(Position, Width, Height, Type, SpeedX, SpeedY, Alpha, newColor, Scale);
         }
         public static void UpdateDustHook(Action orig)
         {
-            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
+            noDustCache = CringeManager.GetCringe<NoDustCringe>();
+            if (noDustCache?.Enabled ?? false)
                 return;
             orig();
         }
         public static void DrawDustHook(Action<Main> orig, Main self)
         {
-            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
+            if (noDustCache?.Enabled ?? false)
                 return;
             orig(self);
         }
 
+        private static NoGoreCringe? noGoreCache;
         public static int NewGoreHook(Func<Vector2, Vector2, int, float, int> orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
-            if (CringeManager.GetCringe<NoDustCringe>().Enabled)
+            if (noGoreCache?.Enabled ?? false)
                 return 600;
             return orig(Position, Velocity, Type, Scale);
         }
         public static void DrawGoreHook(Action<Main> orig, Main self)
         {
-            if (CringeManager.GetCringe<NoGoreCringe>().Enabled)
+            noGoreCache = CringeManager.GetCringe<NoGoreCringe>();
+            if (noGoreCache?.Enabled ?? false)
                 return;
             orig(self);
         }
         public static void DrawGoreBehindHook(Action<Main> orig, Main self)
         {
-            if (CringeManager.GetCringe<NoGoreCringe>().Enabled)
+            if (noGoreCache?.Enabled ?? false)
                 return;
             orig(self);
         }

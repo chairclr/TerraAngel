@@ -164,6 +164,7 @@ namespace TerraAngel.Graphics
         public virtual unsafe void RebuildFontAtlas()
         {
             ImGuiIOPtr io = ImGui.GetIO();
+            io.Fonts.Build();
             io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
 
             Texture2D tex2d = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);

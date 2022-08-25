@@ -638,6 +638,15 @@
          }
  
          Overlays.Scene.Draw(spriteBatch, RenderLayers.ForegroundWater);
+@@ -58962,7 +_,7 @@
+             DrawItemTextPopups(targetScale);
+             PlayerInput.SetZoom_UI();
+             spriteBatch.End();
+-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, DefaultSamplerState, null, null, null, UIScaleMatrix);
++            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null, null, UIScaleMatrix);
+             DrawNetplayStatusText();
+             DrawFPS();
+             spriteBatch.End();
 @@ -59441,8 +_,6 @@
          }
  
@@ -647,6 +656,15 @@
          ClampScreenPositionToWorld();
      }
  
+@@ -59763,7 +_,7 @@
+                 _oldNetplayStatusText = text;
+             }
+ 
+-            Vector2 position = new Vector2(628f - ChatManager.GetStringSize(FontAssets.MouseText.Value, _netplayStatusTextSnippets, Vector2.One).X * 0.5f + (float)(screenWidth - 800), 84f);
++            Vector2 position = new Vector2(628f - MathF.Floor(ChatManager.GetStringSize(FontAssets.MouseText.Value, _netplayStatusTextSnippets, Vector2.One).X * 0.5f) + (float)(screenWidth - 800), 84f);
+             int hoveredSnippet;
+             if (Netplay.Connection.StatusTextHasShadows)
+             {
 @@ -62939,16 +_,21 @@
  
      public static void SetDisplayMode(int width, int height, bool fullscreen)
