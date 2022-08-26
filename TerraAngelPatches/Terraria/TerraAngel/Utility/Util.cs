@@ -78,6 +78,14 @@ namespace TerraAngel.Utility
         {
             return (min.X > 0 || max.X > 0) && (min.X < displaySize.X || max.X < displaySize.X) && (min.Y > 0 || max.Y > 0) && (min.Y < displaySize.Y || max.X < displaySize.Y);
         }
+        public static bool IsMouseHoveringRect(NVector2 min, NVector2 max)
+        {
+            Vector2 mousePos = InputSystem.MousePosition;
+            return  mousePos.X >= min.X &&
+                    mousePos.Y >= min.Y &&
+                    mousePos.X <= max.X &&
+                    mousePos.Y <= max.Y;
+        }
 
         public static string PrettyPrintBytes(long bytes, string format = "{0:F2}{1}")
         {

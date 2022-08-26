@@ -5,9 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ImGuiNET;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Tags;
+using Microsoft.Win32.SafeHandles;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Scripting;
 
@@ -44,6 +46,7 @@ namespace TerraAngel.Client.ClientWindows
         public CSharpScriptEnvironment Script = new CSharpScriptEnvironment();
         private List<CompletionItem> scriptCandidates = new List<CompletionItem>();
         private int currentCandidate = 0;
+        private int centerViewCandidate = 0;
         private bool consoleFocus = false;
         private object CandidateLock = new object();
 
@@ -354,11 +357,38 @@ namespace TerraAngel.Client.ClientWindows
             }
 
         }
+
+        private bool clickedScriptCandidate = false;
         private void RenderScriptCandidates(ImGuiIOPtr io, NVector2 textboxMin, NVector2 textboxMax)
         {
             ImGuiStylePtr style = ImGui.GetStyle();
 
             currentCandidate = Utils.Clamp(currentCandidate, 0, scriptCandidates.Count - 1);
+            centerViewCandidate = Utils.Clamp(centerViewCandidate, 0, scriptCandidates.Count - 1);
+            // wip method signature code -chair
+            //if (extraCandidateText != "")
+            //{
+            //    ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
+            //    NVector2 textSize = ImGui.CalcTextSize(extraCandidateText);
+
+            //    NVector2 size = new NVector2(textSize.X + style.ItemSpacing.X * 2f, textSize.Y + style.ItemSpacing.Y * 2f);
+            //    NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + style.ItemSpacing.Y);
+            //    if (origin.X + size.X > io.DisplaySize.X)
+            //    {
+            //        origin.X -= (origin.X + size.X) - io.DisplaySize.X;
+            //    }
+            //    cadidatesFlipped = false;
+            //    if (origin.Y + size.Y > io.DisplaySize.Y)
+            //    {
+            //        cadidatesFlipped = true;
+            //        origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
+            //    }
+
+            //    origin.X -= size.X + style.ItemSpacing.X;
+            //    drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
+
+            //    drawList.AddText(origin + style.ItemSpacing, Color.White.PackedValue, extraCandidateText);
+            //}
             if (scriptCandidates.Any())
             {
                 string GetCandidateIcon(int i)
@@ -441,12 +471,13 @@ namespace TerraAngel.Client.ClientWindows
                     return scriptCandidates[i].DisplayText;
                 }
 
-
                 ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
+                
+
                 float maxSize = 0f;
                 float drawHeight = style.ItemSpacing.Y * 2f;
 
-                int startCandidate = Utils.Clamp(currentCandidate - 5, 0, scriptCandidates.Count);
+                int startCandidate = Utils.Clamp(centerViewCandidate - 5, 0, scriptCandidates.Count);
                 int endCandidate = Utils.Clamp(startCandidate + 10, 0, scriptCandidates.Count);
                 if ((endCandidate - startCandidate) < 10)
                 {
@@ -463,7 +494,7 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 maxSize += 18f + style.ItemSpacing.X * 3.75f;
                 NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + style.ItemSpacing.Y);
-                NVector2 size = new NVector2(maxSize + style.ItemSpacing.Y * 3f, drawHeight);
+                NVector2 size = new NVector2(maxSize + style.ItemSpacing.X * 2f, drawHeight);
                 if (origin.X + size.X > io.DisplaySize.X)
                 {
                     origin.X -= (origin.X + size.X) - io.DisplaySize.X;
@@ -484,6 +515,19 @@ namespace TerraAngel.Client.ClientWindows
                     Color iconColor = GetIconColor(i);
                     Color col = Color.Gray;
 
+
+
+                    float offsetOffset = ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+                    if (Util.IsMouseHoveringRect(origin + new NVector2(style.ItemSpacing.X, offset + 1f), origin + new NVector2(maxSize, offset + offsetOffset - 1f)))
+                    {
+                        col = Color.Gray * 1.45f;
+                        if (io.MouseClicked[0])
+                        {
+                            if (currentCandidate == i) clickedScriptCandidate = true;
+                            currentCandidate = i;
+                        }
+                    }
+
                     if (i == currentCandidate)
                     {
                         col = Color.White;
@@ -492,8 +536,7 @@ namespace TerraAngel.Client.ClientWindows
                     drawList.AddText(origin + new NVector2(style.ItemSpacing.X * 2f + 18f, offset), col.PackedValue, s);
 
                     drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), iconColor.PackedValue, GetCandidateIcon(i));
-
-                    offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
+                    offset += offsetOffset;
                 }
                 if (cadidatesFlipped)
                 {
@@ -510,8 +553,9 @@ namespace TerraAngel.Client.ClientWindows
                     }
                 }
 
-                if (ImGui.IsMouseHoveringRect(origin, origin + size))
+                if (Util.IsMouseHoveringRect(origin, origin + size))
                 {
+
                     io.WantCaptureMouse = true;
 
                     io.MouseDown[0] = false;
@@ -521,6 +565,15 @@ namespace TerraAngel.Client.ClientWindows
                     io.MouseClicked[0] = false;
                     io.MouseClicked[1] = false;
                     io.MouseClicked[2] = false;
+
+                    if (centerViewCandidate > 4 && centerViewCandidate < scriptCandidates.Count - 4)
+                        centerViewCandidate -= (int)io.MouseWheel;
+                    else
+                    {
+                        if (centerViewCandidate <= 5) centerViewCandidate = 5;
+                        else if (centerViewCandidate >= scriptCandidates.Count - 4) centerViewCandidate = scriptCandidates.Count - 5;
+                    }
+
 
                     ImGui.SetItemDefaultFocus();
                     ImGui.SetKeyboardFocusHere(-1);
@@ -588,6 +641,11 @@ namespace TerraAngel.Client.ClientWindows
                             {
                                 currentCandidate += cadidatesFlipped ? -amount : amount;
                             }
+
+                            if (currentCandidate + 5 < centerViewCandidate)
+                                centerViewCandidate = currentCandidate + 5;
+                            else if (currentCandidate - 4 > centerViewCandidate)
+                                centerViewCandidate = currentCandidate - 4;
                         }
 
                         break;
@@ -701,16 +759,41 @@ namespace TerraAngel.Client.ClientWindows
                                 }
                             }
                         }
+
+                        if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) || ImGui.IsKeyPressed(ImGuiKey.RightArrow))
+                        {
+                            GetScriptCandidates(GetText(), data.CursorPos);
+                        }
+
+                        if (ScriptMode && clickedScriptCandidate)
+                        {
+                            if (scriptCandidates.Count > 0)
+                            {
+                                if (currentCandidate >= scriptCandidates.Count)
+                                    currentCandidate = scriptCandidates.Count - 1;
+
+                                string s = GetText();
+                                int cursorPosition = data.CursorPos;
+                                data.DeleteChars(0, data.BufTextLen);
+                                data.InsertChars(0, Script.GetChangedText(s, scriptCandidates[currentCandidate], cursorPosition, out int newCursorPosition));
+
+                                data.CursorPos = newCursorPosition;
+                            }
+
+                            if (currentCandidate + 5 < centerViewCandidate)
+                                centerViewCandidate = currentCandidate + 5;
+                            else if (currentCandidate - 4 > centerViewCandidate)
+                                centerViewCandidate = currentCandidate - 4;
+
+                            GetScriptCandidates(GetText(), data.CursorPos);
+
+                            clickedScriptCandidate = false;
+                        }
                         break;
                     }
             }
 
-            if (ScriptMode)
-            {
-                if (data.EventKey == ImGuiKey.Enter)
-                    GetScriptCandidates(GetText(), data.CursorPos);
-            }
-            else
+            if (!ScriptMode)
             {
                 candidates.Clear();
                 if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1))

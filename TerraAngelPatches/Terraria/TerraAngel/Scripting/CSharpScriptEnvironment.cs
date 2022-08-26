@@ -5,12 +5,14 @@ using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
@@ -157,6 +159,8 @@ namespace TerraAngel.Scripting
 
                     CompletionService? completion = CompletionService.GetService(scriptDocument);
                     if (completion is null) return new List<CompletionItem>();
+                    if (!completion.ShouldTriggerCompletion(await scriptDocument.GetTextAsync(), cursorPosition, CompletionTrigger.Invoke)) return new List<CompletionItem>();
+
                     CompletionList? results = await completion.GetCompletionsAsync(scriptDocument, cursorPosition);
                     if (results is null) return new List<CompletionItem>();
                     SyntaxNode? rootNode = await scriptDocument.GetSyntaxRootAsync();
@@ -164,7 +168,8 @@ namespace TerraAngel.Scripting
                     string textFilter = "";
                     if (rootNode is not null && !string.IsNullOrWhiteSpace(code))
                     {
-                        textFilter = rootNode.FindToken(cursorPosition - 1).Text;
+                        SyntaxToken token = rootNode.FindToken(Math.Max(cursorPosition - 1, 0));
+                        textFilter = token.Text;
                     }
 
                     if (string.IsNullOrEmpty(textFilter)) return new List<CompletionItem>();
@@ -172,12 +177,44 @@ namespace TerraAngel.Scripting
 
                     List<CompletionItem> l = completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
 
+
                     if (l.Any(x => x.SortText == textFilter))
                         return new List<CompletionItem>();
 
                     return l;
                 });
         }
+        // wip method signature code
+        //public Task<string> GetCompletionOverride(string code, int cursorPosition)
+        //{
+        //    return Task.Run(
+        //        async () =>
+        //        {
+        //            if (!warmedUp) return "";
+        //            if (scriptDocument is null) return "";
+        //            SyntaxNode? rootNode = await scriptDocument.GetSyntaxRootAsync();
+
+        //            if (rootNode is not null && !string.IsNullOrWhiteSpace(code))
+        //            {
+        //                SyntaxToken token = rootNode.FindToken(Math.Max(cursorPosition - 1, 0));
+        //                SyntaxNode? n = token.Parent;
+
+        //                while (n is not null)
+        //                {
+        //                    if (n is ArgumentSyntax)
+        //                    {
+        //                        (n as ArgumentSyntax).
+        //                        return "";
+        //                    }
+        //                    n = n.Parent;
+        //                }
+
+        //                return "";
+        //            }
+
+        //            return "";
+        //        });
+        //}
         public string GetChangedText(string code, CompletionItem item, int previousCursorPosition, out int cursorPosition)
         {
             UpdateDocumentWithCode(code);
