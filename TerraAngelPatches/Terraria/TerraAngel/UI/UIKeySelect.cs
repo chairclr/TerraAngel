@@ -43,7 +43,7 @@ namespace TerraAngel.UI
                 HAlign = 1f,
                 VAlign = 0.5f
             };
-
+            keyText.TextColor = this.valueGet() == Keys.None ? Color.DimGray : Color.White;
 
 
             backgroundPanel.Append(nameText);

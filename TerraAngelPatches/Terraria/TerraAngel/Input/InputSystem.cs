@@ -23,28 +23,28 @@ namespace TerraAngel.Input
         /// <returns>Whether or not a key is currently down</returns>
         public static bool IsKeyDown(Keys key)
         {
-            if (!Main.instance.IsActive)
+            if (!Main.instance.IsActive || key == Keys.None)
                 return false;
             return keyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key is currently up</returns>
         public static bool IsKeyUp(Keys key)
         {
-            if (!Main.instance.IsActive)
+            if (!Main.instance.IsActive || key == Keys.None)
                 return false;
             return !keyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key was pressed this frame</returns>
         public static bool IsKeyPressed(Keys key)
         {
-            if (!Main.instance.IsActive)
+            if (!Main.instance.IsActive || key == Keys.None)
                 return false;
             return keyboardState.IsKeyDown(key) && !lastKeyboardState.IsKeyDown(key);
         }
         /// <returns>Whether or not a key was released this frame</returns>
         public static bool IsKeyReleased(Keys key)
         {
-            if (!Main.instance.IsActive)
+            if (!Main.instance.IsActive || key == Keys.None)
                 return false;
             return !keyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyDown(key);
         }
