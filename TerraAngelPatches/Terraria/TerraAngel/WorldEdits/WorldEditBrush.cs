@@ -1,23 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using TerraAngel.Hooks;
-using Microsoft.Xna.Framework.Input;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using TerraAngel.Cheat;
-using TerraAngel.Graphics;
-using Microsoft.Xna.Framework;
-using TerraAngel.Utility;
-using System.Runtime.CompilerServices;
 using TerraAngel.ID;
 using TerraAngel.Net;
 
-namespace TerraAngel.WorldEdits 
+namespace TerraAngel.WorldEdits
 {
     public class WorldEditBrush : WorldEdit
     {
@@ -59,11 +44,11 @@ namespace TerraAngel.WorldEdits
 
         public override void DrawPreviewInMap(ImGuiIOPtr io, ImDrawListPtr drawList)
         {
-            Vector2 mousePos = Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition);
+            Vector2 mousePos = Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition);
 
             if (!drawDetailedPreview)
             {
-                Vector2 screenCoords = Input.InputSystem.MousePosition;
+                Vector2 screenCoords = InputSystem.MousePosition;
                 Vector2 screenCoords2 = Util.WorldToScreenFullscreenMap((mousePos + new Vector2(brushDiameter + 16f, 0f)));
                 float dist = screenCoords.Distance(screenCoords2);
                 drawList.AddCircleFilled(screenCoords.ToNumerics(), dist, ImGui.GetColorU32(new System.Numerics.Vector4(1f, 0f, 0f, 0.5f)));
@@ -93,11 +78,11 @@ namespace TerraAngel.WorldEdits
         }
         public override void DrawPreviewInWorld(ImGuiIOPtr io, ImDrawListPtr drawList)
         {
-            Vector2 mouseWorld = Util.ScreenToWorld(Input.InputSystem.MousePosition);
+            Vector2 mouseWorld = Util.ScreenToWorld(InputSystem.MousePosition);
 
             if (!drawDetailedPreview)
             {
-                Vector2 screenCoords = Input.InputSystem.MousePosition;
+                Vector2 screenCoords = InputSystem.MousePosition;
                 Vector2 screenCoords2 = Util.WorldToScreen((mouseWorld + new Vector2(brushDiameter + 16f, 0f)));
                 float dist = screenCoords.Distance(screenCoords2);
                 drawList.AddCircleFilled(screenCoords.ToNumerics(), dist, ImGui.GetColorU32(new System.Numerics.Vector4(1f, 0f, 0f, 0.5f)));
@@ -146,9 +131,9 @@ namespace TerraAngel.WorldEdits
                         drawDetailedPreview = true;
                 }
                 ImGui.Text("Tile"); ImGui.SameLine();
-                ImGui.Combo("##WorldEditTileActions",   ref currentTileAction,   tileActionNames,   tileActionNames.Length);
+                ImGui.Combo("##WorldEditTileActions", ref currentTileAction, tileActionNames, tileActionNames.Length);
                 ImGui.Text("Wall"); ImGui.SameLine();
-                ImGui.Combo("##WorldEditWallActions",   ref currentWallAction,   wallActionNames,   wallActionNames.Length);
+                ImGui.Combo("##WorldEditWallActions", ref currentWallAction, wallActionNames, wallActionNames.Length);
                 ImGui.Text("Liquid"); ImGui.SameLine();
                 ImGui.Combo("##WorldEditLiquidActions", ref currentLiquidAction, liquidActionNames, liquidActionNames.Length);
 
@@ -163,7 +148,7 @@ namespace TerraAngel.WorldEdits
         private int currentPlayerCreateStyle;
         private int currentPlayerCreateWall;
         private bool needsResetPlayerPosition = false;
-        
+
         public override void Edit(Vector2 mouseTileCoords)
         {
             lastTeleportPosition = Main.LocalPlayer.position;
@@ -250,7 +235,7 @@ namespace TerraAngel.WorldEdits
             if (revealMap)
             {
                 Main.Map.Update(x, y, 255);
-                Main.refreshMap = true; 
+                Main.refreshMap = true;
             }
         }
 
@@ -260,7 +245,7 @@ namespace TerraAngel.WorldEdits
             {
                 tile.active(false);
                 tile.type = 0;
-                NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.KillTileNoItem, number2: x, number3: y); 
+                NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.KillTileNoItem, number2: x, number3: y);
                 if (sqaureFrame)
                     WorldGen.SquareTileFrame(x, y);
             }

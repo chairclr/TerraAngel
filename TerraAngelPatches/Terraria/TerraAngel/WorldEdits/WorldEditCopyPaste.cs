@@ -1,24 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using ImGuiNET;
-using TerraAngel.Hooks;
-using Microsoft.Xna.Framework.Input;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using TerraAngel.Cheat;
-using TerraAngel.Graphics;
-using Microsoft.Xna.Framework;
-using TerraAngel.Utility;
-using System.Runtime.CompilerServices;
-using TerraAngel.ID;
-using TerraAngel.Net;
-using TerraAngel.Input;
-using TerraAngel.Utility;
-using TerraAngel.Client.Config;
 
 namespace TerraAngel.WorldEdits
 {
@@ -216,7 +197,7 @@ namespace TerraAngel.WorldEdits
                         }
                     }
                 });
-            
+
         }
 
         private void EditSendTileManipulation(Vector2 originTile)

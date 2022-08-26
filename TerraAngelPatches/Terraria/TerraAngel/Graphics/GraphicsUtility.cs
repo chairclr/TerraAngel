@@ -1,9 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-
-namespace TerraAngel.Graphics
+﻿namespace TerraAngel.Graphics
 {
     public class GraphicsUtility
     {

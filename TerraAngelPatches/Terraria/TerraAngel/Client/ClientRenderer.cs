@@ -1,23 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using TerraAngel.Hooks;
-using TerraAngel.Graphics;
-using TerraAngel.Input;
-using TerraAngel.Client;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Input;
-using ImGuiNET;
-using TerraAngel.Client.ClientWindows;
-using Terraria;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent;
-using TerraAngel.Client.Config;
-using TerraAngel.WorldEdits;
-using TerraAngel.Cheat;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-using TerraAngel;
-using System.Runtime.InteropServices;
-using System;
+using Microsoft.Xna.Framework.Input;
+using TerraAngel.Client.ClientWindows;
+using TerraAngel.WorldEdits;
 
 namespace TerraAngel.Client
 {
@@ -147,7 +132,7 @@ namespace TerraAngel.Client
 
         public void Update(GameTime time)
         {
-            
+
         }
         public void Render(GameTime time)
         {

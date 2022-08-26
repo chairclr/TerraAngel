@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.Xna.Framework;
 using MonoMod.RuntimeDetour;
 
 namespace TerraAngel.Hooks

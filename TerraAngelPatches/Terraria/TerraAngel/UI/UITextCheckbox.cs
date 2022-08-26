@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
-using Terraria.Localization;
-using Terraria.Audio;
-using Terraria.ID;
 
 namespace TerraAngel.UI
 {
@@ -21,7 +13,7 @@ namespace TerraAngel.UI
         private Func<bool> valueGet;
         private Action<bool> valueSet;
 
-        public UITextCheckbox(string name, Func<bool> valueGet, Action<bool> valueSet, float textScale = .9f) 
+        public UITextCheckbox(string name, Func<bool> valueGet, Action<bool> valueSet, float textScale = .9f)
         {
             this.valueGet = valueGet;
             this.valueSet = valueSet;

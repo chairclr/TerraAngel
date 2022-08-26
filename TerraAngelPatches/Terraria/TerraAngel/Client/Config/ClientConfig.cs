@@ -1,32 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameContent.UI.Elements;
-using Terraria.UI;
-using TerraAngel.UI;
-using Terraria.Localization;
-using Terraria.Audio;
-using Terraria.ID;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
-using System.IO;
-using System.Reflection;
-using TerraAngel.Cheat;
-using System.Runtime.Serialization;
-using TerraAngel;
-using static System.Net.Mime.MediaTypeNames;
-using static TerraAngel.Client.Config.ClientConfig;
-using Terraria.GameContent;
-using MonoMod.Utils;
-using Microsoft.DiaSymReader;
+using TerraAngel.UI;
+using Terraria.UI;
 
 namespace TerraAngel.Client.Config
 {
-    
+
     public class ClientConfig
     {
         [AttributeUsage(AttributeTargets.Field, Inherited = false)]
@@ -98,7 +83,7 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Console Auto Scroll")]
             public bool ConsoleAutoScroll = true;
 
-            [UIConfigElement("Clear chat on world changes")]  
+            [UIConfigElement("Clear chat on world changes")]
             public bool ClearChatThroughWorldChanges = false;
 
             [UIConfigElement("Clear chat input on close")]
@@ -113,11 +98,11 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Default Projectile Prediction Draw Hostile")]
             public bool DefaultDrawHostileProjectilePrediction = true;
 
-            [UIConfigElement("Default No Gore")]
-            public bool DefaultNoGore = false;
+            [UIConfigElement("Default Disable Gore")]
+            public bool DefaultDisableGore = false;
 
-            [UIConfigElement("Default No Dust")]
-            public bool DefaultNoDust = false;
+            [UIConfigElement("Default Disable Dust")]
+            public bool DefaultDisableDust = false;
 
             [UIConfigElement("Discord Rich Presence")]
             public bool UseDiscordRPC = true;
@@ -143,6 +128,12 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Default ESP Tile Sections")]
             public bool DefaultTileSections = false;
 
+            [UIConfigElement("Default Partial Bright")]
+            public bool PartialBrightDefaultValue = false;
+
+            [UIConfigElement("Default Full Bright")]
+            public bool FullBrightDefaultValue = false;
+
             [UIConfigElement("Toggle UI")]
             public Keys ToggleUIVisibility = Keys.OemTilde;
 
@@ -162,7 +153,7 @@ namespace TerraAngel.Client.Config
             public Keys ToggleFreecam = Keys.F3;
 
             [UIConfigElement("Toggle Fullbright")]
-            public Keys ToggleFullbright = Keys.F4;
+            public Keys ToggleFullBright = Keys.F4;
 
             [UIConfigElement("Teleport to Cursor")]
             public Keys TeleportToCursor = Keys.Z;
@@ -185,7 +176,7 @@ namespace TerraAngel.Client.Config
             [JsonIgnore]
             public List<string> ConsoleHistory = new List<string>();
 
-            public bool PartialBrightDefaultValue = false;
+
             public float PartialBrightSolidExtraLight = 0.3f;
             public float PartialBrightAirExtraLight = 0.065f;
             public float FullBrightBrightness = 0.7f;

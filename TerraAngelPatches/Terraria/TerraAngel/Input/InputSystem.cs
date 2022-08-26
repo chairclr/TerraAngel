@@ -1,21 +1,4 @@
-﻿using ImGuiNET;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Terraria;
-using Terraria.Chat;
-using Terraria.DataStructures;
-using Terraria.GameContent.NetModules;
-using Terraria.Localization;
-using Terraria.Graphics;
-using Terraria.GameContent;
-using Terraria.ID;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Input
 {

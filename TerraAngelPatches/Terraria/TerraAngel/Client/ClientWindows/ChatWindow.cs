@@ -1,18 +1,10 @@
 ﻿using System.Collections.Generic;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using TerraAngel.Graphics;
-using Terraria;
 using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.GameInput;
-using Terraria.ID;
 
 using Terraria.UI.Chat;
-using Terraria.GameContent.UI.Chat;
-using TerraAngel.Utility;
-using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -88,7 +80,7 @@ namespace TerraAngel.Client.ClientWindows
                     ClosePlayerChat();
                 }
 
-                if (Input.InputSystem.IsKeyDown(Keys.Escape))
+                if (InputSystem.IsKeyDown(Keys.Escape))
                 {
                     ClosePlayerChat();
 
@@ -207,7 +199,7 @@ namespace TerraAngel.Client.ClientWindows
                             showMessageFade = true;
                             item.TimeMessageHasBeenVisible++;
                         }
-                        
+
                         if (ImGui.IsRectVisible(textSize) && (IsChatting || showMessageFade))
                         {
                             if (!IsChatting && showMessageFade && item.TimeMessageHasBeenVisible > (ClientConfig.Settings.framesForMessageToBeVisible))
@@ -289,13 +281,18 @@ namespace TerraAngel.Client.ClientWindows
                                         }
                                     }
                                     break;
+                                case ImGuiInputTextFlags.CallbackAlways:
+                                    if (textToAppend.Length > 0)
+                                    {
+                                        lock (textToAppend)
+                                        {
+                                            data.InsertChars(data.CursorPos, textToAppend);
+                                            textToAppend = "";
+                                        }
+                                    }
+                                    break;
                             }
                             chatBoxFocus = true;
-                            if (textToAppend.Length > 0)
-                            {
-                                data.InsertChars(data.CursorPos, textToAppend);
-                                textToAppend = "";
-                            }
                             return 0;
                         });
                 }
@@ -362,15 +359,15 @@ namespace TerraAngel.Client.ClientWindows
         public override void Update()
         {
             justOpened = false;
-            if (!ImGui.GetIO().WantCaptureKeyboard 
-                && Input.InputSystem.IsKeyPressed(ToggleKey) 
-                && !Input.InputSystem.IsKeyDown(Keys.LeftAlt) 
-                && !Input.InputSystem.IsKeyDown(Keys.RightAlt) 
+            if (!ImGui.GetIO().WantCaptureKeyboard
+                && InputSystem.IsKeyPressed(ToggleKey)
+                && !InputSystem.IsKeyDown(Keys.LeftAlt)
+                && !InputSystem.IsKeyDown(Keys.RightAlt)
                 && Main.hasFocus
-                && !Main.editSign 
-                && !Main.editChest 
-                && !Main.gameMenu 
-                && !Input.InputSystem.IsKeyDown(Keys.Escape)
+                && !Main.editSign
+                && !Main.editChest
+                && !Main.gameMenu
+                && !InputSystem.IsKeyDown(Keys.Escape)
                 && Main.CurrentInputTextTakerOverride == null
                 && !IsChatting
                 && !justClosed)
@@ -435,7 +432,10 @@ namespace TerraAngel.Client.ClientWindows
             if (IsChatting)
             {
                 justOpened = true;
-                textToAppend += message;
+                lock (textToAppend)
+                {
+                    textToAppend += message;
+                }
             }
         }
     }

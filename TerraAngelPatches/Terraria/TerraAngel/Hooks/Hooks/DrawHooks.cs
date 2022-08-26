@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
 using ReLogic.Threading;
-using TerraAngel.Cheat;
-using TerraAngel.Cheat.Cringes;
-using TerraAngel.Client.Config;
-using TerraAngel.Utility;
-using Terraria;
 using Terraria.Graphics.Light;
-using Terraria.ID;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -148,7 +140,7 @@ namespace TerraAngel.Hooks.Hooks
 
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
-            fullBrightCache = CringeManager.GetCringe<FullBrightCringe>();
+            lightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
             orig(self, time);
             ClientLoader.MainRenderer?.Render(time);
         }
@@ -178,29 +170,19 @@ namespace TerraAngel.Hooks.Hooks
         public static int SpectateOverride = -1;
         public static void UpdateCameraHook(Action orig)
         {
-            FullBrightCringe fullBright = CringeManager.GetCringe<FullBrightCringe>();
-            if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleFullbright))
-            {
-                fullBright.Enabled = !fullBright.Enabled;
-            }
-
             if (!Main.gameMenu)
             {
                 FreecamCringe freecam = CringeManager.GetCringe<FreecamCringe>();
-                if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleFreecam))
-                {
-                    freecam.Enabled = !freecam.Enabled;
-                }
                 if (freecam.Enabled)
                 {
                     ImGuiIOPtr io = ImGui.GetIO();
                     if (io.MouseClicked[1])
                     {
-                        freecamOriginPoint = Util.ScreenToWorld(Input.InputSystem.MousePosition);
+                        freecamOriginPoint = Util.ScreenToWorld(InputSystem.MousePosition);
                     }
                     if (io.MouseDown[1])
                     {
-                        Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(Input.InputSystem.MousePosition);
+                        Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(InputSystem.MousePosition);
                         Main.screenPosition = Main.screenPosition + diff;
                     }
                     fixedScreenY = (int)Main.screenPosition.Y;
@@ -230,31 +212,28 @@ namespace TerraAngel.Hooks.Hooks
             {
                 Main.myPlayer = temp;
             }
-
-            //Main.screenPosition.X = (int)Main.screenPosition.X;
-            //fixedScreenY = (int)Main.screenPosition.Y;
         }
 
-        private static FullBrightCringe fullBrightCache;
+        private static LightingModifierCringe? lightModificationCache;
         private static Vector3 LightingHook(Func<LightingEngine, int, int, Vector3> orig, LightingEngine self, int x, int y)
         {
-            if (fullBrightCache.Enabled)
+            if (lightModificationCache?.FullBright ?? false)
             {
-                return Vector3.One * fullBrightCache.Brightness;
+                return Vector3.One * lightModificationCache.Brightness;
             }
             return orig(self, x, y);
         }
         private static Vector3 LegacyLightingHook(Func<LegacyLighting, int, int, Vector3> orig, LegacyLighting self, int x, int y)
         {
-            if (fullBrightCache.Enabled)
+            if (lightModificationCache?.FullBright ?? false)
             {
-                return Vector3.One * fullBrightCache.Brightness;
+                return Vector3.One * lightModificationCache.Brightness;
             }
             return orig(self, x, y);
         }
         private static void LightingProcessAreaHook(Action<LightingEngine, Rectangle> orig, LightingEngine self, Rectangle area)
         {
-            if (fullBrightCache.Enabled)
+            if (lightModificationCache?.FullBright ?? false)
             {
                 Main.renderCount = (Main.renderCount + 1) % 4;
                 Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
@@ -283,7 +262,7 @@ namespace TerraAngel.Hooks.Hooks
         }
         private static void LegacyLightingProcessAreaHook(Action<LegacyLighting, Rectangle> orig, LegacyLighting self, Rectangle area)
         {
-            if (fullBrightCache.Enabled)
+            if (lightModificationCache?.FullBright ?? false)
             {
                 Main.renderCount = (Main.renderCount + 1) % 4;
                 Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
@@ -313,13 +292,13 @@ namespace TerraAngel.Hooks.Hooks
         }
         private static void LightingAddLightHook(Action<LightingEngine, int, int, Vector3> orig, LightingEngine self, int x, int y, Vector3 color)
         {
-            if (fullBrightCache.Enabled)
+            if (lightModificationCache?.FullBright ?? false)
                 return;
             orig(self, x, y, color);
         }
         private static void LegacyLightingAddLightHook(Action<LegacyLighting, int, int, Vector3> orig, LegacyLighting self, int x, int y, Vector3 color)
         {
-            if (fullBrightCache.Enabled)
+            if (lightModificationCache?.FullBright ?? false)
                 return;
             orig(self, x, y, color);
         }
@@ -328,54 +307,52 @@ namespace TerraAngel.Hooks.Hooks
         {
             orig(self);
 
-            if (fullBrightCache.PartialBright)
+            if (lightModificationCache?.PartialBright ?? false)
             {
                 LightMap? workingLightMap = (LightMap?)typeof(LightingEngine).GetField("_workingLightMap", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(self);
                 if (workingLightMap == null)
                     return;
-                workingLightMap.LightDecayThroughAir *= fullBrightCache.ExtraAirBrightness + 1f;
-                workingLightMap.LightDecayThroughSolid *= fullBrightCache.ExtraSolidBrightness + 1f;
+                workingLightMap.LightDecayThroughAir *= lightModificationCache.ExtraAirBrightness + 1f;
+                workingLightMap.LightDecayThroughSolid *= lightModificationCache.ExtraSolidBrightness + 1f;
             }
         }
 
-        private static NoDustCringe? noDustCache;
+        private static OptimizationCringe? optimizationCache;
         public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
         {
-            if (noDustCache?.Enabled ?? false)
+            if (optimizationCache?.DisableDust ?? false)
                 return 6000;
             return orig(Position, Width, Height, Type, SpeedX, SpeedY, Alpha, newColor, Scale);
         }
         public static void UpdateDustHook(Action orig)
         {
-            noDustCache = CringeManager.GetCringe<NoDustCringe>();
-            if (noDustCache?.Enabled ?? false)
+            optimizationCache = CringeManager.GetCringe<OptimizationCringe>();
+            if (optimizationCache?.DisableDust ?? false)
                 return;
             orig();
         }
         public static void DrawDustHook(Action<Main> orig, Main self)
         {
-            if (noDustCache?.Enabled ?? false)
+            if (optimizationCache?.DisableDust ?? false)
                 return;
             orig(self);
         }
 
-        private static NoGoreCringe? noGoreCache;
         public static int NewGoreHook(Func<Vector2, Vector2, int, float, int> orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
-            if (noGoreCache?.Enabled ?? false)
+            if (optimizationCache?.DisableGore ?? false)
                 return 600;
             return orig(Position, Velocity, Type, Scale);
         }
         public static void DrawGoreHook(Action<Main> orig, Main self)
         {
-            noGoreCache = CringeManager.GetCringe<NoGoreCringe>();
-            if (noGoreCache?.Enabled ?? false)
+            if (optimizationCache?.DisableGore ?? false)
                 return;
             orig(self);
         }
         public static void DrawGoreBehindHook(Action<Main> orig, Main self)
         {
-            if (noGoreCache?.Enabled ?? false)
+            if (optimizationCache?.DisableGore ?? false)
                 return;
             orig(self);
         }

@@ -1,15 +1,5 @@
 ﻿using System;
-using System.Reflection;
-using Microsoft.Xna.Framework;
-using MonoMod.RuntimeDetour;
-using Terraria;
-using ImGuiNET;
-using ReLogic.OS;
-using Terraria.DataStructures;
-using Terraria.ID;
-using TerraAngel.Cheat;
 using TerraAngel.Hooks.Hooks;
-using TerraAngel;
 
 namespace TerraAngel.Hooks
 {

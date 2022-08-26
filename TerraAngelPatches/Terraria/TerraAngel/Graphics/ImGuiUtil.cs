@@ -1,23 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Terraria;
-using Terraria.Graphics;
-using Terraria.GameContent;
-using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Microsoft.Xna.Framework.Graphics;
-using TerraAngel.Graphics;
-using System.Threading;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using TerraAngel.Utility;
-using Terraria.GameContent.UI;
-using Terraria.UI.Chat;
 using System.Text.RegularExpressions;
+using System.Threading;
+using Terraria.GameContent;
+using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Chat;
+using Terraria.UI.Chat;
 
 namespace TerraAngel.Graphics
 {
@@ -40,7 +29,7 @@ namespace TerraAngel.Graphics
             System.Numerics.Vector3 v3c = color.ToVector3().ToNumerics();
             if (ImGui.ColorEdit3(label, ref v3c))
             {
-                color = new Color(v3c.X, v3c.Y, v3c.Z, (color.A / 255f  ));
+                color = new Color(v3c.X, v3c.Y, v3c.Z, (color.A / 255f));
             }
         }
         public static void ColorEdit4(string label, ref Color color)

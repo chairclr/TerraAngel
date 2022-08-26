@@ -5,6 +5,7 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using TerraAngel;
 using TerraAngel.Utility;
+using Terraria.Net;
 
 namespace Terraria
 {
@@ -32,15 +33,16 @@ namespace Terraria
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if ((uint)x > Width || (uint)y > Height)
+                if ((uint)x >= Width || (uint)y >= Height)
                 { 
                     throw new IndexOutOfRangeException();
                 }
                 return new Tile(TileHeap + (x + (y * Width)));
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             set
             {
-                if ((uint)x > Width || (uint)y > Height)
+                if ((uint)x >= Width || (uint)y >= Height)
                 {
                     throw new IndexOutOfRangeException();
                 }
@@ -58,6 +60,7 @@ namespace Terraria
                 }
                 return new Tile(TileHeap + (position.X + (position.Y * Width)));
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             set
             {
                 if ((uint)position.X > Width || (uint)position.Y > Height)
@@ -78,15 +81,27 @@ namespace Terraria
             GC.RemoveMemoryPressure(HeapSize);
             Marshal.FreeHGlobal((IntPtr)TileHeap);
         }
-        public bool InWorld(NVector2 position) => InWorld((int)position.X, (int)position.Y);
-        public bool InWorld(Vector2 position) => InWorld((int)position.X, (int)position.Y);
+        public bool InWorld(NVector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
+        public bool InWorld(Vector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
         public bool InWorld(Point position) => InWorld(position.X, position.Y);
         public bool InWorld(Vector2i position) => InWorld(position.X, position.Y);
         public bool InWorld(int x, int y)
         {
-            if ((uint)x > Width || (uint)y > Height)
+            if ((uint)x >= Width || (uint)y >= Height)
             {
                 return false;
+            }
+            return true;
+        }
+
+        public bool IsTileInLoadedSection(int x, int y)
+        {
+            if (Main.netMode == 0)
+                return true;
+            else if (Main.netMode == 1)
+            {
+                if (!CringeManager.LoadedTileSections?[x / Main.sectionWidth, y / Main.sectionHeight] ?? true)
+                    return false;
             }
             return true;
         }

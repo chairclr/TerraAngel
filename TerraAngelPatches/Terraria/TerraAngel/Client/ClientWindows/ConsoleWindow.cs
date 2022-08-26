@@ -1,32 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Terraria;
-using System;
-using System.Collections.Generic;
-using System.Composition.Hosting;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
-using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.Tags;
+using Microsoft.Xna.Framework.Input;
 using TerraAngel.Scripting;
-using TerraAngel.Utility;
-using System.Reflection;
-using System.ComponentModel;
-using TerraAngel.Graphics;
-using TerraAngel.Client.Config;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -568,7 +551,7 @@ namespace TerraAngel.Client.ClientWindows
             {
                 case ImGuiInputTextFlags.CallbackHistory:
                     {
-                        if (((!candidates.Any() || ScriptMode) && !scriptCandidates.Any()) || (Input.InputSystem.IsKeyDown(Keys.RightControl) || Input.InputSystem.IsKeyDown(Keys.LeftControl)))
+                        if (((!candidates.Any() || ScriptMode) && !scriptCandidates.Any()) || (InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl)))
                         {
                             int prev_history_pos = historyPos;
                             if (data.EventKey == ImGuiKey.UpArrow)
@@ -595,7 +578,7 @@ namespace TerraAngel.Client.ClientWindows
                         else
                         {
                             int amount = 1;
-                            if (Input.InputSystem.IsKeyDown(Keys.LeftShift) || Input.InputSystem.IsKeyDown(Keys.RightShift))
+                            if (InputSystem.IsKeyDown(Keys.LeftShift) || InputSystem.IsKeyDown(Keys.RightShift))
                                 amount = 5;
                             if (data.EventKey == ImGuiKey.UpArrow)
                             {
@@ -680,7 +663,7 @@ namespace TerraAngel.Client.ClientWindows
                     }
                 case ImGuiInputTextFlags.CallbackAlways:
                     {
-                        bool ctrl = Input.InputSystem.IsKeyDown(Keys.RightControl) || Input.InputSystem.IsKeyDown(Keys.LeftControl);
+                        bool ctrl = InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl);
 
                         if (ctrl)
                         {

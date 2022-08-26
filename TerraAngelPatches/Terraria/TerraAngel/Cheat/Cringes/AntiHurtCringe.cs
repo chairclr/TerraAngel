@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TerraAngel.Cheat.Cringes
+﻿namespace TerraAngel.Cheat.Cringes
 {
     public class AntiHurtCringe : Cringe
     {
@@ -13,8 +7,13 @@ namespace TerraAngel.Cheat.Cringes
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
         [DefaultConfigValue("DefaultAntiHurt")]
-        public override ref bool Enabled => ref base.Enabled;
+        public bool Enabled;
 
         public int FramesSinceLastLifePacket = 0;
+
+        public override void DrawUI(ImGuiIOPtr io)
+        {
+            ImGui.Checkbox(Name, ref Enabled);
+        }
     }
 }

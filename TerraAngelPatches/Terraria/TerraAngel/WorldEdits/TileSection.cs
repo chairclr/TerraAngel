@@ -1,14 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
-using TerraAngel.Graphics;
-using TerraAngel.Utility;
 
 
 namespace TerraAngel.WorldEdits
@@ -26,7 +17,7 @@ namespace TerraAngel.WorldEdits
             Width = width;
             Height = height;
         }
-        public TileSection(int x, int y, int width, int height) 
+        public TileSection(int x, int y, int width, int height)
             : this(Main.tile, x, y, width, height)
         {
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TerraAngel.Cheat
+﻿namespace TerraAngel.Cheat
 {
     public enum CringeTabs
     {
@@ -12,6 +6,7 @@ namespace TerraAngel.Cheat
         MainCringes,
         LightingCringes,
         VisualUtility,
+        ESP,
         AutomationCringes,
     }
 }

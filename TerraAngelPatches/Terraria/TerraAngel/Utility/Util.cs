@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Terraria;
 using System.Reflection;
-using Terraria.ID;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
-using System.Runtime.CompilerServices;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
+using System.Text.RegularExpressions;
 
 namespace TerraAngel.Utility
 {
@@ -22,11 +13,11 @@ namespace TerraAngel.Utility
     {
         private static string[] ByteSizeNames = { "b", "k", "m", "g", "t", "p" };
 
-        public static Dictionary<int, FieldInfo> ItemFields = 
+        public static Dictionary<int, FieldInfo> ItemFields =
             GetPublicValueTypeFields<ItemID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-        
-        public static Dictionary<int, FieldInfo> TileFields = 
+
+        public static Dictionary<int, FieldInfo> TileFields =
             GetPublicValueTypeFields<TileID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
@@ -34,11 +25,11 @@ namespace TerraAngel.Utility
             GetPublicValueTypeFields<WallID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
-        public static Dictionary<int, FieldInfo> PrefixFields = 
+        public static Dictionary<int, FieldInfo> PrefixFields =
             GetPublicValueTypeFields<PrefixID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
-        public static Dictionary<int, FieldInfo> NPCFields = 
+        public static Dictionary<int, FieldInfo> NPCFields =
             GetPublicValueTypeFields<NPCID>()
             .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
@@ -60,7 +51,7 @@ namespace TerraAngel.Utility
 
         public static Vector2 ScreenSize => new Vector2((float)Main.screenWidth, (float)Main.screenHeight);
 
-        
+
         public static IEnumerable<FieldInfo> GetPublicValueTypeFields<T>()
         {
             return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType);
@@ -231,7 +222,7 @@ namespace TerraAngel.Utility
             }
         }
 
-        
+
 
         public static object GetDefault(Type type)
         {
@@ -287,13 +278,13 @@ namespace TerraAngel.Utility
 
             for (j = 1; j <= m; j++)
             {
-                char tJ = t[j - 1]; 
+                char tJ = t[j - 1];
                 d[0] = j;
 
                 for (i = 1; i <= n; i++)
                 {
-                    int cost = s[i - 1] == tJ ? 0 : 1; 
-                                                                     
+                    int cost = s[i - 1] == tJ ? 0 : 1;
+
                     d[i] = Math.Min(Math.Min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
                 }
 
@@ -442,13 +433,13 @@ namespace TerraAngel.Utility
         }
         public object? this[string name]
         {
-            get 
+            get
             {
                 Values.TryGetValue(name, out object? value);
 
                 return value;
             }
-            set 
+            set
             {
                 if (Values.ContainsKey(name))
                 {

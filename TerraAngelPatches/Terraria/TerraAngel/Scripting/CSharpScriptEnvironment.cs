@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
-using TerraAngel.Utility;
 
 namespace TerraAngel.Scripting
 {

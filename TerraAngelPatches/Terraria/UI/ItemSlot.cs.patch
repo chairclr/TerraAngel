@@ -12,3 +12,12 @@
              {
                  Main.cursorOverride = 2;
              }
+@@ -570,7 +_,7 @@
+     public static void LeftClick(Item[] inv, int context = 0, int slot = 0)
+     {
+         Player player = Main.player[Main.myPlayer];
+-        bool flag = Main.mouseLeftRelease && Main.mouseLeft;
++        bool flag = InputSystem.LeftMousePressed;
+         if (flag)
+         {
+             if (OverrideLeftClick(inv, context, slot))

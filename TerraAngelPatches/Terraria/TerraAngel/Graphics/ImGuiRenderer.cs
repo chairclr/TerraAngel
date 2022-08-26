@@ -1,18 +1,6 @@
-﻿using ImGuiNET;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Terraria;
-using Terraria.GameInput;
-using System.Linq;
-using System.IO;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Text;
-using System.Reflection;
+using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Graphics
 {
@@ -49,14 +37,14 @@ namespace TerraAngel.Graphics
         public BasicEffect ImGuiShader;
         public IntPtr? FontTextureId;
         public Dictionary<IntPtr, Texture2D> LoadedTextures;
-        
+
         private RasterizerState RasterizerState;
         private long TextureId;
-        
+
         private VertexBuffer VertexBuffer;
         private byte[] VertexData;
         private int VertexBufferSize;
-        
+
         private IndexBuffer IndexBuffer;
         private byte[] IndexData;
         private int IndexBufferSize;
@@ -85,9 +73,10 @@ namespace TerraAngel.Graphics
             _game = game ?? throw new ArgumentNullException(nameof(game));
             GraphicsDevice = game.GraphicsDevice;
 
-            LoadedTextures = new Dictionary<IntPtr, Texture2D>();
-
-            LoadedTextures.Add(IntPtr.Zero, null);
+            LoadedTextures = new Dictionary<IntPtr, Texture2D>
+            {
+                { IntPtr.Zero, null }
+            };
             TextureId = 1;
 
             RasterizerState = new RasterizerState()
@@ -101,31 +90,33 @@ namespace TerraAngel.Graphics
             };
 
             ImGuiShader = new BasicEffect(GraphicsDevice);
+            ImGuiShader.TextureEnabled = true;
+            ImGuiShader.VertexColorEnabled = true;
         }
         protected virtual void SetupInput()
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Tab] = (int)Microsoft.Xna.Framework.Input.Keys.Tab);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Left);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Right);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Up);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Microsoft.Xna.Framework.Input.Keys.Down);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageUp] = (int)Microsoft.Xna.Framework.Input.Keys.PageUp);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageDown] = (int)Microsoft.Xna.Framework.Input.Keys.PageDown);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Home] = (int)Microsoft.Xna.Framework.Input.Keys.Home);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.End] = (int)Microsoft.Xna.Framework.Input.Keys.End);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Delete] = (int)Microsoft.Xna.Framework.Input.Keys.Delete);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Backspace] = (int)Microsoft.Xna.Framework.Input.Keys.Back);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Enter] = (int)Microsoft.Xna.Framework.Input.Keys.Enter);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Escape] = (int)Microsoft.Xna.Framework.Input.Keys.Escape);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Space] = (int)Microsoft.Xna.Framework.Input.Keys.Space);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.A] = (int)Microsoft.Xna.Framework.Input.Keys.A);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.C] = (int)Microsoft.Xna.Framework.Input.Keys.C);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.V] = (int)Microsoft.Xna.Framework.Input.Keys.V);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.X] = (int)Microsoft.Xna.Framework.Input.Keys.X);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Y] = (int)Microsoft.Xna.Framework.Input.Keys.Y);
-            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Z] = (int)Microsoft.Xna.Framework.Input.Keys.Z);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Tab] =        (int)Keys.Tab);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] =  (int)Keys.Left);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.UpArrow] =    (int)Keys.Up);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.DownArrow] =  (int)Keys.Down);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageUp] =     (int)Keys.PageUp);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageDown] =   (int)Keys.PageDown);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Home] =       (int)Keys.Home);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.End] =        (int)Keys.End);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Delete] =     (int)Keys.Delete);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Backspace] =  (int)Keys.Back);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Enter] =      (int)Keys.Enter);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Escape] =     (int)Keys.Escape);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Space] =      (int)Keys.Space);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.A] =          (int)Keys.A);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.C] =          (int)Keys.C);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.V] =          (int)Keys.V);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.X] =          (int)Keys.X);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Y] =          (int)Keys.Y);
+            keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Z] =          (int)Keys.Z);
 
             io.Fonts.AddFontDefault();
             Client.ClientAssets.LoadFonts(ImGui.GetIO());
@@ -146,13 +137,15 @@ namespace TerraAngel.Graphics
 
         public virtual void BeforeLayout(GameTime gameTime)
         {
-            ImGui.GetIO().DeltaTime = (float)(DateTime.UtcNow - lastTime).TotalSeconds;
+            ImGuiIOPtr io = ImGui.GetIO();
+            io.DeltaTime = (float)(DateTime.UtcNow - lastTime).TotalSeconds;
             lastTime = DateTime.UtcNow;
             UpdateInput(gameTime);
 
             while (preDrawActionQueue.Count > 0)
                 preDrawActionQueue.Dequeue()?.Invoke();
 
+            ImGuiShader.Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
             ImGui.NewFrame();
         }
         public virtual void AfterLayout()
@@ -164,8 +157,10 @@ namespace TerraAngel.Graphics
         public virtual unsafe void RebuildFontAtlas()
         {
             ImGuiIOPtr io = ImGui.GetIO();
-            io.Fonts.Build();
+            if (!io.Fonts.Build()) throw new InvalidOperationException("Failed to build font");
             io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
+
+            if (pixelData == null) throw new NullReferenceException($"Failed to get font data '{nameof(pixelData)}' was null");
 
             Texture2D tex2d = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
             tex2d.SetDataPointerEXT(0, null, (IntPtr)pixelData, width * height * bytesPerPixel);
@@ -177,13 +172,8 @@ namespace TerraAngel.Graphics
             io.Fonts.SetTexID(FontTextureId.Value);
             io.Fonts.ClearTexData();
         }
-        protected virtual void UpdateEffect(Texture2D texture, IntPtr specialEffect)
+        protected virtual void SetEffectTexture(Texture2D texture)
         {
-            ImGuiIOPtr io = ImGui.GetIO();
-
-            ImGuiShader.Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
-            ImGuiShader.TextureEnabled = true;
-            ImGuiShader.VertexColorEnabled = true;
             ImGuiShader.Texture = texture;
         }
         protected virtual void UpdateInput(GameTime gameTime)
@@ -204,17 +194,15 @@ namespace TerraAngel.Graphics
             }
 
 
-
-
-            io.KeyShift = (keyboard.IsKeyDown(Keys.LeftShift)   || keyboard.IsKeyDown(Keys.RightShift))   && _game.IsActive;
-            io.KeyCtrl =  (keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl)) && _game.IsActive;
-            io.KeyAlt =   (keyboard.IsKeyDown(Keys.LeftAlt)     || keyboard.IsKeyDown(Keys.RightAlt))     && _game.IsActive;
+            io.KeyShift = (keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift)) && _game.IsActive;
+            io.KeyCtrl = (keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl)) && _game.IsActive;
+            io.KeyAlt = (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt)) && _game.IsActive;
             io.KeySuper = (keyboard.IsKeyDown(Keys.LeftWindows) || keyboard.IsKeyDown(Keys.RightWindows)) && _game.IsActive;
 
-            io.DisplaySize = new System.Numerics.Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-            io.DisplayFramebufferScale = new System.Numerics.Vector2(1f, 1f);
+            io.DisplaySize = new NVector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+            io.DisplayFramebufferScale = new NVector2(1f, 1f);
 
-            io.MousePos = new System.Numerics.Vector2(mouse.X, mouse.Y);
+            io.MousePos = new NVector2(mouse.X, mouse.Y);
 
             io.MouseDown[0] = mouse.LeftButton == ButtonState.Pressed && _game.IsActive;
             io.MouseDown[1] = mouse.RightButton == ButtonState.Pressed && _game.IsActive;
@@ -226,7 +214,6 @@ namespace TerraAngel.Graphics
 
         private void RenderDrawData(ImDrawDataPtr drawData)
         {
-            // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers
             Viewport lastViewport = GraphicsDevice.Viewport;
             Rectangle lastScissorBox = GraphicsDevice.ScissorRectangle;
             SamplerState lastSamplerState = GraphicsDevice.SamplerStates[0];
@@ -240,17 +227,14 @@ namespace TerraAngel.Graphics
             GraphicsDevice.RasterizerState = RasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
 
-            // Handle cases of screen coordinates != from framebuffer coordinates (e.g. retina displays)
             drawData.ScaleClipRects(ImGui.GetIO().DisplayFramebufferScale);
 
-            // Setup projection
             GraphicsDevice.Viewport = new Viewport(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
 
             UpdateBuffers(drawData);
 
             RenderCommandLists(drawData);
 
-            // Restore modified state
             GraphicsDevice.Viewport = lastViewport;
             GraphicsDevice.ScissorRectangle = lastScissorBox;
             GraphicsDevice.SamplerStates[0] = lastSamplerState;
@@ -265,7 +249,6 @@ namespace TerraAngel.Graphics
                 return;
             }
 
-            // Expand buffers if we need more room
             if (drawData.TotalVtxCount > VertexBufferSize)
             {
                 VertexBuffer?.Dispose();
@@ -284,13 +267,15 @@ namespace TerraAngel.Graphics
                 IndexData = new byte[IndexBufferSize * sizeof(ushort)];
             }
 
-            // Copy ImGui's vertices and indices to a set of managed byte arrays
+
+
+            // idk feels like it could be opimtized -chair
             int vtxOffset = 0;
             int idxOffset = 0;
 
-            for (int n = 0; n < drawData.CmdListsCount; n++)
+            for (int i = 0; i < drawData.CmdListsCount; i++)
             {
-                ImDrawListPtr cmdList = drawData.CmdListsRange[n];
+                ImDrawListPtr cmdList = drawData.CmdListsRange[i];
 
                 fixed (void* vtxDstPtr = &VertexData[vtxOffset * DrawVertDeclaration.Size])
                 fixed (void* idxDstPtr = &IndexData[idxOffset * sizeof(ushort)])
@@ -302,8 +287,7 @@ namespace TerraAngel.Graphics
                 vtxOffset += cmdList.VtxBuffer.Size;
                 idxOffset += cmdList.IdxBuffer.Size;
             }
-
-            // Copy the managed byte arrays to the gpu vertex- and index buffers
+            
             VertexBuffer.SetData(VertexData, 0, drawData.TotalVtxCount * DrawVertDeclaration.Size);
             IndexBuffer.SetData(IndexData, 0, drawData.TotalIdxCount * sizeof(ushort));
         }
@@ -329,7 +313,6 @@ namespace TerraAngel.Graphics
                     if (!LoadedTextures.TryGetValue(drawCmd.TextureId, out Texture2D? cmdTexture))
                     {
                         cmdTexture = GraphicsUtility.MissingTexture;
-                        GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
                     }
 
                     GraphicsDevice.ScissorRectangle = new Rectangle(
@@ -339,7 +322,7 @@ namespace TerraAngel.Graphics
                         (int)(drawCmd.ClipRect.W - drawCmd.ClipRect.Y)
                     );
 
-                    UpdateEffect(cmdTexture, drawCmd.TextureId);
+                    SetEffectTexture(cmdTexture);
                     pass.Apply();
 
 

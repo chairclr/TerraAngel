@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-
-namespace TerraAngel.WorldEdits
+﻿namespace TerraAngel.WorldEdits
 {
     public abstract class WorldEdit
     {

@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using TerraAngel.Client.Config;
-using TerraAngel.Graphics;
-
-namespace TerraAngel.Cheat.Cringes
+﻿namespace TerraAngel.Cheat.Cringes
 {
     public class ESPCringe : Cringe
     {
         public override string Name => "ESP Boxes";
-        public override CringeTabs Tab => CringeTabs.VisualUtility;
+        public override CringeTabs Tab => CringeTabs.ESP;
 
         public ref Color LocalPlayerColor => ref ClientConfig.Settings.LocalBoxPlayerColor;
         public ref Color OtherPlayerColor => ref ClientConfig.Settings.OtherBoxPlayerColor;
@@ -56,8 +46,9 @@ namespace TerraAngel.Cheat.Cringes
                 ImGui.Checkbox("Projectile hitboxes", ref ProjectileBoxes);
                 ImGui.Checkbox("Item hitboxes", ref ItemBoxes);
                 ImGui.Checkbox("Tile Sections", ref ShowTileSections);
-                if (ImGui.CollapsingHeader("ESP settings"))
+                if (ImGui.CollapsingHeader("ESP Colors"))
                 {
+                    ImGui.Indent();
                     ImGuiUtil.ColorEdit4("Local player box color", ref LocalPlayerColor);
                     ImGuiUtil.ColorEdit4("Other player box color", ref OtherPlayerColor);
                     ImGuiUtil.ColorEdit4("Other TerraAngel user box color", ref OtherTerraAngelUserColor);
@@ -66,15 +57,14 @@ namespace TerraAngel.Cheat.Cringes
                     ImGuiUtil.ColorEdit4("NPC net box color", ref NPCNetOffsetColor);
                     ImGuiUtil.ColorEdit4("Projectile box color", ref ProjectileColor);
                     ImGuiUtil.ColorEdit4("Item box color", ref ItemColor);
+                    ImGui.Unindent();
                 }
             }
         }
 
         public override void Update()
         {
-            base.Update();
-
-            if (Input.InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleDrawAnyESP))
+            if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleDrawAnyESP))
                 DrawAnyESP = !DrawAnyESP;
         }
     }

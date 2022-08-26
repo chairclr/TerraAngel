@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Loader;
-using Terraria;
-using Terraria.UI;
-using Terraria.GameContent.UI;
-using Terraria.GameContent.UI.Elements;
 using TerraAngel.UI;
-using TerraAngel;
+using Terraria.UI;
 
 namespace TerraAngel.Plugin
 {
@@ -122,7 +116,7 @@ namespace TerraAngel.Plugin
                 }
             }
         }
-        
+
         private static Plugin LoadPluginFromDLL(Assembly assembly, string path)
         {
             foreach (Type type in assembly.GetTypes())

@@ -13,6 +13,11 @@ namespace TerraAngel.Cheat.Cringes
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
         [DefaultConfigValue("DefaultInfiniteReach")]
-        public override ref bool Enabled => ref base.Enabled;
+        public bool Enabled;
+
+        public override void DrawUI(ImGuiIOPtr io)
+        {
+            ImGui.Checkbox(Name, ref Enabled);
+        }
     }
 }

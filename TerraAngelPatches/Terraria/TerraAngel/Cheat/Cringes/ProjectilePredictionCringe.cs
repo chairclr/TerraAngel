@@ -1,20 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using TerraAngel.Client.ClientWindows;
-using TerraAngel.Client.Config;
-using TerraAngel.Graphics;
-using TerraAngel.Hooks;
-using TerraAngel.Input;
-using TerraAngel.Utility;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
 
 
 namespace TerraAngel.Cheat.Cringes
@@ -44,13 +28,18 @@ namespace TerraAngel.Cheat.Cringes
         {
             ImGui.Checkbox("Projectile Prediction", ref DrawActiveProjectilePrediction);
 
-            if (ImGui.CollapsingHeader("Projectile Prediction Settings"))
+            if (DrawActiveProjectilePrediction)
             {
-                ImGui.Checkbox("Draw Friendly", ref DrawFriendlyProjectiles);
-                ImGui.Checkbox("Draw Hostile", ref DrawHostileProjectiles);
-                ImGuiUtil.ColorEdit4("Friendly Color", ref FriendlyDrawColor);
-                ImGuiUtil.ColorEdit4("Hostile Color", ref HostileDrawColor);
-                ImGui.SliderInt("Max Step Count", ref MaxStepCount, 100, 10000);
+                if (ImGui.CollapsingHeader("Projectile Prediction Settings"))
+                {
+                    ImGui.Indent();
+                    ImGui.Checkbox("Draw Friendly", ref DrawFriendlyProjectiles);
+                    ImGui.Checkbox("Draw Hostile", ref DrawHostileProjectiles);
+                    ImGuiUtil.ColorEdit4("Friendly Color", ref FriendlyDrawColor);
+                    ImGuiUtil.ColorEdit4("Hostile Color", ref HostileDrawColor);
+                    ImGui.SliderInt("Max Step Count", ref MaxStepCount, 100, 10000);
+                    ImGui.Unindent();
+                }
             }
         }
 

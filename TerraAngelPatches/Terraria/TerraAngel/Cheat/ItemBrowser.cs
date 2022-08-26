@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using TerraAngel.Graphics;
-using Terraria;
+﻿using System.Collections.Generic;
 
 namespace TerraAngel.Cheat
 {
     public class ItemBrowser
     {
-        private static System.Numerics.Vector2 itemDrawSize = new System.Numerics.Vector2(32, 32);
+        private static NVector2 itemDrawSize = new NVector2(32, 32);
         private static string itemSearch = "";
-        private static Type itemIdType = typeof(Terraria.ID.ItemID);
-        private static List<string> itemNames = new List<string>(Terraria.ID.ItemID.Count);
-        private static ItemGiveMode itemGiveMode = ItemGiveMode.InMouse;
-        private static string[] ItemGiveModeNames = Utility.Util.EnumFancyNames<ItemGiveMode>();
+        private static List<string> itemNames = new List<string>(ItemID.Count);
+        private static string[] ItemGiveModeNames = Util.EnumFancyNames<ItemGiveMode>();
         private static int currentItemGiveMode = 0;
 
         public static void DrawBrowser()
@@ -31,8 +21,8 @@ namespace TerraAngel.Cheat
             if (ImGui.BeginChild("ItemBrowserScrolling"))
             {
                 float windowMaxX = ImGui.GetWindowPos().X + ImGui.GetWindowContentRegionMax().X;
-                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new System.Numerics.Vector2(4f));
-                for (int i = 1; i < Terraria.ID.ItemID.Count; i++)
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4f));
+                for (int i = 1; i < ItemID.Count; i++)
                 {
                     if (searchEmpty || itemNames[i].ToLower().Contains(itemSearch.ToLower()))
                     {
@@ -49,17 +39,17 @@ namespace TerraAngel.Cheat
                                     }
                                     break;
                                 case ItemGiveMode.DropLocal:
-                                {
-                                    Item local = Main.item[Item.NewItem(new Terraria.DataStructures.EntitySource_Sync(), Main.LocalPlayer.position, Width: Main.LocalPlayer.width, Height: Main.LocalPlayer.height, i, Stack: 999, true, 0, true)];
-                                    local.stack = Utils.Clamp(local.stack, 1, local.maxStack);
-                                }
-                                break;
+                                    {
+                                        Item local = Main.item[Item.NewItem(new Terraria.DataStructures.EntitySource_Sync(), Main.LocalPlayer.position, Width: Main.LocalPlayer.width, Height: Main.LocalPlayer.height, i, Stack: 999, true, 0, true)];
+                                        local.stack = Utils.Clamp(local.stack, 1, local.maxStack);
+                                    }
+                                    break;
                                 case ItemGiveMode.DropServerSide:
-                                {
-                                    Item local = Main.item[Item.NewItem(new Terraria.DataStructures.EntitySource_Sync(), Main.LocalPlayer.position, Width: Main.LocalPlayer.width, Height: Main.LocalPlayer.height, i, Stack: 999, false, 0, true)];
-                                    local.stack = Utils.Clamp(local.stack, 1, local.maxStack);
-                                }
-                                break;
+                                    {
+                                        Item local = Main.item[Item.NewItem(new Terraria.DataStructures.EntitySource_Sync(), Main.LocalPlayer.position, Width: Main.LocalPlayer.width, Height: Main.LocalPlayer.height, i, Stack: 999, false, 0, true)];
+                                        local.stack = Utils.Clamp(local.stack, 1, local.maxStack);
+                                    }
+                                    break;
                             }
                         }
 

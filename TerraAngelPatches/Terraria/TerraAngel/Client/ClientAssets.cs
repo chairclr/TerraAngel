@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using TerraAngel.Utility;
 
 namespace TerraAngel.Client
 {

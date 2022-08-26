@@ -1,22 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using TerraAngel.Cheat;
-using TerraAngel.Cheat.Cringes;
-using Terraria;
-using TerraAngel.Utility;
-using TerraAngel.Graphics;
-using TerraAngel.WorldEdits;
-using Terraria.ID;
-using TerraAngel;
-using TerraAngel.Client.Config;
 using Microsoft.Xna.Framework.Input;
-using Terraria.Map;
-using TerraAngel.Input;
 using TerraAngel.Hooks.Hooks;
 
 namespace TerraAngel.Client.ClientWindows
@@ -159,14 +142,14 @@ namespace TerraAngel.Client.ClientWindows
                     for (int i = 0; i < 50; i++)
                     {
                         ImGuiUtil.ItemButton(player.inventory[i], $"pii{i}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == i);
-                        
+
                         if ((i + 1) % 10 != 0)
                         {
                             ImGui.SameLine();
                         }
                         else
                         {
-                            
+
                             if (i > 10)
                             {
                                 if (c < 4)
@@ -236,7 +219,7 @@ namespace TerraAngel.Client.ClientWindows
                         Player player = Main.player[i];
                         if (player.active && player.whoAmI != Main.myPlayer)
                         {
-                            if (Input.InputSystem.RightMousePressed && player.getRect().Contains(Util.ScreenToWorld(Input.InputSystem.MousePosition).ToPoint()))
+                            if (InputSystem.RightMousePressed && player.getRect().Contains(Util.ScreenToWorld(InputSystem.MousePosition).ToPoint()))
                             {
                                 selectedPlayer = player.whoAmI;
                                 IsEnabled = true;

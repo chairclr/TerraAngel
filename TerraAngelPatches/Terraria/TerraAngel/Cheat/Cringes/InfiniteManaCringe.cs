@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TerraAngel.Cheat.Cringes
+﻿namespace TerraAngel.Cheat.Cringes
 {
     public class InfiniteManaCringe : Cringe
     {
@@ -13,6 +7,11 @@ namespace TerraAngel.Cheat.Cringes
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
         [DefaultConfigValue("DefaultInfiniteMana")]
-        public override ref bool Enabled => ref base.Enabled;
+        public bool Enabled;
+
+        public override void DrawUI(ImGuiIOPtr io)
+        {
+            ImGui.Checkbox(Name, ref Enabled);
+        }
     }
 }

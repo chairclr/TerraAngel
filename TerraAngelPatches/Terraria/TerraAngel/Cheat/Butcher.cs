@@ -1,8 +1,6 @@
 ﻿using System;
 using TerraAngel.Net;
-using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 
 namespace TerraAngel.Cheat
 {

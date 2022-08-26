@@ -1,13 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using MonoMod.RuntimeDetour.Platforms;
-using Terraria;
 
 namespace TerraAngel.Utility
 {
@@ -48,7 +39,7 @@ namespace TerraAngel.Utility
 
     public class Raycast
     {
-        private static readonly Vector2[] slopeOffsets = new Vector2[] 
+        private static readonly Vector2[] slopeOffsets = new Vector2[]
         {
             // down left
             new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(0f, 1f), 
@@ -69,8 +60,8 @@ namespace TerraAngel.Utility
             Vector2 unitRayStepSize = new Vector2(MathF.Sqrt(1f + (direction.Y / direction.X) * (direction.Y / direction.X)), MathF.Sqrt(1f + (direction.X / direction.Y) * (direction.X / direction.Y)));
             Vector2 originalPosition = position;
             Vector2i tilePoint = position / 16f;
-            
-            
+
+
             maxDistance /= 16f;
             position /= 16f;
 
@@ -105,7 +96,7 @@ namespace TerraAngel.Utility
 
             while (!intersects && distance < maxDistance)
             {
-                
+
 
                 // step the ray forward
                 if (rayLength1d.X < rayLength1d.Y)

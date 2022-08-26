@@ -106,7 +106,7 @@ namespace TerraAngel.Client.ClientWindows
                 {
                     if (ImGui.BeginTabBar("VisualBar"))
                     {
-                        if (ImGui.BeginTabItem("Utility/ESP"))
+                        if (ImGui.BeginTabItem("Utility"))
                         {
                             foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.VisualUtility))
                             {
@@ -134,7 +134,16 @@ namespace TerraAngel.Client.ClientWindows
                             }
                             ImGui.EndTabItem();
                         }
-                        if (ImGui.BeginTabItem("Lighting/Dust"))
+                        if (ImGui.BeginTabItem("ESP"))
+                        {
+                            foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.ESP))
+                            {
+                                cringe.DrawUI(io);
+                            }
+
+                            ImGui.EndTabItem();
+                        }
+                        if (ImGui.BeginTabItem("Lighting"))
                         {
                             foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.LightingCringes))
                             {
@@ -173,7 +182,7 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         if (CringeManager.NebulaSpam && CringeManager.NebulaSpamPower > 30)
                         {
-                            CringeManager.GetCringe<Cheat.Cringes.NoDustCringe>().Enabled = true;
+                            CringeManager.GetCringe<Cheat.Cringes.OptimizationCringe>().DisableGore = true;
                         }
                     }
                     if (ImGui.CollapsingHeader("Nebula Settings"))
@@ -182,7 +191,7 @@ namespace TerraAngel.Client.ClientWindows
                         {
                             if (CringeManager.NebulaSpam && CringeManager.NebulaSpamPower > 30)
                             {
-                                CringeManager.GetCringe<Cheat.Cringes.NoDustCringe>().Enabled = true;
+                                CringeManager.GetCringe<Cheat.Cringes.OptimizationCringe>().DisableGore = true;
                             }
                         }
                     }

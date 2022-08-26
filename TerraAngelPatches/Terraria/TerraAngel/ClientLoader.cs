@@ -160,15 +160,15 @@ namespace TerraAngel
             try
             {
 #endif
-                AppDomain.CurrentDomain.AssemblyResolve += (sender, sargs) =>
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, sargs) =>
+            {
+                if (sargs.Name.StartsWith("Steamworks.NET"))
                 {
-                    if (sargs.Name.StartsWith("Steamworks.NET"))
-                    {
-                        return Assembly.LoadFrom($"{TerrariaPath}/{NewLibraryPath}/{ArchitectureString}/Steamworks/Steamworks.NET.dll");
-                    }
-                    return null;
-                };
-                LoadClientInteral();
+                    return Assembly.LoadFrom($"{TerrariaPath}/{NewLibraryPath}/{ArchitectureString}/Steamworks/Steamworks.NET.dll");
+                }
+                return null;
+            };
+            LoadClientInteral();
 #if !DEBUG
             }
             catch (Exception e)

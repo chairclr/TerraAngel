@@ -1,19 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using TerraAngel.Cheat;
-using TerraAngel.Cheat.Cringes;
-using Terraria;
-using TerraAngel.Utility;
-using TerraAngel.Graphics;
 using TerraAngel.WorldEdits;
-using Terraria.ID;
-using TerraAngel;
-using TerraAngel.Input;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -24,7 +10,7 @@ namespace TerraAngel.Client.ClientWindows
         public override bool IsEnabled { get => true; }
         public override bool IsPartOfGlobalUI => false;
 
-        
+
 
         public override void Draw(ImGuiIOPtr io)
         {
@@ -149,8 +135,8 @@ namespace TerraAngel.Client.ClientWindows
 
 
                                     // dont draw if its off screen
-                                        if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
-                                        {
+                                    if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                    {
                                         drawList.AddRect(minScreenPos, maxScreenPos, esp.ProjectileColor.PackedValue);
                                     }
                                 }
@@ -206,7 +192,7 @@ namespace TerraAngel.Client.ClientWindows
                                 Vector2 drawCenter = Util.WorldToScreen(player.Top - new Vector2(0f, 24f));
 
                                 if (item.type != 0)
-                                    ImGuiUtil.DrawItemCentered(drawList, item.type, drawCenter, 24f, item.stack == 1 ? 0 : item.stack);
+                                    ImGuiUtil.DrawItemCentered(drawList, item, drawCenter, 24f);
                             }
                         }
                     }
@@ -215,29 +201,29 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 else
                 {
-                    WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
+                    WorldEdit? worldEdit = ClientLoader.MainRenderer?.CurrentWorldEdit;
                     worldEdit?.DrawPreviewInMap(io, drawList);
                 }
 
                 {
-                    WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
+                    WorldEdit? worldEdit = ClientLoader.MainRenderer?.CurrentWorldEdit;
                     if (worldEdit != null)
                     {
-                        Vector2 mousePos = Util.ScreenToWorld(Input.InputSystem.MousePosition) / 16f;
+                        Vector2 mousePos = Util.ScreenToWorld(InputSystem.MousePosition) / 16f;
 
                         if (Main.mapFullscreen)
-                            mousePos = Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition) / 16f;
+                            mousePos = Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition) / 16f;
 
                         mousePos = new Vector2(MathF.Floor(mousePos.X), MathF.Floor(mousePos.Y));
 
                         if (worldEdit.RunEveryFrame)
                         {
-                            if (Input.InputSystem.MiddleMouseDown)
+                            if (InputSystem.MiddleMouseDown)
                             {
                                 worldEdit.Edit(mousePos);
                             }
                         }
-                        else if (Input.InputSystem.MiddleMousePressed)
+                        else if (InputSystem.MiddleMousePressed)
                         {
                             worldEdit.Edit(mousePos);
                         }
@@ -246,6 +232,5 @@ namespace TerraAngel.Client.ClientWindows
             }
             CringeManager.Update();
         }
-
     }
 }

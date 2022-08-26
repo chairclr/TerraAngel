@@ -1,20 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
-using TerraAngel.Client.Config;
-using TerraAngel.Graphics;
-using TerraAngel.Utility;
-using Terraria;
-using Terraria.ID;
-using static Terraria.GameContent.Skies.CreditsRoll.Actions;
-
-namespace TerraAngel.Cheat.Cringes
+﻿namespace TerraAngel.Cheat.Cringes
 {
     public class AutoAttackCringe : Cringe
     {
@@ -29,17 +13,19 @@ namespace TerraAngel.Cheat.Cringes
         public ref float MinAttackRange => ref ClientConfig.Settings.AutoAttackMinTargetRange;
         public ref float VelocityPrectionScaling => ref ClientConfig.Settings.AutoAttackVelocityPredictionScaling;
 
+        public bool Enabled;
 
         public override void DrawUI(ImGuiIOPtr io)
         {
+            ImGui.Checkbox(Name, ref Enabled);
+
             ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
-            base.DrawUI(io);
 
             if (Enabled)
             {
                 if (ImGui.CollapsingHeader("Auto-Attack Settings"))
                 {
-                    ImGui.Indent(20f);
+                    ImGui.Indent();
                     ImGui.SliderFloat("Minimum Target Range", ref MinAttackRange, 1f, 2000f);
                     if (ImGui.IsItemFocused())
                     {
@@ -58,10 +44,10 @@ namespace TerraAngel.Cheat.Cringes
                     if (VelocityPrediction)
                     {
                         ImGui.SliderFloat("Prediction Scaling", ref VelocityPrectionScaling, 1f, 30f);
-                        
+
                     }
 
-                    ImGui.Unindent(20f);
+                    ImGui.Unindent();
                 }
             }
         }

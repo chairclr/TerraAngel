@@ -1,20 +1,6 @@
-﻿using System;
-using System.IO;
-using Ionic.Zlib;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
-using Terraria.Chat;
-using Terraria.DataStructures;
-using Terraria.GameContent;
-using Terraria.GameContent.Events;
-using Terraria.GameContent.Tile_Entities;
-using Terraria.ID;
-using Terraria.IO;
-using Terraria.Localization;
-using Terraria.Social;
-using Terraria;
+﻿using System.IO;
 using TerraAngel.ID;
-using TerraAngel.Utility;
+using Terraria.Localization;
 
 namespace TerraAngel.Net
 {
@@ -107,19 +93,19 @@ namespace TerraAngel.Net
                         }
                         break;
                     case 5:
-                    {
-                        // player id
-                        writer.Write((byte)number);
-                        // slot
-                        writer.Write((short)number2);
-                        // stack
-                        writer.Write((short)number3);
-                        // Prefix
-                        writer.Write((byte)number4);
-                        // NetID
-                        writer.Write((short)number5);
-                    }
-                    break;
+                        {
+                            // player id
+                            writer.Write((byte)number);
+                            // slot
+                            writer.Write((short)number2);
+                            // stack
+                            writer.Write((short)number3);
+                            // Prefix
+                            writer.Write((byte)number4);
+                            // NetID
+                            writer.Write((short)number5);
+                        }
+                        break;
                 }
 
                 int packetLength = (int)writer.BaseStream.Position;

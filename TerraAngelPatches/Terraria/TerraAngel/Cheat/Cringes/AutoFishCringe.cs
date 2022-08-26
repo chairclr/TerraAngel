@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using TerraAngel.Client.Config;
-using TerraAngel.Hooks;
-using TerraAngel.Input;
-using TerraAngel.Utility;
-using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 
 namespace TerraAngel.Cheat.Cringes
 {
@@ -44,32 +32,37 @@ namespace TerraAngel.Cheat.Cringes
         private bool hasSpecialPosition = false;
         private Vector2 specialPosition = Vector2.Zero;
 
+        public bool Enabled;
+
         public override void DrawUI(ImGuiIOPtr io)
         {
-            base.DrawUI(io);
+            ImGui.Checkbox(Name, ref Enabled);
 
-            if (ImGui.CollapsingHeader("Auto-Fish settings"))
+            if (Enabled)
             {
-                ImGui.Indent(20f);
-                ImGui.Checkbox("Accept Items", ref AcceptItems);
-                ImGui.Checkbox("Accept All Items", ref AcceptAllItems);
-                if (AcceptItems && !AcceptAllItems)
+                if (ImGui.CollapsingHeader("Auto-Fish settings"))
                 {
-                    ImGui.Checkbox("Accept Quest Fish", ref AcceptQuestFish);
-                    ImGui.Checkbox("Accept Crates", ref AcceptCrates);
-                    ImGui.Checkbox("Accept Normal", ref AcceptNormal);
-                    ImGui.Checkbox("Accept Common", ref AcceptCommon);
-                    ImGui.Checkbox("Accept Uncommon", ref AcceptUncommon);
-                    ImGui.Checkbox("Accept Rare", ref AcceptRare);
-                    ImGui.Checkbox("Accept Very Rare", ref AcceptVeryRare);
-                    ImGui.Checkbox("Accept Legendary", ref AcceptLegendary);
-                }
-                ImGui.Checkbox("Accept NPCs", ref AcceptNPCs);
+                    ImGui.Indent();
+                    ImGui.Checkbox("Accept Items", ref AcceptItems);
+                    ImGui.Checkbox("Accept All Items", ref AcceptAllItems);
+                    if (AcceptItems && !AcceptAllItems)
+                    {
+                        ImGui.Checkbox("Accept Quest Fish", ref AcceptQuestFish);
+                        ImGui.Checkbox("Accept Crates", ref AcceptCrates);
+                        ImGui.Checkbox("Accept Normal", ref AcceptNormal);
+                        ImGui.Checkbox("Accept Common", ref AcceptCommon);
+                        ImGui.Checkbox("Accept Uncommon", ref AcceptUncommon);
+                        ImGui.Checkbox("Accept Rare", ref AcceptRare);
+                        ImGui.Checkbox("Accept Very Rare", ref AcceptVeryRare);
+                        ImGui.Checkbox("Accept Legendary", ref AcceptLegendary);
+                    }
+                    ImGui.Checkbox("Accept NPCs", ref AcceptNPCs);
 
-                ImGui.SliderInt("Randomization Min", ref frameCountRandomizationMin, 0, 120);
-                ImGui.SliderInt("Randomization Max", ref frameCountRandomizationMax, frameCountRandomizationMin, frameCountRandomizationMin + 120);
-                ImGui.Checkbox("Use specific mouse position", ref hasSpecialPosition); ImGui.SameLine(); ImGui.TextDisabled("*Press Ctrl+Alt to select specific cast position");
-                ImGui.Unindent(20f);
+                    ImGui.SliderInt("Randomization Min", ref frameCountRandomizationMin, 0, 120);
+                    ImGui.SliderInt("Randomization Max", ref frameCountRandomizationMax, frameCountRandomizationMin, frameCountRandomizationMin + 120);
+                    ImGui.Checkbox("Use specific mouse position", ref hasSpecialPosition); ImGui.SameLine(); ImGui.TextDisabled("*Press Ctrl+Alt to select specific cast position");
+                    ImGui.Unindent();
+                }
             }
         }
 

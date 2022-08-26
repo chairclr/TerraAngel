@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Reflection;
-using Microsoft.Xna.Framework;
-using MonoMod.RuntimeDetour;
-using Terraria;
-using ImGuiNET;
-using ReLogic.OS;
-using Terraria.DataStructures;
-using Terraria.ID;
-using TerraAngel.Cheat;
-using TerraAngel.Hooks;
-using System.IO;
-using TerraAngel;
-using Terraria.Localization;
 using System.Diagnostics;
-using TerraAngel.Cheat.Cringes;
-using Terraria.GameInput;
+using System.IO;
+using System.Reflection;
 using Microsoft.Xna.Framework.Input;
+using Terraria.GameInput;
+using Terraria.Localization;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -73,7 +62,7 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void SetTitleHook(Action<Main> orig, Main self)
         {
-            
+
             SDL2.SDL.SDL_SetWindowTitle(self.Window.Handle, "TerraAngel");
             //orig(self);
         }

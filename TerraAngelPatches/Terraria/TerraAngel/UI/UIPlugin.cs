@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using TerraAngel.Plugin;
+using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
-using Terraria.Localization;
-using Terraria.Audio;
-using Terraria.ID;
-using TerraAngel.Client.Config;
-using ReLogic.Graphics;
-using Terraria.GameContent;
-using TerraAngel.Plugin;
 
 namespace TerraAngel.UI
 {

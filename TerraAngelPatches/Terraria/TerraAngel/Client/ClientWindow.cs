@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using ImGuiNET;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Client
 {

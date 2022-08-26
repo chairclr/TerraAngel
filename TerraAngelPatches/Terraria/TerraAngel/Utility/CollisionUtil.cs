@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Xna.Framework;
-using Terraria;
-using static Terraria.WorldBuilding.Searches;
-
-namespace TerraAngel.Utility
+﻿namespace TerraAngel.Utility
 {
     public static class CollisionUtil
     {
-        public static bool TileSolid(this Tile tile) 
+        public static bool TileSolid(this Tile tile)
         {
             if (!tile.active() || tile.inActive())
             {

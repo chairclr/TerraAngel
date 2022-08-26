@@ -1,25 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using TerraAngel.Hooks;
-using Microsoft.Xna.Framework.Input;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using TerraAngel.Cheat;
-using TerraAngel.Graphics;
-using TerraAngel.WorldEdits;
-using TerraAngel;
-using System.Reflection;
-using Terraria.Localization;
-using System.Diagnostics;
 using System.IO;
-using TerraAngel.Utility;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
-using TerraAngel.Client.Config;
+using Microsoft.Xna.Framework.Input;
+using Terraria.Localization;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -209,7 +195,7 @@ namespace TerraAngel.Client.ClientWindows
 
                             if (messagesShownInTree[i])
                             {
-                                ImGui.Indent(20f);
+                                ImGui.Indent();
                                 for (int j = 0; j < packetInfo.Count; j++)
                                 {
                                     if (packetInfo[j].Sent)
@@ -221,7 +207,7 @@ namespace TerraAngel.Client.ClientWindows
                                         ImGui.TextUnformatted($"NetMessage.GetData Type: {messageIDFields[packetInfo[j].Type].Name}/{packetInfo[j].Type}");
                                     }
                                 }
-                                ImGui.Unindent(20f);
+                                ImGui.Unindent();
                             }
                         }
 

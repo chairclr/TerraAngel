@@ -1,21 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Microsoft.Xna.Framework.Input;
-using TerraAngel.Graphics;
-using TerraAngel.Hooks;
-using TerraAngel.Input;
-using TerraAngel;
-using TerraAngel.UI;
-using Terraria;
-using TerraAngel.Utility;
-using Microsoft.Xna.Framework;
-using System.Reflection;
-using TerraAngel.Client.Config;
-using Microsoft.CodeAnalysis.Operations;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Client.ClientWindows
 {

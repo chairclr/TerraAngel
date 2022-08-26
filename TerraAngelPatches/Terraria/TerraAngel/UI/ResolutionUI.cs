@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Graphics;
-using TerraAngel.Input;
-using Terraria.Audio;
-using Terraria.ID;
-using Terraria.UI;
-using Terraria.GameContent;
-using Terraria.GameContent.UI;
-using Terraria.GameContent.UI.Elements;
-using Terraria;
-using System.Text.RegularExpressions;
-using ReLogic.OS;
-using ReLogic.Localization.IME;
-using Microsoft.Xna.Framework;
+﻿using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework.Input;
+using ReLogic.OS;
+using Terraria.Audio;
+using Terraria.GameContent.UI.Elements;
+using Terraria.UI;
 namespace TerraAngel.UI
 {
     public class ResolutionUI : UIState, IHaveBackButtonCommand
@@ -79,7 +66,7 @@ namespace TerraAngel.UI
             {
                 widthTextBox.ShowInputTicker = true;
                 heightTextBox.ShowInputTicker = false;
-                
+
             };
             widthText = new UIText("Width:", 1.2f)
             {
@@ -118,7 +105,7 @@ namespace TerraAngel.UI
                 BackgroundColor = UIUtil.ButtonColor * 0.98f,
                 VAlign = 0.475f,
                 HAlign = 0.5f,
-                
+
             }.WithFadedMouseOver();
 
             changeStateButton.OnClick += (x, y) =>
@@ -143,7 +130,7 @@ namespace TerraAngel.UI
                 heightTextBox.ShowInputTicker = false;
             };
 
-			Append(element);
+            Append(element);
         }
 
         Regex onlyNumbers = new Regex(@"^\d$");
@@ -195,7 +182,7 @@ namespace TerraAngel.UI
             {
                 widthTextBox.SetText(GetInputText(widthTextBox.Text));
 
-                
+
 
                 if (InputSystem.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Enter))
                 {

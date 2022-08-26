@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
 
 namespace TerraAngel.Cheat
 {
@@ -11,52 +7,34 @@ namespace TerraAngel.Cheat
     {
         private static Dictionary<int, Cringe> cringes = new Dictionary<int, Cringe>();
         private static List<Cringe>[] cringesAsTabs;
+        private static List<Cringe> allCringes;
 
         static CringeManager()
         {
             cringesAsTabs = new List<Cringe>[Enum.GetValues<CringeTabs>().Length];
             for (int i = 0; i < cringesAsTabs.Length; i++)
             {
-                cringesAsTabs[i] = new List<Cringe>();
+                cringesAsTabs[i] = new List<Cringe>(5);
             }
+
+            allCringes = new List<Cringe>(30);
         }
 
-        public static T GetCringe<T>() where T : Cringe
-        {
-            return (T)cringes[typeof(T).MetadataToken];
-        }
-        public static void AddCringe<T>(bool enabled = false) where T : Cringe
-        {
-            if (!cringes.ContainsKey(typeof(T).MetadataToken))
-            {
-                Cringe cringe = Activator.CreateInstance<T>();
-                cringe.Enabled = enabled;
-                cringesAsTabs[(int)cringe.Tab].Add(cringe);
-                cringes.Add(typeof(T).MetadataToken, cringe);
-            }
-        }
-        public static void RemoveCringe<T>() where T : Cringe
-        {
-            if (cringes.ContainsKey(typeof(T).MetadataToken))
-            {
-                Cringe? cringe = GetCringe<T>();
-                if (cringe is not null)
-                    cringesAsTabs[(int)cringe.Tab].Remove(cringe);
-                cringes.Remove(typeof(T).MetadataToken);
-            }
-        }
+        public static T GetCringe<T>() where T : Cringe => (T)GetCringe(typeof(T));
+        public static void AddCringe<T>() where T : Cringe => AddCringe(typeof(T));
+        public static void RemoveCringe<T>() where T : Cringe => RemoveCringe(typeof(T));
 
         public static Cringe GetCringe(Type type)
         {
             return cringes[type.MetadataToken];
         }
-        public static void AddCringe(Type type, bool enabled = false)
+        public static void AddCringe(Type type)
         {
             if (!cringes.ContainsKey(type.MetadataToken))
             {
-                Cringe cringe = (Cringe)Activator.CreateInstance(type);
-                cringe.Enabled = enabled;
+                Cringe cringe = (Cringe?)Activator.CreateInstance(type) ?? throw new NullReferenceException(type.Name);
                 cringesAsTabs[(int)cringe.Tab].Add(cringe);
+                allCringes.Add(cringe);
                 cringes.Add(type.MetadataToken, cringe);
             }
         }
@@ -64,35 +42,36 @@ namespace TerraAngel.Cheat
         {
             if (cringes.ContainsKey(type.MetadataToken))
             {
-                Cringe? cringe = GetCringe(type);
-                if (cringe is not null)
-                    cringesAsTabs[(int)cringe.Tab].Remove(cringe);
+                Cringe cringe = GetCringe(type);
+                cringesAsTabs[(int)cringe.Tab].Remove(cringe);
+                allCringes.Remove(cringe);
                 cringes.Remove(type.MetadataToken);
             }
         }
 
-        public static IEnumerable<Cringe> GetCringeOfTab(CringeTabs tab)
+        public static List<Cringe> GetCringeOfTab(CringeTabs tab)
         {
             return cringesAsTabs[(int)tab];
         }
 
         public static void SortTabs()
         {
-            foreach (List<Cringe> tab in cringesAsTabs)
+            for (int i = 0; i < cringesAsTabs.Length; i++)
             {
+                List<Cringe> tab = cringesAsTabs[i];
                 tab.Sort((x, y) => x.Name.CompareTo(y.Name));
             }
         }
 
         public static void Update()
         {
-            for (int i = 0; i < cringesAsTabs.Length; i++)
+            for (int i = 0; i < allCringes.Count; i++)
             {
-                List<Cringe> tab = cringesAsTabs[i];
-                tab.ForEach(x => x.Update());
+                Cringe cringe = allCringes[i];
+                cringe.Update();
             }
         }
-        
+
 
         public static int ButcherDamage = 1000;
 

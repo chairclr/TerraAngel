@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ImGuiNET;
-using Terraria;
-using Terraria.ID;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework;
-using TerraAngel.Utility;
-using TerraAngel.Input;
-using TerraAngel.Client.Config;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Cheat.Cringes
 {
@@ -23,17 +11,23 @@ namespace TerraAngel.Cheat.Cringes
         public float NoClipSpeed = 20.8f;
         public int NoClipPlayerSyncTime = 1;
 
+        public bool Enabled;
+
         public override void DrawUI(ImGuiIOPtr io)
         {
-            base.DrawUI(io);
-
-            if (ImGui.CollapsingHeader("Noclip Settings"))
+            ImGui.Checkbox(Name, ref Enabled);
+            if (Enabled)
             {
-                ImGui.TextUnformatted("Speed"); ImGui.SameLine();
-                ImGui.SliderFloat("##Speed", ref NoClipSpeed, 1f, 100f);
+                if (ImGui.CollapsingHeader("Noclip Settings"))
+                {
+                    ImGui.Indent();
+                    ImGui.TextUnformatted("Speed"); ImGui.SameLine();
+                    ImGui.SliderFloat("##Speed", ref NoClipSpeed, 1f, 100f);
 
-                ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
-                ImGui.SliderInt("##SyncTime", ref NoClipPlayerSyncTime, 1, 60);
+                    ImGui.TextUnformatted("Frames between sync"); ImGui.SameLine();
+                    ImGui.SliderInt("##SyncTime", ref NoClipPlayerSyncTime, 1, 60);
+                    ImGui.Unindent();
+                }
             }
         }
 
@@ -44,7 +38,7 @@ namespace TerraAngel.Cheat.Cringes
             {
                 Player self = Main.LocalPlayer;
 
-                if (Input.InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleNoclip))
+                if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleNoclip))
                 {
                     Enabled = !Enabled;
                 }
@@ -94,17 +88,17 @@ namespace TerraAngel.Cheat.Cringes
             }
             else
             {
-                if (ClientConfig.Settings.RightClickOnMapToTeleport && (Input.InputSystem.RightMousePressed || (io.KeyCtrl && Input.InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
+                if (ClientConfig.Settings.RightClickOnMapToTeleport && (InputSystem.RightMousePressed || (io.KeyCtrl && InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
                 {
                     Main.LocalPlayer.velocity = Vector2.Zero;
                     if (io.KeyCtrl)
                     {
-                        Main.LocalPlayer.Bottom = Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition);
+                        Main.LocalPlayer.Bottom = Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition);
                     }
                     else
                     {
                         Main.mapFullscreen = false;
-                        Main.LocalPlayer.Teleport(Util.ScreenToWorldFullscreenMap(Input.InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
+                        Main.LocalPlayer.Teleport(Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
                         if (ClientConfig.Settings.TeleportSendRODPacket)
                         {
                             NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
