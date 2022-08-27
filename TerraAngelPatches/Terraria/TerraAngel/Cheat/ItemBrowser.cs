@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Terraria.DataStructures;
 
 namespace TerraAngel.Cheat
 {
@@ -9,6 +11,7 @@ namespace TerraAngel.Cheat
         private static List<string> itemNames = new List<string>(ItemID.Count);
         private static string[] ItemGiveModeNames = Util.EnumFancyNames<ItemGiveMode>();
         private static int currentItemGiveMode = 0;
+        private static bool syncItemWithServer = true;
 
         public static void DrawBrowser()
         {
@@ -16,7 +19,11 @@ namespace TerraAngel.Cheat
             ImGui.TextUnformatted("Search"); ImGui.SameLine();
             ImGui.InputText("##ItemSearch", ref itemSearch, 64);
             ImGui.TextUnformatted("Give Type"); ImGui.SameLine();
+            ImGui.PushItemWidth(MathF.Max(ImGui.GetContentRegionAvail().X / 3.4f, ImGui.CalcTextSize(ItemGiveModeNames[currentItemGiveMode]).X + 30f));
             ImGui.Combo("##ItemGiveType", ref currentItemGiveMode, ItemGiveModeNames, ItemGiveModeNames.Length);
+            ImGui.PopItemWidth();
+            ImGui.SameLine();
+            ImGui.Checkbox("Sync With Server", ref syncItemWithServer);
             bool searchEmpty = itemSearch.Length == 0;
             if (ImGui.BeginChild("ItemBrowserScrolling"))
             {
@@ -26,7 +33,7 @@ namespace TerraAngel.Cheat
                 {
                     if (searchEmpty || itemNames[i].ToLower().Contains(itemSearch.ToLower()))
                     {
-                        if (ImGuiUtil.ItemButton(i, $"ibi{i}", true, true))
+                        if (ImGuiUtil.ItemButton(i, $"ibi{i}", true))
                         {
                             switch ((ItemGiveMode)currentItemGiveMode)
                             {
@@ -36,18 +43,17 @@ namespace TerraAngel.Cheat
                                     {
                                         Main.mouseItem.SetDefaults(i);
                                         Main.mouseItem.stack = Main.mouseItem.maxStack;
+
+                                        if (syncItemWithServer)
+                                        {
+                                            Main.LocalPlayer.inventory[58] = Main.mouseItem.Clone();
+                                            NetMessage.SendData(MessageID.SyncEquipment, number: Main.myPlayer, number2: 58);
+                                        }
                                     }
                                     break;
-                                case ItemGiveMode.DropLocal:
+                                case ItemGiveMode.DropInWorld:
                                     {
-                                        Item local = Main.item[Item.NewItem(new Terraria.DataStructures.EntitySource_Sync(), Main.LocalPlayer.position, Width: Main.LocalPlayer.width, Height: Main.LocalPlayer.height, i, Stack: 999, true, 0, true)];
-                                        local.stack = Utils.Clamp(local.stack, 1, local.maxStack);
-                                    }
-                                    break;
-                                case ItemGiveMode.DropServerSide:
-                                    {
-                                        Item local = Main.item[Item.NewItem(new Terraria.DataStructures.EntitySource_Sync(), Main.LocalPlayer.position, Width: Main.LocalPlayer.width, Height: Main.LocalPlayer.height, i, Stack: 999, false, 0, true)];
-                                        local.stack = Utils.Clamp(local.stack, 1, local.maxStack);
+                                        CreateItem(Main.LocalPlayer.Center, Vector2.Zero, i, 9999, !syncItemWithServer);
                                     }
                                     break;
                             }
@@ -75,8 +81,20 @@ namespace TerraAngel.Cheat
         public enum ItemGiveMode
         {
             InMouse,
-            DropLocal,
-            DropServerSide,
+            DropInWorld,
+        }
+
+        public static int CreateItem(Vector2 position, Vector2 velocity, int id, int stack = 1, bool localOnly = false)
+        {
+            int itemIndex = Item.NewItem(null, (int)position.X, (int)position.Y, 1, 1, id, stack, localOnly, 0, true);
+            Main.item[itemIndex].velocity = velocity;
+            Main.item[itemIndex].newAndShiny = false;
+            Main.item[itemIndex].stack = Utils.Clamp(stack, 1, Main.item[itemIndex].maxStack);
+            if (!localOnly)
+            {
+                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemIndex, (float)Main.item[itemIndex].netID);
+            }
+            return itemIndex;
         }
     }
 }

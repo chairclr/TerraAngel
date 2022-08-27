@@ -186,8 +186,7 @@ namespace TerraAngel.Client.ClientWindows
                         if (i == 8 && !player.CanDemonHeartAccessoryBeShown()) continue;
                         if (i == 9 && !player.CanMasterModeAccessoryBeShown()) continue;
 
-
-                        ImGui.SetCursorPos(new NVector2(minx, sy + (26f + style.ItemSpacing.X) * ti));
+                        ImGui.SetCursorPos(new NVector2(minx, sy + (26f + style.ItemSpacing.X * 2.5f) * ti));
 
                         ImGuiUtil.ItemButton(player.dye[i], $"piid{i}", new Vector2(26f), showToolTip);
                         ImGui.SameLine();

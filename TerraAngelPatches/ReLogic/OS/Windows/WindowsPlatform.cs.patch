@@ -1,6 +1,10 @@
 --- src/Terraria/ReLogic/OS/Windows/WindowsPlatform.cs
 +++ src/TerraAngel/ReLogic/OS/Windows/WindowsPlatform.cs
-@@ -4,38 +_,16 @@
+@@ -1,41 +_,20 @@
+ using System;
+ using ReLogic.Localization.IME;
++using ReLogic.OS.FNA;
+ 
  namespace ReLogic.OS.Windows;
  internal class WindowsPlatform : Platform
  {
@@ -12,7 +16,7 @@
 +        RegisterService((IClipboard)new FNAClipboard());
          RegisterService((IPathService)new PathService());
 -        RegisterService((IWindowService)new WindowService());
-+        RegisterService((IWindowService)new ReLogic.OS.FNA.FNAWindow());
++        RegisterService((IWindowService)new FNAWindow());
          RegisterService((IImeService)new UnsupportedPlatformIme());
      }
  
@@ -39,6 +43,6 @@
 -            _disposedValue = true;
 -            base.Dispose(disposing);
 -        }
-+        RegisterService((IImeService)new ReLogic.OS.FNA.FNAInputIme());
++        RegisterService((IImeService)new FNAIme());
      }
  }

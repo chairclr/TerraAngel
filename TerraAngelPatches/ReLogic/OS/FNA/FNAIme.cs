@@ -2,7 +2,7 @@
 using ReLogic.Localization.IME;
 namespace ReLogic.OS.FNA
 {
-    public class FNAInputIme : PlatformIme
+    public class FNAIme : PlatformIme
     {
         private bool _disposedValue;
         public override uint CandidateCount => 0u;
@@ -46,7 +46,7 @@ namespace ReLogic.OS.FNA
             }
         }
 
-        ~FNAInputIme()
+        ~FNAIme()
         {
             Dispose(disposing: false);
         }

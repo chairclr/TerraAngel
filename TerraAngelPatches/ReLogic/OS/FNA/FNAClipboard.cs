@@ -2,7 +2,7 @@
 using System.Threading;
 using ReLogic.OS.Base;
 
-namespace ReLogic.OS
+namespace ReLogic.OS.FNA
 {
     internal class FNAClipboard : ReLogic.OS.Base.Clipboard
     {

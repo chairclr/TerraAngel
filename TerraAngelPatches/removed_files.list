@@ -1,6 +1,7 @@
 Terraria\GameContent\ChromaHotkeyPainter.cs
 Terraria\Initializers\ChromaInitializer.cs
 Terraria\Net\WeGameAddress.cs
+ReLogic\Localization\IME\FnaIme.cs
 ReLogic\Localization\IME\WindowsIme.cs
 ReLogic\OS\Linux\Clipboard.cs
 ReLogic\OS\Linux\WindowService.cs

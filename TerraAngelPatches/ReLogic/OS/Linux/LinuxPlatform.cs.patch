@@ -1,6 +1,12 @@
 --- src/Terraria/ReLogic/OS/Linux/LinuxPlatform.cs
 +++ src/TerraAngel/ReLogic/OS/Linux/LinuxPlatform.cs
-@@ -6,14 +_,14 @@
+@@ -1,19 +_,20 @@
+ using System;
+ using ReLogic.Localization.IME;
++using ReLogic.OS.FNA;
+ 
+ namespace ReLogic.OS.Linux;
+ internal class LinuxPlatform : Platform
  {
      public LinuxPlatform() : base(PlatformType.Linux)
      {
@@ -8,13 +14,13 @@
 +        RegisterService((IClipboard)new FNAClipboard());
          RegisterService((IPathService)new PathService());
 -        RegisterService((IWindowService)new WindowService());
-+        RegisterService((IWindowService)new ReLogic.OS.FNA.FNAWindow());
++        RegisterService((IWindowService)new FNAWindow());
          RegisterService((IImeService)new UnsupportedPlatformIme());
      }
  
      public override void InitializeClientServices(IntPtr windowHandle)
      {
 -        RegisterService((IImeService)new FnaIme());
-+        RegisterService((IImeService)new ReLogic.OS.FNA.FNAInputIme());
++        RegisterService((IImeService)new FNAIme());
      }
  }

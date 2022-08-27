@@ -75,15 +75,15 @@ namespace TerraAngel.Graphics
         }
 
         private static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
-        public static bool ItemButton(int id, string uid, bool showTooltip = true, bool clickToCopy = false, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
+        public static bool ItemButton(int id, string uid, bool showTooltip = true, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
         {
-            return ItemButton(ContentSamples.ItemsByType[id], uid, new Vector2(32, 32), showTooltip, clickToCopy, isSelected, margin, 18f, alpha);
+            return ItemButton(ContentSamples.ItemsByType[id], uid, new Vector2(32, 32), showTooltip, isSelected, margin, 18f, alpha);
         }
-        public static bool ItemButton(int id, string uid, Vector2 size, bool showTooltip = true, bool clickToCopy = false, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
+        public static bool ItemButton(int id, string uid, Vector2 size, bool showTooltip = true, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
         {
-            return ItemButton(ContentSamples.ItemsByType[id], uid, size, showTooltip, clickToCopy, isSelected, margin, 18f, alpha);
+            return ItemButton(ContentSamples.ItemsByType[id], uid, size, showTooltip, isSelected, margin, 18f, alpha);
         }
-        public static bool ItemButton(Item item, string uid, Vector2 size, bool showTooltip = true, bool clickToCopy = false, bool isSelected = false, float margin = 6f, float countFontSize = 18f, float alpha = 1.0f)
+        public static bool ItemButton(Item item, string uid, Vector2 size, bool showTooltip = true, bool isSelected = false, float margin = 6f, float countFontSize = 18f, float alpha = 1.0f)
         {
             int id = item.type;
             NVector2 drawSize = size.ToNumerics();
@@ -92,22 +92,6 @@ namespace TerraAngel.Graphics
             if (ImGui.Button("", drawSize + new NVector2(margin)))
             {
                 clicked = true;
-                if (clickToCopy)
-                {
-                    Main.playerInventory = true;
-                    if (Main.mouseItem.type == 0)
-                    {
-                        Main.mouseItem.SetDefaults(id);
-                        if (item.stack <= 1)
-                        {
-                            Main.mouseItem.stack = Main.mouseItem.maxStack;
-                        }
-                        else
-                        {
-                            Main.mouseItem.stack = item.stack;
-                        }
-                    }
-                }
             }
             NVector2 min = ImGui.GetItemRectMin();
             NVector2 max = ImGui.GetItemRectMax();
