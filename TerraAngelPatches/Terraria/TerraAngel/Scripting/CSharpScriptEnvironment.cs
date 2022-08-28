@@ -10,11 +10,14 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Formatting;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Elfie.Model;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
 
@@ -95,6 +98,8 @@ namespace TerraAngel.Scripting
 
                     CreateWorkspace();
 
+
+
                     ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp)
                         .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(DefaultAssemblies).Select(x => MetadataReference.CreateFromFile(x.Location)))
                         .WithCompilationOptions(scriptCompilationOptions)
@@ -152,12 +157,6 @@ namespace TerraAngel.Scripting
             return Task.Run(
                 async () =>
                 {
-                    if (!warmedUp) return new List<CompletionItem>();
-
-                    UpdateDocumentWithCode(code);
-
-                    if (scriptDocument is null) return new List<CompletionItem>();
-
                     CompletionService? completion = CompletionService.GetService(scriptDocument);
                     if (completion is null) return new List<CompletionItem>();
                     if (!completion.ShouldTriggerCompletion(await scriptDocument.GetTextAsync(), cursorPosition, CompletionTrigger.Invoke)) return new List<CompletionItem>();
@@ -176,7 +175,7 @@ namespace TerraAngel.Scripting
                     if (string.IsNullOrEmpty(textFilter)) return new List<CompletionItem>();
                     if (textFilter.All(x => !char.IsLetter(x) && !includes.Contains(x))) return new List<CompletionItem>();
 
-                    List<CompletionItem> l = FilterCompletionItems(scriptDocument, results.Items, textFilter, 0.7f); // completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
+                    List<CompletionItem> l = FilterCompletionItems(results.Items, textFilter, 0.7f); // completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
 
 
                     if (l.Any(x => x.SortText == textFilter))
@@ -227,9 +226,6 @@ namespace TerraAngel.Scripting
         }
         public string GetChangedText(string code, CompletionItem item, int previousCursorPosition, out int cursorPosition)
         {
-            UpdateDocumentWithCode(code);
-
-
             if (scriptDocument is null)
             {
                 cursorPosition = previousCursorPosition;
@@ -270,6 +266,38 @@ namespace TerraAngel.Scripting
             }
         }
 
+        public string FormatDocument(string code, int previousCursorPosition, out int cursorPosition)
+        {
+            cursorPosition = previousCursorPosition;
+            if (!warmedUp) return code;
+            if (scriptDocument is null) return code;
+
+            try
+            {
+
+                SyntaxNode? n = scriptDocument?.GetSyntaxRootAsync().Result;
+
+                if (n is null) return code;
+
+                SyntaxNode formattedNode = Formatter.Format(n.NormalizeWhitespace("    "), scriptWorkspace, scriptWorkspace.Options);
+
+                return formattedNode.GetText().ToString();
+            }
+            catch (Exception ex)
+            {
+            }
+            return code;
+        }
+
+        public void SetText(string code)
+        {
+            if (!warmedUp) return;
+
+            UpdateDocumentWithCode(code);
+
+            if (scriptDocument is null) return;
+        }
+
         private void CreateWorkspace()
         {
             Type[] partTypes = MefHostServices.DefaultAssemblies.Concat(
@@ -290,6 +318,16 @@ namespace TerraAngel.Scripting
             scriptHost = new MefHostServices(compositionContext);
 
             scriptWorkspace = new AdhocWorkspace(scriptHost);
+
+            if (scriptWorkspace is null) return;
+
+            OptionSet options = scriptWorkspace.Options;
+
+            options = options.WithChangedOption(CSharpFormattingOptions.IndentBraces, false);
+            options = options.WithChangedOption(CSharpFormattingOptions.IndentBlock, true);
+            options = options.WithChangedOption(new OptionKey(FormattingOptions.UseTabs, "CSharp"), false);
+
+            scriptWorkspace.TryApplyChanges(scriptWorkspace.CurrentSolution.WithOptions(options));
         }
         private async Task CreateScriptState()
         {
@@ -338,7 +376,7 @@ namespace TerraAngel.Scripting
             return null;
         }
 
-        private List<CompletionItem> FilterCompletionItems(Document document, ImmutableArray<CompletionItem> items, string textFilter, float fuzziness)
+        private List<CompletionItem> FilterCompletionItems(ImmutableArray<CompletionItem> items, string textFilter, float fuzziness)
         {
             if (string.IsNullOrWhiteSpace(textFilter))
                 return new List<CompletionItem>();
@@ -357,6 +395,9 @@ namespace TerraAngel.Scripting
             for (int i = 0; i < items.Length; i++)
             {
                 string t = items[i].SortText;
+
+                if (t == "LocalPlayer" && textFilter == "LP")
+                    filteredItems.Add(items[i]);
 
                 if (t.ToLower().Contains(textFilter.ToLower()))
                 {

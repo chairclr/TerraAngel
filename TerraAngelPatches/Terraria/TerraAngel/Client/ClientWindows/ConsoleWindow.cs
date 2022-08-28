@@ -51,7 +51,7 @@ namespace TerraAngel.Client.ClientWindows
         private int centerViewCandidate = 0;
         private bool consoleFocus = false;
         private object CandidateLock = new object();
-
+        private bool consoleReclaimFocus = false;
 
         public ConsoleWindow()
         {
@@ -77,7 +77,7 @@ namespace TerraAngel.Client.ClientWindows
                 return;
             }
 
-            float footerHeight = style.ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
+            float footerHeight = style.ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();//style.ItemSpacing.Y * 3 + MathF.Min(ImGui.CalcTextSize(consoleInput + " ").Y, ImGui.CalcTextSize(" ").Y * 6f);
             ImGui.BeginChild("ConsoleScrollingRegion", new NVector2(0, -footerHeight), false, ImGuiWindowFlags.HorizontalScrollbar);
 
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1)); // Tighten spacing
@@ -117,33 +117,40 @@ namespace TerraAngel.Client.ClientWindows
             ScrollToBottom = false;
 
 
-            bool reclaimFocus = false;
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
             NVector2 minInput;
             NVector2 maxInput;
             consoleFocus = false;
             unsafe
             {
-                if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
+                lock (CandidateLock)
                 {
-                    if (consoleInput.Length > 0)
+                    // wip code for multiline W
+                    //if (ImGui.InputTextMultiline("##consoleInput", ref consoleInput, 2048, new NVector2(ImGui.GetWindowWidth() - style.ItemSpacing.X * 2f, MathF.Min(ImGui.CalcTextSize(consoleInput + " ").Y, ImGui.CalcTextSize(" ").Y * 6f) + style.ItemSpacing.Y * 2f), ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CtrlEnterForNewLine | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
+                    if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
                     {
-                        WriteLine(">> " + consoleInput, new Color(0, 255, 0, 255));
-                        ExecuteAndParseCommand(consoleInput);
-                        consoleInput = "";
+                        if (consoleInput.Length > 0)
+                        {
+                            WriteLine(">> " + consoleInput, new Color(0, 255, 0, 255));
+                            ExecuteAndParseCommand(consoleInput);
+                            consoleInput = "";
 
-                        if (ClientConfig.Settings.ConsoleAutoScroll) ScrollToBottom = true;
+                            if (ClientConfig.Settings.ConsoleAutoScroll) ScrollToBottom = true;
+                        }
+
+                        consoleReclaimFocus = true;
                     }
-
-                    reclaimFocus = true;
                 }
                 minInput = ImGui.GetItemRectMin();
                 maxInput = ImGui.GetItemRectMax();
             }
 
             ImGui.SetItemDefaultFocus();
-            if (reclaimFocus)
+            if (consoleReclaimFocus)
+            {
+                consoleReclaimFocus = false;
                 ImGui.SetKeyboardFocusHere(-1);
+            }
 
 
 
@@ -613,13 +620,18 @@ namespace TerraAngel.Client.ClientWindows
                 }
             }
         }
-        private Task GetScriptCandidates(string text, int cursorPosition)
+        private Task TextChanged(string text, int cursorPosition)
         {
+            //Script.FormatDocument(text, cursorPosition, out cursorPosition));
             return Task.Run(
                 async () =>
                 {
-                    scriptCandidates = await Script.GetCompletionAsync(text, cursorPosition);
-                    methodCandidates = await Script.GetMethodInfo(text, cursorPosition);
+                    lock (CandidateLock)
+                    {
+                        Script.SetText(text);
+                        scriptCandidates = Script.GetCompletionAsync(text, cursorPosition).Result;
+                        methodCandidates = Script.GetMethodInfo(text, cursorPosition).Result;
+                    }
                 });
         }
 
@@ -638,7 +650,7 @@ namespace TerraAngel.Client.ClientWindows
             {
                 case ImGuiInputTextFlags.CallbackHistory:
                     {
-                        if (((!candidates.Any() || ScriptMode) && !scriptCandidates.Any() && methodCandidates.Count <= 1) || (InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl)))
+                        if (((!candidates.Any() || ScriptMode) && !scriptCandidates.Any() && methodCandidates.Count <= 1 && consoleInput.Length == 0) || (InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl)))
                         {
                             int prev_history_pos = historyPos;
                             if (data.EventKey == ImGuiKey.UpArrow)
@@ -720,7 +732,7 @@ namespace TerraAngel.Client.ClientWindows
                                 data.CursorPos = newCursorPosition;
                             }
 
-                            GetScriptCandidates(GetText(), data.CursorPos);
+                            TextChanged(GetText(), data.CursorPos);
                         }
                         else
                         {
@@ -754,7 +766,7 @@ namespace TerraAngel.Client.ClientWindows
                     {
                         if (ScriptMode)
                         {
-                            GetScriptCandidates(GetText(), data.CursorPos);
+                            TextChanged(GetText(), data.CursorPos);
                         }
 
                         if (undoStackPointer < undoStack.Count)
@@ -790,7 +802,7 @@ namespace TerraAngel.Client.ClientWindows
 
                                     if (ScriptMode)
                                     {
-                                        GetScriptCandidates(GetText(), data.CursorPos);
+                                        TextChanged(GetText(), data.CursorPos);
                                     }
                                 }
                             }
@@ -807,7 +819,7 @@ namespace TerraAngel.Client.ClientWindows
 
                                     if (ScriptMode)
                                     {
-                                        GetScriptCandidates(GetText(), data.CursorPos);
+                                        TextChanged(GetText(), data.CursorPos);
                                     }
                                 }
                             }
@@ -815,7 +827,7 @@ namespace TerraAngel.Client.ClientWindows
 
                         if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) || ImGui.IsKeyPressed(ImGuiKey.RightArrow))
                         {
-                            GetScriptCandidates(GetText(), data.CursorPos);
+                            TextChanged(GetText(), data.CursorPos);
                         }
 
                         if (ScriptMode && clickedScriptCandidate)
@@ -838,7 +850,7 @@ namespace TerraAngel.Client.ClientWindows
                             else if (currentCandidate - 4 > centerViewCandidate)
                                 centerViewCandidate = currentCandidate - 4;
 
-                            GetScriptCandidates(GetText(), data.CursorPos);
+                            TextChanged(GetText(),  data.CursorPos);
 
                             clickedScriptCandidate = false;
                         }
