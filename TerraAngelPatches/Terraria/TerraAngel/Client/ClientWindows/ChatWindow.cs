@@ -330,6 +330,7 @@ namespace TerraAngel.Client.ClientWindows
                                 ChatManager.Commands.ProcessIncomingMessage(message, Main.myPlayer);
                             }
 
+                            historyPos = -1;
                             for (int i = ChatHistory.Count - 1; i >= 0; i--)
                             {
                                 if (ChatHistory[i] == ChatText)

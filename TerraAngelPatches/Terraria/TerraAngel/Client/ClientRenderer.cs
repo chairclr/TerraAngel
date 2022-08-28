@@ -188,7 +188,7 @@ namespace TerraAngel.Client
         {
             ImGuiIOPtr io = ImGui.GetIO();
 
-            if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleUIVisibility))
+            if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleUIVisibility) && !(InputSystem.IsKeyDown(Keys.LeftControl) || InputSystem.IsKeyDown(Keys.RightControl)))
                 GlobalUIState = !GlobalUIState;
             for (int i = 0; i < ClientWindows.Count; i++)
             {

@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Elfie.Model;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
@@ -185,36 +186,57 @@ namespace TerraAngel.Scripting
                 });
         }
         // wip method signature code -chair
-        //public Task<string> GetCompletionOverride(string code, int cursorPosition)
-        //{
-        //    return Task.Run(
-        //        async () =>
-        //        {
-        //            if (!warmedUp) return "";
-        //            if (scriptDocument is null) return "";
-        //            SyntaxNode? rootNode = await scriptDocument.GetSyntaxRootAsync();
+        public Task<List<string>> GetMethodInfo(string code, int cursorPosition)
+        {
+            return Task.Run(
+                async () =>
+                {
+                    if (!warmedUp) new List<string>();
+                    if (scriptDocument is null) return new List<string>();
+                    SyntaxNode? rootNode = await scriptDocument.GetSyntaxRootAsync();
 
-        //            if (rootNode is not null && !string.IsNullOrWhiteSpace(code))
-        //            {
-        //                SyntaxToken token = rootNode.FindToken(Math.Max(cursorPosition - 1, 0));
-        //                SyntaxNode? n = token.Parent;
 
-        //                while (n is not null)
-        //                {
-        //                    if (n is ArgumentSyntax)
-        //                    {
-        //                        (n as ArgumentSyntax).
-        //                        return "";
-        //                    }
-        //                    n = n.Parent;
-        //                }
+                    SemanticModel? semanticModel = await scriptDocument.GetSemanticModelAsync();
 
-        //                return "";
-        //            }
+                    if (semanticModel is not null && rootNode is not null && !string.IsNullOrWhiteSpace(code))
+                    {
 
-        //            return "";
-        //        });
-        //}
+                        SyntaxToken tokenAtCursor = rootNode.FindToken(Math.Max(cursorPosition - 1, 0));
+                        SyntaxNode? workingNode = tokenAtCursor.Parent;
+                        
+                        while (workingNode is not null)
+                        {
+                            if (workingNode is ArgumentListSyntax)
+                            {
+                                if (workingNode.Parent is not null)
+                                {
+                                    SymbolInfo info = semanticModel.GetSymbolInfo(workingNode.Parent);
+
+                                    List<string> candidates = new List<string>(info.CandidateSymbols.Length);
+                                    if (info.Symbol is not null)
+                                    {
+                                        candidates.Add(info.Symbol.ToMinimalDisplayString(semanticModel, cursorPosition, SymbolDisplayFormat.MinimallyQualifiedFormat));
+                                        return candidates;
+                                    }
+                                    if (info.CandidateSymbols.Length == 0)
+                                    {
+                                        return new List<string>();
+                                    }
+                                    foreach (ISymbol symbol in info.CandidateSymbols)
+                                    {
+                                        candidates.Add(symbol.ToMinimalDisplayString(semanticModel, cursorPosition, SymbolDisplayFormat.MinimallyQualifiedFormat));
+                                    }
+                                    return candidates;
+                                }
+                            }
+                            workingNode = workingNode.Parent;
+                        }
+                        return new List<string>();
+                    }
+
+                    return new List<string>();
+                });
+        }
         public string GetChangedText(string code, CompletionItem item, int previousCursorPosition, out int cursorPosition)
         {
             UpdateDocumentWithCode(code);

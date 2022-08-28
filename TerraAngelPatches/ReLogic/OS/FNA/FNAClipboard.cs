@@ -8,17 +8,12 @@ namespace ReLogic.OS.FNA
     {
         protected override string GetClipboard()
         {
-            return TryToGetClipboardText();
+            return SDL2.SDL.SDL_GetClipboardText();
         }
 
         protected override void SetClipboard(string text)
         {
             SDL2.SDL.SDL_SetClipboardText(text);
-        }
-
-        private string TryToGetClipboardText()
-        {
-            return SDL2.SDL.SDL_GetClipboardText();
         }
     }
 }
