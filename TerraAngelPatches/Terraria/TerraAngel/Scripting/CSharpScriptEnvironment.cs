@@ -176,7 +176,7 @@ namespace TerraAngel.Scripting
                     if (string.IsNullOrEmpty(textFilter)) return new List<CompletionItem>();
                     if (textFilter.All(x => !char.IsLetter(x) && !includes.Contains(x))) return new List<CompletionItem>();
 
-                    List<CompletionItem> l = completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
+                    List<CompletionItem> l = FilterCompletionItems(scriptDocument, results.Items, textFilter, 0.7f); // completion.FilterItems(scriptDocument, results.Items, textFilter).ToList();
 
 
                     if (l.Any(x => x.SortText == textFilter))
@@ -185,7 +185,7 @@ namespace TerraAngel.Scripting
                     return l;
                 });
         }
-        // wip method signature code -chair
+
         public Task<List<string>> GetMethodInfo(string code, int cursorPosition)
         {
             return Task.Run(
@@ -193,45 +193,33 @@ namespace TerraAngel.Scripting
                 {
                     if (!warmedUp) new List<string>();
                     if (scriptDocument is null) return new List<string>();
+                    if (string.IsNullOrWhiteSpace(code)) return new List<string>();
+
                     SyntaxNode? rootNode = await scriptDocument.GetSyntaxRootAsync();
-
-
                     SemanticModel? semanticModel = await scriptDocument.GetSemanticModelAsync();
 
-                    if (semanticModel is not null && rootNode is not null && !string.IsNullOrWhiteSpace(code))
+                    if (rootNode == null) return new List<string>();
+                    if (semanticModel == null) return new List<string>();
+
+                    SyntaxToken tokenAtCursor = rootNode.FindToken(Math.Max(cursorPosition - 1, 0));
+                    SyntaxNode? node = FindParentArgumentList(tokenAtCursor.Parent);
+
+                    if (node is not null && node.Parent is not null)
                     {
+                        SymbolInfo info = semanticModel.GetSymbolInfo(node.Parent);
 
-                        SyntaxToken tokenAtCursor = rootNode.FindToken(Math.Max(cursorPosition - 1, 0));
-                        SyntaxNode? workingNode = tokenAtCursor.Parent;
-                        
-                        while (workingNode is not null)
+                        List<string> candidates = new List<string>(info.CandidateSymbols.Length);
+                        if (info.Symbol is not null)
                         {
-                            if (workingNode is ArgumentListSyntax)
-                            {
-                                if (workingNode.Parent is not null)
-                                {
-                                    SymbolInfo info = semanticModel.GetSymbolInfo(workingNode.Parent);
-
-                                    List<string> candidates = new List<string>(info.CandidateSymbols.Length);
-                                    if (info.Symbol is not null)
-                                    {
-                                        candidates.Add(info.Symbol.ToMinimalDisplayString(semanticModel, cursorPosition, SymbolDisplayFormat.MinimallyQualifiedFormat));
-                                        return candidates;
-                                    }
-                                    if (info.CandidateSymbols.Length == 0)
-                                    {
-                                        return new List<string>();
-                                    }
-                                    foreach (ISymbol symbol in info.CandidateSymbols)
-                                    {
-                                        candidates.Add(symbol.ToMinimalDisplayString(semanticModel, cursorPosition, SymbolDisplayFormat.MinimallyQualifiedFormat));
-                                    }
-                                    return candidates;
-                                }
-                            }
-                            workingNode = workingNode.Parent;
+                            candidates.Add(info.Symbol.ToMinimalDisplayString(semanticModel, cursorPosition));
+                            return candidates;
                         }
-                        return new List<string>();
+                        for (int i = 0; i < info.CandidateSymbols.Length; i++)
+                        {
+                            ISymbol symbol = info.CandidateSymbols[i];
+                            candidates.Add(symbol.ToMinimalDisplayString(semanticModel, cursorPosition));
+                        }
+                        return candidates;
                     }
 
                     return new List<string>();
@@ -336,32 +324,59 @@ namespace TerraAngel.Scripting
             scriptProject = scriptDocument?.Project;
         }
 
+        private SyntaxNode? FindParentArgumentList(SyntaxNode? node)
+        {
+            SyntaxNode? workingNode = node;
+            while (workingNode is not null)
+            {
+                if (workingNode is ArgumentListSyntax)
+                {
+                    return workingNode;
+                }
+                workingNode = workingNode.Parent;
+            }
+            return null;
+        }
 
-        private List<CompletionItem> FilterCompletionItems(Document document, ImmutableArray<CompletionItem> items, string textFilter)
+        private List<CompletionItem> FilterCompletionItems(Document document, ImmutableArray<CompletionItem> items, string textFilter, float fuzziness)
         {
             if (string.IsNullOrWhiteSpace(textFilter))
                 return new List<CompletionItem>();
 
+            if (textFilter.Length == 1 && !char.IsLetter(textFilter[0]))
+                return items.ToList();
             string lowerTextFilter = textFilter.ToLower();
 
-            int d(string s)
+            int dist(string s)
             {
                 return Math.Min(Util.CompareStringDist(s.ToLower(), textFilter), Util.CompareStringDist(s, textFilter));
             }
 
-
-            List<CompletionItem> filteredItems = new List<CompletionItem>(items.Length);
+            List<CompletionItem> filteredItems = new List<CompletionItem>(items.Length / 10);
 
             for (int i = 0; i < items.Length; i++)
             {
-                int dist = d(items[i].SortText);
-                if (dist == 0)
-                    return new List<CompletionItem>();
-                if (dist < 14)
+                string t = items[i].SortText;
+
+                if (t.ToLower().Contains(textFilter.ToLower()))
+                {
                     filteredItems.Add(items[i]);
+                }
+                else
+                {
+                    int d = dist(t);
+                    int length = Math.Max(t.Length, textFilter.Length);
+
+                    float score = 1.0f - (float)d / (float)length;
+
+                    if (score > fuzziness)
+                    {
+                        filteredItems.Add(items[i]);
+                    }
+                }
             }
 
-            filteredItems.Sort((x, y) => d(x.SortText.ToLower()).CompareTo(d(y.SortText.ToLower())));
+            filteredItems.Sort((x, y) => dist(x.SortText).CompareTo(dist(y.SortText)));
 
             return filteredItems;
         }
