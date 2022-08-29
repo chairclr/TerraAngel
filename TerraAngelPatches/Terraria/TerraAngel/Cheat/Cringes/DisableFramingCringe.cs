@@ -6,7 +6,7 @@
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
-        [DefaultConfigValue("DefaultDisableTileFraming")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDisableTileFraming))]
         public bool Enabled;
 
         public override void DrawUI(ImGuiIOPtr io)

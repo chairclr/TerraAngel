@@ -14,25 +14,25 @@
         public ref Color ItemColor => ref ClientConfig.Settings.ItemBoxColor;
         public ref Color TracerColor => ref ClientConfig.Settings.TracerColor;
 
-        [DefaultConfigValue("DefaultDrawAnyESP")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDrawAnyESP))]
         public bool DrawAnyESP = true;
 
-        [DefaultConfigValue("DefaultPlayerESPBoxes")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultPlayerESPBoxes))]
         public bool PlayerBoxes = false;
 
-        [DefaultConfigValue("DefaultPlayerESPTracers")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultPlayerESPTracers))]
         public bool PlayerTracers = false;
 
-        [DefaultConfigValue("DefaultNPCBoxes")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultNPCBoxes))]
         public bool NPCBoxes = false;
 
-        [DefaultConfigValue("DefaultProjectileBoxes")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultProjectileBoxes))]
         public bool ProjectileBoxes = false;
 
-        [DefaultConfigValue("DefaultItemBoxes")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultItemBoxes))]
         public bool ItemBoxes = false;
 
-        [DefaultConfigValue("DefaultTileSections")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultTileSections))]
         public bool ShowTileSections = false;
 
         public override void DrawUI(ImGuiIOPtr io)

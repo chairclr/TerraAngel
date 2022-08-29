@@ -12,7 +12,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
-        [DefaultConfigValue("DefaultInfiniteReach")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultInfiniteReach))]
         public bool Enabled;
 
         public override void DrawUI(ImGuiIOPtr io)

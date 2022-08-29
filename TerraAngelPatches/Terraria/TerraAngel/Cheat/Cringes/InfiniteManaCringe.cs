@@ -6,7 +6,7 @@
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
-        [DefaultConfigValue("DefaultInfiniteMana")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultInfiniteMana))]
         public bool Enabled;
 
         public override void DrawUI(ImGuiIOPtr io)

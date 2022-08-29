@@ -11,13 +11,13 @@ namespace TerraAngel.Cheat.Cringes
 
         public bool DrawPlayerProjectilePrediction = false;
 
-        [DefaultConfigValue("DefaultDrawActiveProjectilePrediction")]
-        public bool DrawActiveProjectilePrediction = true;
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDrawActiveProjectilePrediction))]
+        public bool DrawActiveProjectilePrediction = false;
 
-        [DefaultConfigValue("DefaultDrawFriendlyProjectilePrediction")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDrawFriendlyProjectilePrediction))]
         public bool DrawFriendlyProjectiles = false;
 
-        [DefaultConfigValue("DefaultDrawHostileProjectilePrediction")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDrawHostileProjectilePrediction))]
         public bool DrawHostileProjectiles = true;
 
         public ref Color FriendlyDrawColor => ref ClientConfig.Settings.FriendlyProjectilePredictionDrawColor;

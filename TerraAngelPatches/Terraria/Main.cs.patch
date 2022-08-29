@@ -16,16 +16,14 @@
  using Microsoft.Win32;
  using Microsoft.Xna.Framework;
  using Microsoft.Xna.Framework.Content;
-@@ -23,8 +_,8 @@
+@@ -23,7 +_,6 @@
  using ReLogic.Graphics;
  using ReLogic.Localization.IME;
  using ReLogic.OS;
 -using ReLogic.Peripherals.RGB;
  using ReLogic.Utilities;
-+using TerraAngel;
  using Terraria.Achievements;
  using Terraria.Audio;
- using Terraria.Chat;
 @@ -203,8 +_,6 @@
      public static bool CaptureModeDisabled = false;
      public bool unityMouseOver;

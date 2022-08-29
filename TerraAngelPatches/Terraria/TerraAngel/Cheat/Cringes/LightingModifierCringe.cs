@@ -7,12 +7,12 @@
         public override CringeTabs Tab => CringeTabs.LightingCringes;
 
 
-        [DefaultConfigValue("PartialBrightDefaultValue")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.PartialBrightDefaultValue))]
         public bool PartialBright;
         public ref float ExtraAirBrightness => ref ClientConfig.Settings.PartialBrightAirExtraLight;
         public ref float ExtraSolidBrightness => ref ClientConfig.Settings.PartialBrightSolidExtraLight;
 
-        [DefaultConfigValue("FullBrightDefaultValue")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.FullBrightDefaultValue))]
         public bool FullBright;
         public ref float Brightness => ref ClientConfig.Settings.FullBrightBrightness;
 

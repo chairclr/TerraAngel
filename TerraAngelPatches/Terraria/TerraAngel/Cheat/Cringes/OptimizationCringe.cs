@@ -6,10 +6,10 @@
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
-        [DefaultConfigValue("DefaultDisableDust")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDisableDust))]
         public bool DisableDust;
 
-        [DefaultConfigValue("DefaultDisableGore")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDisableGore))]
         public bool DisableGore;
 
         public override void DrawUI(ImGuiIOPtr io)

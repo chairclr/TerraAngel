@@ -12,7 +12,7 @@ namespace TerraAngel.Cheat.Cringes
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
-        [DefaultConfigValue("DefaultInfiniteMinions")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultInfiniteMinions))]
         public bool Enabled;
 
         public override void DrawUI(ImGuiIOPtr io)

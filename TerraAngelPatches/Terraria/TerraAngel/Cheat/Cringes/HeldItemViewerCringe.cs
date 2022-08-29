@@ -6,7 +6,7 @@
 
         public override CringeTabs Tab => CringeTabs.VisualUtility;
 
-        [DefaultConfigValue("DefaultShowHeldItem")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultShowHeldItem))]
         public bool Enabled;
 
         public override void DrawUI(ImGuiIOPtr io)

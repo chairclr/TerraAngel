@@ -6,7 +6,7 @@
 
         public override CringeTabs Tab => CringeTabs.MainCringes;
 
-        [DefaultConfigValue("DefaultAntiHurt")]
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultAntiHurt))]
         public bool Enabled;
 
         public int FramesSinceLastLifePacket = 0;

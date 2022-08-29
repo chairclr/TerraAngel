@@ -2,6 +2,7 @@
 using System.Reflection;
 using ReLogic.Threading;
 using Terraria.Graphics.Light;
+using Terraria.ID;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -34,13 +35,33 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Main>("DrawGore", DrawGoreHook);
             HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
             HookUtil.HookGen(Main.MouseText_DrawItemTooltip_GetLinesInfo, GetLinesInfoHook);
-            HookUtil.HookGen<Main>("DrawTiles", DrawTilesHook);
-            HookUtil.HookGen<Main>("DrawWater", DrawWaterHook);
+            HookUtil.HookGen<Item>("AffixName", AffixNameHook);
         }
 
-        public static void DrawWaterHook(Action<Main, bool, int, float> orig, Main self, bool bg, int Style, float Alpha)
+        public static string AffixNameHook(Func<Item, string> orig, Item self)
         {
-            orig(self, bg, Style, Alpha);
+            if (ClientConfig.Settings.ShowDetailedItemTooltip)
+            {
+                if (self.prefix < 0 || self.prefix >= Lang.prefix.Length)
+                {
+                    return self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+                }
+
+                string text = Lang.prefix[self.prefix].Value;
+                if (text == "")
+                {
+                    return self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+                }
+
+                if (text.StartsWith("("))
+                {
+                    return text + $" [{Util.PrefixFields[self.prefix].Name}/{self.prefix}] " + self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+                }
+
+                return text + $" [{Util.PrefixFields[self.prefix].Name}/{self.prefix}] " + self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+            }
+
+            return orig(self);
         }
 
         public delegate void GetLinesInfoDef(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine);
@@ -51,14 +72,6 @@ namespace TerraAngel.Hooks.Hooks
             /// "please" - An anonymous user
             if (ClientConfig.Settings.ShowDetailedItemTooltip)
             {
-                toolTipLine[0] += $" [{Util.ItemFields[item.type].Name}/{item.type}]";
-                if (item.prefix > 0)
-                {
-                    int firstSpace = toolTipLine[0].IndexOf(' ');
-                    firstSpace = firstSpace == -1 ? toolTipLine[0].Length : firstSpace;
-                    toolTipLine[0] = toolTipLine[0].Insert(firstSpace, $" [{Util.PrefixFields[item.prefix].Name}/{item.prefix}]");
-                }
-
                 if (item.useAmmo > 0)
                 {
                     int projectileType = item.shoot;
@@ -128,14 +141,6 @@ namespace TerraAngel.Hooks.Hooks
                     numLines++;
                 }
             }
-        }
-
-        public static void DrawTilesHook(Action<Main, bool, bool, bool, int> orig, Main self, bool solidLayer, bool forRenderTargets, bool intoRenderTargets, int waterStyleOverride)
-        {
-            //float lsp = Main.screenPosition.Y;
-            //Main.screenPosition.Y = fixedScreenY;
-            orig(self, solidLayer, forRenderTargets, intoRenderTargets, waterStyleOverride);
-            //Main.screenPosition.Y = lsp;
         }
 
         public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
@@ -239,25 +244,33 @@ namespace TerraAngel.Hooks.Hooks
             if (lightModificationCache?.FullBright ?? false)
             {
                 Main.renderCount = (Main.renderCount + 1) % 4;
-                Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
-                value.Inflate(-40, -40);
-                area = Rectangle.Intersect(area, value);
-                Main.mapMinX = area.Left;
-                Main.mapMinY = area.Top;
-                Main.mapMaxX = area.Right;
-                Main.mapMaxY = area.Bottom;
-
-                /// this hurts to use :(
-                FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
+                if (Main.mapDelay > 0)
                 {
-                    for (int i = start; i < end; i++)
+                    Main.mapDelay--;
+                }
+                else
+                {
+                    Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
+                    value.Inflate(-40, -40);
+                    area = Rectangle.Intersect(area, value);
+                    Main.mapMinX = area.Left;
+                    Main.mapMinY = area.Top;
+                    Main.mapMaxX = area.Right;
+                    Main.mapMaxY = area.Bottom;
+
+                    FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
                     {
-                        for (int j = area.Top; j < area.Bottom; j++)
+                        for (int i = start; i < end; i++)
                         {
-                            Main.Map.Update(i, j, 255);
+                            for (int j = area.Top; j < area.Bottom; j++)
+                            {
+                                Main.Map.Update(i, j, 255);
+                            }
                         }
-                    }
-                });
+                    });
+
+                    Main.updateMap = true;
+                }
 
                 return;
             }
