@@ -177,6 +177,8 @@ namespace TerraAngel.Client.Config
             public List<string> ConsoleHistory = new List<string>();
 
 
+            public int ConsoleUndoStackSize = 3000;
+
             public float PartialBrightSolidExtraLight = 0.3f;
             public float PartialBrightAirExtraLight = 0.065f;
             public float FullBrightBrightness = 0.7f;
@@ -219,7 +221,6 @@ namespace TerraAngel.Client.Config
             public float AutoAttackMinTargetRange = 800f;
 
             public float StatsWindowHoveredTransperency = 0.65f;
-            public bool ConsoleInReplMode = false;
 
             public ClientUIConfig UIConfig = new ClientUIConfig();
 

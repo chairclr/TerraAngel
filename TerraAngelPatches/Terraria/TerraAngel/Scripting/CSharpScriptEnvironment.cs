@@ -19,6 +19,7 @@ using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Text;
 
 namespace TerraAngel.Scripting
@@ -68,37 +69,33 @@ namespace TerraAngel.Scripting
 
         public static IEnumerable<Assembly> DefaultAssemblies => AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && File.Exists(x.Location));
 
-        private bool warmedUp = false;
+        public bool Ready { get; protected set; }
         private ScriptState? scriptState = null;
         private MefHostServices? scriptHost = null;
         private AdhocWorkspace? scriptWorkspace = null;
         private Project? scriptProject = null;
         private Document? scriptDocument = null;
         private DocumentId? scriptDocumentId;
-        private CompilationOptions? scriptCompilationOptions => scriptState?.Script.GetCompilation().Options;
+        private CSharpCompilationOptions? scriptCompilationOptions => (CSharpCompilationOptions?)scriptState?.Script.GetCompilation().Options;
+        private string lastString = "";
 
         public CSharpScriptEnvironment()
         {
 
         }
 
-        public Task Warmup()
+        public Task Init()
         {
-            if (warmedUp)
+            if (Ready)
                 return Task.CompletedTask;
 
             return Task.Run(
                 async () =>
                 {
-                    ClientLoader.Console.WriteLine("Warming up c# REPL");
-
                     await CreateScriptState();
                     if (scriptState is null) throw new InvalidOperationException("Failed to create script state.");
 
-
                     CreateWorkspace();
-
-
 
                     ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp)
                         .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(DefaultAssemblies).Select(x => MetadataReference.CreateFromFile(x.Location)))
@@ -109,8 +106,8 @@ namespace TerraAngel.Scripting
 
                     SubmitCodeToDocument("using System;");
 
-                    warmedUp = true;
-                    ClientLoader.Console.WriteLine("Warmed up c# REPL");
+                    Ready = true;
+                    ClientLoader.Console.WriteLine("C# Scripting Engine Initialized");
                 });
         }
 
@@ -119,12 +116,12 @@ namespace TerraAngel.Scripting
             return Task.Run<object?>(
                 async () =>
                 {
-                    if (scriptState is null) throw new InvalidOperationException("Script state not intialized. Call CSharpScriptEnvironment.Warmup");
+                    if (!Ready) throw new InvalidOperationException("Script state not intialized. Call CSharpScriptEnvironment.Warmup");
 
                     object? returnValue = null;
                     try
                     {
-                        scriptState = await scriptState.ContinueWithAsync(code, catchException: (x) => true);
+                        scriptState = await scriptState!.ContinueWithAsync(code, catchException: (x) => true);
                         returnValue = scriptState.ReturnValue;
                         SubmitCodeToDocument(code);
                     }
@@ -137,7 +134,7 @@ namespace TerraAngel.Scripting
                         ClientLoader.Console.WriteError(ex.ToString());
                     }
 
-                    if (scriptState.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
+                    if (scriptState?.Exception is not null) ClientLoader.Console.WriteError(scriptState.Exception.ToString());
                     return returnValue;
                 });
         }
@@ -151,12 +148,23 @@ namespace TerraAngel.Scripting
             return CSharpObjectFormatter.Instance.FormatObject(obj);
         }
 
+        public void SetText(string code)
+        {
+            if (!Ready) return;
+            if (code == lastString) return;
+
+            UpdateDocumentWithCode(code);
+            lastString = code;
+        }
+
         private static char[] includes = new char[] { '.', ',' };
         public Task<List<CompletionItem>> GetCompletionAsync(string code, int cursorPosition)
         {
             return Task.Run(
                 async () =>
                 {
+                    SetText(code);
+
                     CompletionService? completion = CompletionService.GetService(scriptDocument);
                     if (completion is null) return new List<CompletionItem>();
                     if (!completion.ShouldTriggerCompletion(await scriptDocument.GetTextAsync(), cursorPosition, CompletionTrigger.Invoke)) return new List<CompletionItem>();
@@ -184,15 +192,16 @@ namespace TerraAngel.Scripting
                     return l;
                 });
         }
-
-        public Task<List<string>> GetMethodInfo(string code, int cursorPosition)
+        public Task<List<string>> GetArgumentListCompletionSymbolsAsync(string code, int cursorPosition)
         {
             return Task.Run(
                 async () =>
                 {
-                    if (!warmedUp) new List<string>();
+                    if (!Ready) new List<string>();
                     if (scriptDocument is null) return new List<string>();
                     if (string.IsNullOrWhiteSpace(code)) return new List<string>();
+
+                    SetText(code);
 
                     SyntaxNode? rootNode = await scriptDocument.GetSyntaxRootAsync();
                     SemanticModel? semanticModel = await scriptDocument.GetSemanticModelAsync();
@@ -266,10 +275,11 @@ namespace TerraAngel.Scripting
             }
         }
 
+        // wip code
         public string FormatDocument(string code, int previousCursorPosition, out int cursorPosition)
         {
             cursorPosition = previousCursorPosition;
-            if (!warmedUp) return code;
+            if (!Ready) return code;
             if (scriptDocument is null) return code;
 
             try
@@ -289,14 +299,7 @@ namespace TerraAngel.Scripting
             return code;
         }
 
-        public void SetText(string code)
-        {
-            if (!warmedUp) return;
-
-            UpdateDocumentWithCode(code);
-
-            if (scriptDocument is null) return;
-        }
+        
 
         private void CreateWorkspace()
         {
@@ -340,7 +343,27 @@ namespace TerraAngel.Scripting
         {
             if (string.IsNullOrWhiteSpace(code)) return;
 
-            scriptDocument = scriptProject?.AddDocument("Script", SourceText.From(code));
+            SourceText source = SourceText.From(code);
+
+            List<string> usings = ((CSharpCompilationOptions)scriptProject!.CompilationOptions).Usings.ToList();
+
+            scriptDocument = scriptProject?.AddDocument("Script", source);
+
+            foreach (SyntaxNode node in scriptDocument!.GetSyntaxTreeAsync().Result!.GetRoot().DescendantNodes())
+            {
+                if (node is UsingDirectiveSyntax)
+                {
+                    UsingDirectiveSyntax usingNode = (UsingDirectiveSyntax)node;
+
+                    string t = usingNode.Name.ToString();
+
+                    if (!usings.Contains(t))
+                        usings.Add(t);
+                }
+            }
+
+            scriptDocument = scriptProject?.WithCompilationOptions(((CSharpCompilationOptions)scriptProject!.CompilationOptions).WithUsings(usings)).AddDocument("Script", source);
+
             if (scriptDocumentId is null) scriptDocumentId = scriptDocument?.Id;
 
             if (scriptDocument is null) throw new InvalidOperationException("Could not append state to document.");
@@ -354,6 +377,7 @@ namespace TerraAngel.Scripting
             if (string.IsNullOrWhiteSpace(code)) return;
             if (scriptDocument is null) throw new InvalidOperationException("Could not change state of document.");
 
+
             scriptDocument = scriptDocument.WithText(SourceText.From(code));
 
             if (!scriptWorkspace?.TryApplyChanges(scriptDocument.Project.Solution) ?? true) throw new InvalidOperationException("Could not apply changes.");
@@ -361,7 +385,6 @@ namespace TerraAngel.Scripting
             scriptDocument = scriptWorkspace?.CurrentSolution.GetDocument(scriptDocumentId);
             scriptProject = scriptDocument?.Project;
         }
-
         private SyntaxNode? FindParentArgumentList(SyntaxNode? node)
         {
             SyntaxNode? workingNode = node;
@@ -375,7 +398,6 @@ namespace TerraAngel.Scripting
             }
             return null;
         }
-
         private List<CompletionItem> FilterCompletionItems(ImmutableArray<CompletionItem> items, string textFilter, float fuzziness)
         {
             if (string.IsNullOrWhiteSpace(textFilter))
@@ -394,19 +416,16 @@ namespace TerraAngel.Scripting
 
             for (int i = 0; i < items.Length; i++)
             {
-                string t = items[i].SortText;
+                string sortText = items[i].SortText;
 
-                if (t == "LocalPlayer" && textFilter == "LP")
-                    filteredItems.Add(items[i]);
-
-                if (t.ToLower().Contains(textFilter.ToLower()))
+                if (sortText.ToLower().Contains(textFilter.ToLower()))
                 {
                     filteredItems.Add(items[i]);
                 }
                 else
                 {
-                    int d = dist(t);
-                    int length = Math.Max(t.Length, textFilter.Length);
+                    int d = dist(sortText);
+                    int length = Math.Max(sortText.Length, textFilter.Length);
 
                     float score = 1.0f - (float)d / (float)length;
 

@@ -17,10 +17,6 @@ namespace TerraAngel.Client.ClientWindows
 {
     public class ConsoleWindow : ClientWindow
     {
-        public static readonly int MaxUndoSize = 3000;
-
-
-
         public override bool DefaultEnabled => true;
 
         public override bool IsEnabled => ClientConfig.Settings.ShowConsoleWindow;
@@ -32,32 +28,34 @@ namespace TerraAngel.Client.ClientWindows
         public Dictionary<string, ConsoleCommand> ConsoleCommands = new Dictionary<string, ConsoleCommand>();
         public List<ConsoleElement> ConsoleItems = new List<ConsoleElement>();
         public ref List<string> ConsoleHistory => ref ClientConfig.Settings.ConsoleHistory;
+
+        public ref int UndoStackSize => ref ClientConfig.Settings.ConsoleUndoStackSize;
         private List<UndoState> undoStack = new List<UndoState>() { new UndoState(0, "") };
         private int undoStackPointer = 1;
 
-        public ref bool ScriptMode => ref ClientConfig.Settings.ConsoleInReplMode;
+
+        public CSharpScriptEnvironment Script = new CSharpScriptEnvironment();
+
+        private List<CompletionItem> completionCandidates = new List<CompletionItem>();
+        private int currentCompletionCandidate = 0;
+        private int completionCenterView = 0;
+
+        private List<string> argumentSymbols = new List<string>();
+        private int currentArgumentSymbolOverload = 0;
 
         private object ConsoleLock = new object();
+        private object CandidateLock = new object();
         public bool ScrollToBottom = false;
         private string consoleInput = "";
         private int historyPos = -1;
-        private List<string> candidates = new List<string>();
-        private List<string> methodCandidates = new List<string>();
-        private int currentMethodCandidate = 0;
 
-        public CSharpScriptEnvironment Script = new CSharpScriptEnvironment();
-        private List<CompletionItem> scriptCandidates = new List<CompletionItem>();
-        private int currentCandidate = 0;
-        private int centerViewCandidate = 0;
         private bool consoleFocus = false;
-        private object CandidateLock = new object();
         private bool consoleReclaimFocus = false;
 
         public ConsoleWindow()
         {
-            Script.Warmup();
+            Script.Init();
         }
-
 
         public override void Draw(ImGuiIOPtr io)
         {
@@ -132,7 +130,7 @@ namespace TerraAngel.Client.ClientWindows
                         if (consoleInput.Length > 0)
                         {
                             WriteLine(">> " + consoleInput, new Color(0, 255, 0, 255));
-                            ExecuteAndParseCommand(consoleInput);
+                            ExecuteMessage(consoleInput);
                             consoleInput = "";
 
                             if (ClientConfig.Settings.ConsoleAutoScroll) ScrollToBottom = true;
@@ -158,26 +156,249 @@ namespace TerraAngel.Client.ClientWindows
             {
                 if (consoleFocus)
                 {
-                    if (ScriptMode)
+                    if (consoleInput.Trim().Length == 0)
                     {
-                        if (consoleInput.Trim().Length == 0)
-                        {
-                            methodCandidates.Clear();
-                            scriptCandidates.Clear();
-                        }
-                        RenderScriptCandidates(io, minInput, maxInput);
+                        argumentSymbols.Clear();
+                        completionCandidates.Clear();
                     }
-                    else
-                    {
-                        RenderConsoleCandidates(io, minInput, maxInput);
-                    }
+                    RenderScriptCandidates(io, minInput, maxInput);
                 }
             }
 
             ImGui.End();
             ImGui.PopFont();
         }
+        private unsafe int TextEditCallback(ImGuiInputTextCallbackDataPtr data)
+        {
+            string GetText() => Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen);
+            void ReplaceText(string t)
+            {
+                data.DeleteChars(0, data.BufTextLen);
+                data.InsertChars(0, t);
+            }
 
+            switch (data.EventFlag)
+            {
+                case ImGuiInputTextFlags.CallbackHistory:
+                    {
+                        if ((!completionCandidates.Any() && argumentSymbols.Count <= 1) || (InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl)))
+                        {
+                            int prev_history_pos = historyPos;
+                            if (data.EventKey == ImGuiKey.UpArrow)
+                            {
+                                if (historyPos == -1)
+                                    historyPos = ConsoleHistory.Count - 1;
+                                else if (historyPos > 0)
+                                    historyPos--;
+                            }
+                            else if (data.EventKey == ImGuiKey.DownArrow)
+                            {
+                                if (historyPos != -1)
+                                    if (++historyPos >= ConsoleHistory.Count)
+                                        historyPos = -1;
+                            }
+
+                            if (prev_history_pos != historyPos)
+                            {
+                                string history_str = (historyPos >= 0) ? ConsoleHistory[historyPos] : "";
+                                data.DeleteChars(0, data.BufTextLen);
+                                data.InsertChars(0, history_str);
+                            }
+                        }
+                        else
+                        {
+                            int amount = 1;
+                            if (InputSystem.IsKeyDown(Keys.LeftShift) || InputSystem.IsKeyDown(Keys.RightShift))
+                                amount = 5;
+
+                            if (argumentSymbols.Count <= 1)
+                            {
+                                if (data.EventKey == ImGuiKey.UpArrow)
+                                {
+                                    currentCompletionCandidate -= cadidatesFlipped ? -amount : amount;
+                                }
+                                else if (data.EventKey == ImGuiKey.DownArrow)
+                                {
+                                    currentCompletionCandidate += cadidatesFlipped ? -amount : amount;
+                                }
+
+                                if (currentCompletionCandidate + 5 < completionCenterView)
+                                    completionCenterView = currentCompletionCandidate + 5;
+                                else if (currentCompletionCandidate - 4 > completionCenterView)
+                                    completionCenterView = currentCompletionCandidate - 4;
+                            }
+                            else
+                            {
+                                if (data.EventKey == ImGuiKey.UpArrow)
+                                {
+                                    currentArgumentSymbolOverload += amount;
+                                }
+                                else if (data.EventKey == ImGuiKey.DownArrow)
+                                {
+                                    currentArgumentSymbolOverload -= amount;
+                                }
+
+                                currentArgumentSymbolOverload %= argumentSymbols.Count;
+
+                                if (currentArgumentSymbolOverload < 0)
+                                    currentArgumentSymbolOverload = argumentSymbols.Count + currentArgumentSymbolOverload;
+                            }
+                        }
+                        break;
+                    }
+                case ImGuiInputTextFlags.CallbackCompletion:
+                    {
+                        if (completionCandidates.Count > 0)
+                        {
+                            if (currentCompletionCandidate >= completionCandidates.Count)
+                                currentCompletionCandidate = completionCandidates.Count - 1;
+
+                            string s = GetText();
+                            int cursorPosition = data.CursorPos;
+                            data.DeleteChars(0, data.BufTextLen);
+                            data.InsertChars(0, Script.GetChangedText(s, completionCandidates[currentCompletionCandidate], cursorPosition, out int newCursorPosition));
+
+                            data.CursorPos = newCursorPosition;
+                        }
+
+                        TextChanged(GetText(), data.CursorPos);
+
+                        if (undoStackPointer < undoStack.Count)
+                        {
+                            undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
+                        }
+
+                        undoStack.Add(new UndoState(data.CursorPos, GetText()));
+                        undoStackPointer++;
+
+                        if (undoStack.Count > UndoStackSize)
+                        {
+                            undoStackPointer--;
+                            undoStack.RemoveAt(0);
+                        }
+                        break;
+                    }
+                case ImGuiInputTextFlags.CallbackEdit:
+                    {
+                        TextChanged(GetText(), data.CursorPos);
+
+                        if (undoStackPointer < undoStack.Count)
+                        {
+                            undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
+                        }
+
+                        undoStack.Add(new UndoState(data.CursorPos, GetText()));
+                        undoStackPointer++;
+
+                        if (undoStack.Count > UndoStackSize)
+                        {
+                            undoStackPointer--;
+                            undoStack.RemoveAt(0);
+                        }
+                        break;
+                    }
+                case ImGuiInputTextFlags.CallbackAlways:
+                    {
+                        bool ctrl = InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl);
+
+                        if (ctrl)
+                        {
+                            if (ImGui.IsKeyPressed(ImGuiKey.Z, true))
+                            {
+                                if (undoStackPointer > 1)
+                                {
+                                    UndoState state = undoStack[undoStackPointer - 2];
+                                    undoStackPointer--;
+
+                                    ReplaceText(state.Text);
+                                    data.CursorPos = state.CursorPosition;
+
+                                    TextChanged(GetText(), data.CursorPos);
+                                }
+                            }
+
+                            if (ImGui.IsKeyPressed(ImGuiKey.Y, true))
+                            {
+                                if (undoStackPointer > 1 && undoStackPointer < undoStack.Count)
+                                {
+                                    UndoState state = undoStack[undoStackPointer];
+                                    undoStackPointer++;
+
+                                    ReplaceText(state.Text);
+                                    data.CursorPos = state.CursorPosition;
+
+                                    TextChanged(GetText(), data.CursorPos);
+                                }
+                            }
+                        }
+
+                        if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) || ImGui.IsKeyPressed(ImGuiKey.RightArrow))
+                        {
+                            TextChanged(GetText(), data.CursorPos);
+                        }
+
+                        if (clickedScriptCandidate)
+                        {
+                            if (completionCandidates.Count > 0)
+                            {
+                                if (currentCompletionCandidate >= completionCandidates.Count)
+                                    currentCompletionCandidate = completionCandidates.Count - 1;
+
+                                string s = GetText();
+                                int cursorPosition = data.CursorPos;
+                                data.DeleteChars(0, data.BufTextLen);
+                                data.InsertChars(0, Script.GetChangedText(s, completionCandidates[currentCompletionCandidate], cursorPosition, out int newCursorPosition));
+
+                                data.CursorPos = newCursorPosition;
+                            }
+
+                            if (currentCompletionCandidate + 5 < completionCenterView)
+                                completionCenterView = currentCompletionCandidate + 5;
+                            else if (currentCompletionCandidate - 4 > completionCenterView)
+                                completionCenterView = currentCompletionCandidate - 4;
+
+                            TextChanged(GetText(), data.CursorPos);
+
+                            clickedScriptCandidate = false;
+                        }
+                        break;
+                    }
+            }
+
+            consoleFocus = true;
+
+            return 0;
+        }
+
+        private void ExecuteMessage(string message)
+        {
+            historyPos = -1;
+            for (int i = ConsoleHistory.Count - 1; i >= 0; i--)
+            {
+                if (ConsoleHistory[i] == message)
+                {
+                    ConsoleHistory.RemoveAt(i);
+                    break;
+                }
+            }
+            if (ConsoleHistory.Count > ClientConfig.Settings.ConsoleHistoryLimit)
+                ConsoleHistory.RemoveRange(0, ConsoleHistory.Count - ClientConfig.Settings.ConsoleHistoryLimit);
+
+            ConsoleHistory.Add(message);
+
+            if (message.StartsWith("#"))
+            {
+                string realCommand = message.Remove(0, 1);
+                if (ConsoleCommands.TryGetValue(realCommand, out ConsoleCommand command))
+                {
+                    command.CommandAction(new CmdStr(realCommand));
+                    return;
+                }
+            }
+            
+            object? expressionValue = Script.Eval(consoleInput);
+            if (expressionValue is not null) WriteLine(Script.FormatObject(expressionValue));
+        }
         public void WriteLine(string message, Color color)
         {
             lock (ConsoleLock)
@@ -205,52 +426,9 @@ namespace TerraAngel.Client.ClientWindows
         {
             WriteLine($"[Error] {error}", Color.Red);
         }
-
-        private void ExecuteAndParseCommand(string message)
+        public void ClearConsole()
         {
-            historyPos = -1;
-            for (int i = ConsoleHistory.Count - 1; i >= 0; i--)
-            {
-                if (ConsoleHistory[i] == message)
-                {
-                    ConsoleHistory.RemoveAt(i);
-                    break;
-                }
-            }
-            if (ConsoleHistory.Count > ClientConfig.Settings.ConsoleHistoryLimit)
-                ConsoleHistory.RemoveRange(0, ConsoleHistory.Count - ClientConfig.Settings.ConsoleHistoryLimit);
-
-            ConsoleHistory.Add(message);
-
-            if (ScriptMode)
-            {
-                string trimmed = consoleInput.Trim();
-                if (trimmed == "#exit")
-                {
-                    ScriptMode = false;
-                    return;
-                }
-                else if (trimmed == "#clear")
-                {
-                    ClearConsole();
-                    return;
-                }
-                object? expressionValue = Script.Eval(consoleInput);
-                if (expressionValue is not null) WriteLine(Script.FormatObject(expressionValue));
-            }
-            else
-            {
-                CmdStr command = new CmdStr(message);
-                if (ConsoleCommands.ContainsKey(command.Command))
-                {
-                    ConsoleCommand aacmd = ConsoleCommands[command.Command];
-                    aacmd?.CommandAction(command);
-                }
-                else
-                {
-                    WriteError($"Could not find command {command.Command}");
-                }
-            }
+            ConsoleItems.Clear();
         }
         public void AddCommand(string name, Action<CmdStr> action, string description = "No Description Given", Func<CmdStr, int, List<string>>? getCandidates = null)
         {
@@ -264,127 +442,25 @@ namespace TerraAngel.Client.ClientWindows
                 command.GetCandidates = getCandidates;
             }
         }
-        public void ClearConsole()
-        {
-            ConsoleItems.Clear();
-        }
-        public void ResetConsole()
-        {
-            ConsoleCommands.Clear();
-            ConsoleHistory.Clear();
-            ConsoleItems.Clear();
-        }
 
         private bool cadidatesFlipped = false;
-        private void RenderConsoleCandidates(ImGuiIOPtr io, NVector2 textboxMin, NVector2 textboxMax)
-        {
-            ImGuiStylePtr style = ImGui.GetStyle();
-            currentCandidate = Utils.Clamp(currentCandidate, 0, candidates.Count - 1);
-            if (candidates.Any())
-            {
-                ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
-                float maxSize = 0f;
-                float drawHeight = style.ItemSpacing.Y * 2f;
-
-                int startCandidate = Utils.Clamp(currentCandidate - 5, 0, candidates.Count);
-                int endCandidate = Utils.Clamp(startCandidate + 10, 0, candidates.Count);
-
-                if ((endCandidate - startCandidate) < 10)
-                {
-                    startCandidate = Utils.Clamp(endCandidate - 10, 0, candidates.Count);
-                }
-
-                for (int i = startCandidate; i < endCandidate; i++)
-                {
-                    string s = candidates[i];
-                    NVector2 textSize = ImGui.CalcTextSize(s);
-                    if (textSize.X > maxSize)
-                        maxSize = textSize.X + style.ItemSpacing.Y;
-                    drawHeight += textSize.Y + style.ItemSpacing.Y;
-                }
-
-                NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + style.ItemSpacing.Y);
-                NVector2 size = new NVector2(maxSize + style.ItemSpacing.Y * 3f, drawHeight);
-
-                if (origin.X + size.X > io.DisplaySize.X)
-                {
-                    origin.X -= (origin.X + size.X) - io.DisplaySize.X;
-                }
-
-                cadidatesFlipped = false;
-
-                if (origin.Y + size.Y > io.DisplaySize.Y)
-                {
-                    cadidatesFlipped = true;
-                    origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
-                }
-
-                drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
-
-                if (ImGui.IsMouseHoveringRect(origin, origin + size))
-                {
-                    io.WantCaptureMouse = true;
-
-                    io.MouseDown[0] = false;
-                    io.MouseDown[1] = false;
-                    io.MouseDown[2] = false;
-
-                    ImGui.SetItemDefaultFocus();
-                    ImGui.SetKeyboardFocusHere(-1);
-                }
-
-                float offset = style.ItemSpacing.Y;
-                if (cadidatesFlipped)
-                {
-                    for (int i = endCandidate - 1; i > startCandidate - 1; i--)
-                    {
-                        string s = candidates[i];
-                        if (i != currentCandidate)
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.Gray.PackedValue, s);
-                        }
-                        else
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.White.PackedValue, s);
-                        }
-                        offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
-                    }
-                }
-                else
-                {
-                    for (int i = startCandidate; i < endCandidate; i++)
-                    {
-                        string s = candidates[i];
-                        if (i != currentCandidate)
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.Gray.PackedValue, s);
-                        }
-                        else
-                        {
-                            drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), Color.White.PackedValue, s);
-                        }
-                        offset += ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
-                    }
-                }
-            }
-
-        }
-
         private bool clickedScriptCandidate = false;
         private void RenderScriptCandidates(ImGuiIOPtr io, NVector2 textboxMin, NVector2 textboxMax)
         {
             ImGuiStylePtr style = ImGui.GetStyle();
 
-            currentCandidate = Utils.Clamp(currentCandidate, 0, scriptCandidates.Count - 1);
-            centerViewCandidate = Utils.Clamp(centerViewCandidate, 0, scriptCandidates.Count - 1);
-            // wip method signature code -chair
-            if (scriptCandidates.Any())
+            currentCompletionCandidate = Utils.Clamp(currentCompletionCandidate, 0, completionCandidates.Count - 1);
+            completionCenterView = Utils.Clamp(completionCenterView, 0, completionCandidates.Count - 1);
+            NVector2 completionOrigin = NVector2.Zero;
+            NVector2 completionSize = NVector2.Zero;
+
+            if (completionCandidates.Any())
             {
                 string GetCandidateIcon(int i)
                 {
-                    if (scriptCandidates[i].Tags.Length > 0)
+                    if (completionCandidates[i].Tags.Length > 0)
                     {
-                        string tag = scriptCandidates[i].Tags[0];
+                        string tag = completionCandidates[i].Tags[0];
                         switch (tag)
                         {
                             case WellKnownTags.Field:
@@ -423,9 +499,9 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 Color GetIconColor(int i)
                 {
-                    if (scriptCandidates[i].Tags.Length > 0)
+                    if (completionCandidates[i].Tags.Length > 0)
                     {
-                        string tag = scriptCandidates[i].Tags[0];
+                        string tag = completionCandidates[i].Tags[0];
                         switch (tag)
                         {
                             case WellKnownTags.Field:
@@ -457,20 +533,20 @@ namespace TerraAngel.Client.ClientWindows
                 }
                 string GetCandidateText(int i)
                 {
-                    return scriptCandidates[i].DisplayText;
+                    return completionCandidates[i].DisplayText;
                 }
 
                 ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
-                
+
 
                 float maxSize = 0f;
                 float drawHeight = style.ItemSpacing.Y * 2f;
 
-                int startCandidate = Utils.Clamp(centerViewCandidate - 5, 0, scriptCandidates.Count);
-                int endCandidate = Utils.Clamp(startCandidate + 10, 0, scriptCandidates.Count);
+                int startCandidate = Utils.Clamp(completionCenterView - 5, 0, completionCandidates.Count);
+                int endCandidate = Utils.Clamp(startCandidate + 10, 0, completionCandidates.Count);
                 if ((endCandidate - startCandidate) < 10)
                 {
-                    startCandidate = Utils.Clamp(endCandidate - 10, 0, scriptCandidates.Count);
+                    startCandidate = Utils.Clamp(endCandidate - 10, 0, completionCandidates.Count);
                 }
 
                 for (int i = startCandidate; i < endCandidate; i++)
@@ -512,12 +588,12 @@ namespace TerraAngel.Client.ClientWindows
                         col = Color.Gray * 1.45f;
                         if (io.MouseClicked[0])
                         {
-                            if (currentCandidate == i) clickedScriptCandidate = true;
-                            currentCandidate = i;
+                            if (currentCompletionCandidate == i) clickedScriptCandidate = true;
+                            currentCompletionCandidate = i;
                         }
                     }
 
-                    if (i == currentCandidate)
+                    if (i == currentCompletionCandidate)
                     {
                         col = Color.White;
                     }
@@ -541,356 +617,71 @@ namespace TerraAngel.Client.ClientWindows
                         RenderCandidate(i);
                     }
                 }
-                
+
+
+                completionOrigin = origin;
+                completionSize = size;
+
                 if (Util.IsMouseHoveringRect(origin, origin + size))
                 {
 
                     io.WantCaptureMouse = true;
 
-                    io.MouseDown[0] = false;
-                    io.MouseDown[1] = false;
-                    io.MouseDown[2] = false;
-
-                    io.MouseClicked[0] = false;
-                    io.MouseClicked[1] = false;
-                    io.MouseClicked[2] = false;
-
-                    if (centerViewCandidate > 4 && centerViewCandidate < scriptCandidates.Count - 4)
-                        centerViewCandidate -= (int)io.MouseWheel;
+                    if (completionCenterView > 4 && completionCenterView < completionCandidates.Count - 4)
+                        completionCenterView -= (int)io.MouseWheel;
                     else
                     {
-                        if (centerViewCandidate <= 5) centerViewCandidate = 5;
-                        else if (centerViewCandidate >= scriptCandidates.Count - 4) centerViewCandidate = scriptCandidates.Count - 5;
+                        if (completionCenterView <= 5) completionCenterView = 5;
+                        else if (completionCenterView >= completionCandidates.Count - 4) completionCenterView = completionCandidates.Count - 5;
                     }
 
 
                     ImGui.SetItemDefaultFocus();
                     ImGui.SetKeyboardFocusHere(-1);
                 }
-
-
-
-                if (methodCandidates.Any())
-                {
-                    currentMethodCandidate = Math.Clamp(currentMethodCandidate, 0, methodCandidates.Count - 1);
-                    string currentText = (methodCandidates.Count > 1 ? $"({currentMethodCandidate + 1}/{methodCandidates.Count}) " : "") + methodCandidates[currentMethodCandidate];
-
-                    NVector2 sOrigin = origin;
-                    NVector2 sSize = size;
-                    origin = new NVector2(textboxMin.X, sOrigin.Y + size.Y + style.ItemSpacing.Y);
-                    size = new NVector2(ImGui.CalcTextSize(currentText).X + style.ItemSpacing.X * 2f, ImGui.CalcTextSize(currentText).Y + style.ItemSpacing.Y * 2f);
-
-                    if (origin.X + size.X > io.DisplaySize.X)
-                    {
-                        origin.X -= (origin.X + size.X) - io.DisplaySize.X;
-                    }
-                    if (cadidatesFlipped || origin.Y + size.Y > io.DisplaySize.Y)
-                    {
-                        origin.Y = textboxMin.Y - style.ItemSpacing.Y * 2f - sSize.Y - size.Y;
-                    }
-
-                    drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
-
-                    drawList.AddText(origin + style.ItemSpacing, Color.White.PackedValue, currentText);
-                }
             }
-            else
+
+            if (argumentSymbols.Any())
             {
-                if (methodCandidates.Any())
+                currentArgumentSymbolOverload = Math.Clamp(currentArgumentSymbolOverload, 0, argumentSymbols.Count - 1);
+                ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
+                string currentText = (argumentSymbols.Count > 1 ? $"({currentArgumentSymbolOverload + 1}/{argumentSymbols.Count}) " : "") + argumentSymbols[currentArgumentSymbolOverload];
+                NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + completionSize.Y + style.ItemSpacing.Y * 2f);
+                NVector2 size = new NVector2(ImGui.CalcTextSize(currentText).X + style.ItemSpacing.X * 2f, ImGui.CalcTextSize(currentText).Y + style.ItemSpacing.Y * 2f);
+
+                if (origin.X + size.X > io.DisplaySize.X)
                 {
-                    currentMethodCandidate = Math.Clamp(currentMethodCandidate, 0, methodCandidates.Count - 1);
-                    ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
-
-                    string currentText = (methodCandidates.Count > 1 ? $"({currentMethodCandidate + 1}/{methodCandidates.Count}) " : "") + methodCandidates[currentMethodCandidate];
-                    NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + style.ItemSpacing.Y);
-                    NVector2 size = new NVector2(ImGui.CalcTextSize(currentText).X + style.ItemSpacing.X * 2f, ImGui.CalcTextSize(currentText).Y + style.ItemSpacing.Y * 2f);
-
-                    if (origin.X + size.X > io.DisplaySize.X)
-                    {
-                        origin.X -= (origin.X + size.X) - io.DisplaySize.X;
-                    }
-                    if (origin.Y + size.Y > io.DisplaySize.Y)
-                    {
-                        origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
-                    }
-
-                    drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
-
-                    drawList.AddText(origin + style.ItemSpacing, Color.White.PackedValue, currentText);
+                    origin.X -= (origin.X + size.X) - io.DisplaySize.X;
                 }
+                if (origin.Y + size.Y > io.DisplaySize.Y)
+                {
+                    origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
+                }
+                if (cadidatesFlipped && completionCandidates.Any())
+                {
+                    origin.Y = textboxMin.Y - style.ItemSpacing.Y * 2f - size.Y - completionSize.Y;
+                }
+
+                drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
+
+                drawList.AddText(origin + style.ItemSpacing, Color.White.PackedValue, currentText);
             }
         }
+
         private Task TextChanged(string text, int cursorPosition)
         {
-            //Script.FormatDocument(text, cursorPosition, out cursorPosition));
             return Task.Run(
                 async () =>
                 {
                     lock (CandidateLock)
                     {
                         Script.SetText(text);
-                        scriptCandidates = Script.GetCompletionAsync(text, cursorPosition).Result;
-                        methodCandidates = Script.GetMethodInfo(text, cursorPosition).Result;
+                        completionCandidates = Script.GetCompletionAsync(text, cursorPosition).Result;
+                        argumentSymbols = Script.GetArgumentListCompletionSymbolsAsync(text, cursorPosition).Result;
                     }
                 });
         }
 
-
-
-        unsafe int TextEditCallback(ImGuiInputTextCallbackDataPtr data)
-        {
-            string GetText() => Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen);
-            void ReplaceText(string t)
-            {
-                data.DeleteChars(0, data.BufTextLen);
-                data.InsertChars(0, t);
-            }
-
-            switch (data.EventFlag)
-            {
-                case ImGuiInputTextFlags.CallbackHistory:
-                    {
-                        if (((!candidates.Any() || ScriptMode) && !scriptCandidates.Any() && methodCandidates.Count <= 1 && consoleInput.Length == 0) || (InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl)))
-                        {
-                            int prev_history_pos = historyPos;
-                            if (data.EventKey == ImGuiKey.UpArrow)
-                            {
-                                if (historyPos == -1)
-                                    historyPos = ConsoleHistory.Count - 1;
-                                else if (historyPos > 0)
-                                    historyPos--;
-                            }
-                            else if (data.EventKey == ImGuiKey.DownArrow)
-                            {
-                                if (historyPos != -1)
-                                    if (++historyPos >= ConsoleHistory.Count)
-                                        historyPos = -1;
-                            }
-
-                            if (prev_history_pos != historyPos)
-                            {
-                                string history_str = (historyPos >= 0) ? ConsoleHistory[historyPos] : "";
-                                data.DeleteChars(0, data.BufTextLen);
-                                data.InsertChars(0, history_str);
-                            }
-                        }
-                        else
-                        {
-                            int amount = 1;
-                            if (InputSystem.IsKeyDown(Keys.LeftShift) || InputSystem.IsKeyDown(Keys.RightShift))
-                                amount = 5;
-
-                            if (methodCandidates.Count <= 1)
-                            {
-                                if (data.EventKey == ImGuiKey.UpArrow)
-                                {
-                                    currentCandidate -= cadidatesFlipped ? -amount : amount;
-                                }
-                                else if (data.EventKey == ImGuiKey.DownArrow)
-                                {
-                                    currentCandidate += cadidatesFlipped ? -amount : amount;
-                                }
-
-                                if (currentCandidate + 5 < centerViewCandidate)
-                                    centerViewCandidate = currentCandidate + 5;
-                                else if (currentCandidate - 4 > centerViewCandidate)
-                                    centerViewCandidate = currentCandidate - 4;
-                            }
-                            else
-                            {
-                                if (data.EventKey == ImGuiKey.UpArrow)
-                                {
-                                    currentMethodCandidate += amount;
-                                }
-                                else if (data.EventKey == ImGuiKey.DownArrow)
-                                {
-                                    currentMethodCandidate -= amount;
-                                }
-
-                                currentMethodCandidate %= methodCandidates.Count;
-
-                                if (currentMethodCandidate < 0)
-                                    currentMethodCandidate = methodCandidates.Count + currentMethodCandidate;
-                            }
-                        }
-                        break;
-                    }
-                case ImGuiInputTextFlags.CallbackCompletion:
-                    {
-                        if (ScriptMode)
-                        {
-                            if (scriptCandidates.Count > 0)
-                            {
-                                if (currentCandidate >= scriptCandidates.Count)
-                                    currentCandidate = scriptCandidates.Count - 1;
-
-                                string s = GetText();
-                                int cursorPosition = data.CursorPos;
-                                data.DeleteChars(0, data.BufTextLen);
-                                data.InsertChars(0, Script.GetChangedText(s, scriptCandidates[currentCandidate], cursorPosition, out int newCursorPosition));
-
-                                data.CursorPos = newCursorPosition;
-                            }
-
-                            TextChanged(GetText(), data.CursorPos);
-                        }
-                        else
-                        {
-                            if (candidates.Count > 0)
-                            {
-                                if (currentCandidate >= candidates.Count)
-                                    currentCandidate = candidates.Count - 1;
-
-                                data.DeleteChars(0, data.BufTextLen);
-                                data.InsertChars(data.CursorPos, candidates[currentCandidate]);
-                                data.InsertChars(data.CursorPos, " ");
-                            }
-                        }
-
-                        if (undoStackPointer < undoStack.Count)
-                        {
-                            undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
-                        }
-
-                        undoStack.Add(new UndoState(data.CursorPos, GetText()));
-                        undoStackPointer++;
-
-                        if (undoStack.Count > MaxUndoSize)
-                        {
-                            undoStackPointer--;
-                            undoStack.RemoveAt(0);
-                        }
-                        break;
-                    }
-                case ImGuiInputTextFlags.CallbackEdit:
-                    {
-                        if (ScriptMode)
-                        {
-                            TextChanged(GetText(), data.CursorPos);
-                        }
-
-                        if (undoStackPointer < undoStack.Count)
-                        {
-                            undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
-                        }
-
-                        undoStack.Add(new UndoState(data.CursorPos, GetText()));
-                        undoStackPointer++;
-
-                        if (undoStack.Count > MaxUndoSize)
-                        {
-                            undoStackPointer--;
-                            undoStack.RemoveAt(0);
-                        }
-                        break;
-                    }
-                case ImGuiInputTextFlags.CallbackAlways:
-                    {
-                        bool ctrl = InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl);
-
-                        if (ctrl)
-                        {
-                            if (ImGui.IsKeyPressed(ImGuiKey.Z, true))
-                            {
-                                if (undoStackPointer > 1)
-                                {
-                                    UndoState state = undoStack[undoStackPointer - 2];
-                                    undoStackPointer--;
-
-                                    ReplaceText(state.Text);
-                                    data.CursorPos = state.CursorPosition;
-
-                                    if (ScriptMode)
-                                    {
-                                        TextChanged(GetText(), data.CursorPos);
-                                    }
-                                }
-                            }
-
-                            if (ImGui.IsKeyPressed(ImGuiKey.Y, true))
-                            {
-                                if (undoStackPointer > 1 && undoStackPointer < undoStack.Count)
-                                {
-                                    UndoState state = undoStack[undoStackPointer];
-                                    undoStackPointer++;
-
-                                    ReplaceText(state.Text);
-                                    data.CursorPos = state.CursorPosition;
-
-                                    if (ScriptMode)
-                                    {
-                                        TextChanged(GetText(), data.CursorPos);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) || ImGui.IsKeyPressed(ImGuiKey.RightArrow))
-                        {
-                            TextChanged(GetText(), data.CursorPos);
-                        }
-
-                        if (ScriptMode && clickedScriptCandidate)
-                        {
-                            if (scriptCandidates.Count > 0)
-                            {
-                                if (currentCandidate >= scriptCandidates.Count)
-                                    currentCandidate = scriptCandidates.Count - 1;
-
-                                string s = GetText();
-                                int cursorPosition = data.CursorPos;
-                                data.DeleteChars(0, data.BufTextLen);
-                                data.InsertChars(0, Script.GetChangedText(s, scriptCandidates[currentCandidate], cursorPosition, out int newCursorPosition));
-
-                                data.CursorPos = newCursorPosition;
-                            }
-
-                            if (currentCandidate + 5 < centerViewCandidate)
-                                centerViewCandidate = currentCandidate + 5;
-                            else if (currentCandidate - 4 > centerViewCandidate)
-                                centerViewCandidate = currentCandidate - 4;
-
-                            TextChanged(GetText(),  data.CursorPos);
-
-                            clickedScriptCandidate = false;
-                        }
-                        break;
-                    }
-            }
-
-            if (!ScriptMode)
-            {
-                candidates.Clear();
-                if ((data.CursorPos <= consoleInput.IndexOf(' ') || consoleInput.IndexOf(' ') == -1))
-                {
-                    string s = consoleInput.Trim();
-                    int firstSpace = s.IndexOf(' ');
-                    if (firstSpace > 0)
-                        s = s.Substring(0, firstSpace);
-
-                    foreach (ConsoleCommand command in ConsoleCommands.Values)
-                    {
-                        if (command.CommandName.ToLower().Contains(s))
-                        {
-                            candidates.Add(command.CommandName);
-                        }
-                    }
-                }
-                else
-                {
-                    CmdStr command = new CmdStr(GetText());
-                    if (ConsoleCommands.ContainsKey(command.Command))
-                    {
-                        ConsoleCommand aacmd = ConsoleCommands[command.Command];
-
-                        candidates = aacmd.GetCandidates?.Invoke(command, data.CursorPos) ?? new List<string>();
-                    }
-                }
-            }
-            consoleFocus = true;
-
-            return 0;
-        }
 
         public class CmdStr
         {
@@ -953,8 +744,7 @@ namespace TerraAngel.Client.ClientWindows
                 this.GetCandidates = getCandidates;
             }
         }
-
-        struct UndoState
+        public struct UndoState
         {
             public int CursorPosition;
             public string Text;
@@ -986,90 +776,7 @@ namespace TerraAngel.Client.ClientWindows
                         console.WriteLine($"{command.CommandName}: {command.CommandDescription}");
                     }
                 }, "Prints help");
-            console.AddCommand(
-                "reset",
-                (x) =>
-                {
-                    console.ResetConsole();
-                    console.AddCommand(
-                        "reinit",
-                        (x) =>
-                        {
-                            SetConsoleInitialCommands(console);
-                        }, "Re-initializes the console");
-                }, "Resets the console");
-            console.AddCommand(
-                "reinit",
-                (x) =>
-                {
-                    SetConsoleInitialCommands(console);
-                }, "Re-initializes the console");
-            console.AddCommand(
-                "echo",
-                (x) =>
-                {
-                    console.WriteLine(x.FullArgs);
-                }, "Echos the input back to the console");
-            console.AddCommand(
-                "e",
-                (x) =>
-                {
-                    console.WriteLine(console.Script.FormatObject(console.Script.Eval(x.FullArgs)));
-                }, "Executes arbitrary c# code");
-            console.AddCommand(
-                "ea",
-                (x) =>
-                {
-                    console.WriteLine(console.Script.FormatObject(console.Script.EvalAsync(x.FullArgs)));
-                }, "Executes arbitrary c# code");
-            console.AddCommand(
-                "repl",
-                (x) =>
-                {
-                    console.ScriptMode = true;
-                    if (console.ScriptMode)
-                        console.WriteLine("Entering C# REPL mode\nType #exit to exit REPL mode");
-                    else
-                        console.WriteLine("Exiting C# REPL mode");
-                });
+            console.WriteLine("Type #help for a list of commands");
         }
-
-        public static bool TryConvertValue(Type targetType, string stringValue, out object? convertedValue)
-        {
-            if (targetType == typeof(string))
-            {
-                convertedValue = Convert.ChangeType(stringValue, targetType);
-                return true;
-            }
-            if (targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>))
-            {
-                if (string.IsNullOrEmpty(stringValue))
-                {
-                    convertedValue = null;
-                    return true;
-                }
-                targetType = new NullableConverter(targetType).UnderlyingType;
-            }
-
-            Type[] argTypes = { typeof(string), targetType.MakeByRefType() };
-            MethodInfo? tryParseMethodInfo = targetType.GetMethod("TryParse", argTypes);
-            if (tryParseMethodInfo == null)
-            {
-                convertedValue = null;
-                return false;
-            }
-
-            object?[] args = { stringValue, null };
-            bool successfulParse = (bool)tryParseMethodInfo?.Invoke(null, args);
-            if (!successfulParse)
-            {
-                convertedValue = null;
-                return false;
-            }
-
-            convertedValue = args[1];
-            return true;
-        }
-
     }
 }
