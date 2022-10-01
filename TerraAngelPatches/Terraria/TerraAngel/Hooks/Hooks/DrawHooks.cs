@@ -147,10 +147,10 @@ namespace TerraAngel.Hooks.Hooks
         {
             lightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
             orig(self, time);
-            float ry = Main.screenPosition.Y;
-            Main.screenPosition.Y = Main.realScreenY;
+            float y = Main.screenPosition.Y;
+            Main.screenPosition.Y = Main.floatingCameraY;
             ClientLoader.MainRenderer?.Render(time);
-            Main.screenPosition.Y = ry;
+            Main.screenPosition.Y = y;
         }
         public static void UpdateHook(Action<Main, GameTime> orig, Main self, GameTime time)
         {
@@ -193,7 +193,6 @@ namespace TerraAngel.Hooks.Hooks
                         Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(InputSystem.MousePosition);
                         Main.screenPosition = Main.screenPosition + diff;
                     }
-                    Main.realScreenY = Main.screenPosition.Y;
                     return;
                 }
             }

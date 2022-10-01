@@ -304,61 +304,25 @@
                  }
              }
  
-@@ -20508,6 +_,8 @@
- 
-     protected void DrawProjectiles()
-     {
-+        float ry = Main.screenPosition.Y;
-+        Main.screenPosition.Y = realScreenY;
-         PlayerInput.SetZoom_MouseInWorld();
-         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, DefaultSamplerState, DepthStencilState.None, Rasterizer, null, Transform);
-         int num = 0;
-@@ -20547,6 +_,7 @@
-         CurrentDrawnEntityShader = 0;
-         spriteBatch.End();
-         TimeLogger.DetailedDrawTime(20);
-+        Main.screenPosition.Y = ry;
-     }
- 
-     public static int GetProjectileDesiredShader(Projectile proj)
-@@ -20628,14 +_,20 @@
+@@ -20628,14 +_,18 @@
  
      protected void DrawPlayers_BehindNPCs()
      {
-+        float ry = Main.screenPosition.Y;
-+        Main.screenPosition.Y = realScreenY;
++        Main.screenPosition.Y = floatingCameraY;
          PotionOfReturnRenderer.DrawPlayers(Camera, _playersThatDrawBehindNPCs.Where((Player p) => p.PotionOfReturnOriginalUsePosition.HasValue));
          PlayerRenderer.DrawPlayers(Camera, _playersThatDrawBehindNPCs);
-+        Main.screenPosition.Y = ry;
++        Main.screenPosition.Y = (int)Main.screenPosition.Y;
      }
  
      protected void DrawPlayers_AfterProjectiles()
      {
-+        float ry = Main.screenPosition.Y;
-+        Main.screenPosition.Y = realScreenY;
++        Main.screenPosition.Y = floatingCameraY;
          PotionOfReturnRenderer.DrawPlayers(Camera, _playersThatDrawAfterProjectiles.Where((Player p) => p.PotionOfReturnOriginalUsePosition.HasValue));
          PlayerRenderer.DrawPlayers(Camera, _playersThatDrawAfterProjectiles);
-+        Main.screenPosition.Y = ry;
++        Main.screenPosition.Y = (int)Main.screenPosition.Y;
      }
  
      protected void DrawElderEye(SpriteBatch spriteBatch, Vector2 worldPosition, float opacity, float scale, int frameNumber, Microsoft.Xna.Framework.Color passedColor)
-@@ -20650,6 +_,8 @@
- 
-     protected void DrawNPCs(bool behindTiles = false)
-     {
-+        float ry = Main.screenPosition.Y;
-+        Main.screenPosition.Y = realScreenY;
-         bool flag = false;
-         Microsoft.Xna.Framework.Rectangle rectangle = new Microsoft.Xna.Framework.Rectangle((int)screenPosition.X - 800, (int)screenPosition.Y - 800, screenWidth + 1600, screenHeight + 1600);
-         for (int num = 199; num >= 0; num--)
-@@ -20792,6 +_,7 @@
-                 npc[num].active = false;
-             }
-         }
-+        Main.screenPosition.Y = ry;
-     }
- 
-     protected void DrawNPCCheckAlt(NPC n)
 @@ -46917,7 +_,6 @@
  
      private static void TryDisposingEverything()
@@ -688,12 +652,13 @@
          }
  
          instance.CameraModifiers.ApplyTo(ref screenPosition);
-+        realScreenY = screenPosition.Y;
++        ClampScreenPositionToWorld();
++        floatingCameraY = screenPosition.Y;
          screenPosition.X = (int)screenPosition.X;
          screenPosition.Y = (int)screenPosition.Y;
-         ClampScreenPositionToWorld();
+-        ClampScreenPositionToWorld();
      }
-+    public static float realScreenY = 0f;
++    public static float floatingCameraY;
  
      public static bool IsItDay()
      {

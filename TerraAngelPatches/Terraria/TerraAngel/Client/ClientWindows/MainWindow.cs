@@ -124,7 +124,10 @@ namespace TerraAngel.Client.ClientWindows
                                     {
                                         for (int y = 0; y < ylen; y++)
                                         {
-                                            Main.Map.Update(x, y, 255);
+                                            if (Main.netMode == 0 || CringeManager.LoadedTileSections[x / 200, y / 150])
+                                            {
+                                                Main.Map.Update(x, y, 255);
+                                            }
                                         }
                                     }
                                     watch.Stop();

@@ -35,23 +35,32 @@
      }
  
      private void MakeFloorDust(bool Falling, int type, int paintColor)
-@@ -28300,6 +_,8 @@
+@@ -28298,6 +_,9 @@
+             CheckCrackedBrickBreak();
+         }
  
++        
++        if ((!CringeManager.GetCringe<NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && (CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)))
++        {
          if (!shimmering)
          {
-+        if ((!TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && (TerraAngel.Cheat.CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)))
-+        {
              SlopeDownMovement();
-             bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
-             if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
-@@ -28522,6 +_,7 @@
- 
-         PressurePlateHelper.UpdatePlayerPosition(this);
-         BordersMovement();
+@@ -28528,6 +_,7 @@
+         {
+             ItemCheck_ManageRightClickFeatures();
+         }
 +        }
-         numMinions = 0;
-         slotsMinions = 0f;
-         if (mount.Type != 8)
+ 
+         ItemCheckWrapped(i);
+         PlayerFrame();
+@@ -28552,6 +_,7 @@
+         UpdateAdvancedShadows();
+     }
+ 
++
+     private void AdjustRemainingPotionSickness()
+     {
+         if (whoAmI == Main.myPlayer)
 @@ -42729,7 +_,7 @@
          return num;
      }

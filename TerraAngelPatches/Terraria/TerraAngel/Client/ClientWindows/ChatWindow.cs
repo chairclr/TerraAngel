@@ -38,7 +38,7 @@ namespace TerraAngel.Client.ClientWindows
 
         private object ChatLock = new object();
 
-        public List<ChatItem> ChatItems = new List<ChatItem>(100);
+        public List<ChatItem> ChatItems = new List<ChatItem>(ClientConfig.Settings.ChatMessageLimit);
         public List<string> ChatHistory = new List<string>(100);
         private int historyPos = -1;
 
@@ -419,6 +419,11 @@ namespace TerraAngel.Client.ClientWindows
                 else
                 {
                     ChatItems.Add(new ChatItem(message, snippets, color, 0));
+                }
+
+                if (ChatItems.Count > ClientConfig.Settings.ChatMessageLimit)
+                {
+                    ChatItems.RemoveRange(0, ChatItems.Count - ClientConfig.Settings.ChatMessageLimit);
                 }
             }
         }
