@@ -48,7 +48,6 @@ namespace TerraAngel.Client
             AddWindow(ClientLoader.ChatWindow = new ChatWindow());
             AddWindow(new StyleEditorWindow());
 
-            Task.Run(() => ImGuiUtil.ItemLoaderThread(this));
             ItemBrowser.Init();
 
             unsafe

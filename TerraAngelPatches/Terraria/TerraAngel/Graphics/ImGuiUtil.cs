@@ -58,22 +58,6 @@ namespace TerraAngel.Graphics
             drawList.AddRectFilled(min.ToNumerics(), max.ToNumerics(), col);
         }
 
-        private static int itemPtr = 0;
-        private static int[] ItemsToLoad = new int[ItemID.Count];
-        public static void ItemLoaderThread(TerraImGuiRenderer renderer)
-        {
-            while (true)
-            {
-                for (int i = 0; i < itemPtr; i++)
-                {
-                    Main.instance.LoadItem(ItemsToLoad[i]);
-                    ItemImages[ItemsToLoad[i]] = renderer.BindTexture(TextureAssets.Item[ItemsToLoad[i]].Value);
-                }
-                itemPtr = 0;
-                Thread.Sleep(10);
-            }
-        }
-
         private static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
         public static bool ItemButton(int id, string uid, bool showTooltip = true, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
         {
@@ -152,13 +136,12 @@ namespace TerraAngel.Graphics
             int id = item.type;
             if (ItemImages[id] == IntPtr.Zero)
             {
-                ItemImages[id] = (IntPtr)(-1);
-                lock (ItemsToLoad)
-                {
-                    ItemsToLoad[itemPtr] = id;
-                    itemPtr++;
-                }
+                Main.instance.LoadItem(id);
+                ItemImages[id] = ClientLoader.MainRenderer?.BindTexture(TextureAssets.Item[id].Value) ?? IntPtr.Zero;
             }
+
+            
+
             if (ItemImages[id] != (IntPtr)(-1))
             {
                 Texture2D value = TextureAssets.Item[id].Value;

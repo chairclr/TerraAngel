@@ -39,7 +39,7 @@ namespace TerraAngel.Graphics
         public Dictionary<IntPtr, Texture2D> LoadedTextures;
 
         private RasterizerState RasterizerState;
-        private long TextureId;
+        private long TextureId = 0;
 
         private VertexBuffer VertexBuffer;
         private byte[] VertexData;
@@ -75,7 +75,7 @@ namespace TerraAngel.Graphics
 
             LoadedTextures = new Dictionary<IntPtr, Texture2D>
             {
-                { IntPtr.Zero, null }
+                { IntPtr.Zero, null } // bind null texture to id 0
             };
             TextureId = 1;
 
