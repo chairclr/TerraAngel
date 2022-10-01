@@ -13,7 +13,7 @@ Installation
 
 You need to have [git](https://git-scm.com/download/win) installed
 
-You need to have the [dotnet runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed 
+You need to have the [dotnet 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed 
 
 First, open command prompt or some other terminal, and clone the repository
 
