@@ -130,7 +130,7 @@ namespace TerraAngel.Cheat.Cringes
                                     Main.mouseX = (int)specialPosition.X - (int)Main.screenPosition.X;
                                     Main.mouseY = (int)specialPosition.Y - (int)Main.screenPosition.Y;
                                 }
-                                Main.LocalPlayer.ItemCheck(Main.LocalPlayer.HeldItem.useStyle);
+                                Main.LocalPlayer.ItemCheck();
                                 NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
 
                                 Main.mouseX = mx;

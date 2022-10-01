@@ -7,5 +7,5 @@
 -    private Tile[,] _tileArray;
 +    private NativeTileMap _tileArray;
      private TilePaintSystemV2 _paintSystem;
-     public WallDrawing(TilePaintSystemV2 paintSystem)
-     {
+     private bool _shouldShowInvisibleWalls;
+     public void LerpVertexColorsWithColor(ref VertexColors colors, Color lerpColor, float percent)

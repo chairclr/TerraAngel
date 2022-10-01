@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Player.cs
 +++ src/TerraAngel/Terraria/Player.cs
-@@ -472,6 +_,7 @@
+@@ -524,6 +_,7 @@
          }
      }
  
@@ -8,34 +8,43 @@
      public int emoteTime;
      public CreativeUnlocksTracker creativeTracker;
      private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
-@@ -16648,7 +_,7 @@
+@@ -17772,7 +_,7 @@
                  }
  
                  int num5 = tile.frameY / 22;
--                if (num5 < 22)
+-                if (num5 < 24)
 +                if (num5 < 22 && num5 >= 0)
                  {
                      nearbyTorch[num5] = true;
                      if (num5 == 17 && (tile.liquid == 0 || tile.liquidType() != 0))
-@@ -18171,7 +_,7 @@
+@@ -19515,7 +_,7 @@
  
          int num = (int)(position.X + (float)(width / 2)) / 16;
          int num2 = (int)(position.Y - 8f) / 16;
--        if (Main.tile[num, num2] == null || !Main.tile[num, num2].active() || !Main.tileRope[Main.tile[num, num2].type])
+-        if (!WorldGen.IsRope(num, num2))
 +        if (!WorldGen.InWorld(num, num2) || Main.tile[num, num2] == null || !Main.tile[num, num2].active() || !Main.tileRope[Main.tile[num, num2].type])
          {
              return;
          }
-@@ -26485,6 +_,8 @@
-             CheckCrackedBrickBreak();
-         }
+@@ -23696,7 +_,7 @@
  
+     public static int GetFloorTileType(int x, int y)
+     {
+-        return ((int?)GetFloorTile(x, y)?.type) ?? (-1);
++        return ((int)GetFloorTile(x, y).type);// ?? (-1);
+     }
+ 
+     private void MakeFloorDust(bool Falling, int type, int paintColor)
+@@ -28300,6 +_,8 @@
+ 
+         if (!shimmering)
+         {
 +        if ((!TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && (TerraAngel.Cheat.CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)))
 +        {
-         SlopeDownMovement();
-         bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
-         if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
-@@ -26695,6 +_,7 @@
+             SlopeDownMovement();
+             bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
+             if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
+@@ -28522,6 +_,7 @@
  
          PressurePlateHelper.UpdatePlayerPosition(this);
          BordersMovement();
@@ -43,7 +52,7 @@
          numMinions = 0;
          slotsMinions = 0f;
          if (mount.Type != 8)
-@@ -39761,7 +_,7 @@
+@@ -42729,7 +_,7 @@
          return num;
      }
  

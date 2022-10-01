@@ -13,7 +13,7 @@
 -    public ushort type;
 -    public ushort wall;
 -    public byte liquid;
--    public short sTileHeader;
+-    public ushort sTileHeader;
 -    public byte bTileHeader;
 -    public byte bTileHeader2;
 -    public byte bTileHeader3;
@@ -24,7 +24,7 @@
 +    public ref ushort wall => ref Data->wall;
 +    public ref short frameX => ref Data->frameX;
 +    public ref short frameY => ref Data->frameY;
-+    public ref short sTileHeader => ref Data->sTileHeader;
++    public ref ushort sTileHeader => ref Data->sTileHeader;
 +    public ref byte liquid => ref Data->liquid;
 +    public ref byte bTileHeader => ref Data->bTileHeader;
 +    public ref byte bTileHeader2 => ref Data->bTileHeader2;
@@ -50,10 +50,10 @@
 +    public int GetX(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) % tileMap.Width);
 +    public int GetY() => (int)((Data - Main.tile.TileHeap) / Main.tile.Width);
 +    public int GetY(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) / tileMap.Width);
-     public const int Type_Solid = 0;
-     public const int Type_Halfbrick = 1;
-     public const int Type_SlopeDownRight = 2;
-@@ -50,52 +_,6 @@
+     private const int Bit0 = 1;
+     private const int Bit1 = 2;
+     private const int Bit2 = 4;
+@@ -62,52 +_,6 @@
          }
      }
  
@@ -106,7 +106,7 @@
      public void ClearEverything()
      {
          type = 0;
-@@ -119,15 +_,7 @@
+@@ -131,15 +_,7 @@
  
      public void CopyFrom(Tile from)
      {

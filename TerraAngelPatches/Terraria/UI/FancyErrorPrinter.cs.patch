@@ -6,12 +6,17 @@
  using System.Text;
 -using System.Windows.Forms;
  using ReLogic.Content;
+ using ReLogic.OS;
  
- namespace Terraria.UI;
-@@ -139,6 +_,5 @@
+@@ -140,9 +_,9 @@
  
      private static void ShowTheBox(string preparedMessage)
      {
--        MessageBox.Show(preparedMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+-        if (Platform.IsWindows && !Main.dedServ)
++        if (!Main.dedServ)
+         {
+-            MessageBox.Show(preparedMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
++            SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Terraria: Error", preparedMessage, Main.instance.Window.Handle);
+         }
      }
  }

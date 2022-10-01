@@ -1,0 +1,10 @@
+--- src/Terraria/ReLogic/OS/Windows/PathService.cs
++++ src/TerraAngel/ReLogic/OS/Windows/PathService.cs
+@@ -18,6 +_,6 @@
+ 
+     public override bool MoveToRecycleBin(string path)
+     {
+-        return NativeMethods.MoveToRecycleBin(path);
++        File.Delete(path); return true;
+     }
+ }

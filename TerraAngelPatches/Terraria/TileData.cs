@@ -10,9 +10,9 @@ namespace Terraria
     {
         public ushort type;
         public ushort wall;
+        public ushort sTileHeader;
         public short frameX;
         public short frameY;
-        public short sTileHeader;
         public byte liquid;
         public byte bTileHeader;
         public byte bTileHeader2;

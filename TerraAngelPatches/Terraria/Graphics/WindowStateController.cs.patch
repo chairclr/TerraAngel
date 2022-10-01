@@ -3,11 +3,11 @@
 @@ -1,5 +_,4 @@
  using System.Drawing;
 -using System.Windows.Forms;
+ using ReLogic.OS;
  
  namespace Terraria.Graphics;
- public class WindowStateController
-@@ -8,53 +_,21 @@
-     public string ScreenDeviceName => Main.instance.Window.ScreenDeviceName;
+@@ -21,53 +_,21 @@
+ 
      public void TryMovingToScreen(string screenDeviceName)
      {
 -        if (CanMoveWindowAcrossScreens && TryGetBounds(screenDeviceName, out var bounds) && IsVisibleOnAnyScreen(bounds))

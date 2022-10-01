@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/IngameOptions.cs
 +++ src/TerraAngel/Terraria/IngameOptions.cs
-@@ -882,33 +_,33 @@
+@@ -904,33 +_,33 @@
                  }
              }
  

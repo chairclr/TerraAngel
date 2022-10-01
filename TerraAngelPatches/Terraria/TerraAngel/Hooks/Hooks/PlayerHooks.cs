@@ -15,7 +15,7 @@ namespace TerraAngel.Hooks.Hooks
             HookUtil.HookGen<Player>("Spawn", PlayerSpawnHook);
         }
 
-        public static double PlayerHurtHook(Func<Player, PlayerDeathReason, int, int, bool, bool, bool, int, double> orig, Player self, PlayerDeathReason damageSource, int Damage, int hitDirection, bool pvp, bool quiet, bool Crit, int cooldownCounter)
+        public static double PlayerHurtHook(Func<Player, PlayerDeathReason, int, int, bool, bool, bool, int, bool, double> orig, Player self, PlayerDeathReason damageSource, int Damage, int hitDirection, bool pvp, bool quiet, bool Crit, int cooldownCounter, bool dodgeable)
         {
             if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
             {
@@ -28,7 +28,7 @@ namespace TerraAngel.Hooks.Hooks
                 return 0.0d;
             }
 
-            return orig(self, damageSource, Damage, hitDirection, pvp, quiet, Crit, cooldownCounter);
+            return orig(self, damageSource, Damage, hitDirection, pvp, quiet, Crit, cooldownCounter, dodgeable);
         }
         public static void PlayerKillHook(Action<Player, PlayerDeathReason, double, int, bool> orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
         {

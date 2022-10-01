@@ -1,10 +1,14 @@
 --- src/Terraria/Terraria/Audio/SoundInstanceGarbageCollector.cs
 +++ src/TerraAngel/Terraria/Audio/SoundInstanceGarbageCollector.cs
-@@ -7,6 +_,7 @@
+@@ -7,10 +_,7 @@
      private static readonly List<SoundEffectInstance> _activeSounds = new List<SoundEffectInstance>(128);
      public static void Track(SoundEffectInstance sound)
      {
+-        if (Program.IsFna)
+-        {
+-            _activeSounds.Add(sound);
 +        _activeSounds.Add(sound);
+-        }
      }
  
      public static void Update()

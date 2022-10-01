@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/GameContent/Liquid/LiquidRenderer.cs
 +++ src/TerraAngel/Terraria/GameContent/Liquid/LiquidRenderer.cs
-@@ -63,7 +_,7 @@
+@@ -78,7 +_,7 @@
      private readonly UnifiedRandom _random = new UnifiedRandom();
      private Color[] _waveMask = new Color[1];
      private float _frameState;

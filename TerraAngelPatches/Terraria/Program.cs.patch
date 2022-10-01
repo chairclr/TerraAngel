@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Program.cs
 +++ src/TerraAngel/Terraria/Program.cs
-@@ -6,12 +_,11 @@
+@@ -6,19 +_,18 @@
  using System.Runtime.CompilerServices;
  using System.Text;
  using System.Threading;
@@ -14,17 +14,26 @@
  using Terraria.Utilities;
  
  namespace Terraria;
-@@ -165,6 +_,7 @@
+ public static class Program
+ {
+-    public static bool IsXna = true;
++    public static bool IsXna = false;
+-    public static bool IsFna = false;
++    public static bool IsFna = true;
+     public static bool IsMono = Type.GetType("Mono.Runtime") != null;
+     public const bool IsDebug = false;
+     public static Dictionary<string, string> LaunchParameters = new Dictionary<string, string>();
+@@ -187,6 +_,7 @@
  
-     public static void LaunchGame(string[] args, bool monoArgs = false)
-     {
+         LaunchParameters = Utils.ParseArguements(args);
+         SavePath = (LaunchParameters.ContainsKey("-savedirectory") ? LaunchParameters["-savedirectory"] : Platform.Get<IPathService>().GetStoragePath("Terraria"));
 +        ClientLoader.LoadClient();
-         Thread.CurrentThread.Name = "Main Thread";
-         if (monoArgs)
-         {
-@@ -186,18 +_,22 @@
+         ThreadPool.SetMinThreads(8, 8);
+         InitializeConsoleOutput();
          SetupLogging();
-         Platform.Get<IWindowService>().SetQuickEditEnabled(enabled: false);
+@@ -206,10 +_,12 @@
+         }
+ 
          using Main main = new Main();
 +#if !DEBUG
          try
@@ -35,6 +44,10 @@
 +            //SocialAPI.Initialize();
              LaunchInitializer.LoadParameters(main);
              Main.OnEnginePreload += StartForceLoad;
+             if (Main.dedServ)
+@@ -218,11 +_,13 @@
+             }
+ 
              main.Run();
 +#if !DEBUG
          }
@@ -46,7 +59,7 @@
      }
  
      private static void TrySettingFNAToOpenGL(string[] args)
-@@ -218,7 +_,7 @@
+@@ -243,7 +_,7 @@
          }
      }
  
@@ -55,8 +68,8 @@
      {
          try
          {
-@@ -241,7 +_,7 @@
-                 streamWriter.WriteLine("");
+@@ -271,7 +_,7 @@
+                 Console.WriteLine(Language.GetTextValue("Error.ServerCrash"), DateTime.Now, text);
              }
  
 -            MessageBox.Show(text, "Terraria: Error");
