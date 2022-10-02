@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,41 +_,139 @@
+@@ -3,41 +_,241 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -118,6 +118,108 @@
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="Assets\Symbola.ttf">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x64\FNA\libFAudio.so.0">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x64\FNA\libFNA3D.so.0">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x64\FNA\libSDL2-2.0.so.0">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x64\FNA\libtheorafile.so">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x86\FNA\libFAudio.so.0">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x86\FNA\libFNA3D.so.0">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x86\FNA\libSDL2-2.0.so.0">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\lin\x86\FNA\libtheorafile.so">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x64\FNA\libFAudio.0.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x64\FNA\libFNA3D.0.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x64\FNA\libMoltenVK.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x64\FNA\libSDL2-2.0.0.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x64\FNA\libtheorafile.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x64\FNA\libvulkan.1.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x86\FNA\libFAudio.0.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x86\FNA\libFNA3D.0.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x86\FNA\libMoltenVK.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x86\FNA\libSDL2-2.0.0.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x86\FNA\libtheorafile.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\osx\x86\FNA\libvulkan.1.dylib">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x64\FNA\FAudio.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x64\FNA\FNA3D.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x64\FNA\libtheorafile.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x64\FNA\SDL2.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x64\ImGui\cimgui.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x64\Steamworks\Steamworks.NET.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x64\Steamworks\steam_api64.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x86\FNA\FAudio.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x86\FNA\FNA3D.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x86\FNA\libtheorafile.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x86\FNA\SDL2.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x86\ImGui\cimgui.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x86\Steamworks\Steamworks.NET.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="LibNew\win\x86\Steamworks\steam_api.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="LibNew\x64\FNA\FAudio.dll">

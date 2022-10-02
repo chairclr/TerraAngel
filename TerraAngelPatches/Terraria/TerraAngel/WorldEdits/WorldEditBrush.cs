@@ -27,7 +27,8 @@ namespace TerraAngel.WorldEdits
             Remove,
             Water,
             Lava,
-            Honey
+            Honey,
+            Shimmer,
         }
 
 
@@ -231,6 +232,9 @@ namespace TerraAngel.WorldEdits
                 case LiquidEditActions.Honey:
                     PlaceLiquid(tile, x, y, Tile.Liquid_Honey);
                     break;
+                case LiquidEditActions.Shimmer:
+                    PlaceLiquid(tile, x, y, Tile.Liquid_Shimmer);
+                    break;
             }
 
             if (revealMap)
@@ -343,6 +347,9 @@ namespace TerraAngel.WorldEdits
                         break;
                     case Tile.Liquid_Honey:
                         SpecialNetMessage.SendInventorySlot(0, ItemID.HoneyBucket);
+                        break;
+                    case Tile.Liquid_Shimmer:
+                        SpecialNetMessage.SendInventorySlot(0, ItemID.BottomlessShimmerBucket);
                         break;
                 }
 

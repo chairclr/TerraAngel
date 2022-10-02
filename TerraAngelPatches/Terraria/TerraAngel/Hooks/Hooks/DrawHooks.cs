@@ -193,6 +193,8 @@ namespace TerraAngel.Hooks.Hooks
                         Vector2 diff = freecamOriginPoint - Util.ScreenToWorld(InputSystem.MousePosition);
                         Main.screenPosition = Main.screenPosition + diff;
                     }
+
+                    Main.floatingCameraY = Main.screenPosition.Y;
                     return;
                 }
             }
