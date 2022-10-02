@@ -20,7 +20,7 @@
  
      private void UpdateCollision()
      {
-+        if (!(TerraAngel.Cheat.CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)) return;
++        if (!Main.tile.IsTileInLoadedSection(((int)(position.X / 16f)), ((int)(position.Y / 16f)))) return;
          Collision_WalkDownSlopes();
          bool lava = Collision_LavaCollision();
          lava = Collision_WaterCollision(lava);

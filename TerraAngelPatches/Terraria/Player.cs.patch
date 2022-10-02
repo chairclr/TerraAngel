@@ -40,7 +40,7 @@
          }
  
 +        
-+        if ((!CringeManager.GetCringe<NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && (CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)))
++        if ((!CringeManager.GetCringe<NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && Main.tile.IsTileInLoadedSection(((int)(position.X / 16f)), ((int)(position.Y / 16f)))))
 +        {
          if (!shimmering)
          {

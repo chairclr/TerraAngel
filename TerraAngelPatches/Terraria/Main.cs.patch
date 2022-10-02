@@ -596,6 +596,14 @@
      }
  
      public static void OpenCharacterSelectUI()
+@@ -54652,6 +_,7 @@
+ 
+     protected void RenderBackground()
+     {
++        if (!Main.instance.IsActive || netMode == 1) return;
+         if (drawToScreen)
+         {
+             return;
 @@ -56156,6 +_,10 @@
  
      private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)
@@ -607,6 +615,14 @@
          Asset<Texture2D> asset = TextureAssets.MapBGs[0];
          int num = -1;
          Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+@@ -56956,6 +_,7 @@
+ 
+     protected void RenderWater()
+     {
++        if (!Main.instance.IsActive || netMode == 1) return;
+         if (!drawToScreen)
+         {
+             base.GraphicsDevice.SetRenderTarget(waterTarget);
 @@ -61696,14 +_,14 @@
                      sceneTilePos.Y = screenPosition.Y - (float)offScreenRange;
                  }

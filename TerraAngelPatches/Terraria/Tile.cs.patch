@@ -1,6 +1,8 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,42 @@
+@@ -1,18 +_,46 @@
++using System;
++using System.Collections.Generic;
 +using System.Runtime.CompilerServices;
 +using System.Runtime.InteropServices;
  using Microsoft.Xna.Framework;
@@ -45,6 +47,8 @@
 +    public static bool operator ==(Tile rhs, object lhs) => lhs == null && rhs.Data == null;
 +    [MethodImpl(MethodImplOptions.AggressiveInlining)]
 +    public static bool operator !=(Tile rhs, object lhs) => !(lhs == null && rhs.Data == null);
++    public override bool Equals(object? obj) => obj is Tile tile && tile.Data == this.Data;
++    public override int GetHashCode() => HashCode.Combine(*Data);
 +    public class ImplicitHack { }
 +    public int GetX() => (int)((Data - Main.tile.TileHeap) % Main.tile.Width);
 +    public int GetX(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeap) % tileMap.Width);

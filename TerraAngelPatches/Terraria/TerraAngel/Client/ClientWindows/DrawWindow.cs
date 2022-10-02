@@ -1,5 +1,6 @@
 ﻿using System;
 using TerraAngel.WorldEdits;
+using static Terraria.WorldBuilding.Conditions;
 
 namespace TerraAngel.Client.ClientWindows
 {
@@ -102,6 +103,32 @@ namespace TerraAngel.Client.ClientWindows
                                 {
 
                                     Rectangle myRect = new Rectangle((int)currentProjectile.position.X, (int)currentProjectile.position.Y, currentProjectile.width, currentProjectile.height);
+
+                                    if (currentProjectile.type == 101)
+                                    {
+                                        myRect.Inflate(30, 30);
+                                    }
+
+                                    if (currentProjectile.type == 85)
+                                    {
+                                        if (currentProjectile.localAI[0] >= 54f)
+                                        {
+                                            return;
+                                        }
+
+                                        int num = (int)Utils.Remap(currentProjectile.localAI[0], 0f, 72f, 10f, 40f);
+                                        myRect.Inflate(num, num);
+                                    }
+
+                                    if (currentProjectile.type == 188)
+                                    {
+                                        myRect.Inflate(20, 20);
+                                    }
+
+                                    if (currentProjectile.aiStyle == 29)
+                                    {
+                                        myRect.Inflate(4, 4);
+                                    }
                                     if (currentProjectile.type == 85 || currentProjectile.type == 101)
                                     {
                                         int num = 30;
@@ -110,7 +137,6 @@ namespace TerraAngel.Client.ClientWindows
                                         myRect.Width += num * 2;
                                         myRect.Height += num * 2;
                                     }
-
                                     if (currentProjectile.type == 188)
                                     {
                                         int num2 = 20;
@@ -119,7 +145,6 @@ namespace TerraAngel.Client.ClientWindows
                                         myRect.Width += num2 * 2;
                                         myRect.Height += num2 * 2;
                                     }
-
                                     if (currentProjectile.aiStyle == 29)
                                     {
                                         int num3 = 4;

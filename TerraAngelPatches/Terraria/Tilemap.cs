@@ -13,7 +13,12 @@ namespace Terraria
     {
         public readonly uint Width;
         public readonly uint Height;
+
+        /// <summary>
+        /// Size of the heap in bytes
+        /// </summary>
         public readonly long HeapSize;
+
         public readonly TileData* TileHeap;
 
         public NativeTileMap(int width, int height)
