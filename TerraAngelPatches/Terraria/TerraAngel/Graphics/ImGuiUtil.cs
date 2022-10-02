@@ -234,6 +234,27 @@ namespace TerraAngel.Graphics
             return v;
         }
 
+        public static bool WrappedSelectable(string id, string text, float wrapWidth)
+        {
+            NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+
+            ImGui.PushID(id);
+            bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
+            ImGui.PopID();
+
+            NVector2 min = ImGui.GetItemRectMin();
+            NVector2 spacing = ImGui.GetStyle().ItemSpacing;
+
+            NVector2 pos = min + spacing;
+
+            ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
+
+            windowDrawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
+
+            return v;
+        }
+
+
         public static unsafe void AddText(this ImDrawListPtr drawList, ImFontPtr font, float fontSize, NVector2 pos, string text, uint color, float wrapWidth)
         {
             int textByteCount = Encoding.UTF8.GetByteCount(text);

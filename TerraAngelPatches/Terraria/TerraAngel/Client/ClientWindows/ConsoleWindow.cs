@@ -93,7 +93,7 @@ namespace TerraAngel.Client.ClientWindows
                     NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
                     if (ImGui.IsRectVisible(textSize))
                     {
-                        if (ImGuiUtil.WrappedSelectable(text, wrapWidth))
+                        if (ImGuiUtil.WrappedSelectable($"coni{i}", text, wrapWidth))
                         {
                             ImGui.SetClipboardText(item.text);
                         }
