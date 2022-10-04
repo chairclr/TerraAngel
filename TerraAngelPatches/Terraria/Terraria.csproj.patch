@@ -1,19 +1,17 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,41 +_,241 @@
+@@ -3,40 +_,241 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
 +    <Deterministic>true</Deterministic>
-     <Version>1.4.4.2</Version>
+     <Version>1.4.4.3</Version>
      <Company>Re-Logic</Company>
      <Company>Copyright © 2022 Re-Logic</Company>
      <RootNamespace>Terraria</RootNamespace>
--    <TargetFramework>net4.7.2</TargetFramework>
--  </PropertyGroup>
 +    <TargetFramework>net6.0</TargetFramework>
 +    <Platforms>AnyCPU</Platforms>
-+  </PropertyGroup>
+   </PropertyGroup>
 +  <PropertyGroup>
 +    <ApplicationIcon>app.ico</ApplicationIcon>
 +    <Win32Resource />

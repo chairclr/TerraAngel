@@ -687,7 +687,7 @@
              int hoveredSnippet;
              if (Netplay.Connection.StatusTextHasShadows)
              {
-@@ -66631,24 +_,20 @@
+@@ -66633,24 +_,20 @@
  
      public static void SetDisplayMode(int width, int height, bool fullscreen)
      {
@@ -721,7 +721,7 @@
  
          bool flag2 = false;
          int num3;
-@@ -66667,13 +_,10 @@
+@@ -66669,13 +_,10 @@
                  }
              }
  
@@ -738,7 +738,7 @@
              }
  
              if (width > maxScreenW)
-@@ -66709,14 +_,12 @@
+@@ -66711,14 +_,12 @@
          else
          {
              PlayerInput.RawMouseScale = Vector2.One;
@@ -758,7 +758,7 @@
              }
  
              width = Math.Min(width, maxScreenW);
-@@ -66726,23 +_,33 @@
+@@ -66728,23 +_,33 @@
              flag2 = graphics.PreferredBackBufferWidth != graphics.GraphicsDevice.Viewport.Width || graphics.PreferredBackBufferHeight != graphics.GraphicsDevice.Viewport.Height;
          }
  
@@ -802,7 +802,7 @@
          width = Math.Max(width, minScreenW);
          height = Math.Max(height, minScreenH);
          if (graphics.IsFullScreen != fullscreen)
-@@ -66752,7 +_,21 @@
+@@ -66754,7 +_,21 @@
              graphics.ApplyChanges();
              graphics.ToggleFullScreen();
          }
@@ -824,7 +824,7 @@
          if (width != num3 || height != num4 || flag2)
          {
              mapTime = 0;
-@@ -66776,22 +_,19 @@
+@@ -66778,22 +_,19 @@
              PendingResolutionWidth = screenWidth;
              PendingResolutionHeight = screenHeight;
              PlayerInput.CacheOriginalScreenDimensions();
@@ -852,7 +852,7 @@
              Lighting.Initialize();
              if (!drawToScreen && !_isResizingAndRemakingTargets)
              {
-@@ -66835,7 +_,13 @@
+@@ -66837,7 +_,13 @@
              FullscreenStartup();
          }
  
