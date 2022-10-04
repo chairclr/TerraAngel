@@ -8,7 +8,7 @@
  using Terraria.Audio;
  using Terraria.Chat;
  using Terraria.DataStructures;
-@@ -2685,8 +_,8 @@
+@@ -2686,8 +_,8 @@
                          Main.tile[num246, num247] = new Tile();
                      }
  
@@ -19,7 +19,7 @@
                          Main.tile[num246, num247].liquid = b15;
                          Main.tile[num246, num247].liquidType(liquidType);
                          if (Main.netMode == 2)
-@@ -2699,7 +_,7 @@
+@@ -2700,7 +_,7 @@
                          }
  
                          break;
@@ -28,7 +28,7 @@
                  }
  
              case 49:
-@@ -3997,6 +_,7 @@
+@@ -3998,6 +_,7 @@
                  break;
              case 102:
                  {
@@ -36,7 +36,7 @@
                      int num60 = reader.ReadByte();
                      ushort num61 = reader.ReadUInt16();
                      Vector2 other = reader.ReadVector2();
-@@ -4020,6 +_,8 @@
+@@ -4021,6 +_,8 @@
                          Vector2 vector3 = Vector2.Normalize(value2);
                          if (!vector3.HasNaNs())
                          {
@@ -45,7 +45,7 @@
                              int type4 = 90;
                              float num63 = 0f;
                              float num64 = (float)Math.PI / 15f;
-@@ -4050,6 +_,7 @@
+@@ -4051,6 +_,7 @@
                                  num65 = (Main.dust[num68].fadeIn = num65 + num66);
                                  Main.dust[num68].velocity += vector3 * 1.5f;
                              }
@@ -53,7 +53,7 @@
                          }
  
                          player5.NebulaLevelup(num61);
-@@ -4257,6 +_,11 @@
+@@ -4258,6 +_,11 @@
                          if (Main.netMode == 2)
                          {
                              NetMessage.SendPlayerHurt(num243, playerDeathReason2, damage3, num244, flag15, pvp2, num245, -1, whoAmI);

@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Utils.cs
 +++ src/TerraAngel/Terraria/Utils.cs
-@@ -1988,7 +_,7 @@
+@@ -1986,7 +_,7 @@
  
      public static string ReadEmbeddedResource(string path)
      {

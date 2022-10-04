@@ -323,7 +323,7 @@
      }
  
      protected void DrawElderEye(SpriteBatch spriteBatch, Vector2 worldPosition, float opacity, float scale, int frameNumber, Microsoft.Xna.Framework.Color passedColor)
-@@ -46917,7 +_,6 @@
+@@ -46927,7 +_,6 @@
  
      private static void TryDisposingEverything()
      {
@@ -331,7 +331,7 @@
          CaptureManager.Instance.Dispose();
          audioSystem.Dispose();
      }
-@@ -48105,6 +_,26 @@
+@@ -48115,6 +_,26 @@
              }
  
              num11++;
@@ -358,7 +358,7 @@
              array9[num11] = Lang.menu[14].Value;
              if (selectedMenu == num11)
              {
-@@ -48879,6 +_,8 @@
+@@ -48889,6 +_,8 @@
                      menuMode = 112;
                  }
  
@@ -367,7 +367,7 @@
                  num20++;
                  array9[num20] = Lang.menu[210].Value;
                  if (selectedMenu == num20)
-@@ -49312,83 +_,87 @@
+@@ -49322,83 +_,87 @@
              }
              else if (menuMode == 111)
              {
@@ -532,7 +532,7 @@
              }
              else if (menuMode == 1125)
              {
-@@ -51591,44 +_,43 @@
+@@ -51601,44 +_,43 @@
  
      private static bool IsBorderlessDisplayAvailable()
      {
@@ -596,7 +596,7 @@
      }
  
      public static void OpenCharacterSelectUI()
-@@ -54652,6 +_,7 @@
+@@ -54662,6 +_,7 @@
  
      protected void RenderBackground()
      {
@@ -604,7 +604,7 @@
          if (drawToScreen)
          {
              return;
-@@ -56156,6 +_,10 @@
+@@ -56166,6 +_,10 @@
  
      private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)
      {
@@ -615,7 +615,7 @@
          Asset<Texture2D> asset = TextureAssets.MapBGs[0];
          int num = -1;
          Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
-@@ -56956,6 +_,7 @@
+@@ -56966,6 +_,7 @@
  
      protected void RenderWater()
      {
@@ -623,7 +623,7 @@
          if (!drawToScreen)
          {
              base.GraphicsDevice.SetRenderTarget(waterTarget);
-@@ -61696,14 +_,14 @@
+@@ -61742,14 +_,14 @@
                      sceneTilePos.Y = screenPosition.Y - (float)offScreenRange;
                  }
  
@@ -640,7 +640,7 @@
                  {
                      RenderWalls();
                      sceneWallPos.X = screenPosition.X - (float)offScreenRange;
-@@ -62243,7 +_,13 @@
+@@ -62289,7 +_,13 @@
                  DrawWires();
              }
  
@@ -655,7 +655,7 @@
          }
  
          if (shimmerAlpha > 0f)
-@@ -62354,7 +_,7 @@
+@@ -62400,7 +_,7 @@
              DrawItemTextPopups(targetScale);
              PlayerInput.SetZoom_UI();
              spriteBatch.End();
@@ -664,7 +664,7 @@
              DrawNetplayStatusText();
              DrawFPS();
              spriteBatch.End();
-@@ -62864,10 +_,12 @@
+@@ -62910,10 +_,12 @@
          }
  
          instance.CameraModifiers.ApplyTo(ref screenPosition);
@@ -678,7 +678,7 @@
  
      public static bool IsItDay()
      {
-@@ -63337,7 +_,7 @@
+@@ -63383,7 +_,7 @@
                  _oldNetplayStatusText = text;
              }
  
@@ -687,7 +687,7 @@
              int hoveredSnippet;
              if (Netplay.Connection.StatusTextHasShadows)
              {
-@@ -66633,24 +_,20 @@
+@@ -66679,24 +_,20 @@
  
      public static void SetDisplayMode(int width, int height, bool fullscreen)
      {
@@ -721,7 +721,7 @@
  
          bool flag2 = false;
          int num3;
-@@ -66669,13 +_,10 @@
+@@ -66715,13 +_,10 @@
                  }
              }
  
@@ -738,7 +738,7 @@
              }
  
              if (width > maxScreenW)
-@@ -66711,14 +_,12 @@
+@@ -66757,14 +_,12 @@
          else
          {
              PlayerInput.RawMouseScale = Vector2.One;
@@ -758,7 +758,7 @@
              }
  
              width = Math.Min(width, maxScreenW);
-@@ -66728,23 +_,33 @@
+@@ -66774,23 +_,33 @@
              flag2 = graphics.PreferredBackBufferWidth != graphics.GraphicsDevice.Viewport.Width || graphics.PreferredBackBufferHeight != graphics.GraphicsDevice.Viewport.Height;
          }
  
@@ -802,7 +802,7 @@
          width = Math.Max(width, minScreenW);
          height = Math.Max(height, minScreenH);
          if (graphics.IsFullScreen != fullscreen)
-@@ -66754,7 +_,21 @@
+@@ -66800,7 +_,21 @@
              graphics.ApplyChanges();
              graphics.ToggleFullScreen();
          }
@@ -824,7 +824,7 @@
          if (width != num3 || height != num4 || flag2)
          {
              mapTime = 0;
-@@ -66778,22 +_,19 @@
+@@ -66824,22 +_,19 @@
              PendingResolutionWidth = screenWidth;
              PendingResolutionHeight = screenHeight;
              PlayerInput.CacheOriginalScreenDimensions();
@@ -852,7 +852,7 @@
              Lighting.Initialize();
              if (!drawToScreen && !_isResizingAndRemakingTargets)
              {
-@@ -66837,7 +_,13 @@
+@@ -66883,7 +_,13 @@
              FullscreenStartup();
          }
  
