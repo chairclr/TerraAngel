@@ -34,8 +34,6 @@
 -    <Reference Include="Newtonsoft.Json" />
 -    <Reference Include="NVorbis" />
 -    <Reference Include="RailSDK.Net" />
-+    <Reference Include="Libraries/CsvHelper/**" />
-+    <Reference Include="Libraries/DotNetZip/**" />
      <ProjectReference Include="../ReLogic/ReLogic.csproj" />
 -    <EmbeddedResource Include="../ReLogic/bin/$(Configuration)/$(TargetFramework)/ReLogic.dll" />
 -    <Reference Include="Steamworks.NET" />
@@ -54,21 +52,21 @@
 +  <!-- New libraries added -->
 +  <ItemGroup>
 +    <Reference Include="FNA">
-+      <HintPath>LibNew\FNA\FNA.dll</HintPath>
++      <HintPath>Libraries\FNA\FNA.dll</HintPath>
 +    </Reference>
 +    <Reference Include="ImGui.NET">
-+      <HintPath>LibNew\ImGui\ImGui.NET.dll</HintPath>
++      <HintPath>Libraries\ImGui\ImGui.NET.dll</HintPath>
 +    </Reference>
 +    <Reference Include="Mono.Cecil">
-+      <HintPath>LibNew\MonoMod\Mono.Cecil.dll</HintPath>
++      <HintPath>Libraries\MonoMod\Mono.Cecil.dll</HintPath>
 +    </Reference>
 +    <Reference Include="MonoMod.RuntimeDetour">
-+      <HintPath>LibNew\MonoMod\MonoMod.RuntimeDetour.dll</HintPath>
++      <HintPath>Libraries\MonoMod\MonoMod.RuntimeDetour.dll</HintPath>
 +    </Reference>
 +    <Reference Include="MonoMod.Utils">
-+      <HintPath>LibNew\MonoMod\MonoMod.Utils.dll</HintPath>
++      <HintPath>Libraries\MonoMod\MonoMod.Utils.dll</HintPath>
 +    </Reference>
-+    <Reference Include="LibNew/x64/Steamworks/Steamworks.NET.dll" />
++    <Reference Include="Libraries/x64/Steamworks/Steamworks.NET.dll" />
 +    <ProjectReference Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
 +  </ItemGroup>
 +
@@ -88,7 +86,9 @@
 +
 +
 +  <ItemGroup>
++    <PackageReference Include="CsvHelper" Version="28.0.1" />
 +    <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
++    <PackageReference Include="DotNetZip" Version="1.16.0" />
 +    <PackageReference Include="LargeAddressAware" Version="1.0.6" />
 +    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.3.1" />
 +    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.3.1" />
@@ -118,148 +118,148 @@
 +    <None Update="Assets\Symbola.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x64\FNA\libFAudio.so.0">
++    <None Update="Libraries\lin\x64\FNA\libFAudio.so.0">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x64\FNA\libFNA3D.so.0">
++    <None Update="Libraries\lin\x64\FNA\libFNA3D.so.0">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x64\FNA\libSDL2-2.0.so.0">
++    <None Update="Libraries\lin\x64\FNA\libSDL2-2.0.so.0">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x64\FNA\libtheorafile.so">
++    <None Update="Libraries\lin\x64\FNA\libtheorafile.so">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x86\FNA\libFAudio.so.0">
++    <None Update="Libraries\lin\x86\FNA\libFAudio.so.0">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x86\FNA\libFNA3D.so.0">
++    <None Update="Libraries\lin\x86\FNA\libFNA3D.so.0">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x86\FNA\libSDL2-2.0.so.0">
++    <None Update="Libraries\lin\x86\FNA\libSDL2-2.0.so.0">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\lin\x86\FNA\libtheorafile.so">
++    <None Update="Libraries\lin\x86\FNA\libtheorafile.so">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x64\FNA\libFAudio.0.dylib">
++    <None Update="Libraries\osx\x64\FNA\libFAudio.0.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x64\FNA\libFNA3D.0.dylib">
++    <None Update="Libraries\osx\x64\FNA\libFNA3D.0.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x64\FNA\libMoltenVK.dylib">
++    <None Update="Libraries\osx\x64\FNA\libMoltenVK.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x64\FNA\libSDL2-2.0.0.dylib">
++    <None Update="Libraries\osx\x64\FNA\libSDL2-2.0.0.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x64\FNA\libtheorafile.dylib">
++    <None Update="Libraries\osx\x64\FNA\libtheorafile.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x64\FNA\libvulkan.1.dylib">
++    <None Update="Libraries\osx\x64\FNA\libvulkan.1.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x86\FNA\libFAudio.0.dylib">
++    <None Update="Libraries\osx\x86\FNA\libFAudio.0.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x86\FNA\libFNA3D.0.dylib">
++    <None Update="Libraries\osx\x86\FNA\libFNA3D.0.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x86\FNA\libMoltenVK.dylib">
++    <None Update="Libraries\osx\x86\FNA\libMoltenVK.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x86\FNA\libSDL2-2.0.0.dylib">
++    <None Update="Libraries\osx\x86\FNA\libSDL2-2.0.0.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x86\FNA\libtheorafile.dylib">
++    <None Update="Libraries\osx\x86\FNA\libtheorafile.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\osx\x86\FNA\libvulkan.1.dylib">
++    <None Update="Libraries\osx\x86\FNA\libvulkan.1.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x64\FNA\FAudio.dll">
++    <None Update="Libraries\win\x64\FNA\FAudio.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x64\FNA\FNA3D.dll">
++    <None Update="Libraries\win\x64\FNA\FNA3D.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x64\FNA\libtheorafile.dll">
++    <None Update="Libraries\win\x64\FNA\libtheorafile.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x64\FNA\SDL2.dll">
++    <None Update="Libraries\win\x64\FNA\SDL2.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x64\ImGui\cimgui.dll">
++    <None Update="Libraries\win\x64\ImGui\cimgui.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x64\Steamworks\Steamworks.NET.dll">
++    <None Update="Libraries\win\x64\Steamworks\Steamworks.NET.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x64\Steamworks\steam_api64.dll">
++    <None Update="Libraries\win\x64\Steamworks\steam_api64.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x86\FNA\FAudio.dll">
++    <None Update="Libraries\win\x86\FNA\FAudio.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x86\FNA\FNA3D.dll">
++    <None Update="Libraries\win\x86\FNA\FNA3D.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x86\FNA\libtheorafile.dll">
++    <None Update="Libraries\win\x86\FNA\libtheorafile.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x86\FNA\SDL2.dll">
++    <None Update="Libraries\win\x86\FNA\SDL2.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x86\ImGui\cimgui.dll">
++    <None Update="Libraries\win\x86\ImGui\cimgui.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x86\Steamworks\Steamworks.NET.dll">
++    <None Update="Libraries\win\x86\Steamworks\Steamworks.NET.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\win\x86\Steamworks\steam_api.dll">
++    <None Update="Libraries\win\x86\Steamworks\steam_api.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\FNA\FAudio.dll">
++    <None Update="Libraries\x64\FNA\FAudio.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\FNA\FNA3D.dll">
++    <None Update="Libraries\x64\FNA\FNA3D.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\FNA\libtheorafile.dll">
++    <None Update="Libraries\x64\FNA\libtheorafile.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\FNA\SDL2.dll">
++    <None Update="Libraries\x64\FNA\SDL2.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\ImGui\cimgui.dll">
++    <None Update="Libraries\x64\ImGui\cimgui.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\Steamworks\Steamworks.NET.dll">
++    <None Update="Libraries\x64\Steamworks\Steamworks.NET.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x64\Steamworks\steam_api64.dll">
++    <None Update="Libraries\x64\Steamworks\steam_api64.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x86\FNA\FAudio.dll">
++    <None Update="Libraries\x86\FNA\FAudio.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x86\FNA\FNA3D.dll">
++    <None Update="Libraries\x86\FNA\FNA3D.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x86\FNA\libtheorafile.dll">
++    <None Update="Libraries\x86\FNA\libtheorafile.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x86\FNA\SDL2.dll">
++    <None Update="Libraries\x86\FNA\SDL2.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x86\ImGui\cimgui.dll">
++    <None Update="Libraries\x86\ImGui\cimgui.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x86\Steamworks\Steamworks.NET.dll">
++    <None Update="Libraries\x86\Steamworks\Steamworks.NET.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="LibNew\x86\Steamworks\steam_api.dll">
++    <None Update="Libraries\x86\Steamworks\steam_api.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
    </ItemGroup>

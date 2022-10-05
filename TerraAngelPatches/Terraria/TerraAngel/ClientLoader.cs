@@ -32,7 +32,7 @@ namespace TerraAngel
         public static string PluginsPath => Path.Combine(SavePath, "Plugins");
         public static string TerrariaPath => Path.GetDirectoryName(typeof(Main).Assembly.Location)!;
         public static string AssetPath => "Assets";
-        public static string NewLibraryPath => "LibNew";
+        public static string NewLibraryPath => "Libraries";
         public static string ArchitectureString => Environment.Is64BitProcess ? "x64" : "x86";
         public static string PlatformString
         {
