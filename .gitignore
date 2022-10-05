@@ -373,10 +373,7 @@ Build/
 !TerraAngelPatches/Terraria/Terraria.sln
 !TerraAngelSetup/TerraAngelSetup/TerraAngelSetup.sln
 
-build_log_*.txt
+build_log*.txt
 
-!TerraAngelPatches/Terraria/LibNew/x64
-!TerraAngelPatches/Terraria/LibNew/x86
 TerraAngelPatches/Terraria/Properties/launchSettings.json
 TerraAngelSetup/TerraAngelSetup/Properties/launchSettings.json
-build_log.txt
