@@ -36,8 +36,6 @@
 -    <Reference Include="RailSDK.Net" />
 +    <Reference Include="Libraries/CsvHelper/**" />
 +    <Reference Include="Libraries/DotNetZip/**" />
-+    <Reference Include="Libraries/MP3Sharp/**" />
-+    <Reference Include="Libraries/NVorbis/**" />
      <ProjectReference Include="../ReLogic/ReLogic.csproj" />
 -    <EmbeddedResource Include="../ReLogic/bin/$(Configuration)/$(TargetFramework)/ReLogic.dll" />
 -    <Reference Include="Steamworks.NET" />
@@ -100,6 +98,8 @@
 +    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="4.3.1" />
 +    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.3.1" />
 +    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.3.1" />
++    <PackageReference Include="MP3Sharp" Version="1.0.5" />
++    <PackageReference Include="NVorbis" Version="0.10.4" />
 +    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 +  </ItemGroup>

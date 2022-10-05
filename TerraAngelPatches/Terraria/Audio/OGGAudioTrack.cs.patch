@@ -1,0 +1,17 @@
+--- src/Terraria/Terraria/Audio/OGGAudioTrack.cs
++++ src/TerraAngel/Terraria/Audio/OGGAudioTrack.cs
+@@ -56,12 +_,12 @@
+ 
+     private void FindLoops()
+     {
+-        IDictionary<string, IList<string>> all = _vorbisReader.Tags.All;
++        IReadOnlyDictionary<string, IReadOnlyList<string>> all = _vorbisReader.Tags.All;
+         TryReadingTag(all, "LOOPSTART", ref _loopStart);
+         TryReadingTag(all, "LOOPEND", ref _loopEnd);
+     }
+ 
+-    private void TryReadingTag(IDictionary<string, IList<string>> tags, string entryName, ref int result)
++    private void TryReadingTag(IReadOnlyDictionary<string, IReadOnlyList<string>> tags, string entryName, ref int result)
+     {
+         if (tags.TryGetValue(entryName, out var value) && value.Count > 0 && int.TryParse(value[0], out var result2))
+         {

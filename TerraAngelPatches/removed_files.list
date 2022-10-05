@@ -94,6 +94,8 @@ Terraria\GameContent\RGB\VirtualKeyboard.cs
 Terraria\GameContent\RGB\WallOfFleshShader.cs
 Terraria\GameContent\RGB\WormShader.cs
 Terraria\Libraries\JSON.NET\Newtonsoft.Json.dll
+Terraria\Libraries\MP3Sharp\MP3Sharp.dll
+Terraria\Libraries\NVorbis\NVorbis.dll
 Terraria\Social\WeGame\AchievementsSocialModule.cs
 Terraria\Social\WeGame\AsyncTaskHelper.cs
 Terraria\Social\WeGame\CloudSocialModule.cs
