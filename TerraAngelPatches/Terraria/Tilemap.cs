@@ -21,6 +21,8 @@ namespace Terraria
 
         public readonly TileData* TileHeap;
 
+        public bool[,] LoadedTileSections = new bool[0,0];
+
         public NativeTileMap(int width, int height)
         {
             Width = (uint)width;
@@ -31,6 +33,8 @@ namespace Terraria
 
             // tell the GC that we just allocated a bunch of unmanaged memory
             GC.AddMemoryPressure(HeapSize);
+
+            LoadedTileSections = new bool[Width / Main.sectionWidth, Height / Main.sectionHeight];
         }
 
         public Tile this[int x, int y]
@@ -99,13 +103,19 @@ namespace Terraria
             return true;
         }
 
+        public bool IsTileSectionLoaded(int sectionX, int sectionY)
+        {
+            if (Main.netMode == 0) return true;
+            if (Main.netMode == 1) return LoadedTileSections[sectionX, sectionY];
+            return true;
+        }
         public bool IsTileInLoadedSection(int x, int y)
         {
             if (Main.netMode == 0)
                 return true;
             else if (Main.netMode == 1)
             {
-                if (!CringeManager.LoadedTileSections?[x / Main.sectionWidth, y / Main.sectionHeight] ?? true)
+                if (IsTileSectionLoaded(x / Main.sectionWidth, y / Main.sectionHeight))
                     return false;
             }
             return true;

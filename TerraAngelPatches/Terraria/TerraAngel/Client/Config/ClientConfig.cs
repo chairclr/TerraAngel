@@ -299,7 +299,7 @@ namespace TerraAngel.Client.Config
                     Settings.ConsoleHistorySave = Settings.ConsoleHistory;
 
                 string s = JsonConvert.SerializeObject(Settings, new JsonSerializerSettings() { Formatting = Formatting.Indented });
-                Utility.Util.CreateParentDirectory(ClientLoader.ConfigPath);
+                Util.CreateParentDirectory(ClientLoader.ConfigPath);
                 using (FileStream fs = new FileStream(ClientLoader.ConfigPath, FileMode.OpenOrCreate))
                 {
                     byte[] bytes = Encoding.UTF8.GetBytes(s);

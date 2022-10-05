@@ -73,12 +73,9 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void DecompressTileBlock_InnerHook(Action<BinaryReader, int, int, int, int> orig, BinaryReader reader, int xStart, int yStart, int width, int height)
         {
-            if (CringeManager.LoadedTileSections == null)
-                CringeManager.LoadedTileSections = new bool[Main.maxSectionsX, Main.maxSectionsY];
-
             if (xStart % Main.sectionWidth == 0 && yStart % Main.sectionHeight == 0 && width == Main.sectionWidth && height == Main.sectionHeight)
             {
-                CringeManager.LoadedTileSections[xStart / Main.sectionWidth, yStart / Main.sectionHeight] = true;
+                Main.tile.LoadedTileSections[xStart / Main.sectionWidth, yStart / Main.sectionHeight] = true;
             }
 
             orig(reader, xStart, yStart, width, height);

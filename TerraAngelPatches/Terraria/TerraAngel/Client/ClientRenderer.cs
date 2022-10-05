@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Client.ClientWindows;
 using TerraAngel.WorldEdits;
+using static Terraria.WorldBuilding.Searches;
 
 namespace TerraAngel.Client
 {
@@ -37,7 +39,7 @@ namespace TerraAngel.Client
 
         public void Init()
         {
-            Utility.TileUtil.Init();
+            TileUtil.Init();
             this.RebuildFontAtlas();
             AddWindow(new DrawWindow());
             AddWindow(new MainWindow());
@@ -49,6 +51,11 @@ namespace TerraAngel.Client
             AddWindow(new StyleEditorWindow());
 
             ItemBrowser.Init();
+
+            Main.instance.Exiting += (args, o) =>
+            {
+                ClientConfig.WriteToFile();
+            };
 
             unsafe
             {
@@ -155,9 +162,9 @@ namespace TerraAngel.Client
                 ClientConfig.WriteToFile();
             }
 
-            if (Netplay.Connection.State <= 3 && CringeManager.LoadedTileSections != null)
+            if (Main.netMode == 1 && Netplay.Connection.State <= 3)
             {
-                CringeManager.LoadedTileSections = null;
+                Main.tile.LoadedTileSections = new bool[Main.tile.Width / Main.sectionWidth, Main.tile.Height / Main.sectionHeight];
             }
 
             if (!ClientConfig.Settings.UseDiscordRPC && ClientLoader.DiscordClient is not null)

@@ -93,6 +93,7 @@ Terraria\GameContent\RGB\VineShader.cs
 Terraria\GameContent\RGB\VirtualKeyboard.cs
 Terraria\GameContent\RGB\WallOfFleshShader.cs
 Terraria\GameContent\RGB\WormShader.cs
+Terraria\Libraries\JSON.NET\Newtonsoft.Json.dll
 Terraria\Social\WeGame\AchievementsSocialModule.cs
 Terraria\Social\WeGame\AsyncTaskHelper.cs
 Terraria\Social\WeGame\CloudSocialModule.cs

@@ -49,7 +49,7 @@
  
      public static bool SolidOrSlopedTile(int x, int y)
      {
-+        if (!CringeManager.LoadedTileSections?[x / Main.sectionWidth, y / Main.sectionHeight] ?? false) return false;
++        if (!Main.tile.IsTileInLoadedSection(x, y)) return false;
          return SolidOrSlopedTile(Main.tile[x, y]);
      }
  
@@ -57,7 +57,7 @@
  
      public static bool SolidTile(int i, int j, bool noDoors = false)
      {
-+        if (!CringeManager.LoadedTileSections?[i / Main.sectionWidth, j / Main.sectionHeight] ?? false) return false;
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return false;
          try
          {
              if (Main.tile[i, j] == null)

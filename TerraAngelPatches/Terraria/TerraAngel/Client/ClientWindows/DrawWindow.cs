@@ -170,14 +170,14 @@ namespace TerraAngel.Client.ClientWindows
 
                         if (esp.ShowTileSections)
                         {
-                            if (CringeManager.LoadedTileSections != null)
+                            if (Main.netMode == 1)
                             {
                                 for (int xs = 0; xs < Main.maxSectionsX; xs++)
                                 {
                                     for (int ys = 0; ys < Main.maxSectionsY; ys++)
                                     {
                                         Color col = new Color(1f, 1, 0f);
-                                        if (!CringeManager.LoadedTileSections[xs, ys])
+                                        if (!Main.tile.IsTileSectionLoaded(xs, ys))
                                         {
                                             col = new Color(1f, 0f, 0f);
                                         }

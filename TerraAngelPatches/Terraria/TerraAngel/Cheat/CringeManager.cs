@@ -79,7 +79,5 @@ namespace TerraAngel.Cheat
 
         public static bool NebulaSpam = false;
         public static int NebulaSpamPower = 100;
-
-        public static bool[,] LoadedTileSections;
     }
 }

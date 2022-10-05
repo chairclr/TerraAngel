@@ -142,7 +142,6 @@ namespace TerraAngel
             {
                 InitDiscord();
             }
-
         }
 
         public static void LoadClient()
