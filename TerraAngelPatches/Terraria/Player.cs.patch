@@ -8,7 +8,7 @@
      public int emoteTime;
      public CreativeUnlocksTracker creativeTracker;
      private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
-@@ -17796,7 +_,7 @@
+@@ -17800,7 +_,7 @@
                  }
  
                  int num5 = tile.frameY / 22;
@@ -17,7 +17,7 @@
                  {
                      nearbyTorch[num5] = true;
                      if (num5 == 17 && (tile.liquid == 0 || tile.liquidType() != 0))
-@@ -19539,7 +_,7 @@
+@@ -19543,7 +_,7 @@
  
          int num = (int)(position.X + (float)(width / 2)) / 16;
          int num2 = (int)(position.Y - 8f) / 16;
@@ -26,26 +26,70 @@
          {
              return;
          }
-@@ -23723,7 +_,7 @@
+@@ -23727,7 +_,7 @@
  
      public static int GetFloorTileType(int x, int y)
      {
 -        return ((int?)GetFloorTile(x, y)?.type) ?? (-1);
-+        return ((int)GetFloorTile(x, y).type);// ?? (-1);
++        return (int)GetFloorTile(x, y).type;
      }
  
      private void MakeFloorDust(bool Falling, int type, int paintColor)
-@@ -28330,6 +_,9 @@
+@@ -28337,28 +_,35 @@
              CheckCrackedBrickBreak();
          }
  
-+        
 +        if ((!CringeManager.GetCringe<NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && Main.tile.IsTileInLoadedSection(((int)(position.X / 16f)), ((int)(position.Y / 16f)))))
 +        {
          if (!shimmering)
          {
              SlopeDownMovement();
-@@ -28560,6 +_,7 @@
++            // patch context
+             bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
+             if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
+             {
+                 Collision.StepDown(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, waterWalk || waterWalk2);
+             }
+-
++            // patch context
+             if (gravDir == -1f)
+             {
++                // patch context
+                 if ((carpetFrame != -1 || velocity.Y <= gravity) && !controlUp)
+                 {
+                     Collision.StepUp(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, controlUp);
+                 }
++                // patch context
+             }
+             else if ((carpetFrame != -1 || velocity.Y >= gravity) && !controlDown && !mount.Cart && !flag26 && grappling[0] == -1)
+             {
+                 Collision.StepUp(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, controlUp);
+             }
++            // patch context
+         }
+ 
++        // patch context
+         oldPosition = position;
+         oldDirection = direction;
+         bool falling = false;
+@@ -28553,20 +_,22 @@
+         {
+             FloorVisuals(falling);
+         }
+-
++        // patch context
+         if (whoAmI == Main.myPlayer && !shimmering)
+         {
+             Collision.SwitchTiles(position, width, height, oldPosition, 1);
+         }
+-
++        // patch context
+         PressurePlateHelper.UpdatePlayerPosition(this);
+         BordersMovement();
+         numMinions = 0;
+         slotsMinions = 0f;
++        // patch context
+         if (mount.Type != 8)
          {
              ItemCheck_ManageRightClickFeatures();
          }
@@ -53,15 +97,15 @@
  
          ItemCheckWrapped(i);
          PlayerFrame();
-@@ -28584,6 +_,7 @@
-         UpdateAdvancedShadows();
+@@ -28684,6 +_,7 @@
+         return result;
      }
  
 +
      private void AdjustRemainingPotionSickness()
      {
          if (whoAmI == Main.myPlayer)
-@@ -42823,7 +_,7 @@
+@@ -42941,7 +_,7 @@
          return num;
      }
  
