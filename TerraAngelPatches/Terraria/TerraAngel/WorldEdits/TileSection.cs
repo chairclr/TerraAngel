@@ -36,6 +36,9 @@ namespace TerraAngel.WorldEdits
                 height = -height;
             }
 
+            if (width * height <= 0)
+                return;
+
             Tiles = new NativeTileMap(width, height);
 
             for (int i = 0; i < width; i++)

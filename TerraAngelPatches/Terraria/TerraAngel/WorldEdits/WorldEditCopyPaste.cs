@@ -219,6 +219,8 @@ namespace TerraAngel.WorldEdits
             //    }
             //}
 
+            if (width * height <= 0) return;
+
             CopiedSection = new TileSection(((int)startTile.X), ((int)startTile.Y), ((int)width), ((int)height));
         }
 
