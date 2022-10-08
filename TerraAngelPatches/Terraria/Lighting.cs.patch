@@ -11,3 +11,82 @@
      public static float GlobalBrightness { get; set; }
  
      public static LightMode Mode
+@@ -223,6 +_,10 @@
+         {
+             return Color.White;
+         }
++        if (TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache?.FullBright ?? false)
++        {
++            return new Color(Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache.Brightness);
++        }
+ 
+         Color result = default(Color);
+         Vector3 color = _activeEngine.GetColor(x, y);
+@@ -253,6 +_,12 @@
+ 
+     public static void GetColor9Slice(int centerX, int centerY, ref Color[] slices)
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache?.FullBright ?? false)
++        {
++            Color c = new Color(Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache.Brightness);
++            for (int i = 0; i < slices.Length; i++) slices[i] = c;
++            return;
++        }
+         int num = 0;
+         for (int i = centerX - 1; i <= centerX + 1; i++)
+         {
+@@ -289,6 +_,12 @@
+ 
+     public static void GetColor9Slice(int x, int y, ref Vector3[] slices)
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache?.FullBright ?? false)
++        {
++            Vector3 c = Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache.Brightness;
++            for (int i = 0; i < slices.Length; i++) slices[i] = c;
++            return;
++        }
+         slices[0] = _activeEngine.GetColor(x - 1, y - 1) * GlobalBrightness;
+         slices[3] = _activeEngine.GetColor(x - 1, y) * GlobalBrightness;
+         slices[6] = _activeEngine.GetColor(x - 1, y + 1) * GlobalBrightness;
+@@ -303,6 +_,15 @@
+     public static void GetCornerColors(int centerX, int centerY, out VertexColors vertices, float scale = 1f)
+     {
+         vertices = default(VertexColors);
++        //if (TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache?.FullBright ?? false)
++        //{
++        //    Color c = new Color(Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache.Brightness);
++        //    vertices.TopLeftColor = c;
++        //    vertices.TopRightColor = c;
++        //    vertices.BottomLeftColor = c;
++        //    vertices.BottomLeftColor = c;
++        //    return;
++        //}
+         Vector3 color = _activeEngine.GetColor(centerX, centerY);
+         Vector3 color2 = _activeEngine.GetColor(centerX, centerY - 1);
+         Vector3 color3 = _activeEngine.GetColor(centerX, centerY + 1);
+@@ -401,6 +_,12 @@
+ 
+     public static void GetColor4Slice(int centerX, int centerY, ref Color[] slices)
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache?.FullBright ?? false)
++        {
++            Color c = new Color(Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache.Brightness);
++            for (int i = 0; i < slices.Length; i++) slices[i] = c;
++            return;
++        }
+         Vector3 color = _activeEngine.GetColor(centerX, centerY - 1);
+         Vector3 color2 = _activeEngine.GetColor(centerX, centerY + 1);
+         Vector3 color3 = _activeEngine.GetColor(centerX - 1, centerY);
+@@ -592,6 +_,12 @@
+ 
+     public static void GetColor4Slice(int x, int y, ref Vector3[] slices)
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache?.FullBright ?? false)
++        {
++            Vector3 c = Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.lightModificationCache.Brightness;
++            for (int i = 0; i < slices.Length; i++) slices[i] = c;
++            return;
++        }
+         Vector3 color = _activeEngine.GetColor(x, y - 1);
+         Vector3 color2 = _activeEngine.GetColor(x, y + 1);
+         Vector3 color3 = _activeEngine.GetColor(x - 1, y);

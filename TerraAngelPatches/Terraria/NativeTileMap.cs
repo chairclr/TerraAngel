@@ -9,7 +9,7 @@ using Terraria.Net;
 
 namespace Terraria
 {
-    public unsafe class NativeTileMap : IDisposable
+    public unsafe class NativeTileMap
     {
         public readonly uint Width;
         public readonly uint Height;
@@ -19,9 +19,10 @@ namespace Terraria
         /// </summary>
         public readonly long HeapSize;
 
-        public readonly TileData* TileHeap;
+        public readonly TileData[,] TileHeap;
+        public readonly TileData* TileHeapPtr;
 
-        public bool[,] LoadedTileSections = new bool[0,0];
+        public bool[,] LoadedTileSections = new bool[0, 0];
 
         public NativeTileMap(int width, int height)
         {
@@ -29,10 +30,8 @@ namespace Terraria
             Height = (uint)height;
             HeapSize = Width * Height * sizeof(TileData);
 
-            TileHeap = (TileData*)Marshal.AllocHGlobal((IntPtr)HeapSize);
-
-            // tell the GC that we just allocated a bunch of unmanaged memory
-            GC.AddMemoryPressure(HeapSize);
+            TileHeap = new TileData[Width, Height];
+            TileHeapPtr = (TileData*)Unsafe.AsPointer(ref TileHeap[0, 0]);
 
             LoadedTileSections = new bool[Width / Main.sectionWidth, Height / Main.sectionHeight];
         }
@@ -42,20 +41,12 @@ namespace Terraria
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if ((uint)x >= Width || (uint)y >= Height)
-                { 
-                    throw new IndexOutOfRangeException();
-                }
-                return new Tile(TileHeap + (x + (y * Width)));
+                return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[x, y]));
             }
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             set
             {
-                if ((uint)x >= Width || (uint)y >= Height)
-                {
-                    throw new IndexOutOfRangeException();
-                }
-                *(TileHeap + (x + (y * Width))) = *value.Data;
+                TileHeap[x, y] = *value.Data;
             }
         }
         public Tile this[Vector2i position]
@@ -63,33 +54,20 @@ namespace Terraria
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             get
             {
-                if ((uint)position.X > Width || (uint)position.Y > Height)
-                {
-                    throw new IndexOutOfRangeException();
-                }
-                return new Tile(TileHeap + (position.X + (position.Y * Width)));
+                return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[position.X, position.Y]));
             }
             [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
             set
             {
-                if ((uint)position.X > Width || (uint)position.Y > Height)
-                {
-                    throw new IndexOutOfRangeException();
-                }
-                *(TileHeap + (position.X + (position.Y * Width))) = *value.Data;
+                TileHeap[position.X, position.Y] = *value.Data;
             }
         }
 
         public void ResetHeap()
         {
-            Unsafe.InitBlockUnaligned(TileHeap, 0, (uint)HeapSize);
+            Unsafe.InitBlockUnaligned(TileHeapPtr, 0, (uint)HeapSize);
         }
 
-        public void Dispose()
-        {
-            GC.RemoveMemoryPressure(HeapSize);
-            Marshal.FreeHGlobal((IntPtr)TileHeap);
-        }
         public bool InWorld(NVector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
         public bool InWorld(Vector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
         public bool InWorld(Point position) => InWorld(position.X, position.Y);

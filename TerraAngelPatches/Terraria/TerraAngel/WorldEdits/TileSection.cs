@@ -52,11 +52,6 @@ namespace TerraAngel.WorldEdits
             Width = width;
             Height = height;
         }
-
-        ~TileSection()
-        {
-            Tiles?.Dispose();
-        }
     }
 
     public class TileSectionRenderer

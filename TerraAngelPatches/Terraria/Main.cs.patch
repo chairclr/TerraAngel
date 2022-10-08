@@ -623,28 +623,10 @@
          if (!drawToScreen)
          {
              base.GraphicsDevice.SetRenderTarget(waterTarget);
-@@ -61739,14 +_,14 @@
-                     sceneTilePos.Y = screenPosition.Y - (float)offScreenRange;
-                 }
- 
--                if (renderCount == 3)
-+                if (renderCount == (Lighting.LegacyEngine.Mode == 0 ? 2 : 3))
-                 {
-                     RenderTiles2();
-                     sceneTile2Pos.X = screenPosition.X - (float)offScreenRange;
-                     sceneTile2Pos.Y = screenPosition.Y - (float)offScreenRange;
-                 }
- 
--                if (renderCount == 3)
-+                if (renderCount == (Lighting.LegacyEngine.Mode == 0 ? 0 : 3))
-                 {
-                     RenderWalls();
-                     sceneWallPos.X = screenPosition.X - (float)offScreenRange;
-@@ -62286,7 +_,13 @@
-                 DrawWires();
+@@ -62287,6 +_,13 @@
              }
  
--            TimeLogger.DetailedDrawTime(26);
+             TimeLogger.DetailedDrawTime(26);
 +            SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
 +            w = Utils.Clamp(w, minScreenW, maxScreenW);
 +            h = Utils.Clamp(h, minScreenH, maxScreenH);

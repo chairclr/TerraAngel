@@ -3,6 +3,7 @@ using System.Reflection;
 using ReLogic.Threading;
 using Terraria.Graphics.Light;
 using Terraria.ID;
+using Terraria.UI;
 
 namespace TerraAngel.Hooks.Hooks
 {
@@ -174,7 +175,6 @@ namespace TerraAngel.Hooks.Hooks
             return orig(smart);
         }
         private static Vector2 freecamOriginPoint;
-        private static int fixedScreenY;
         public static int SpectateOverride = -1;
         public static void UpdateCameraHook(Action orig)
         {
@@ -223,7 +223,7 @@ namespace TerraAngel.Hooks.Hooks
             }
         }
 
-        private static LightingModifierCringe? lightModificationCache;
+        public static LightingModifierCringe? lightModificationCache;
         private static Vector3 LightingHook(Func<LightingEngine, int, int, Vector3> orig, LightingEngine self, int x, int y)
         {
             if (lightModificationCache?.FullBright ?? false)
@@ -240,16 +240,55 @@ namespace TerraAngel.Hooks.Hooks
             }
             return orig(self, x, y);
         }
+        static int state = 0;
         private static void LightingProcessAreaHook(Action<LightingEngine, Rectangle> orig, LightingEngine self, Rectangle area)
         {
             if (lightModificationCache?.FullBright ?? false)
             {
                 Main.renderCount = (Main.renderCount + 1) % 4;
-                if (Main.mapDelay > 0)
+                state = ((state + 1) % 4);
+                if (state == 0)
                 {
-                    Main.mapDelay--;
+                    if (Main.mapDelay > 0)
+                    {
+                        Main.mapDelay--;
+                    }
+                    else
+                    {
+                        Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
+                        value.Inflate(-40, -40);
+                        area = Rectangle.Intersect(area, value);
+                        Main.mapMinX = area.Left;
+                        Main.mapMinY = area.Top;
+                        Main.mapMaxX = area.Right;
+                        Main.mapMaxY = area.Bottom;
+
+                        FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
+                        {
+                            for (int i = start; i < end; i++)
+                            {
+                                for (int j = area.Top; j < area.Bottom; j++)
+                                {
+                                    Main.Map.Update(i, j, 255);
+                                }
+                            }
+                        });
+
+                        Main.updateMap = true;
+                    }
                 }
-                else
+
+                return;
+            }
+            orig(self, area);
+        }
+        private static void LegacyLightingProcessAreaHook(Action<LegacyLighting, Rectangle> orig, LegacyLighting self, Rectangle area)
+        {
+            if (lightModificationCache?.FullBright ?? false)
+            {
+                Main.renderCount = (Main.renderCount + 1) % 4;
+                state = ((state + 1) % 4);
+                if (state == 0)
                 {
                     Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
                     value.Inflate(-40, -40);
@@ -272,36 +311,6 @@ namespace TerraAngel.Hooks.Hooks
 
                     Main.updateMap = true;
                 }
-
-                return;
-            }
-            orig(self, area);
-        }
-        private static void LegacyLightingProcessAreaHook(Action<LegacyLighting, Rectangle> orig, LegacyLighting self, Rectangle area)
-        {
-            if (lightModificationCache?.FullBright ?? false)
-            {
-                Main.renderCount = (Main.renderCount + 1) % 4;
-                Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
-                value.Inflate(-40, -40);
-                area = Rectangle.Intersect(area, value);
-                Main.mapMinX = area.Left;
-                Main.mapMinY = area.Top;
-                Main.mapMaxX = area.Right;
-                Main.mapMaxY = area.Bottom;
-
-                FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
-                {
-                    for (int i = start; i < end; i++)
-                    {
-                        for (int j = area.Top; j < area.Bottom; j++)
-                        {
-                            Main.Map.Update(i, j, 255);
-                        }
-                    }
-                });
-
-                Main.updateMap = true;
 
                 return;
             }
