@@ -58,6 +58,8 @@ namespace TerraAngel.Hooks.Hooks
         {
             if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || (ImGui.GetIO().WantCaptureKeyboard && !(ImGui.GetIO().KeyAlt && (ClientLoader.ChatWindow?.IsChatting ?? false) && lastCursorOverride == 2))))
                 visible = true;
+            if (!Main.instance.IsActive)
+                visible = true;
             orig(self, visible);
         }
         public static void SetTitleHook(Action<Main> orig, Main self)
@@ -149,6 +151,8 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void UpdateInputHook(Action orig)
         {
+            if (!Main.instance.IsActive)
+                return;
             if (ClientLoader.SetupRenderer)
             {
                 ImGuiIOPtr io = ImGui.GetIO();

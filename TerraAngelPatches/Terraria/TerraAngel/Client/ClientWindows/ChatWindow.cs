@@ -22,6 +22,15 @@ namespace TerraAngel.Client.ClientWindows
 
         public override Keys ToggleKey => Keys.Enter;
 
+        public ChatWindow()
+        {
+            Main.instance.Activated += (o, args) =>
+            {
+                if (IsChatting)
+                    ReclaimFocus = true;
+            };
+        }
+
         public bool IsChatting = false;
         public bool ScrollToBottom = false;
         public bool ReclaimFocus = false;

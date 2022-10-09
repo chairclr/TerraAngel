@@ -160,6 +160,8 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
         {
+            if (!Main.instance.IsActive)
+                return;
             if (ClientLoader.WantCaptureMouse || ClientLoader.WantCaptureKeyboard)
             {
                 return;
@@ -168,6 +170,8 @@ namespace TerraAngel.Hooks.Hooks
         }
         public static Vector2 DrawThickCursorHook(Func<bool, Vector2> orig, bool smart)
         {
+            if (!Main.instance.IsActive)
+                return Vector2.Zero;
             if (ClientLoader.WantCaptureMouse || ClientLoader.WantCaptureKeyboard)
             {
                 return Vector2.Zero;
