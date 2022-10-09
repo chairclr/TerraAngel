@@ -58,7 +58,7 @@ namespace TerraAngel.Hooks.Hooks
         {
             if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || (ImGui.GetIO().WantCaptureKeyboard && !(ImGui.GetIO().KeyAlt && (ClientLoader.ChatWindow?.IsChatting ?? false) && lastCursorOverride == 2))))
                 visible = true;
-            if (!Main.instance.IsActive)
+            if (!Main.instance?.IsActive ?? false)
                 visible = true;
             orig(self, visible);
         }

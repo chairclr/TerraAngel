@@ -93,8 +93,7 @@ namespace Terraria
                 return true;
             else if (Main.netMode == 1)
             {
-                if (IsTileSectionLoaded(x / Main.sectionWidth, y / Main.sectionHeight))
-                    return false;
+                return IsTileSectionLoaded(x / Main.sectionWidth, y / Main.sectionHeight);
             }
             return true;
         }
