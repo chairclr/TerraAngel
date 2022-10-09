@@ -49,7 +49,7 @@ namespace TerraAngel.WorldEdits
         }
         public override void DrawPreviewInWorld(ImGuiIOPtr io, ImDrawListPtr drawList)
         {
-            Vector2 worldMouse = Util.ScreenToWorld(InputSystem.MousePosition);
+            Vector2 worldMouse = Util.ScreenToWorldWorld(InputSystem.MousePosition);
             Vector2 tileMouse = (worldMouse / 16f).Floor();
             if (InputSystem.IsKeyPressed(ClientConfig.Settings.WorldEditSelectKey))
             {
@@ -75,7 +75,7 @@ namespace TerraAngel.WorldEdits
             {
                 if (CopiedSection is not null)
                 {
-                    Renderer.DrawDetailed(CopiedSection, Util.WorldToScreen(tileMouse * 16f), Vector2.Zero, io.DisplaySize.ToXNA());
+                    Renderer.DrawDetailed(CopiedSection, Util.WorldToScreenWorld(tileMouse * 16f), Vector2.Zero, io.DisplaySize.ToXNA());
                 }
             }
         }

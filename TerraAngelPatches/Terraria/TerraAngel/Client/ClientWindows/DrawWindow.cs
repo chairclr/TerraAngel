@@ -18,12 +18,49 @@ namespace TerraAngel.Client.ClientWindows
             ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
             if (!Main.gameMenu)
             {
+                WorldEdit? worldEdit = ClientLoader.MainRenderer?.CurrentWorldEdit;
+                ESPCringe esp = CringeManager.GetCringe<ESPCringe>();
+
+
                 if (!Main.mapFullscreen)
                 {
-                    ESPCringe esp = CringeManager.GetCringe<ESPCringe>();
-                    Vector2 localPlayerCenter = Util.WorldToScreen(Main.LocalPlayer.Center);
                     if (esp.DrawAnyESP)
                     {
+                        
+                    }
+
+                    worldEdit?.DrawPreviewInWorld(io, drawList);
+
+                    if (CringeManager.GetCringe<HeldItemViewerCringe>().Enabled)
+                    {
+                        for (int i = 0; i < 255; i++)
+                        {
+                            Player player = Main.player[i];
+                            if (player.active && player.whoAmI != Main.myPlayer)
+                            {
+                                Item item = new Item();
+
+                                if (player.selectedItem < 59)
+                                    item = player.inventory[player.selectedItem];
+
+                                Vector2 drawCenter = Util.WorldToScreenWorld(player.Top - new Vector2(0f, 24f));
+
+                                if (item.type != 0)
+                                    ImGuiUtil.DrawItemCentered(drawList, item, drawCenter, 24f);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    worldEdit?.DrawPreviewInMap(io, drawList);
+                }
+
+                if (esp.DrawAnyESP)
+                {
+                    if (esp.MapESP || !Main.mapFullscreen)
+                    {
+                        Vector2 localPlayerCenter = Util.WorldToScreenDynamic(Main.LocalPlayer.Center);
                         for (int i = 0; i < 1000; i++)
                         {
                             if (i < 255)
@@ -33,8 +70,8 @@ namespace TerraAngel.Client.ClientWindows
                                     Player currentPlayer = Main.player[i];
                                     if (esp.PlayerBoxes)
                                     {
-                                        Vector2 minScreenPos = Util.WorldToScreenExact(currentPlayer.TopLeft);
-                                        Vector2 maxScreenPos = Util.WorldToScreenExact(currentPlayer.BottomRight);
+                                        Vector2 minScreenPos = Util.WorldToScreenDynamicExact(currentPlayer.TopLeft);
+                                        Vector2 maxScreenPos = Util.WorldToScreenDynamicExact(currentPlayer.BottomRight);
 
                                         Color drawColor = esp.OtherPlayerColor;
 
@@ -49,7 +86,7 @@ namespace TerraAngel.Client.ClientWindows
                                     {
                                         if (currentPlayer.whoAmI != Main.myPlayer)
                                         {
-                                            Vector2 otherPlayerCenter = Util.WorldToScreen(currentPlayer.Center);
+                                            Vector2 otherPlayerCenter = Util.WorldToScreenDynamic(currentPlayer.Center);
 
                                             drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), esp.TracerColor.PackedValue);
                                         }
@@ -66,13 +103,13 @@ namespace TerraAngel.Client.ClientWindows
                                         // as per request of an anonymous user, NPC net offset drawing
                                         if (!currentNPC.position.HasNaNs())
                                         {
-                                            Vector2 minNetScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft);
-                                            Vector2 maxNetScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight);
+                                            Vector2 minNetScreenPos = Util.WorldToScreenDynamicExact(currentNPC.TopLeft);
+                                            Vector2 maxNetScreenPos = Util.WorldToScreenDynamicExact(currentNPC.BottomRight);
                                             drawList.AddRect(minNetScreenPos.ToNumerics(), maxNetScreenPos.ToNumerics(), esp.NPCNetOffsetColor.PackedValue);
 
 
-                                            Vector2 minScreenPos = Util.WorldToScreenExact(currentNPC.TopLeft + currentNPC.netOffset);
-                                            Vector2 maxScreenPos = Util.WorldToScreenExact(currentNPC.BottomRight + currentNPC.netOffset);
+                                            Vector2 minScreenPos = Util.WorldToScreenDynamicExact(currentNPC.TopLeft + currentNPC.netOffset);
+                                            Vector2 maxScreenPos = Util.WorldToScreenDynamicExact(currentNPC.BottomRight + currentNPC.netOffset);
                                             drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), esp.NPCColor.PackedValue);
                                         }
 
@@ -86,8 +123,8 @@ namespace TerraAngel.Client.ClientWindows
                                     Item currentItem = Main.item[i];
                                     if (esp.ItemBoxes)
                                     {
-                                        NVector2 minScreenPos = Util.WorldToScreenExact(currentItem.TopLeft).ToNumerics();
-                                        NVector2 maxScreenPos = Util.WorldToScreenExact(currentItem.BottomRight).ToNumerics();
+                                        NVector2 minScreenPos = Util.WorldToScreenDynamicExact(currentItem.TopLeft).ToNumerics();
+                                        NVector2 maxScreenPos = Util.WorldToScreenDynamicExact(currentItem.BottomRight).ToNumerics();
                                         // dont draw if its off screen lol
                                         if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
                                         {
@@ -154,8 +191,8 @@ namespace TerraAngel.Client.ClientWindows
                                         myRect.Height += num3 * 2;
                                     }
 
-                                    NVector2 minScreenPos = Util.WorldToScreenExact(myRect.TopLeft()).ToNumerics();
-                                    NVector2 maxScreenPos = Util.WorldToScreenExact(myRect.BottomRight()).ToNumerics();
+                                    NVector2 minScreenPos = Util.WorldToScreenDynamicExact(myRect.TopLeft()).ToNumerics();
+                                    NVector2 maxScreenPos = Util.WorldToScreenDynamicExact(myRect.BottomRight()).ToNumerics();
 
 
 
@@ -167,93 +204,48 @@ namespace TerraAngel.Client.ClientWindows
                                 }
                             }
                         }
+                    }
 
-                        if (esp.ShowTileSections)
+                    if (esp.ShowTileSections)
+                    {
+                        for (int xs = 0; xs < Main.maxSectionsX; xs++)
                         {
-                            if (Main.netMode == 1)
+                            for (int ys = 0; ys < Main.maxSectionsY; ys++)
                             {
-                                for (int xs = 0; xs < Main.maxSectionsX; xs++)
+                                Color col = new Color(1f, 1, 0f);
+                                if (!Main.tile.IsTileSectionLoaded(xs, ys))
                                 {
-                                    for (int ys = 0; ys < Main.maxSectionsY; ys++)
-                                    {
-                                        Color col = new Color(1f, 1, 0f);
-                                        if (!Main.tile.IsTileSectionLoaded(xs, ys))
-                                        {
-                                            col = new Color(1f, 0f, 0f);
-                                        }
-
-                                        Vector2 worldCoords = new Vector2(xs * 200 * 16, ys * 150 * 16);
-                                        Vector2 worldCoords2 = new Vector2((xs + 1) * 200 * 16, (ys + 1) * 150 * 16);
-
-                                        if (Main.mapFullscreen)
-                                        {
-                                            drawList.AddRect(Util.WorldToScreenFullscreenMap(worldCoords).ToNumerics(), Util.WorldToScreenFullscreenMap(worldCoords2).ToNumerics(), col.PackedValue);
-                                        }
-                                        else
-                                        {
-                                            drawList.AddRect(Util.WorldToScreen(worldCoords).ToNumerics(), Util.WorldToScreen(worldCoords2).ToNumerics(), col.PackedValue);
-                                        }
-                                    }
+                                    col = new Color(1f, 0f, 0f);
                                 }
+
+                                Vector2 worldCoords = new Vector2(xs * 200 * 16, ys * 150 * 16);
+                                Vector2 worldCoords2 = new Vector2((xs + 1) * 200 * 16, (ys + 1) * 150 * 16);
+
+                                drawList.AddRect(Util.WorldToScreenDynamic(worldCoords).ToNumerics(), Util.WorldToScreenDynamic(worldCoords2).ToNumerics(), col.PackedValue);
                             }
                         }
                     }
-
-                    WorldEdit worldEdit = ClientLoader.MainRenderer.CurrentWorldEdit;
-                    worldEdit?.DrawPreviewInWorld(io, drawList);
-
-                    if (CringeManager.GetCringe<HeldItemViewerCringe>().Enabled)
-                    {
-                        for (int i = 0; i < 255; i++)
-                        {
-                            Player player = Main.player[i];
-                            if (player.active && player.whoAmI != Main.myPlayer)
-                            {
-                                Item item = new Item();
-
-                                if (player.selectedItem < 59)
-                                    item = player.inventory[player.selectedItem];
-
-                                Vector2 drawCenter = Util.WorldToScreen(player.Top - new Vector2(0f, 24f));
-
-                                if (item.type != 0)
-                                    ImGuiUtil.DrawItemCentered(drawList, item, drawCenter, 24f);
-                            }
-                        }
-                    }
-
-
-                }
-                else
-                {
-                    WorldEdit? worldEdit = ClientLoader.MainRenderer?.CurrentWorldEdit;
-                    worldEdit?.DrawPreviewInMap(io, drawList);
                 }
 
+                if (worldEdit is not null)
                 {
-                    WorldEdit? worldEdit = ClientLoader.MainRenderer?.CurrentWorldEdit;
-                    if (worldEdit != null)
+                    Vector2 mousePos = Util.ScreenToWorldDynamic(InputSystem.MousePosition) / 16f;
+
+                    mousePos = new Vector2(MathF.Floor(mousePos.X), MathF.Floor(mousePos.Y));
+
+                    if (worldEdit.RunEveryFrame)
                     {
-                        Vector2 mousePos = Util.ScreenToWorld(InputSystem.MousePosition) / 16f;
-
-                        if (Main.mapFullscreen)
-                            mousePos = Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition) / 16f;
-
-                        mousePos = new Vector2(MathF.Floor(mousePos.X), MathF.Floor(mousePos.Y));
-
-                        if (worldEdit.RunEveryFrame)
-                        {
-                            if (InputSystem.MiddleMouseDown)
-                            {
-                                worldEdit.Edit(mousePos);
-                            }
-                        }
-                        else if (InputSystem.MiddleMousePressed)
+                        if (InputSystem.MiddleMouseDown)
                         {
                             worldEdit.Edit(mousePos);
                         }
                     }
+                    else if (InputSystem.MiddleMousePressed)
+                    {
+                        worldEdit.Edit(mousePos);
+                    }
                 }
+
             }
             CringeManager.Update();
         }

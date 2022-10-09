@@ -35,7 +35,7 @@
                         }
                         else
                         {
-                            drawList.AddCircleFilled(Util.WorldToScreen(Main.LocalPlayer.Center).ToNumerics(), MinAttackRange, Color.Red.WithAlpha(0.5f).PackedValue);
+                            drawList.AddCircleFilled(Util.WorldToScreenWorld(Main.LocalPlayer.Center).ToNumerics(), MinAttackRange, Color.Red.WithAlpha(0.5f).PackedValue);
                         }
                     }
 
@@ -113,7 +113,7 @@
                         }
                     }
                 }
-                if (!Main.mapFullscreen && LockedOnToTarget) drawList.AddCircleFilled(Util.WorldToScreen(TargetPoint).ToNumerics(), 5f, Color.Red.PackedValue);
+                if (!Main.mapFullscreen && LockedOnToTarget) drawList.AddCircleFilled(Util.WorldToScreenWorld(TargetPoint).ToNumerics(), 5f, Color.Red.PackedValue);
             }
         }
 

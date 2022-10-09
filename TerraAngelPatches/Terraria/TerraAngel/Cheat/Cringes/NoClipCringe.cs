@@ -68,7 +68,7 @@ namespace TerraAngel.Cheat.Cringes
                     if (InputSystem.IsKeyPressed(ClientConfig.Settings.TeleportToCursor))
                     {
                         Main.LocalPlayer.velocity = Vector2.Zero;
-                        Main.LocalPlayer.Teleport(Util.ScreenToWorld(InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
+                        Main.LocalPlayer.Teleport(Util.ScreenToWorldWorld(InputSystem.MousePosition) - new Vector2(Main.LocalPlayer.width / 2f, Main.LocalPlayer.height), TeleportationStyleID.RodOfDiscord);
 
                         NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
 

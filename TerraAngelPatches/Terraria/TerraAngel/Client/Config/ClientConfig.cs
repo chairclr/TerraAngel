@@ -47,6 +47,9 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Default ESP Draw Any")]
             public bool DefaultDrawAnyESP = false;
 
+            [UIConfigElement("Default ESP On Map")]
+            public bool DefaultMapESP = false;
+
             [UIConfigElement("Default ESP Tracers")]
             public bool DefaultPlayerESPTracers = false;
 

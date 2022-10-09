@@ -76,7 +76,7 @@ namespace TerraAngel.Cheat.Cringes
                 if (hasSpecialPosition)
                 {
                     ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
-                    drawList.AddCircleFilled(Util.WorldToScreen(specialPosition).ToNumerics(), 10f, Color.Red.PackedValue);
+                    drawList.AddCircleFilled(Util.WorldToScreenWorld(specialPosition).ToNumerics(), 10f, Color.Red.PackedValue);
 
                     if (InputSystem.KeyCtrl && InputSystem.KeyAlt)
                     {

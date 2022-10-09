@@ -52,8 +52,8 @@ namespace TerraAngel.Graphics
             }
             else
             {
-                min = Util.WorldToScreen(startTile * 16f);
-                max = Util.WorldToScreen(endTile * 16f);
+                min = Util.WorldToScreenWorld(startTile * 16f);
+                max = Util.WorldToScreenWorld(endTile * 16f);
             }
             drawList.AddRectFilled(min.ToNumerics(), max.ToNumerics(), col);
         }
@@ -112,7 +112,7 @@ namespace TerraAngel.Graphics
 
         public static void DrawRay(this ImDrawListPtr drawList, RaycastData data, uint col)
         {
-            drawList.AddLine(Util.WorldToScreen(data.Origin).ToNumerics(), Util.WorldToScreen(data.End).ToNumerics(), col);
+            drawList.AddLine(Util.WorldToScreenWorld(data.Origin).ToNumerics(), Util.WorldToScreenWorld(data.End).ToNumerics(), col);
         }
         public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
         {

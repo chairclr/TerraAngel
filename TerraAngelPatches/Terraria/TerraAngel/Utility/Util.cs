@@ -99,6 +99,23 @@ namespace TerraAngel.Utility
             return string.Format(format, len, ByteSizeNames[order]);
         }
 
+
+        public static Vector2 WorldToScreenDynamic(Vector2 worldPoint)
+        {
+            if (Main.mapFullscreen) return WorldToScreenFullscreenMap(worldPoint);
+            else return WorldToScreenWorld(worldPoint);
+        }
+        public static Vector2 WorldToScreenDynamicExact(Vector2 worldPoint)
+        {
+            if (Main.mapFullscreen) return WorldToScreenFullscreenMap(worldPoint);
+            else return WorldToScreenWorldExact(worldPoint);
+        }
+        public static Vector2 ScreenToWorldDynamic(Vector2 screenPoint)
+        {
+            if (Main.mapFullscreen) return ScreenToWorldFullscreenMap(screenPoint);
+            else return ScreenToWorldWorld(screenPoint);
+        }
+
         public static Vector2 ScreenToWorldFullscreenMap(Vector2 screenPoint)
         {
             screenPoint += Main.mapFullscreenPos * Main.mapFullscreenScale;
@@ -116,17 +133,17 @@ namespace TerraAngel.Utility
             return worldPoint;
         }
 
-        public static Vector2 WorldToScreen(Vector2 worldPosition)
+        public static Vector2 WorldToScreenWorld(Vector2 worldPosition)
         {
             return Vector2.Transform(worldPosition - Main.screenPosition, Main.GameViewMatrix.ZoomMatrix);
         }
-        public static Vector2 WorldToScreenExact(Vector2 worldPosition)
+        public static Vector2 WorldToScreenWorldExact(Vector2 worldPosition)
         {
             return Vector2.Transform((worldPosition - Main.screenPosition).Floor(), Main.GameViewMatrix.ZoomMatrix).Floor();
         }
-        public static Vector2 ScreenToWorld(Vector2 screenPosition)
+        public static Vector2 ScreenToWorldWorld(Vector2 screenPosition)
         {
-            return Vector2.Transform(screenPosition, Matrix.Invert(Main.GameViewMatrix.ZoomMatrix)) + Main.screenPosition;
+            return Vector2.Transform(screenPosition, Main.GameViewMatrix.InverseZoomMatrix) + Main.screenPosition;
         }
 
         public static void CreateDirectory(string dir)

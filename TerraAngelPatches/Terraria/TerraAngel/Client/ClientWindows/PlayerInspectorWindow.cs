@@ -218,7 +218,7 @@ namespace TerraAngel.Client.ClientWindows
                         Player player = Main.player[i];
                         if (player.active && player.whoAmI != Main.myPlayer)
                         {
-                            if (InputSystem.RightMousePressed && player.getRect().Contains(Util.ScreenToWorld(InputSystem.MousePosition).ToPoint()))
+                            if (InputSystem.RightMousePressed && player.getRect().Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))
                             {
                                 selectedPlayer = player.whoAmI;
                                 IsEnabled = true;

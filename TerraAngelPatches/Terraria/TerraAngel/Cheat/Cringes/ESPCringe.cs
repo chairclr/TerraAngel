@@ -17,6 +17,9 @@
         [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDrawAnyESP))]
         public bool DrawAnyESP = true;
 
+        [DefaultConfigValue(nameof(ClientConfig.Config.DefaultMapESP))]
+        public bool MapESP = true;
+
         [DefaultConfigValue(nameof(ClientConfig.Config.DefaultPlayerESPBoxes))]
         public bool PlayerBoxes = false;
 
@@ -40,11 +43,12 @@
             ImGui.Checkbox("Draw Any ESP", ref DrawAnyESP);
             if (DrawAnyESP)
             {
+                ImGui.Checkbox("Draw ESP on map", ref MapESP);
                 ImGui.Checkbox("Player hitboxes", ref PlayerBoxes);
-                ImGui.Checkbox("Player tracers", ref PlayerTracers);
                 ImGui.Checkbox("NPC hitboxes", ref NPCBoxes);
                 ImGui.Checkbox("Projectile hitboxes", ref ProjectileBoxes);
                 ImGui.Checkbox("Item hitboxes", ref ItemBoxes);
+                ImGui.Checkbox("Player tracers", ref PlayerTracers);
                 ImGui.Checkbox("Tile Sections", ref ShowTileSections);
                 if (ImGui.CollapsingHeader("ESP Colors"))
                 {

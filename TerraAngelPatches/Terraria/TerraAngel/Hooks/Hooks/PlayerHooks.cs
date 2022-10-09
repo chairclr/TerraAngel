@@ -50,7 +50,7 @@ namespace TerraAngel.Hooks.Hooks
 
                 if (CringeManager.GetCringe<AutoAttackCringe>().LockedOnToTarget)
                 {
-                    Vector2 point = Util.WorldToScreen(CringeManager.GetCringe<AutoAttackCringe>().TargetPoint);
+                    Vector2 point = Util.WorldToScreenWorld(CringeManager.GetCringe<AutoAttackCringe>().TargetPoint);
 
                     CringeManager.GetCringe<AutoAttackCringe>().LockedOnToTarget = false;
                     Main.mouseX = (int)point.X;
@@ -91,13 +91,8 @@ namespace TerraAngel.Hooks.Hooks
 
                 if (CringeManager.GetCringe<InfiniteReachCringe>().Enabled)
                 {
-                    Player.tileRangeX = 100;
-                    Player.tileRangeY = 100;
-                }
-                else
-                {
-                    Player.tileRangeX = 5;
-                    Player.tileRangeY = 4;
+                    Player.tileRangeX = Main.screenWidth / 32 + 8;
+                    Player.tileRangeY = Main.screenHeight / 32 + 8;
                 }
 
                 if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket > 0)
