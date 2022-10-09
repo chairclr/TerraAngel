@@ -600,7 +600,7 @@
  
      protected void RenderBackground()
      {
-+        if (!Main.instance.IsActive || netMode == 1) return;
++        if (!Main.instance.IsActive && netMode == 0) return;
          if (drawToScreen)
          {
              return;
