@@ -1,0 +1,15 @@
+--- src/Terraria/Terraria/GameContent/Creative/CreativeUI.cs
++++ src/TerraAngel/Terraria/GameContent/Creative/CreativeUI.cs
+@@ -81,11 +_,7 @@
+             Initialize();
+         }
+ 
+-        if (Main.LocalPlayer.difficulty != 3)
+-        {
+-            Enabled = false;
+-        }
+-        else if (!Blocked)
++        if (!Blocked)
+         {
+             Vector2 location = new Vector2(28f, 267f);
+             Vector2 vector = new Vector2(353f, 258f);
