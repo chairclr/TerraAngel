@@ -1,13 +1,19 @@
 --- src/Terraria/Terraria/GameContent/Creative/CreativeUI.cs
 +++ src/TerraAngel/Terraria/GameContent/Creative/CreativeUI.cs
-@@ -81,11 +_,7 @@
+@@ -81,11 +_,15 @@
              Initialize();
          }
  
 -        if (Main.LocalPlayer.difficulty != 3)
--        {
++        if (!ClientConfig.Settings.ForceEnableCreativeUI)
+         {
++            if (Main.LocalPlayer.difficulty != 3)
++            {
 -            Enabled = false;
--        }
++                Enabled = false;
++                return;
++            }
+         }
 -        else if (!Blocked)
 +        if (!Blocked)
          {

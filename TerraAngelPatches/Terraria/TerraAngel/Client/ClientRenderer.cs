@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Client.ClientWindows;
 using TerraAngel.WorldEdits;
+using Terraria.GameContent;
 using static Terraria.WorldBuilding.Searches;
 
 namespace TerraAngel.Client
@@ -185,6 +187,13 @@ namespace TerraAngel.Client
             if (ClientConfig.Settings.ClearChatThroughWorldChanges && Main.gameMenu)
             {
                 ClientLoader.ChatWindow?.ChatItems.Clear();
+            }
+
+            for (int i = 0; i < 10 && ImGuiUtil.ItemIdsToLoad.Count > 0; i++)
+            {
+                int id = ImGuiUtil.ItemIdsToLoad.Dequeue();
+                Main.instance.LoadItem(id);
+                ImGuiUtil.ItemImages[id] = BindTexture(TextureAssets.Item[id].Value);
             }
 
             base.AfterLayout();

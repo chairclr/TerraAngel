@@ -33,6 +33,16 @@
      public static Camera Camera = new Camera();
      public static IPlayerRenderer PlayerRenderer = new LegacyPlayerRenderer();
      public static IPlayerRenderer PotionOfReturnRenderer = new ReturnGatePlayerRenderer();
+@@ -734,7 +_,8 @@
+     public static float invAlpha = 1f;
+     public static float invDir = 1f;
+     [ThreadStatic]
+-    public static UnifiedRandom rand;
++    public static UnifiedRandom _rand;
++    public static UnifiedRandom rand { get { if (_rand is null) { _rand = new UnifiedRandom(); } return _rand; } set { _rand = value; } }
+     public static bool allChestStackHover;
+     public static bool inventorySortMouseOver;
+     public static float GraveyardVisualIntensity;
 @@ -878,7 +_,7 @@
      public static HairstyleUnlocksHelper Hairstyles = new HairstyleUnlocksHelper();
      public static bool tilesLoaded = false;

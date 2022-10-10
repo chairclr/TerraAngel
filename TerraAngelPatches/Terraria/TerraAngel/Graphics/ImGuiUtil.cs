@@ -58,7 +58,8 @@ namespace TerraAngel.Graphics
             drawList.AddRectFilled(min.ToNumerics(), max.ToNumerics(), col);
         }
 
-        private static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
+        public static Queue<int> ItemIdsToLoad = new Queue<int>();
+        public static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
         public static bool ItemButton(int id, string uid, bool showTooltip = true, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
         {
             return ItemButton(ContentSamples.ItemsByType[id], uid, new Vector2(32, 32), showTooltip, isSelected, margin, 18f, alpha);
@@ -89,7 +90,7 @@ namespace TerraAngel.Graphics
                     drawList.AddRectFilledMultiColor(min, max, 0xFF1de5ff, 0xFFa4ffff, 0xFF1de5ff, 0xFF00b4ff);
                 }
 
-                drawList.DrawItem(item, (min).ToXNA() + new Vector2(margin) / 2f, size, countFontSize, alpha);
+                drawList.DrawItemDelayedLoad(item, (min).ToXNA() + new Vector2(margin) / 2f, size, countFontSize, alpha);
 
                 if (showTooltip && id != ItemID.None)
                 {
@@ -119,18 +120,15 @@ namespace TerraAngel.Graphics
             Vector2 v = new Vector2(size);
             DrawItem(drawList, id, center - v / 2f, v, countFontSize, alpha);
         }
-
         public static void DrawItemCentered(ImDrawListPtr drawList, Item item, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
         {
             Vector2 v = new Vector2(size);
             DrawItem(drawList, item, center - v / 2f, v, countFontSize, alpha);
         }
-
         public static void DrawItem(this ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
         {
             DrawItem(drawList, ContentSamples.ItemsByType[id], position, size, countFontSize, alpah);
         }
-
         public static void DrawItem(this ImDrawListPtr drawList, Item item, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
         {
             int id = item.type;
@@ -140,9 +138,91 @@ namespace TerraAngel.Graphics
                 ItemImages[id] = ClientLoader.MainRenderer?.BindTexture(TextureAssets.Item[id].Value) ?? IntPtr.Zero;
             }
 
-            
+
 
             if (ItemImages[id] != (IntPtr)(-1))
+            {
+                Texture2D value = TextureAssets.Item[id].Value;
+                if (TextureAssets.Item[id].IsLoaded)
+                {
+                    bool animated = Main.itemAnimations[id] != null;
+
+                    if (animated)
+                    {
+                        Rectangle animationRect = Main.itemAnimations[id].GetFrame(value);
+
+                        int width = animationRect.Width;
+                        int height = animationRect.Height;
+                        float num = 1f;
+                        if (width > size.X || height > size.Y)
+                        {
+                            num = ((width <= height) ? (size.X / height) : (size.Y / width));
+                        }
+                        NVector2 rectStart = new NVector2(animationRect.X, animationRect.Y);
+                        NVector2 rectEnd = new NVector2(animationRect.X + width, animationRect.Y + height);
+                        NVector2 uvMin = rectStart / new NVector2(value.Width, value.Height);
+                        NVector2 uvMax = rectEnd / new NVector2(value.Width, value.Height);
+
+
+                        Vector2 scaledSize = (new Vector2(width, height) * num);
+                        Vector2 start = position + (size / 2f) - scaledSize / 2f;
+
+                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), uvMin, uvMax, Color.White.WithAlpha(alpah).PackedValue);
+                    }
+                    else
+                    {
+                        int width = value.Width;
+                        int height = value.Height;
+                        float num = 1f;
+                        if (width > size.X || height > size.Y)
+                        {
+                            num = ((width <= height) ? (size.X / height) : (size.Y / width));
+                        }
+                        Vector2 scaledSize = (new Vector2(width, height) * num);
+                        Vector2 start = position + (size / 2f) - scaledSize / 2f;
+                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), NVector2.Zero, NVector2.One, Color.White.WithAlpha(alpah).PackedValue);
+                    }
+
+                    if (item.stack > 1)
+                    {
+                        string s = item.stack.ToString();
+                        ImFontPtr font = Client.ClientAssets.GetTerrariaFont(countFontSize);
+                        ImGui.PushFont(font);
+                        Vector2 pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
+
+                        // for shadow 
+                        pos.X -= 1;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+
+                        pos.X += 2;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+
+                        pos.X -= 1;
+                        pos.Y -= 1;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+
+                        pos.Y += 2f;
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+
+                        pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
+                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.White.WithAlpha(alpah).PackedValue, s);
+                        ImGui.PopFont();
+                    }
+                }
+            }
+        }
+        public static void DrawItemDelayedLoad(this ImDrawListPtr drawList, Item item, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
+        {
+            int id = item.type;
+            if (ItemImages[id] == IntPtr.Zero && !ItemIdsToLoad.Contains(id))
+            {
+                ItemIdsToLoad.Enqueue(id);
+                return;
+            }
+
+
+
+            if (ItemImages[id] != IntPtr.Zero)
             {
                 Texture2D value = TextureAssets.Item[id].Value;
                 if (TextureAssets.Item[id].IsLoaded)
@@ -233,7 +313,6 @@ namespace TerraAngel.Graphics
 
             return v;
         }
-
         public static bool WrappedSelectable(string id, string text, float wrapWidth)
         {
             NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
@@ -254,7 +333,6 @@ namespace TerraAngel.Graphics
             return v;
         }
 
-
         public static unsafe void AddText(this ImDrawListPtr drawList, ImFontPtr font, float fontSize, NVector2 pos, string text, uint color, float wrapWidth)
         {
             int textByteCount = Encoding.UTF8.GetByteCount(text);
@@ -268,7 +346,6 @@ namespace TerraAngel.Graphics
 
             ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, font.NativePtr, fontSize, pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
         }
-
         public static unsafe void AddText(this ImDrawListPtr drawList, NVector2 pos, string text, uint color, float wrapWidth)
         {
             int textByteCount = Encoding.UTF8.GetByteCount(text);
@@ -282,7 +359,6 @@ namespace TerraAngel.Graphics
 
             ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
         }
-
         public unsafe static NVector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)
         {
             ImFontPtr font = ImGui.GetFont();
@@ -372,7 +448,6 @@ namespace TerraAngel.Graphics
 
             return textSize;
         }
-
         public static void ImGuiItemTooltip(Item item)
         {
             ImGui.BeginTooltip();

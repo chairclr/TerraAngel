@@ -137,6 +137,12 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Default Full Bright")]
             public bool FullBrightDefaultValue = false;
 
+            [UIConfigElement("Always Enable Journey Menu")]
+            public bool ForceEnableCreativeUI = false;
+
+            [UIConfigElement("All Journey Items Available")]
+            public bool ForceAllCreativeUnlocks = false;
+
             [UIConfigElement("Toggle UI")]
             public Keys ToggleUIVisibility = Keys.OemTilde;
 

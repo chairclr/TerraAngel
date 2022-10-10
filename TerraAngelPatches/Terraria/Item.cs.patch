@@ -1,0 +1,24 @@
+--- src/Terraria/Terraria/Item.cs
++++ src/TerraAngel/Terraria/Item.cs
+@@ -320,20 +_,7 @@
+         return $"{{Name: \"{Name}\" NetID: {netID} Stack: {stack}";
+     }
+ 
+-    private bool CanHavePrefixes()
+-    {
+-        if (type != 0 && maxStack == 1)
+-        {
+-            if (damage <= 0)
+-            {
+-                return accessory;
+-            }
+-
+-            return true;
+-        }
+-
+-        return false;
+-    }
++    private bool CanHavePrefixes() => true;
+ 
+     public bool Prefix(int prefixWeWant)
+     {
