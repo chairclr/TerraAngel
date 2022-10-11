@@ -49,18 +49,25 @@
  
      public static bool SolidOrSlopedTile(int x, int y)
      {
-+        if (!Main.tile.IsTileInLoadedSection(x, y)) return false;
++        if (!Main.tile.IsTileInLoadedSection(x, y)) return true;
          return SolidOrSlopedTile(Main.tile[x, y]);
      }
  
-@@ -66084,6 +_,7 @@
+@@ -66084,13 +_,9 @@
  
      public static bool SolidTile(int i, int j, bool noDoors = false)
      {
-+        if (!Main.tile.IsTileInLoadedSection(i, j)) return false;
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
          try
          {
-             if (Main.tile[i, j] == null)
+-            if (Main.tile[i, j] == null)
+-            {
+-                return true;
+-            }
+-
+             if (Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type] && !Main.tile[i, j].halfBrick() && Main.tile[i, j].slope() == 0 && !Main.tile[i, j].inActive())
+             {
+                 if (noDoors && Main.tile[i, j].type == 10)
 @@ -83128,6 +_,7 @@
          {
              for (int j = 0; j < height; j++)
