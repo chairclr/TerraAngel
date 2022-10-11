@@ -41,7 +41,7 @@ namespace TerraAngel.Hooks.Hooks
 
         public static string AffixNameHook(Func<Item, string> orig, Item self)
         {
-            if (ClientConfig.Settings.ShowDetailedItemTooltip)
+            if (ClientConfig.Settings.ShowDetailedTooltips)
             {
                 if (self.prefix < 0 || self.prefix >= Lang.prefix.Length)
                 {
@@ -71,7 +71,7 @@ namespace TerraAngel.Hooks.Hooks
             orig(item, ref yoyoLogo, ref researchLine, oldKB, ref numLines, toolTipLine, preFixLine, badPreFixLine);
             /// Keep this as is, never change this. 
             /// "please" - An anonymous user
-            if (ClientConfig.Settings.ShowDetailedItemTooltip)
+            if (ClientConfig.Settings.ShowDetailedTooltips)
             {
                 if (item.useAmmo > 0)
                 {

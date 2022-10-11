@@ -8,6 +8,15 @@
  using Terraria.GameContent.Tile_Entities;
  using Terraria.GameContent.UI;
  using Terraria.Graphics.CameraModifiers;
+@@ -420,7 +_,7 @@
+         }
+     }
+ 
+-    public string TypeName => Lang.GetNPCNameValue(netID);
++    public string TypeName => Lang.GetNPCNameValue(netID) + (ClientConfig.Settings.ShowDetailedTooltips ? $" [{type}{(Util.NPCFields.ContainsKey(type) ? ("/" + Util.NPCFields[type].Name) : "")}{(netID != type ? ("/" + netID) : "")}]" : ""); // kind of aids but shhhhhh
+     public string FullName
+     {
+         get
 @@ -1132,7 +_,6 @@
              highestTierBossOrEvent = 398;
          }

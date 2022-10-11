@@ -113,8 +113,8 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Tell server that you're using a modified client (Experimental)")]
             public bool BroadcastPresence = false;
 
-            [UIConfigElement("Show Detailed Item Tooltip")]
-            public bool ShowDetailedItemTooltip = true;
+            [UIConfigElement("Show Detailed Tooltips")]
+            public bool ShowDetailedTooltips = true;
 
             [UIConfigElement("Save Console History")]
             public bool PreserveConsoleHistory = true;
