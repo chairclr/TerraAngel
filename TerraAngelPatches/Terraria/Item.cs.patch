@@ -22,3 +22,11 @@
  
      public bool Prefix(int prefixWeWant)
      {
+@@ -49290,6 +_,7 @@
+         velocity.X = vector2.Z;
+         velocity.Y = vector2.W;
+         Collision.StepConveyorBelt(this, 1f);
++        if (!Main.tile.IsTileInLoadedSection(((int)(position.X / 16)), ((int)(position.Y / 16)))) velocity = Vector2.Zero;
+     }
+ 
+     private void GetPickedUpByMonsters_Special(int i)
