@@ -75,10 +75,10 @@ namespace TerraAngel.Client.ClientWindows
                 return;
             }
 
-            float footerHeight = style.ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();//style.ItemSpacing.Y * 3 + MathF.Min(ImGui.CalcTextSize(consoleInput + " ").Y, ImGui.CalcTextSize(" ").Y * 6f);
+            float footerHeight = style.ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
             ImGui.BeginChild("ConsoleScrollingRegion", new NVector2(0, -footerHeight), false, ImGuiWindowFlags.HorizontalScrollbar);
 
-            ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1)); // Tighten spacing
+            ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1));
             float wrapWidth = ImGui.GetContentRegionAvail().X;
             lock (ConsoleLock)
             {
@@ -181,7 +181,7 @@ namespace TerraAngel.Client.ClientWindows
             {
                 case ImGuiInputTextFlags.CallbackHistory:
                     {
-                        if ((!completionCandidates.Any() && argumentSymbols.Count <= 1) || (InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl)))
+                        if ((!completionCandidates.Any() && argumentSymbols.Count <= 1) || (InputSystem.IsKeyDownRaw(Keys.RightControl) || InputSystem.IsKeyDownRaw(Keys.LeftControl)))
                         {
                             int prev_history_pos = historyPos;
                             if (data.EventKey == ImGuiKey.UpArrow)
@@ -208,7 +208,7 @@ namespace TerraAngel.Client.ClientWindows
                         else
                         {
                             int amount = 1;
-                            if (InputSystem.IsKeyDown(Keys.LeftShift) || InputSystem.IsKeyDown(Keys.RightShift))
+                            if (InputSystem.IsKeyDownRaw(Keys.LeftShift) || InputSystem.IsKeyDownRaw(Keys.RightShift))
                                 amount = 5;
 
                             if (argumentSymbols.Count <= 1)
@@ -299,7 +299,7 @@ namespace TerraAngel.Client.ClientWindows
                     }
                 case ImGuiInputTextFlags.CallbackAlways:
                     {
-                        bool ctrl = InputSystem.IsKeyDown(Keys.RightControl) || InputSystem.IsKeyDown(Keys.LeftControl);
+                        bool ctrl = InputSystem.IsKeyDownRaw(Keys.RightControl) || InputSystem.IsKeyDownRaw(Keys.LeftControl);
 
                         if (ctrl)
                         {

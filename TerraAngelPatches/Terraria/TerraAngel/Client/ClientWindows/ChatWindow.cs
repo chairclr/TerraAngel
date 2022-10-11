@@ -89,7 +89,7 @@ namespace TerraAngel.Client.ClientWindows
                     ClosePlayerChat();
                 }
 
-                if (InputSystem.IsKeyDown(Keys.Escape))
+                if (InputSystem.IsKeyDownRaw(Keys.Escape))
                 {
                     ClosePlayerChat();
 
@@ -322,7 +322,7 @@ namespace TerraAngel.Client.ClientWindows
 
             if (IsChatting)
             {
-                if (!justOpened && InputSystem.IsKeyPressed(Keys.Enter))
+                if (!justOpened && InputSystem.IsKeyPressedRaw(Keys.Enter))
                 {
                     if (chatBoxFocus)
                     {
@@ -370,14 +370,14 @@ namespace TerraAngel.Client.ClientWindows
         {
             justOpened = false;
             if (!ImGui.GetIO().WantCaptureKeyboard
-                && InputSystem.IsKeyPressed(ToggleKey)
-                && !InputSystem.IsKeyDown(Keys.LeftAlt)
-                && !InputSystem.IsKeyDown(Keys.RightAlt)
+                && InputSystem.IsKeyPressedRaw(ToggleKey)
+                && !InputSystem.IsKeyDownRaw(Keys.LeftAlt)
+                && !InputSystem.IsKeyDownRaw(Keys.RightAlt)
                 && Main.hasFocus
                 && !Main.editSign
                 && !Main.editChest
                 && !Main.gameMenu
-                && !InputSystem.IsKeyDown(Keys.Escape)
+                && !InputSystem.IsKeyDownRaw(Keys.Escape)
                 && Main.CurrentInputTextTakerOverride == null
                 && !IsChatting
                 && !justClosed)

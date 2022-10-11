@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework.Input;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
@@ -94,7 +95,7 @@ namespace TerraAngel.UI
         {
             base.Draw(spriteBatch);
 
-            if (InputSystem.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
+            if (InputSystem.IsKeyDown(Keys.Escape))
                 ((IHaveBackButtonCommand)this).HandleBackButtonUsage();
         }
 

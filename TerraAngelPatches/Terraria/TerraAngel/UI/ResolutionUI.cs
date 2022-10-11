@@ -140,7 +140,7 @@ namespace TerraAngel.UI
             if (!Main.hasFocus)
                 return old;
 
-            if ((InputSystem.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) || InputSystem.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl)) && InputSystem.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.V))
+            if ((InputSystem.IsKeyDown(Keys.LeftControl) || InputSystem.IsKeyDown(Keys.RightControl)) && InputSystem.IsKeyPressed(Keys.V))
             {
                 old += Platform.Get<IClipboard>().Value;
             }

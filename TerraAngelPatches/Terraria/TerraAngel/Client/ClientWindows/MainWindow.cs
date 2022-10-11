@@ -7,13 +7,12 @@ namespace TerraAngel.Client.ClientWindows
 {
     public class MainWindow : ClientWindow
     {
-        public override Keys ToggleKey => ClientConfig.Settings.ToggleUIVisibility;
-
         public override bool DefaultEnabled => true;
 
-        public override bool IsToggleable => true;
+        public override bool IsToggleable => false;
 
         public override string Title => "Main Window";
+
         public override bool IsPartOfGlobalUI => true;
 
         public override void Draw(ImGuiIOPtr io)

@@ -25,6 +25,7 @@ namespace TerraAngel
         public static ImGuiIOPtr? ImGuiIO => (ImGui.GetIO().NativePtr == null ? null : ImGui.GetIO());
         public static bool WantCaptureMouse => ImGuiIO?.WantCaptureMouse ?? false;
         public static bool WantCaptureKeyboard => ImGuiIO?.WantCaptureKeyboard ?? false;
+        public static bool WantCaptureText => ImGuiIO?.WantTextInput ?? false;
 
 
         public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
