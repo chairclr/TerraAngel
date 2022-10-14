@@ -11,28 +11,13 @@ namespace TerraAngel.Hooks.Hooks
     {
         public static void Generate()
         {
-            HookUtil.HookGen<Main>("DoDraw", DoDrawHook);
-            HookUtil.HookGen<Main>("Update", UpdateHook);
             HookUtil.HookGen(Main.DrawCursor, DrawCursorHook);
             HookUtil.HookGen(Main.DrawThickCursor, DrawThickCursorHook);
             HookUtil.HookGen<Main>("DoDraw_UpdateCameraPosition", UpdateCameraHook);
 
-            HookUtil.HookGen<LightingEngine>("GetColor", LightingHook);
-            HookUtil.HookGen<LegacyLighting>("GetColor", LegacyLightingHook);
-
-            HookUtil.HookGen<LightingEngine>("ProcessArea", LightingProcessAreaHook);
-            HookUtil.HookGen<LegacyLighting>("ProcessArea", LegacyLightingProcessAreaHook);
-
-            HookUtil.HookGen<LightingEngine>("AddLight", LightingAddLightHook);
-            HookUtil.HookGen<LegacyLighting>("AddLight", LegacyLightingAddLightHook);
-
             HookUtil.HookGen<LightingEngine>("UpdateLightDecay", LightingUpdateLightDecay);
 
-            HookUtil.HookGen(Dust.NewDust, NewDustHook);
-            HookUtil.HookGen(Dust.UpdateDust, UpdateDustHook);
             HookUtil.HookGen<Main>("DrawDust", DrawDustHook);
-
-            HookUtil.HookGen(Gore.NewGore, NewGoreHook);
             HookUtil.HookGen<Main>("DrawGore", DrawGoreHook);
             HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
             HookUtil.HookGen(Main.MouseText_DrawItemTooltip_GetLinesInfo, GetLinesInfoHook);
@@ -144,20 +129,6 @@ namespace TerraAngel.Hooks.Hooks
             }
         }
 
-        public static void DoDrawHook(Action<Main, GameTime> orig, Main self, GameTime time)
-        {
-            lightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
-            orig(self, time);
-            float y = Main.screenPosition.Y;
-            Main.screenPosition.Y = Main.floatingCameraY;
-            ClientLoader.MainRenderer?.Render(time);
-            Main.screenPosition.Y = y;
-        }
-        public static void UpdateHook(Action<Main, GameTime> orig, Main self, GameTime time)
-        {
-            orig(self, time);
-            ClientLoader.MainRenderer?.Update(time);
-        }
         public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
         {
             if (!Main.instance.IsActive)
@@ -227,162 +198,38 @@ namespace TerraAngel.Hooks.Hooks
             }
         }
 
-        public static LightingModifierCringe? lightModificationCache;
-        private static Vector3 LightingHook(Func<LightingEngine, int, int, Vector3> orig, LightingEngine self, int x, int y)
-        {
-            if (lightModificationCache?.FullBright ?? false)
-            {
-                return Vector3.One * lightModificationCache.Brightness;
-            }
-            return orig(self, x, y);
-        }
-        private static Vector3 LegacyLightingHook(Func<LegacyLighting, int, int, Vector3> orig, LegacyLighting self, int x, int y)
-        {
-            if (lightModificationCache?.FullBright ?? false)
-            {
-                return Vector3.One * lightModificationCache.Brightness;
-            }
-            return orig(self, x, y);
-        }
-        static int state = 0;
-        private static void LightingProcessAreaHook(Action<LightingEngine, Rectangle> orig, LightingEngine self, Rectangle area)
-        {
-            if (lightModificationCache?.FullBright ?? false)
-            {
-                Main.renderCount = (Main.renderCount + 1) % 4;
-                state = ((state + 1) % 4);
-                if (state == 0)
-                {
-                    if (Main.mapDelay > 0)
-                    {
-                        Main.mapDelay--;
-                    }
-                    else
-                    {
-                        Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
-                        value.Inflate(-40, -40);
-                        area = Rectangle.Intersect(area, value);
-                        Main.mapMinX = area.Left;
-                        Main.mapMinY = area.Top;
-                        Main.mapMaxX = area.Right;
-                        Main.mapMaxY = area.Bottom;
-
-                        FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
-                        {
-                            for (int i = start; i < end; i++)
-                            {
-                                for (int j = area.Top; j < area.Bottom; j++)
-                                {
-                                    Main.Map.Update(i, j, 255);
-                                }
-                            }
-                        });
-
-                        Main.updateMap = true;
-                    }
-                }
-
-                return;
-            }
-            orig(self, area);
-        }
-        private static void LegacyLightingProcessAreaHook(Action<LegacyLighting, Rectangle> orig, LegacyLighting self, Rectangle area)
-        {
-            if (lightModificationCache?.FullBright ?? false)
-            {
-                Main.renderCount = (Main.renderCount + 1) % 4;
-                state = ((state + 1) % 4);
-                if (state == 0)
-                {
-                    Rectangle value = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
-                    value.Inflate(-40, -40);
-                    area = Rectangle.Intersect(area, value);
-                    Main.mapMinX = area.Left;
-                    Main.mapMinY = area.Top;
-                    Main.mapMaxX = area.Right;
-                    Main.mapMaxY = area.Bottom;
-
-                    FastParallel.For(area.Left, area.Right, delegate (int start, int end, object context)
-                    {
-                        for (int i = start; i < end; i++)
-                        {
-                            for (int j = area.Top; j < area.Bottom; j++)
-                            {
-                                Main.Map.Update(i, j, 255);
-                            }
-                        }
-                    });
-
-                    Main.updateMap = true;
-                }
-
-                return;
-            }
-            orig(self, area);
-        }
-        private static void LightingAddLightHook(Action<LightingEngine, int, int, Vector3> orig, LightingEngine self, int x, int y, Vector3 color)
-        {
-            if (lightModificationCache?.FullBright ?? false)
-                return;
-            orig(self, x, y, color);
-        }
-        private static void LegacyLightingAddLightHook(Action<LegacyLighting, int, int, Vector3> orig, LegacyLighting self, int x, int y, Vector3 color)
-        {
-            if (lightModificationCache?.FullBright ?? false)
-                return;
-            orig(self, x, y, color);
-        }
-
+        public static LightingModifierCringe? LightModificationCache;
         private static void LightingUpdateLightDecay(Action<LightingEngine> orig, LightingEngine self)
         {
             orig(self);
 
-            if (lightModificationCache?.PartialBright ?? false)
+            if (LightModificationCache?.PartialBright ?? false)
             {
                 LightMap? workingLightMap = (LightMap?)typeof(LightingEngine).GetField("_workingLightMap", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(self);
                 if (workingLightMap == null)
                     return;
-                workingLightMap.LightDecayThroughAir *= lightModificationCache.ExtraAirBrightness + 1f;
-                workingLightMap.LightDecayThroughSolid *= lightModificationCache.ExtraSolidBrightness + 1f;
+                workingLightMap.LightDecayThroughAir *= LightModificationCache.ExtraAirBrightness + 1f;
+                workingLightMap.LightDecayThroughSolid *= LightModificationCache.ExtraSolidBrightness + 1f;
             }
         }
 
-        private static OptimizationCringe? optimizationCache;
-        public static int NewDustHook(Func<Vector2, int, int, int, float, float, int, Color, float, int> orig, Vector2 Position, int Width, int Height, int Type, float SpeedX, float SpeedY, int Alpha, Color newColor, float Scale)
-        {
-            if (optimizationCache?.DisableDust ?? false)
-                return 6000;
-            return orig(Position, Width, Height, Type, SpeedX, SpeedY, Alpha, newColor, Scale);
-        }
-        public static void UpdateDustHook(Action orig)
-        {
-            optimizationCache = CringeManager.GetCringe<OptimizationCringe>();
-            if (optimizationCache?.DisableDust ?? false)
-                return;
-            orig();
-        }
+        public static OptimizationCringe? OptimizationCache;
         public static void DrawDustHook(Action<Main> orig, Main self)
         {
-            if (optimizationCache?.DisableDust ?? false)
+            if (OptimizationCache?.DisableDust ?? false)
                 return;
             orig(self);
         }
 
-        public static int NewGoreHook(Func<Vector2, Vector2, int, float, int> orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
-        {
-            if (optimizationCache?.DisableGore ?? false)
-                return 600;
-            return orig(Position, Velocity, Type, Scale);
-        }
         public static void DrawGoreHook(Action<Main> orig, Main self)
         {
-            if (optimizationCache?.DisableGore ?? false)
+            if (OptimizationCache?.DisableGore ?? false)
                 return;
             orig(self);
         }
         public static void DrawGoreBehindHook(Action<Main> orig, Main self)
         {
-            if (optimizationCache?.DisableGore ?? false)
+            if (OptimizationCache?.DisableGore ?? false)
                 return;
             orig(self);
         }

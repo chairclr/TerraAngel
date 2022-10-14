@@ -220,6 +220,14 @@
              {
                  newMusic = 8;
              }
+@@ -14916,6 +_,7 @@
+         {
+             _isDrawingOrUpdating = true;
+             DoUpdate(ref gameTime);
++            ClientLoader.MainRenderer?.Update(gameTime);
+             CinematicManager.Instance.Update(gameTime);
+             if (netMode == 2)
+             {
 @@ -14978,8 +_,6 @@
          {
              UpdateAudio();
@@ -529,6 +537,17 @@
          if (!drawToScreen)
          {
              base.GraphicsDevice.SetRenderTarget(waterTarget);
+@@ -61562,6 +_,10 @@
+             _isDrawingOrUpdating = true;
+             EnsureRenderTargetContent();
+             DoDraw(gameTime);
++            float y = Main.screenPosition.Y;
++            Main.screenPosition.Y = Main.floatingCameraY;
++            ClientLoader.MainRenderer?.Render(gameTime);
++            Main.screenPosition.Y = y;
+             if (Main.OnPostDraw != null)
+             {
+                 Main.OnPostDraw(gameTime);
 @@ -62287,6 +_,13 @@
              }
  

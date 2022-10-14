@@ -1,4 +1,6 @@
-﻿namespace TerraAngel.Cheat.Cringes
+﻿using TerraAngel.Hooks.Hooks;
+
+namespace TerraAngel.Cheat.Cringes
 {
     public class OptimizationCringe : Cringe
     {
@@ -16,6 +18,11 @@
         {
             ImGui.Checkbox("Disable Dust", ref DisableDust);
             ImGui.Checkbox("Disable Gore", ref DisableGore);
+        }
+
+        public override void Update()
+        {
+            DrawHooks.OptimizationCache = this;
         }
     }
 }

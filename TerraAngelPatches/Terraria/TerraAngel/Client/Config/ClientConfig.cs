@@ -116,6 +116,9 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Show Detailed Tooltips")]
             public bool ShowDetailedTooltips = true;
 
+            [UIConfigElement("Ignore super laggy visuals (Yorai eye)")]
+            public bool IgnoreReLogicBullshit = true;
+
             [UIConfigElement("Save Console History")]
             public bool PreserveConsoleHistory = true;
 

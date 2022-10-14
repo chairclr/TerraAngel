@@ -18,7 +18,10 @@
 
         public override void DrawUI(ImGuiIOPtr io)
         {
-            ImGui.Checkbox("Full Bright", ref FullBright);
+            if (ImGui.Checkbox("Full Bright", ref FullBright))
+            {
+                Lighting.Mode = Lighting.Mode;
+            }
 
             ImGui.TextUnformatted("Brightness"); ImGui.SameLine();
             float tmp = Brightness * 100f;
@@ -48,6 +51,8 @@
             {
                 FullBright = !FullBright;
             }
+            TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
+            FullbrightEngine.Brightness = Brightness;
         }
     }
 }

@@ -8,6 +8,14 @@
      public int emoteTime;
      public CreativeUnlocksTracker creativeTracker;
      private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
+@@ -11547,6 +_,7 @@
+ 
+     public void Yoraiz0rEye()
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false || ClientConfig.Settings.IgnoreReLogicBullshit) return;
+         int num = 0;
+         num += bodyFrame.Y / 56;
+         if (num >= Main.OffsetsPlayerHeadgear.Length)
 @@ -17800,7 +_,7 @@
                  }
  
@@ -105,6 +113,23 @@
      private void AdjustRemainingPotionSickness()
      {
          if (whoAmI == Main.myPlayer)
+@@ -38143,6 +_,7 @@
+             bool flag = false;
+             for (int j = -1; j <= 1; j++)
+             {
++                if (!Main.tile.InWorld(x + j, y + i)) continue;
+                 Tile tile = Main.tile[x + j, y + i];
+                 if (tile.nactive() && (Main.tileSolid[tile.type] || !Main.tileSolidTop[tile.type]))
+                 {
+@@ -38191,7 +_,7 @@
+         {
+             for (int j = floorY - 3; j < floorY; j++)
+             {
+-                if (Main.tile[i, j] != null)
++                if (Main.tile.InWorld(i, j))
+                 {
+                     if (Main.tile[i, j].nactive() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type])
+                     {
 @@ -42941,7 +_,7 @@
          return num;
      }
