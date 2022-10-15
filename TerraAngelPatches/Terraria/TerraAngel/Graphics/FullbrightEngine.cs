@@ -28,10 +28,10 @@ public class FullbrightEngine : ILightingEngine
 
     public void ProcessArea(Rectangle area)
     {
+        Main.renderCount = (Main.renderCount + 1) % 4;
         state = ((state + 1) % 6);
         if (state == 0)
         {
-            Main.renderCount = (Main.renderCount + 1) % 4;
             if (Main.mapDelay > 0)
             {
                 Main.mapDelay--;

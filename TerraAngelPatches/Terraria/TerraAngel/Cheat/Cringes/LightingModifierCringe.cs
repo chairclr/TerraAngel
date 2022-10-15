@@ -50,6 +50,7 @@
             if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleFullBright))
             {
                 FullBright = !FullBright;
+                Lighting.Mode = Lighting.Mode;
             }
             TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
             FullbrightEngine.Brightness = Brightness;

@@ -11,7 +11,13 @@
  
                  if (tile.active())
                  {
-@@ -435,25 +_,17 @@
+@@ -430,30 +_,23 @@
+         byte b = (byte)(100f + 150f * Main.martianLight);
+         _martianGlow = new Color(b, b, b, 0);
+         TileDrawInfo value = _currentTileDrawInfo.Value;
++        SpriteBatch spriteBatch = Main.spriteBatch;
+         for (int i = firstTileY; i < lastTileY + 4; i++)
+         {
              for (int j = firstTileX - 2; j < lastTileX + 2; j++)
              {
                  Tile tile = Main.tile[j, i];
@@ -42,9 +48,100 @@
                      short frameX = tile.frameX;
                      short frameY = tile.frameY;
                      if (!TextureAssets.Tile[type].IsLoaded)
-@@ -673,7 +_,6 @@
+@@ -672,8 +_,97 @@
+                             break;
                      }
  
++                    if (TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false)
++                    {
++                    Color tileColor = new Color(new Vector3(TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache.Brightness));
++                    ushort typeCache = tile.type;
++                    short tileFrameX = tile.frameX;
++                    short tileFrameY = tile.frameY;
++                    GetTileDrawData(j, i, tile, typeCache, ref tileFrameX, ref tileFrameY, out value.tileWidth, out value.tileHeight, out value.tileTop, out value.halfBrickHeight, out value.addFrX, out value.addFrY, out value.tileSpriteEffect, out value.glowTexture, out value.glowSourceRect, out value.glowColor);
++                    Texture2D texture = GetTileDrawTexture(tile, j, i);
++                    Rectangle normalTileRect = new Rectangle(tileFrameX + value.addFrX, tileFrameY + value.addFrY, value.tileWidth, value.tileHeight - value.halfBrickHeight);
++                    Vector2 normalTilePosition = new Vector2((float)(j * 16 - (int)unscaledPosition.X) - ((float)value.tileWidth - 16f) / 2f, i * 16 - (int)unscaledPosition.Y + value.tileTop + value.halfBrickHeight) + vector;
++
++                    int slope = tile.slope();
++                    if (slope > 0)
++                    {
++                        if (TileID.Sets.Platforms[typeCache])
++                        {
++                            spriteBatch.Draw(texture, normalTilePosition, normalTileRect, tileColor, 0f, _zero, 1f, value.tileSpriteEffect, 0f);
++                            if (slope == 1 && Main.tile[j + 1, i + 1].active() && Main.tileSolid[Main.tile[j + 1, i + 1].type] && Main.tile[j + 1, i + 1].slope() != 2 && !Main.tile[j + 1, i + 1].halfBrick() && (!Main.tile[j, i + 1].active() || (Main.tile[j, i + 1].blockType() != 0 && Main.tile[j, i + 1].blockType() != 5) || (!TileID.Sets.BlocksStairs[Main.tile[j, i + 1].type] && !TileID.Sets.BlocksStairsAbove[Main.tile[j, i + 1].type])))
++                            {
++                                Rectangle rectValue = new Rectangle(198, tileFrameY, 16, 16);
++                                if (TileID.Sets.Platforms[Main.tile[j + 1, i + 1].type] && Main.tile[j + 1, i + 1].slope() == 0)
++                                {
++                                    rectValue.X = 324;
++                                }
++
++                                spriteBatch.Draw(texture, normalTilePosition + new Vector2(0f, 16f), rectValue, tileColor, 0f, _zero, 1f, value.tileSpriteEffect, 0f);
++                            }
++                            else if (slope == 2 && Main.tile[j - 1, i + 1].active() && Main.tileSolid[Main.tile[j - 1, i + 1].type] && Main.tile[j - 1, i + 1].slope() != 1 && !Main.tile[j - 1, i + 1].halfBrick() && (!Main.tile[j, i + 1].active() || (Main.tile[j, i + 1].blockType() != 0 && Main.tile[j, i + 1].blockType() != 4) || (!TileID.Sets.BlocksStairs[Main.tile[j, i + 1].type] && !TileID.Sets.BlocksStairsAbove[Main.tile[j, i + 1].type])))
++                            {
++                                Rectangle value2 = new Rectangle(162, tileFrameY, 16, 16);
++                                if (TileID.Sets.Platforms[Main.tile[j - 1, i + 1].type] && Main.tile[j - 1, i + 1].slope() == 0)
++                                {
++                                    value2.X = 306;
++                                }
++
++                                spriteBatch.Draw(texture, normalTilePosition + new Vector2(0f, 16f), value2, tileColor, 0f, _zero, 1f, value.tileSpriteEffect, 0f);
++                            }
++
++                            continue;
++                        }
++                        if (TileID.Sets.HasSlopeFrames[typeCache])
++                        {
++                            spriteBatch.Draw(texture, normalTilePosition, new Rectangle(tileFrameX + value.addFrX, tileFrameY + value.addFrY, 16, 16), tileColor, 0f, _zero, 1f, value.tileSpriteEffect, 0f);
++                            continue;
++                        }
++
++                        int l_num = slope;
++                        int l_num2 = 2;
++                        for (int l_i = 0; l_i < 8; l_i++)
++                        {
++                            int l_num3 = l_i * -2;
++                            int l_num4 = 16 - l_i * 2;
++                            int l_num5 = 16 - l_num4;
++                            int l_num6;
++                            switch (l_num)
++                            {
++                                case 1:
++                                    l_num3 = 0;
++                                    l_num6 = l_i * 2;
++                                    l_num4 = 14 - l_i * 2;
++                                    l_num5 = 0;
++                                    break;
++                                case 2:
++                                    l_num3 = 0;
++                                    l_num6 = 16 - l_i * 2 - 2;
++                                    l_num4 = 14 - l_i * 2;
++                                    l_num5 = 0;
++                                    break;
++                                case 3:
++                                    l_num6 = l_i * 2;
++                                    break;
++                                default:
++                                    l_num6 = 16 - l_i * 2 - 2;
++                                    break;
++                            }
++
++                            spriteBatch.Draw(texture, normalTilePosition + new Vector2(l_num6, l_i * l_num2 + l_num3), new Rectangle(tileFrameX + value.addFrX + l_num6, tileFrameY + value.addFrY + l_num5, l_num2, l_num4), tileColor, 0f, _zero, 1f, value.tileSpriteEffect, 0f);
++                        }
++
++                        int l_num7 = ((l_num <= 2) ? 14 : 0);
++                        spriteBatch.Draw(texture, normalTilePosition + new Vector2(0f, l_num7), new Rectangle(tileFrameX + value.addFrX, tileFrameY + value.addFrY + l_num7, 16, 2), tileColor, 0f, _zero, 1f, value.tileSpriteEffect, 0f);
++                        continue;
++                    }
++                    else
++                    {
++                        spriteBatch.Draw(texture, normalTilePosition, normalTileRect, tileColor, 0f, _zero, 1f, value.tileSpriteEffect, 0f);
++                    }
++                    continue;
++                    }
++
                      DrawSingleTile(value, solidLayer, waterStyleOverride, unscaledPosition, vector, j, i);
 -                }
              }
