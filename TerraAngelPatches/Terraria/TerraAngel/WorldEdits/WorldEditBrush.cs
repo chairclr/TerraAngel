@@ -53,7 +53,7 @@ namespace TerraAngel.WorldEdits
                 Vector2 screenCoords = InputSystem.MousePosition;
                 Vector2 screenCoords2 = Util.WorldToScreenFullscreenMap((mousePos + new Vector2(brushDiameter + 16f, 0f)));
                 float dist = screenCoords.Distance(screenCoords2);
-                drawList.AddCircleFilled(screenCoords.ToNumerics(), dist, ImGui.GetColorU32(new System.Numerics.Vector4(1f, 0f, 0f, 0.5f)));
+                drawList.AddCircleFilled(screenCoords, dist, ImGui.GetColorU32(new Vector4(1f, 0f, 0f, 0.5f)));
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace TerraAngel.WorldEdits
                     {
                         Vector2 worldCoords = tileCoords.ToPoint().ToWorldCoordinates(0, 0);
                         Vector2 worldCoords2 = (tileCoords + Vector2.One).ToPoint().ToWorldCoordinates(0, 0);
-                        drawList.AddRectFilled(Util.WorldToScreenFullscreenMap(worldCoords).ToNumerics(), Util.WorldToScreenFullscreenMap(worldCoords2).ToNumerics(), ImGui.GetColorU32(new System.Numerics.Vector4(1f, 0f, 0f, 0.5f)));
+                        drawList.AddRectFilled(Util.WorldToScreenFullscreenMap(worldCoords), Util.WorldToScreenFullscreenMap(worldCoords2), ImGui.GetColorU32(new Vector4(1f, 0f, 0f, 0.5f)));
                     }
 
                 }
@@ -87,7 +87,7 @@ namespace TerraAngel.WorldEdits
                 Vector2 screenCoords = InputSystem.MousePosition;
                 Vector2 screenCoords2 = Util.WorldToScreenWorld((mouseWorld + new Vector2(brushDiameter + 16f, 0f)));
                 float dist = screenCoords.Distance(screenCoords2);
-                drawList.AddCircleFilled(screenCoords.ToNumerics(), dist, ImGui.GetColorU32(new System.Numerics.Vector4(1f, 0f, 0f, 0.5f)));
+                drawList.AddCircleFilled(screenCoords, dist, ImGui.GetColorU32(new Vector4(1f, 0f, 0f, 0.5f)));
                 return;
             }
 
@@ -106,7 +106,7 @@ namespace TerraAngel.WorldEdits
                     {
                         Vector2 worldCoords = tileCoords.ToPoint().ToWorldCoordinates(0, 0);
                         Vector2 worldCoords2 = (tileCoords + Vector2.One).ToPoint().ToWorldCoordinates(0, 0);
-                        drawList.AddRectFilled(Util.WorldToScreenWorld(worldCoords).ToNumerics(), Util.WorldToScreenWorld(worldCoords2).ToNumerics(), ImGui.GetColorU32(new System.Numerics.Vector4(1f, 0f, 0f, 0.5f)));
+                        drawList.AddRectFilled(Util.WorldToScreenWorld(worldCoords), Util.WorldToScreenWorld(worldCoords2), ImGui.GetColorU32(new Vector4(1f, 0f, 0f, 0.5f)));
                     }
 
                 }

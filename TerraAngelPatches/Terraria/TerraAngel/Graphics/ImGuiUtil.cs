@@ -26,7 +26,7 @@ namespace TerraAngel.Graphics
         }
         public static void ColorEdit3(string label, ref Color color)
         {
-            System.Numerics.Vector3 v3c = color.ToVector3().ToNumerics();
+            Vector3 v3c = color.ToVector3();
             if (ImGui.ColorEdit3(label, ref v3c))
             {
                 color = new Color(v3c.X, v3c.Y, v3c.Z, (color.A / 255f));
@@ -34,10 +34,10 @@ namespace TerraAngel.Graphics
         }
         public static void ColorEdit4(string label, ref Color color)
         {
-            System.Numerics.Vector4 v4c = color.ToVector4().ToNumerics();
+            Vector4 v4c = color.ToVector4();
             if (ImGui.ColorEdit4(label, ref v4c))
             {
-                color = new Color(v4c.ToXNA());
+                color = new Color(v4c);
             }
         }
 
@@ -55,7 +55,7 @@ namespace TerraAngel.Graphics
                 min = Util.WorldToScreenWorld(startTile * 16f);
                 max = Util.WorldToScreenWorld(endTile * 16f);
             }
-            drawList.AddRectFilled(min.ToNumerics(), max.ToNumerics(), col);
+            drawList.AddRectFilled(min, max, col);
         }
 
         public static Queue<int> ItemIdsToLoad = new Queue<int>();
@@ -71,15 +71,15 @@ namespace TerraAngel.Graphics
         public static bool ItemButton(Item item, string uid, Vector2 size, bool showTooltip = true, bool isSelected = false, float margin = 6f, float countFontSize = 18f, float alpha = 1.0f)
         {
             int id = item.type;
-            NVector2 drawSize = size.ToNumerics();
+            Vector2 drawSize = size;
             ImGui.PushID(uid);
             bool clicked = false;
-            if (ImGui.Button("", drawSize + new NVector2(margin)))
+            if (ImGui.Button("", drawSize + new Vector2(margin)))
             {
                 clicked = true;
             }
-            NVector2 min = ImGui.GetItemRectMin();
-            NVector2 max = ImGui.GetItemRectMax();
+            Vector2 min = ImGui.GetItemRectMin();
+            Vector2 max = ImGui.GetItemRectMax();
             ImGui.PopID();
 
             if (ImGui.IsRectVisible(min, max))
@@ -90,7 +90,7 @@ namespace TerraAngel.Graphics
                     drawList.AddRectFilledMultiColor(min, max, 0xFF1de5ff, 0xFFa4ffff, 0xFF1de5ff, 0xFF00b4ff);
                 }
 
-                drawList.DrawItemDelayedLoad(item, (min).ToXNA() + new Vector2(margin) / 2f, size, countFontSize, alpha);
+                drawList.DrawItemDelayedLoad(item, (min) + new Vector2(margin) / 2f, size, countFontSize, alpha);
 
                 if (showTooltip && id != ItemID.None)
                 {
@@ -113,7 +113,7 @@ namespace TerraAngel.Graphics
 
         public static void DrawRay(this ImDrawListPtr drawList, RaycastData data, uint col)
         {
-            drawList.AddLine(Util.WorldToScreenWorld(data.Origin).ToNumerics(), Util.WorldToScreenWorld(data.End).ToNumerics(), col);
+            drawList.AddLine(Util.WorldToScreenWorld(data.Origin), Util.WorldToScreenWorld(data.End), col);
         }
         public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
         {
@@ -158,16 +158,16 @@ namespace TerraAngel.Graphics
                         {
                             num = ((width <= height) ? (size.X / height) : (size.Y / width));
                         }
-                        NVector2 rectStart = new NVector2(animationRect.X, animationRect.Y);
-                        NVector2 rectEnd = new NVector2(animationRect.X + width, animationRect.Y + height);
-                        NVector2 uvMin = rectStart / new NVector2(value.Width, value.Height);
-                        NVector2 uvMax = rectEnd / new NVector2(value.Width, value.Height);
+                        Vector2 rectStart = new Vector2(animationRect.X, animationRect.Y);
+                        Vector2 rectEnd = new Vector2(animationRect.X + width, animationRect.Y + height);
+                        Vector2 uvMin = rectStart / new Vector2(value.Width, value.Height);
+                        Vector2 uvMax = rectEnd / new Vector2(value.Width, value.Height);
 
 
                         Vector2 scaledSize = (new Vector2(width, height) * num);
                         Vector2 start = position + (size / 2f) - scaledSize / 2f;
 
-                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), uvMin, uvMax, Color.White.WithAlpha(alpah).PackedValue);
+                        drawList.AddImage(ItemImages[id], start.Floor(), (start + scaledSize).Floor(), uvMin, uvMax, Color.White.WithAlpha(alpah).PackedValue);
                     }
                     else
                     {
@@ -180,7 +180,7 @@ namespace TerraAngel.Graphics
                         }
                         Vector2 scaledSize = (new Vector2(width, height) * num);
                         Vector2 start = position + (size / 2f) - scaledSize / 2f;
-                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), NVector2.Zero, NVector2.One, Color.White.WithAlpha(alpah).PackedValue);
+                        drawList.AddImage(ItemImages[id], start.Floor(), (start + scaledSize).Floor(), Vector2.Zero, Vector2.One, Color.White.WithAlpha(alpah).PackedValue);
                     }
 
                     if (item.stack > 1)
@@ -192,20 +192,20 @@ namespace TerraAngel.Graphics
 
                         // for shadow 
                         pos.X -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.X += 2;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.X -= 1;
                         pos.Y -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.Y += 2f;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.White.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.White.WithAlpha(alpah).PackedValue, s);
                         ImGui.PopFont();
                     }
                 }
@@ -240,16 +240,16 @@ namespace TerraAngel.Graphics
                         {
                             num = ((width <= height) ? (size.X / height) : (size.Y / width));
                         }
-                        NVector2 rectStart = new NVector2(animationRect.X, animationRect.Y);
-                        NVector2 rectEnd = new NVector2(animationRect.X + width, animationRect.Y + height);
-                        NVector2 uvMin = rectStart / new NVector2(value.Width, value.Height);
-                        NVector2 uvMax = rectEnd / new NVector2(value.Width, value.Height);
+                        Vector2 rectStart = new Vector2(animationRect.X, animationRect.Y);
+                        Vector2 rectEnd = new Vector2(animationRect.X + width, animationRect.Y + height);
+                        Vector2 uvMin = rectStart / new Vector2(value.Width, value.Height);
+                        Vector2 uvMax = rectEnd / new Vector2(value.Width, value.Height);
 
 
                         Vector2 scaledSize = (new Vector2(width, height) * num);
                         Vector2 start = position + (size / 2f) - scaledSize / 2f;
 
-                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), uvMin, uvMax, Color.White.WithAlpha(alpah).PackedValue);
+                        drawList.AddImage(ItemImages[id], start.Floor(), (start + scaledSize).Floor(), uvMin, uvMax, Color.White.WithAlpha(alpah).PackedValue);
                     }
                     else
                     {
@@ -262,7 +262,7 @@ namespace TerraAngel.Graphics
                         }
                         Vector2 scaledSize = (new Vector2(width, height) * num);
                         Vector2 start = position + (size / 2f) - scaledSize / 2f;
-                        drawList.AddImage(ItemImages[id], start.Floor().ToNumerics(), (start + scaledSize).Floor().ToNumerics(), NVector2.Zero, NVector2.One, Color.White.WithAlpha(alpah).PackedValue);
+                        drawList.AddImage(ItemImages[id], start.Floor(), (start + scaledSize).Floor(), Vector2.Zero, Vector2.One, Color.White.WithAlpha(alpah).PackedValue);
                     }
 
                     if (item.stack > 1)
@@ -274,20 +274,20 @@ namespace TerraAngel.Graphics
 
                         // for shadow 
                         pos.X -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.X += 2;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.X -= 1;
                         pos.Y -= 1;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos.Y += 2f;
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.Black.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.Black.WithAlpha(alpah).PackedValue, s);
 
                         pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
-                        drawList.AddText(font, font.FontSize, pos.ToNumerics(), Color.White.WithAlpha(alpah).PackedValue, s);
+                        drawList.AddText(font, font.FontSize, pos, Color.White.WithAlpha(alpah).PackedValue, s);
                         ImGui.PopFont();
                     }
                 }
@@ -296,16 +296,16 @@ namespace TerraAngel.Graphics
 
         public static bool WrappedSelectable(string text, float wrapWidth)
         {
-            NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+            Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
 
             ImGui.PushID(text);
             bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
             ImGui.PopID();
 
-            NVector2 min = ImGui.GetItemRectMin();
-            NVector2 spacing = ImGui.GetStyle().ItemSpacing;
+            Vector2 min = ImGui.GetItemRectMin();
+            Vector2 spacing = ImGui.GetStyle().ItemSpacing;
 
-            NVector2 pos = min + spacing;
+            Vector2 pos = min + spacing;
 
             ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
 
@@ -315,16 +315,16 @@ namespace TerraAngel.Graphics
         }
         public static bool WrappedSelectable(string id, string text, float wrapWidth)
         {
-            NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+            Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
 
             ImGui.PushID(id);
             bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
             ImGui.PopID();
 
-            NVector2 min = ImGui.GetItemRectMin();
-            NVector2 spacing = ImGui.GetStyle().ItemSpacing;
+            Vector2 min = ImGui.GetItemRectMin();
+            Vector2 spacing = ImGui.GetStyle().ItemSpacing;
 
-            NVector2 pos = min + spacing;
+            Vector2 pos = min + spacing;
 
             ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
 
@@ -333,7 +333,7 @@ namespace TerraAngel.Graphics
             return v;
         }
 
-        public static unsafe void AddText(this ImDrawListPtr drawList, ImFontPtr font, float fontSize, NVector2 pos, string text, uint color, float wrapWidth)
+        public static unsafe void AddText(this ImDrawListPtr drawList, ImFontPtr font, float fontSize, Vector2 pos, string text, uint color, float wrapWidth)
         {
             int textByteCount = Encoding.UTF8.GetByteCount(text);
             byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
@@ -346,7 +346,7 @@ namespace TerraAngel.Graphics
 
             ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, font.NativePtr, fontSize, pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
         }
-        public static unsafe void AddText(this ImDrawListPtr drawList, NVector2 pos, string text, uint color, float wrapWidth)
+        public static unsafe void AddText(this ImDrawListPtr drawList, Vector2 pos, string text, uint color, float wrapWidth)
         {
             int textByteCount = Encoding.UTF8.GetByteCount(text);
             byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
@@ -359,13 +359,13 @@ namespace TerraAngel.Graphics
 
             ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
         }
-        public unsafe static NVector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)
+        public unsafe static Vector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)
         {
             ImFontPtr font = ImGui.GetFont();
             float itemTagSpacingWidth = ImGui.CalcTextSize(" ").X / 2f;
 
-            NVector2 textSize = new NVector2(0f, font.FontSize);
-            NVector2 offset = textSize;
+            Vector2 textSize = new Vector2(0f, font.FontSize);
+            Vector2 offset = textSize;
 
             bool renderedWord = false;
 
@@ -475,24 +475,24 @@ namespace TerraAngel.Graphics
 
         public static bool WrappedSelectableWithTextBorder(string text, float wrapWidth, Color borderColor)
         {
-            NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+            Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
 
             ImGui.PushID(text);
             bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
             ImGui.PopID();
 
-            NVector2 min = ImGui.GetItemRectMin();
-            NVector2 spacing = ImGui.GetStyle().ItemSpacing;
+            Vector2 min = ImGui.GetItemRectMin();
+            Vector2 spacing = ImGui.GetStyle().ItemSpacing;
 
-            NVector2 pos = min + spacing;
+            Vector2 pos = min + spacing;
 
             ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
 
 
-            windowDrawList.AddText(pos - NVector2.UnitX, text, borderColor.PackedValue, wrapWidth);
-            windowDrawList.AddText(pos + NVector2.UnitX, text, borderColor.PackedValue, wrapWidth);
-            windowDrawList.AddText(pos - NVector2.UnitY, text, borderColor.PackedValue, wrapWidth);
-            windowDrawList.AddText(pos + NVector2.UnitY, text, borderColor.PackedValue, wrapWidth);
+            windowDrawList.AddText(pos - Vector2.UnitX, text, borderColor.PackedValue, wrapWidth);
+            windowDrawList.AddText(pos + Vector2.UnitX, text, borderColor.PackedValue, wrapWidth);
+            windowDrawList.AddText(pos - Vector2.UnitY, text, borderColor.PackedValue, wrapWidth);
+            windowDrawList.AddText(pos + Vector2.UnitY, text, borderColor.PackedValue, wrapWidth);
 
             windowDrawList.AddText(pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
             return v;
@@ -500,19 +500,19 @@ namespace TerraAngel.Graphics
         public static bool WrappedSelectableWithTextBorderWithTags(string id, List<TextSnippet> tags, float wrapWidth, Color borderColor, float alpha = 1.0f)
         {
             borderColor.A = (byte)(alpha * 255f);
-            NVector2 textSize = CalcTextSizeWithTags(tags, wrapWidth);
+            Vector2 textSize = CalcTextSizeWithTags(tags, wrapWidth);
 
             ImGui.PushID(id);
             bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
             ImGui.PopID();
 
-            NVector2 min = ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing;
+            Vector2 min = ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing;
 
             ImFontPtr font = ImGui.GetFont();
 
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
 
-            NVector2 offset = NVector2.Zero;
+            Vector2 offset = Vector2.Zero;
 
             bool renderedWord = false;
 
@@ -531,7 +531,7 @@ namespace TerraAngel.Graphics
                     if (string.IsNullOrEmpty(words[j]))
                         continue;
 
-                    NVector2 wordSize = ImGui.CalcTextSize(words[j]);
+                    Vector2 wordSize = ImGui.CalcTextSize(words[j]);
 
                     if (words[i] == "\n" && wordSize.X == 0)
                     {
@@ -553,20 +553,20 @@ namespace TerraAngel.Graphics
 
                         offset.Y += font.FontSize;
                         offset.X = 0;
-                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
                         drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
                         offset.X = wordSize.X;
                     }
                     else
                     {
                         spaceLeft -= wordSize.X;
-                        drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                        drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset - Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                        drawList.AddText(min + offset + Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
                         drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
 
                         if (tags[i] is ItemTagHandler.ItemSnippet)
@@ -587,21 +587,21 @@ namespace TerraAngel.Graphics
 
             return v;
         }
-        public static bool WrappedSelectableWithTextBorderWithTags(string id, List<TextSnippet> tags, float wrapWidth, Color borderColor, NVector2 textSize, float alpha = 1.0f)
+        public static bool WrappedSelectableWithTextBorderWithTags(string id, List<TextSnippet> tags, float wrapWidth, Color borderColor, Vector2 textSize, float alpha = 1.0f)
         {
             borderColor.A = (byte)(alpha * 255f);
             ImGui.PushID(id);
             bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
             ImGui.PopID();
 
-            NVector2 min = ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing;
+            Vector2 min = ImGui.GetItemRectMin() + ImGui.GetStyle().ItemSpacing;
 
             ImFontPtr font = ImGui.GetFont();
             float itemTagSpacingWidth = ImGui.CalcTextSize(" ").X / 2f;
 
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
 
-            NVector2 offset = NVector2.Zero;
+            Vector2 offset = Vector2.Zero;
 
             bool renderedWord = false;
 
@@ -611,7 +611,7 @@ namespace TerraAngel.Graphics
                 if (tags[i] is ItemTagHandler.ItemSnippet)
                 {
                     ItemTagHandler.ItemSnippet snippet = (ItemTagHandler.ItemSnippet)tags[i];
-                    NVector2 wordSize = new NVector2(font.FontSize);
+                    Vector2 wordSize = new Vector2(font.FontSize);
 
                     if (renderedWord && (wordSize.X + itemTagSpacingWidth * 2f) > spaceLeft)
                     {
@@ -620,7 +620,7 @@ namespace TerraAngel.Graphics
                         offset.Y += font.FontSize;
                         offset.X = itemTagSpacingWidth;
 
-                        DrawItemCentered(drawList, snippet._item, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, 18f, alpha);
+                        DrawItemCentered(drawList, snippet._item, ((min + offset + min + offset + wordSize) / 2f), font.FontSize, 18f, alpha);
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {
@@ -636,7 +636,7 @@ namespace TerraAngel.Graphics
 
                         offset.X += itemTagSpacingWidth;
 
-                        DrawItemCentered(drawList, snippet._item, ((min + offset + min + offset + wordSize) / 2f).ToXNA(), font.FontSize, 18f, alpha);
+                        DrawItemCentered(drawList, snippet._item, ((min + offset + min + offset + wordSize) / 2f), font.FontSize, 18f, alpha);
 
                         if (ImGui.IsMouseHoveringRect(min + offset, min + offset + wordSize))
                         {
@@ -662,7 +662,7 @@ namespace TerraAngel.Graphics
                         if (string.IsNullOrEmpty(words[j]))
                             continue;
 
-                        NVector2 wordSize = ImGui.CalcTextSize(words[j]);
+                        Vector2 wordSize = ImGui.CalcTextSize(words[j]);
 
                         if (words[j] == "\n" && wordSize.X == 0)
                         {
@@ -684,20 +684,20 @@ namespace TerraAngel.Graphics
 
                             offset.Y += font.FontSize;
                             offset.X = 0;
-                            drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                            drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                            drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                            drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset - Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset - Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
                             drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
                             offset.X = wordSize.X;
                         }
                         else
                         {
                             spaceLeft -= wordSize.X;
-                            drawList.AddText(min + offset - NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                            drawList.AddText(min + offset + NVector2.UnitX * 2f, borderColor.PackedValue, words[j]);
-                            drawList.AddText(min + offset - NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
-                            drawList.AddText(min + offset + NVector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset - Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + Vector2.UnitX * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset - Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
+                            drawList.AddText(min + offset + Vector2.UnitY * 2f, borderColor.PackedValue, words[j]);
                             drawList.AddText(min + offset, tagColor.PackedValue, words[j]);
                             offset.X += wordSize.X;
                             renderedWord = true;

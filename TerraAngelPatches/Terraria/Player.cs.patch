@@ -16,6 +16,14 @@
          int num = 0;
          num += bodyFrame.Y / 56;
          if (num >= Main.OffsetsPlayerHeadgear.Length)
+@@ -16346,6 +_,7 @@
+         ZoneLihzhardTemple = false;
+         int num3 = (int)base.Center.X / 16;
+         int num4 = (int)base.Center.Y / 16;
++        if (!Main.tile.InWorld(num3, num4)) return;
+         if (Main.tile[num3, num4] != null && Main.tile[num3, num4].wall == 87)
+         {
+             ZoneLihzhardTemple = true;
 @@ -17800,7 +_,7 @@
                  }
  

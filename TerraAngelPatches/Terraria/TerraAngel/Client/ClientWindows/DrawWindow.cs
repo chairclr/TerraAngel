@@ -80,7 +80,7 @@ namespace TerraAngel.Client.ClientWindows
                                         if (currentPlayer.TerraAngelUser)
                                             drawColor = esp.OtherTerraAngelUserColor;
 
-                                        drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), drawColor.PackedValue);
+                                        drawList.AddRect(minScreenPos, maxScreenPos, drawColor.PackedValue);
                                     }
                                     if (esp.PlayerTracers)
                                     {
@@ -88,7 +88,7 @@ namespace TerraAngel.Client.ClientWindows
                                         {
                                             Vector2 otherPlayerCenter = Util.WorldToScreenDynamic(currentPlayer.Center);
 
-                                            drawList.AddLine(localPlayerCenter.ToNumerics(), otherPlayerCenter.ToNumerics(), esp.TracerColor.PackedValue);
+                                            drawList.AddLine(localPlayerCenter, otherPlayerCenter, esp.TracerColor.PackedValue);
                                         }
                                     }
                                 }
@@ -105,12 +105,12 @@ namespace TerraAngel.Client.ClientWindows
                                         {
                                             Vector2 minNetScreenPos = Util.WorldToScreenDynamicExact(currentNPC.TopLeft);
                                             Vector2 maxNetScreenPos = Util.WorldToScreenDynamicExact(currentNPC.BottomRight);
-                                            drawList.AddRect(minNetScreenPos.ToNumerics(), maxNetScreenPos.ToNumerics(), esp.NPCNetOffsetColor.PackedValue);
+                                            drawList.AddRect(minNetScreenPos, maxNetScreenPos, esp.NPCNetOffsetColor.PackedValue);
 
 
                                             Vector2 minScreenPos = Util.WorldToScreenDynamicExact(currentNPC.TopLeft + currentNPC.netOffset);
                                             Vector2 maxScreenPos = Util.WorldToScreenDynamicExact(currentNPC.BottomRight + currentNPC.netOffset);
-                                            drawList.AddRect(minScreenPos.ToNumerics(), maxScreenPos.ToNumerics(), esp.NPCColor.PackedValue);
+                                            drawList.AddRect(minScreenPos, maxScreenPos, esp.NPCColor.PackedValue);
                                         }
 
                                     }
@@ -123,8 +123,8 @@ namespace TerraAngel.Client.ClientWindows
                                     Item currentItem = Main.item[i];
                                     if (esp.ItemBoxes)
                                     {
-                                        NVector2 minScreenPos = Util.WorldToScreenDynamicExact(currentItem.TopLeft).ToNumerics();
-                                        NVector2 maxScreenPos = Util.WorldToScreenDynamicExact(currentItem.BottomRight).ToNumerics();
+                                        Vector2 minScreenPos = Util.WorldToScreenDynamicExact(currentItem.TopLeft);
+                                        Vector2 maxScreenPos = Util.WorldToScreenDynamicExact(currentItem.BottomRight);
                                         // dont draw if its off screen lol
                                         if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
                                         {
@@ -191,8 +191,8 @@ namespace TerraAngel.Client.ClientWindows
                                         myRect.Height += num3 * 2;
                                     }
 
-                                    NVector2 minScreenPos = Util.WorldToScreenDynamicExact(myRect.TopLeft()).ToNumerics();
-                                    NVector2 maxScreenPos = Util.WorldToScreenDynamicExact(myRect.BottomRight()).ToNumerics();
+                                    Vector2 minScreenPos = Util.WorldToScreenDynamicExact(myRect.TopLeft());
+                                    Vector2 maxScreenPos = Util.WorldToScreenDynamicExact(myRect.BottomRight());
 
 
 
@@ -221,7 +221,7 @@ namespace TerraAngel.Client.ClientWindows
                                 Vector2 worldCoords = new Vector2(xs * 200 * 16, ys * 150 * 16);
                                 Vector2 worldCoords2 = new Vector2((xs + 1) * 200 * 16, (ys + 1) * 150 * 16);
 
-                                drawList.AddRect(Util.WorldToScreenDynamic(worldCoords).ToNumerics(), Util.WorldToScreenDynamic(worldCoords2).ToNumerics(), col.PackedValue);
+                                drawList.AddRect(Util.WorldToScreenDynamic(worldCoords), Util.WorldToScreenDynamic(worldCoords2), col.PackedValue);
                             }
                         }
                     }

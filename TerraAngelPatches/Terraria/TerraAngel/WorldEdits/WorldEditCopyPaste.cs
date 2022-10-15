@@ -43,7 +43,7 @@ namespace TerraAngel.WorldEdits
             {
                 if (CopiedSection is not null)
                 {
-                    Renderer.DrawPrimitiveMap(CopiedSection, tileMouse * 16f, Vector2.Zero, io.DisplaySize.ToXNA());
+                    Renderer.DrawPrimitiveMap(CopiedSection, tileMouse * 16f, Vector2.Zero, io.DisplaySize);
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace TerraAngel.WorldEdits
             {
                 if (CopiedSection is not null)
                 {
-                    Renderer.DrawDetailed(CopiedSection, Util.WorldToScreenWorld(tileMouse * 16f), Vector2.Zero, io.DisplaySize.ToXNA());
+                    Renderer.DrawDetailed(CopiedSection, Util.WorldToScreenWorld(tileMouse * 16f), Vector2.Zero, io.DisplaySize);
                 }
             }
         }

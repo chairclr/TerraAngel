@@ -44,7 +44,7 @@ namespace TerraAngel.Client.ClientWindows
                             ImGui.EndDisabled();
                             for (int j = i; j < Math.Min(i + 20, 255); j++)
                             {
-                                if (!Main.player[j].active) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Text] * new System.Numerics.Vector4(1f, 1f, 1f, 0.4f));
+                                if (!Main.player[j].active) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Text] * new Vector4(1f, 1f, 1f, 0.4f));
                                 if (ImGui.MenuItem($"Player \"{Main.player[j].name.Truncate(30)}\""))
                                 {
                                     selectedPlayer = j;
@@ -137,7 +137,7 @@ namespace TerraAngel.Client.ClientWindows
                     int c = 0;
 
 
-                    ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4f));
+                    ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(4f));
 
                     for (int i = 0; i < 50; i++)
                     {
@@ -173,11 +173,11 @@ namespace TerraAngel.Client.ClientWindows
 
                     ImGui.SameLine();
 
-                    NVector2 cPos = ImGui.GetCursorPos();
+                    Vector2 cPos = ImGui.GetCursorPos();
 
                     ImGui.NewLine();
 
-                    NVector2 lastCursorPos = ImGui.GetCursorPos();
+                    Vector2 lastCursorPos = ImGui.GetCursorPos();
 
                     float minx = MathF.Max(cPos.X, (ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X) - ((26f + style.ItemSpacing.X) * 3f + style.ItemSpacing.X));
                     int ti = 0;
@@ -186,7 +186,7 @@ namespace TerraAngel.Client.ClientWindows
                         if (i == 8 && !player.CanDemonHeartAccessoryBeShown()) continue;
                         if (i == 9 && !player.CanMasterModeAccessoryBeShown()) continue;
 
-                        ImGui.SetCursorPos(new NVector2(minx, sy + (26f + style.ItemSpacing.X * 2.5f) * ti));
+                        ImGui.SetCursorPos(new Vector2(minx, sy + (26f + style.ItemSpacing.X * 2.5f) * ti));
 
                         ImGuiUtil.ItemButton(player.dye[i], $"piid{i}", new Vector2(26f), showToolTip);
                         ImGui.SameLine();

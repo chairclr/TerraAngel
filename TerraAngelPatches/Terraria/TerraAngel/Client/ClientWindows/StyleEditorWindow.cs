@@ -15,7 +15,7 @@ namespace TerraAngel.Client.ClientWindows
         public override void Draw(ImGuiIOPtr io)
         {
             ImGuiStylePtr style = ImGui.GetStyle();
-            RangeAccessor<System.Numerics.Vector4> colors = style.Colors;
+            RangeAccessor<Vector4> colors = style.Colors;
 
             ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 

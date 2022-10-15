@@ -4,29 +4,14 @@ namespace TerraAngel.Client.ClientWindows
 {
     public class StatsWindow : ClientWindow
     {
-
         public override Keys ToggleKey => Keys.None;
 
         public override bool IsToggleable => false;
-
-        public override bool DefaultEnabled => true;
 
         public override bool IsEnabled { get => ClientConfig.Settings.ShowStatsWindow; }
 
         public override string Title => "Stat Window";
         public override bool IsPartOfGlobalUI => false;
-
-        private static bool HooksGenerated = false;
-
-        public override void Init()
-        {
-            if (!HooksGenerated)
-            {
-                HooksGenerated = true;
-                // HookUtil.HookGen<Terraria.UI.NetDiagnosticsUI>("CountSentMessage", CountSentMessageHook);
-                // HookUtil.HookGen<Terraria.UI.NetDiagnosticsUI>("CountReadMessage", CountReadMessageHook);
-            }
-        }
 
         private static int PacketsUpLastSecond = 0;
         private static int BytesUpLastSecond = 0;
@@ -40,20 +25,6 @@ namespace TerraAngel.Client.ClientWindows
         private static int PacketsDownLastSecondCounting = 0;
         private static int BytesDownLastSecondCounting = 0;
 
-        //public static void CountSentMessageHook(Action<Terraria.UI.NetDiagnosticsUI, int, int> orig, Terraria.UI.NetDiagnosticsUI self, int messageId, int messageLength)
-        //{
-        //    orig(self, messageId, messageLength);
-        //
-        //    PacketsUpLastSecondCounting++;
-        //    BytesUpLastSecondCounting += messageLength;
-        //}
-        //private static void CountReadMessageHook(Action<Terraria.UI.NetDiagnosticsUI, int, int> orig, Terraria.UI.NetDiagnosticsUI self, int messageId, int messageLength)
-        //{
-        //    orig(self, messageId, messageLength);
-        //
-        //    PacketsDownLastSecondCounting++;
-        //    BytesDownLastSecondCounting += messageLength;
-        //}
         public static void CountSentMessage(int len)
         {
             PacketsUpLastSecondCounting++;
@@ -63,9 +34,7 @@ namespace TerraAngel.Client.ClientWindows
         {
             PacketsDownLastSecondCounting++;
             BytesDownLastSecondCounting += len;
-
         }
-
 
         private bool moveStatWindow = false;
 
@@ -81,8 +50,8 @@ namespace TerraAngel.Client.ClientWindows
                 flags |= ImGuiWindowFlags.NoInputs;
             else
             {
-                ImGui.PushStyleColor(ImGuiCol.FrameBg, new System.Numerics.Vector4(0.3f, 0.5f, 0.3f, 0.8f));
-                ImGui.PushStyleColor(ImGuiCol.WindowBg, new System.Numerics.Vector4(0.3f, 0.5f, 0.3f, 0.8f));
+                ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0.3f, 0.5f, 0.3f, 0.8f));
+                ImGui.PushStyleColor(ImGuiCol.WindowBg, new Vector4(0.3f, 0.5f, 0.3f, 0.8f));
             }
             if (decreaseTransperency)
             {
@@ -92,7 +61,7 @@ namespace TerraAngel.Client.ClientWindows
 
             bool isInMultiplayerGame = Main.netMode == 1 && Netplay.Connection.State != 0;
 
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(0, io.DisplaySize.Y / 2.2f - 32f), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowPos(new Vector2(0, io.DisplaySize.Y / 2.2f - 32f), ImGuiCond.FirstUseEver);
             ImGui.Begin("##StatWindow", flags);
             ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 

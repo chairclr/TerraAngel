@@ -108,7 +108,7 @@ namespace TerraAngel.Client.ClientWindows
 
             ImGuiStylePtr style = ImGui.GetStyle();
 
-            RangeAccessor<System.Numerics.Vector4> colors = style.Colors;
+            RangeAccessor<Vector4> colors = style.Colors;
 
             Color colorWithAlpha(ImGuiCol col, float a)
             {
@@ -124,8 +124,8 @@ namespace TerraAngel.Client.ClientWindows
             Color scrollGrabActiveColor = colorWithAlpha(ImGuiCol.ScrollbarGrabActive, transperency);
             Color scrollGrabHoveredColor = colorWithAlpha(ImGuiCol.ScrollbarGrabHovered, transperency);
 
-            NVector2 windowSize = new NVector2(io.DisplaySize.X - 690, 240);
-            NVector2 windowPosition = new NVector2(88f, io.DisplaySize.Y - windowSize.Y);
+            Vector2 windowSize = new Vector2(io.DisplaySize.X - 690, 240);
+            Vector2 windowPosition = new Vector2(88f, io.DisplaySize.Y - windowSize.Y);
 
             ImGui.SetNextWindowPos(windowPosition, ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
@@ -155,7 +155,7 @@ namespace TerraAngel.Client.ClientWindows
             {
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 1f);
                 ImGui.TextUnformatted("Chat");
-                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(0f, 1f));
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0f, 1f));
                 if (ImGui.Button($"{(chatLocked ? Icon.Lock : Icon.Unlock)}")) chatLocked = !chatLocked;
                 if (ImGui.IsItemHovered())
                 {
@@ -184,12 +184,12 @@ namespace TerraAngel.Client.ClientWindows
 
             float footerHeight = style.ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
 
-            if (ImGui.BeginChild("##ChatScrolling", new NVector2(0, -footerHeight), false, IsChatting ? ImGuiWindowFlags.None : (ImGuiWindowFlags.NoInputs)))
+            if (ImGui.BeginChild("##ChatScrolling", new Vector2(0, -footerHeight), false, IsChatting ? ImGuiWindowFlags.None : (ImGuiWindowFlags.NoInputs)))
             {
                 ImDrawListPtr drawList = ImGui.GetWindowDrawList();
-                drawList.PushClipRect(drawList.GetClipRectMin(), drawList.GetClipRectMax() + new NVector2(0, 5f));
-                NVector2 tip = style.ItemSpacing;
-                style.ItemSpacing = new NVector2(4f, 1f);
+                drawList.PushClipRect(drawList.GetClipRectMin(), drawList.GetClipRectMax() + new Vector2(0, 5f));
+                Vector2 tip = style.ItemSpacing;
+                style.ItemSpacing = new Vector2(4f, 1f);
                 float wrapWidth = ImGui.GetContentRegionAvail().X;
 
                 lock (ChatLock)
@@ -200,7 +200,7 @@ namespace TerraAngel.Client.ClientWindows
 
                         if (item.CountAbove > 0) item.TextSnippets[item.TextSnippets.Count - 1].Text = $" ({item.CountAbove})";
 
-                        NVector2 textSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
+                        Vector2 textSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
 
                         bool showMessageFade = false;
                         if (item.TimeMessageHasBeenVisible < ClientConfig.Settings.framesForMessageToBeVisible + 60)

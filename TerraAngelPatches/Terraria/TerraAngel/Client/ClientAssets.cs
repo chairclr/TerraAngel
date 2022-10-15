@@ -50,28 +50,28 @@ namespace TerraAngel.Client
         public unsafe static ImFontPtr LoadFont(string path, float size)
         {
             ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
-            ImFontPtr font = LoadFont(path, size, false, config.GlyphOffset.ToXNA(), config.GlyphExtraSpacing.ToXNA(), config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, 0);
+            ImFontPtr font = LoadFont(path, size, false, config.GlyphOffset, config.GlyphExtraSpacing, config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, 0);
             config.Destroy();
             return font;
         }
         public unsafe static ImFontPtr LoadFont(string path, float size, params ushort[] glpyhRanges)
         {
             ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
-            ImFontPtr font = LoadFont(path, size, false, config.GlyphOffset.ToXNA(), config.GlyphExtraSpacing.ToXNA(), config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, glpyhRanges);
+            ImFontPtr font = LoadFont(path, size, false, config.GlyphOffset, config.GlyphExtraSpacing, config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, glpyhRanges);
             config.Destroy();
             return font;
         }
         public unsafe static ImFontPtr LoadFont(string path, float size, bool merge, params ushort[] glpyhRanges)
         {
             ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
-            ImFontPtr font = LoadFont(path, size, merge, config.GlyphOffset.ToXNA(), config.GlyphExtraSpacing.ToXNA(), config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, glpyhRanges);
+            ImFontPtr font = LoadFont(path, size, merge, config.GlyphOffset, config.GlyphExtraSpacing, config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, glpyhRanges);
             config.Destroy();
             return font;
         }
         public unsafe static ImFontPtr LoadFont(string path, float size, bool merge, Vector2 glyphOffset, params ushort[] glpyhRanges)
         {
             ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
-            ImFontPtr font = LoadFont(path, size, merge, glyphOffset, config.GlyphExtraSpacing.ToXNA(), config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, glpyhRanges);
+            ImFontPtr font = LoadFont(path, size, merge, glyphOffset, config.GlyphExtraSpacing, config.GlyphMinAdvanceX, config.GlyphMaxAdvanceX, config.OversampleH, config.OversampleV, config.PixelSnapH, config.RasterizerMultiply, glpyhRanges);
             config.Destroy();
             return font;
         }
@@ -110,8 +110,8 @@ namespace TerraAngel.Client
                     ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
 
                     config.MergeMode = merge;
-                    config.GlyphOffset = glyphOffset.ToNumerics();
-                    config.GlyphExtraSpacing = glyphExtraSpacing.ToNumerics();
+                    config.GlyphOffset = glyphOffset;
+                    config.GlyphExtraSpacing = glyphExtraSpacing;
                     config.GlyphMinAdvanceX = minAdvanceX;
                     config.GlyphMaxAdvanceX = maxAdvanceX;
                     config.OversampleH = overSampleH;
@@ -129,8 +129,8 @@ namespace TerraAngel.Client
                 ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
 
                 config.MergeMode = merge;
-                config.GlyphOffset = glyphOffset.ToNumerics();
-                config.GlyphExtraSpacing = glyphExtraSpacing.ToNumerics();
+                config.GlyphOffset = glyphOffset;
+                config.GlyphExtraSpacing = glyphExtraSpacing;
                 config.GlyphMinAdvanceX = minAdvanceX;
                 config.GlyphMaxAdvanceX = maxAdvanceX;
                 config.OversampleH = overSampleH;

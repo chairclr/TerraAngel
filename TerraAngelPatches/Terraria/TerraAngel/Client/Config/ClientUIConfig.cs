@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using DiscordRPC.Logging;
 using Newtonsoft.Json;
 
 
@@ -15,7 +16,7 @@ namespace TerraAngel.Client.Config
         private ImGuiStylePtr style => ImGui.GetStyle();
 
         [JsonIgnore]
-        public Dictionary<string, NVector4> StyleColors
+        public Dictionary<string, Vector4> StyleColors
         {
             get
             {
@@ -24,7 +25,7 @@ namespace TerraAngel.Client.Config
                 ImGuiStylePtr styleCache = style;
 
 
-                Dictionary<string, NVector4> colors = new Dictionary<string, NVector4>(styleCache.Colors.Count);
+                Dictionary<string, Vector4> colors = new Dictionary<string, Vector4>(styleCache.Colors.Count);
 
                 for (int i = 0; i < styleCache.Colors.Count; i++)
                 {
@@ -44,7 +45,7 @@ namespace TerraAngel.Client.Config
 
                 for (int i = 0; i < styleCache.Colors.Count; i++)
                 {
-                    if (value.TryGetValue(ColorNames[i], out NVector4 v))
+                    if (value.TryGetValue(ColorNames[i], out Vector4 v))
                     {
                         styleCache.Colors[i] = v;
                     }
@@ -53,9 +54,9 @@ namespace TerraAngel.Client.Config
         }
 
         delegate ref float FuncRefFloat();
-        delegate ref NVector2 FuncRefNVector2();
-        delegate ref NVector3 FuncRefNVector3();
-        delegate ref NVector4 FuncRefNVector4();
+        delegate ref Vector2 FuncRefVector2();
+        delegate ref Vector3 FuncRefVector3();
+        delegate ref Vector4 FuncRefVector4();
         delegate ref bool FuncRefBool();
 
         [JsonIgnore]
@@ -83,8 +84,8 @@ namespace TerraAngel.Client.Config
                     Type t = property.PropertyType;
 
                     if (t != typeof(float).MakeByRefType()
-                        && t != typeof(NVector2).MakeByRefType()
-                        && t != typeof(NVector4).MakeByRefType()
+                        && t != typeof(Vector2).MakeByRefType()
+                        && t != typeof(Vector4).MakeByRefType()
                         && t != typeof(bool).MakeByRefType())
                         continue;
 
@@ -101,6 +102,9 @@ namespace TerraAngel.Client.Config
                     return;
 
                 ImGuiStylePtr styleCache = style;
+
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Converters.Add(new ClientConfig.VectorConverter());
 
                 foreach (KeyValuePair<string, object> kvp in value)
                 {
@@ -122,17 +126,17 @@ namespace TerraAngel.Client.Config
                                 v = (float)kvp.Value;
                             getMethod.CreateDelegate<FuncRefFloat>(styleCache)() = v;
                         }
-                        else if (t == typeof(NVector2).MakeByRefType())
+                        else if (t == typeof(Vector2).MakeByRefType())
                         {
-                            getMethod.CreateDelegate<FuncRefNVector2>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<NVector2>();
+                            getMethod.CreateDelegate<FuncRefVector2>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<Vector2>(serializer);
                         }
-                        else if (t == typeof(NVector3).MakeByRefType())
+                        else if (t == typeof(Vector3).MakeByRefType())
                         {
-                            getMethod.CreateDelegate<FuncRefNVector3>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<NVector3>();
+                            getMethod.CreateDelegate<FuncRefVector3>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<Vector3>(serializer);
                         }
-                        else if (t == typeof(NVector4).MakeByRefType())
+                        else if (t == typeof(Vector4).MakeByRefType())
                         {
-                            getMethod.CreateDelegate<FuncRefNVector4>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<NVector4>();
+                            getMethod.CreateDelegate<FuncRefVector4>(styleCache)() = ((Newtonsoft.Json.Linq.JObject)kvp.Value).ToObject<Vector4>(serializer);
                         }
                         else if (t == typeof(bool).MakeByRefType())
                         {
@@ -155,7 +159,7 @@ namespace TerraAngel.Client.Config
             styleData = StyleData;
         }
 
-        public Dictionary<string, NVector4> styleColors;
+        public Dictionary<string, Vector4> styleColors;
         public Dictionary<string, object> styleData;
 
         public ClientUIConfig()

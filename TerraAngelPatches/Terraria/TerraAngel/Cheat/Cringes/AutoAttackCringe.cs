@@ -31,11 +31,11 @@
                     {
                         if (Main.mapFullscreen)
                         {
-                            drawList.AddCircleFilled(Util.WorldToScreenFullscreenMap(Main.LocalPlayer.Center).ToNumerics(), Util.WorldToScreenFullscreenMap(Main.LocalPlayer.Center).Distance(Util.WorldToScreenFullscreenMap(Main.LocalPlayer.Center + new Vector2(MinAttackRange, 0f))), Color.Red.WithAlpha(0.5f).PackedValue);
+                            drawList.AddCircleFilled(Util.WorldToScreenFullscreenMap(Main.LocalPlayer.Center), Util.WorldToScreenFullscreenMap(Main.LocalPlayer.Center).Distance(Util.WorldToScreenFullscreenMap(Main.LocalPlayer.Center + new Vector2(MinAttackRange, 0f))), Color.Red.WithAlpha(0.5f).PackedValue);
                         }
                         else
                         {
-                            drawList.AddCircleFilled(Util.WorldToScreenWorld(Main.LocalPlayer.Center).ToNumerics(), MinAttackRange, Color.Red.WithAlpha(0.5f).PackedValue);
+                            drawList.AddCircleFilled(Util.WorldToScreenWorld(Main.LocalPlayer.Center), MinAttackRange, Color.Red.WithAlpha(0.5f).PackedValue);
                         }
                     }
 
@@ -113,7 +113,7 @@
                         }
                     }
                 }
-                if (!Main.mapFullscreen && LockedOnToTarget) drawList.AddCircleFilled(Util.WorldToScreenWorld(TargetPoint).ToNumerics(), 5f, Color.Red.PackedValue);
+                if (!Main.mapFullscreen && LockedOnToTarget) drawList.AddCircleFilled(Util.WorldToScreenWorld(TargetPoint), 5f, Color.Red.PackedValue);
             }
         }
 

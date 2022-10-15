@@ -155,7 +155,7 @@ namespace TerraAngel.Cheat.Cringes
             if (ray1.Distance <= ray2.Distance) ray = ray1;
             else ray = ray2;
 
-            drawList.AddLine(Util.WorldToScreenWorld(projectile.Center).ToNumerics(), Util.WorldToScreenWorld(projectile.Center + ray.Direction * ray.Distance).ToNumerics(), projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue);
+            drawList.AddLine(Util.WorldToScreenWorld(projectile.Center), Util.WorldToScreenWorld(projectile.Center + ray.Direction * ray.Distance), projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue);
         }
 
         public void StraightBouncingPrediction(Projectile projectile, ImDrawListPtr drawList)
@@ -187,8 +187,8 @@ namespace TerraAngel.Cheat.Cringes
                     if (f)
                     {
 
-                        NVector2 bounceLastScreenPos = Util.WorldToScreenWorld(startPosition + (projectile.Size / 2f)).ToNumerics();
-                        NVector2 bounceCurrentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f)).ToNumerics();
+                        Vector2 bounceLastScreenPos = Util.WorldToScreenWorld(startPosition + (projectile.Size / 2f));
+                        Vector2 bounceCurrentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f));
 
                         drawList.AddLine(bounceLastScreenPos, bounceCurrentScreenPos, col);
 
@@ -221,8 +221,8 @@ namespace TerraAngel.Cheat.Cringes
 
                     if (f)
                     {
-                        NVector2 bounceLastScreenPos = Util.WorldToScreenWorld(startPosition + (projectile.Size / 2f)).ToNumerics();
-                        NVector2 bounceCurrentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f)).ToNumerics();
+                        Vector2 bounceLastScreenPos = Util.WorldToScreenWorld(startPosition + (projectile.Size / 2f));
+                        Vector2 bounceCurrentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f));
 
                         drawList.AddLine(bounceLastScreenPos, bounceCurrentScreenPos, col);
 
@@ -255,8 +255,8 @@ namespace TerraAngel.Cheat.Cringes
 
             if (!flag)
             {
-                NVector2 lastScreenPos = Util.WorldToScreenWorld(startPosition + (projectile.Size / 2f)).ToNumerics();
-                NVector2 currentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f)).ToNumerics();
+                Vector2 lastScreenPos = Util.WorldToScreenWorld(startPosition + (projectile.Size / 2f));
+                Vector2 currentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f));
 
                 drawList.AddLine(lastScreenPos, currentScreenPos, col);
             }
@@ -274,7 +274,7 @@ namespace TerraAngel.Cheat.Cringes
             if (someVelocityCap > 16) someVelocityCap = 16;
 
             uint col = projectile.hostile ? HostileDrawColor.PackedValue : FriendlyDrawColor.PackedValue;
-            NVector2 displaySize = ImGui.GetIO().DisplaySize;
+            Vector2 displaySize = ImGui.GetIO().DisplaySize;
             int stepCount = Math.Min(projectile.timeLeft, MaxStepCount);
             for (int i = 0; i < stepCount; i++)
             {
@@ -391,8 +391,8 @@ namespace TerraAngel.Cheat.Cringes
                     flag = true;
 
                 position += velocity;
-                NVector2 lastScreenPos = Util.WorldToScreenWorld(lastPosition + (projectile.Size / 2f)).ToNumerics();
-                NVector2 currentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f)).ToNumerics();
+                Vector2 lastScreenPos = Util.WorldToScreenWorld(lastPosition + (projectile.Size / 2f));
+                Vector2 currentScreenPos = Util.WorldToScreenWorld(position + (projectile.Size / 2f));
 
                 // dont draw off screen W
                 if (Util.IsRectOnScreen(lastScreenPos, currentScreenPos, displaySize))

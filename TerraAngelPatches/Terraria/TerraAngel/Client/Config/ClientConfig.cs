@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis.RulesetToEditorconfig;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using TerraAngel.UI;
@@ -300,6 +301,39 @@ namespace TerraAngel.Client.Config
             }
         }
 
+
+        public class VectorConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(Vector2) || objectType == typeof(Vector3) || objectType == typeof(Vector4);
+            }
+
+            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+            {
+                if (objectType == typeof(Vector2)) return serializer.Deserialize<System.Numerics.Vector2>(reader).ToXNA();
+                if (objectType == typeof(Vector3)) return serializer.Deserialize<System.Numerics.Vector3>(reader).ToXNA();
+                if (objectType == typeof(Vector4)) return serializer.Deserialize<System.Numerics.Vector4>(reader).ToXNA();
+                return existingValue;
+            }
+
+            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+            {
+                if (value is Vector2 vec2) serializer.Serialize(writer, vec2.ToNumerics());
+                if (value is Vector3 vec3) serializer.Serialize(writer, vec3.ToNumerics());
+                if (value is Vector4 vec4) serializer.Serialize(writer, vec4.ToNumerics());
+            }
+        }
+
+        public static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings()
+        {
+            Converters = new List<JsonConverter>()
+            {
+                new VectorConverter(),
+            },
+            Formatting = Formatting.Indented,
+        };
+
         private static object FileLock = new object();
         public static void WriteToFile()
         {
@@ -310,7 +344,7 @@ namespace TerraAngel.Client.Config
                 if (Settings.PreserveConsoleHistory)
                     Settings.ConsoleHistorySave = Settings.ConsoleHistory;
 
-                string s = JsonConvert.SerializeObject(Settings, new JsonSerializerSettings() { Formatting = Formatting.Indented });
+                string s = JsonConvert.SerializeObject(Settings, SerializerSettings);
                 Util.CreateParentDirectory(ClientLoader.ConfigPath);
                 using (FileStream fs = new FileStream(ClientLoader.ConfigPath, FileMode.OpenOrCreate))
                 {
@@ -340,7 +374,7 @@ namespace TerraAngel.Client.Config
                     s = Encoding.UTF8.GetString(buffer);
                     fs.Close();
                 }
-                Settings = JsonConvert.DeserializeObject<Config>(s) ?? new Config();
+                Settings = JsonConvert.DeserializeObject<Config>(s, SerializerSettings) ?? new Config();
 
                 if (Settings.PreserveConsoleHistory && Settings.ConsoleHistorySave is not null)
                     Settings.ConsoleHistory = Settings.ConsoleHistorySave;
@@ -350,9 +384,9 @@ namespace TerraAngel.Client.Config
         }
 
         delegate ref float FuncRefFloat();
-        delegate ref NVector2 FuncRefNVector2();
-        delegate ref NVector3 FuncRefNVector3();
-        delegate ref NVector4 FuncRefNVector4();
+        delegate ref Vector2 FuncRefVector2();
+        delegate ref Vector3 FuncRefVector3();
+        delegate ref Vector4 FuncRefVector4();
         delegate ref bool FuncRefBool();
         public static void SetDefaultCringeValues(Cringe cringe)
         {
@@ -404,17 +438,17 @@ namespace TerraAngel.Client.Config
                     {
                         getMethod.CreateDelegate<FuncRefFloat>(cringe)() = (float)obj;
                     }
-                    else if (t == typeof(NVector2).MakeByRefType())
+                    else if (t == typeof(Vector2).MakeByRefType())
                     {
-                        getMethod.CreateDelegate<FuncRefNVector2>(cringe)() = (NVector2)obj;
+                        getMethod.CreateDelegate<FuncRefVector2>(cringe)() = (Vector2)obj;
                     }
-                    else if (t == typeof(NVector3).MakeByRefType())
+                    else if (t == typeof(Vector3).MakeByRefType())
                     {
-                        getMethod.CreateDelegate<FuncRefNVector3>(cringe)() = (NVector3)obj;
+                        getMethod.CreateDelegate<FuncRefVector3>(cringe)() = (Vector3)obj;
                     }
-                    else if (t == typeof(NVector4).MakeByRefType())
+                    else if (t == typeof(Vector4).MakeByRefType())
                     {
-                        getMethod.CreateDelegate<FuncRefNVector4>(cringe)() = (NVector4)obj;
+                        getMethod.CreateDelegate<FuncRefVector4>(cringe)() = (Vector4)obj;
                     }
                     else if (t == typeof(bool).MakeByRefType())
                     {

@@ -199,10 +199,10 @@ namespace TerraAngel.Graphics
             io.KeyAlt = (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt)) && _game.IsActive;
             io.KeySuper = (keyboard.IsKeyDown(Keys.LeftWindows) || keyboard.IsKeyDown(Keys.RightWindows)) && _game.IsActive;
 
-            io.DisplaySize = new NVector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-            io.DisplayFramebufferScale = new NVector2(1f, 1f);
+            io.DisplaySize = new Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+            io.DisplayFramebufferScale = new Vector2(1f, 1f);
 
-            io.MousePos = new NVector2(mouse.X, mouse.Y);
+            io.MousePos = new Vector2(mouse.X, mouse.Y);
 
             io.MouseDown[0] = mouse.LeftButton == ButtonState.Pressed && _game.IsActive;
             io.MouseDown[1] = mouse.RightButton == ButtonState.Pressed && _game.IsActive;

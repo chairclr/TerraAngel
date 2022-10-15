@@ -74,11 +74,11 @@ namespace TerraAngel.Utility
         }
 
 
-        public static bool IsRectOnScreen(NVector2 min, NVector2 max, NVector2 displaySize)
+        public static bool IsRectOnScreen(Vector2 min, Vector2 max, Vector2 displaySize)
         {
             return (min.X > 0 || max.X > 0) && (min.X < displaySize.X || max.X < displaySize.X) && (min.Y > 0 || max.Y > 0) && (min.Y < displaySize.Y || max.X < displaySize.Y);
         }
-        public static bool IsMouseHoveringRect(NVector2 min, NVector2 max)
+        public static bool IsMouseHoveringRect(Vector2 min, Vector2 max)
         {
             Vector2 mousePos = InputSystem.MousePosition;
             return  mousePos.X >= min.X &&
@@ -358,7 +358,6 @@ namespace TerraAngel.Utility
         {
             return new System.Numerics.Vector3(v.X, v.Y, v.Z);
         }
-
         public static Vector2 Round(this Vector2 vec)
         {
             return new Vector2(MathF.Round(vec.X), MathF.Round(vec.Y));

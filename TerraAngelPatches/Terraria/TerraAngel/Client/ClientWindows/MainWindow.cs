@@ -19,9 +19,9 @@ namespace TerraAngel.Client.ClientWindows
         {
             ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
-            NVector2 windowSize = io.DisplaySize / new NVector2(3f, 2f);
+            Vector2 windowSize = io.DisplaySize / new Vector2(3f, 2f);
 
-            ImGui.SetNextWindowPos(new NVector2(0, io.DisplaySize.Y - windowSize.Y), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowPos(new Vector2(0, io.DisplaySize.Y - windowSize.Y), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
 
             ImGui.Begin("Main window");

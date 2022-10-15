@@ -22,11 +22,6 @@ namespace TerraAngel.Utility
             X = (int)v.X;
             Y = (int)v.Y;
         }
-        public Vector2i(NVector2 v)
-        {
-            X = (int)v.X;
-            Y = (int)v.Y;
-        }
         public Vector2i(Point v)
         {
             X = v.X;
@@ -58,19 +53,11 @@ namespace TerraAngel.Utility
         {
             return new Vector2(v.X, v.Y);
         }
-        public static implicit operator NVector2(Vector2i v)
-        {
-            return new NVector2(v.X, v.Y);
-        }
         public static implicit operator Vector2i(Point v)
         {
             return new Vector2i(v);
         }
         public static implicit operator Vector2i(Vector2 v)
-        {
-            return new Vector2i(v);
-        }
-        public static implicit operator Vector2i(NVector2 v)
         {
             return new Vector2i(v);
         }
@@ -143,23 +130,6 @@ namespace TerraAngel.Utility
             return new Vector2i(lhs.X / (int)rhs.X, lhs.Y / (int)rhs.Y);
         }
 
-        public static Vector2i operator +(Vector2i lhs, NVector2 rhs)
-        {
-            return new Vector2i(lhs.X + (int)rhs.X, lhs.Y + (int)rhs.Y);
-        }
-        public static Vector2i operator -(Vector2i lhs, NVector2 rhs)
-        {
-            return new Vector2i(lhs.X - (int)rhs.X, lhs.Y - (int)rhs.Y);
-        }
-        public static Vector2i operator *(Vector2i lhs, NVector2 rhs)
-        {
-            return new Vector2i(lhs.X * (int)rhs.X, lhs.Y * (int)rhs.Y);
-        }
-        public static Vector2i operator /(Vector2i lhs, NVector2 rhs)
-        {
-            return new Vector2i(lhs.X / (int)rhs.X, lhs.Y / (int)rhs.Y);
-        }
-
         public static Vector2 operator +(Vector2 lhs, Vector2i rhs)
         {
             return new Vector2i((int)lhs.X + rhs.X, (int)lhs.Y + rhs.Y);
@@ -173,23 +143,6 @@ namespace TerraAngel.Utility
             return new Vector2i((int)lhs.X * rhs.X, (int)lhs.Y * rhs.Y);
         }
         public static Vector2 operator /(Vector2 lhs, Vector2i rhs)
-        {
-            return new Vector2i((int)lhs.X / rhs.X, (int)lhs.Y / rhs.Y);
-        }
-
-        public static NVector2 operator +(NVector2 lhs, Vector2i rhs)
-        {
-            return new Vector2i((int)lhs.X + rhs.X, (int)lhs.Y + rhs.Y);
-        }
-        public static NVector2 operator -(NVector2 lhs, Vector2i rhs)
-        {
-            return new Vector2i((int)lhs.X - rhs.X, (int)lhs.Y - rhs.Y);
-        }
-        public static NVector2 operator *(NVector2 lhs, Vector2i rhs)
-        {
-            return new Vector2i((int)lhs.X * rhs.X, (int)lhs.Y * rhs.Y);
-        }
-        public static NVector2 operator /(NVector2 lhs, Vector2i rhs)
         {
             return new Vector2i((int)lhs.X / rhs.X, (int)lhs.Y / rhs.Y);
         }

@@ -246,7 +246,7 @@ namespace TerraAngel.Client.ClientWindows
                         {
                             if (ImGui.CollapsingHeader("Network Text"))
                             {
-                                ImGui.InputTextMultiline("##NETstr", ref networkText, short.MaxValue - 100, ImGui.GetContentRegionAvail() / new NVector2(2.5f, 3.5f));
+                                ImGui.InputTextMultiline("##NETstr", ref networkText, short.MaxValue - 100, ImGui.GetContentRegionAvail() / new Vector2(2.5f, 3.5f));
                             }
                             ImGui.Text("Number 1"); ImGui.SameLine(); ImGui.InputInt("##NUM1", ref number1);
                             ImGui.Text("Number 2"); ImGui.SameLine(); ImGui.InputFloat("##NUM2", ref number2);
@@ -285,7 +285,7 @@ namespace TerraAngel.Client.ClientWindows
                         Actions.Add(new NetMessageAction((MessageActions)selectedAction));
                     }
                     ImGui.SameLine(); ImGui.Combo("##ItemActionsAdd", ref selectedAction, actionNames, actionNames.Length);
-                    if (ImGui.BeginChild("RawMessageScrolling", NVector2.Zero, false, ImGuiWindowFlags.HorizontalScrollbar))
+                    if (ImGui.BeginChild("RawMessageScrolling", Vector2.Zero, false, ImGuiWindowFlags.HorizontalScrollbar))
                     {
                         int size = 0;
                         ImGui.NewLine();

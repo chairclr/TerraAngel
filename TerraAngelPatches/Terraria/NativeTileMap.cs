@@ -68,7 +68,6 @@ namespace Terraria
             Unsafe.InitBlockUnaligned(TileHeapPtr, 0, (uint)HeapSize);
         }
 
-        public bool InWorld(NVector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
         public bool InWorld(Vector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
         public bool InWorld(Point position) => InWorld(position.X, position.Y);
         public bool InWorld(Vector2i position) => InWorld(position.X, position.Y);

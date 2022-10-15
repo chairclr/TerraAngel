@@ -63,8 +63,8 @@ namespace TerraAngel.Client.ClientWindows
 
             ImGuiStylePtr style = ImGui.GetStyle();
 
-            NVector2 windowSize = io.DisplaySize / new NVector2(2.8f, 1.9f);
-            ImGui.SetNextWindowPos(new NVector2(io.DisplaySize.X - windowSize.X, io.DisplaySize.Y - windowSize.Y), ImGuiCond.FirstUseEver);
+            Vector2 windowSize = io.DisplaySize / new Vector2(2.8f, 1.9f);
+            ImGui.SetNextWindowPos(new Vector2(io.DisplaySize.X - windowSize.X, io.DisplaySize.Y - windowSize.Y), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
 
             ImGui.SetNextWindowBgAlpha(0.85f);
@@ -76,9 +76,9 @@ namespace TerraAngel.Client.ClientWindows
             }
 
             float footerHeight = style.ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
-            ImGui.BeginChild("ConsoleScrollingRegion", new NVector2(0, -footerHeight), false, ImGuiWindowFlags.HorizontalScrollbar);
+            ImGui.BeginChild("ConsoleScrollingRegion", new Vector2(0, -footerHeight), false, ImGuiWindowFlags.HorizontalScrollbar);
 
-            ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4, 1));
+            ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(4, 1));
             float wrapWidth = ImGui.GetContentRegionAvail().X;
             lock (ConsoleLock)
             {
@@ -90,7 +90,7 @@ namespace TerraAngel.Client.ClientWindows
                     if (item.countAbove > 0) text = $"{item.text} ({item.countAbove})";
                     else text = item.text;
 
-                    NVector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+                    Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
                     if (ImGui.IsRectVisible(textSize))
                     {
                         if (ImGuiUtil.WrappedSelectable($"coni{i}", text, wrapWidth))
@@ -116,15 +116,15 @@ namespace TerraAngel.Client.ClientWindows
 
 
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
-            NVector2 minInput;
-            NVector2 maxInput;
+            Vector2 minInput;
+            Vector2 maxInput;
             consoleFocus = false;
             unsafe
             {
                 lock (CandidateLock)
                 {
                     // wip code for multiline W
-                    //if (ImGui.InputTextMultiline("##consoleInput", ref consoleInput, 2048, new NVector2(ImGui.GetWindowWidth() - style.ItemSpacing.X * 2f, MathF.Min(ImGui.CalcTextSize(consoleInput + " ").Y, ImGui.CalcTextSize(" ").Y * 6f) + style.ItemSpacing.Y * 2f), ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CtrlEnterForNewLine | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
+                    //if (ImGui.InputTextMultiline("##consoleInput", ref consoleInput, 2048, new Vector2(ImGui.GetWindowWidth() - style.ItemSpacing.X * 2f, MathF.Min(ImGui.CalcTextSize(consoleInput + " ").Y, ImGui.CalcTextSize(" ").Y * 6f) + style.ItemSpacing.Y * 2f), ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CtrlEnterForNewLine | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
                     if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
                     {
                         if (consoleInput.Length > 0)
@@ -445,14 +445,14 @@ namespace TerraAngel.Client.ClientWindows
 
         private bool cadidatesFlipped = false;
         private bool clickedScriptCandidate = false;
-        private void RenderScriptCandidates(ImGuiIOPtr io, NVector2 textboxMin, NVector2 textboxMax)
+        private void RenderScriptCandidates(ImGuiIOPtr io, Vector2 textboxMin, Vector2 textboxMax)
         {
             ImGuiStylePtr style = ImGui.GetStyle();
 
             currentCompletionCandidate = Utils.Clamp(currentCompletionCandidate, 0, completionCandidates.Count - 1);
             completionCenterView = Utils.Clamp(completionCenterView, 0, completionCandidates.Count - 1);
-            NVector2 completionOrigin = NVector2.Zero;
-            NVector2 completionSize = NVector2.Zero;
+            Vector2 completionOrigin = Vector2.Zero;
+            Vector2 completionSize = Vector2.Zero;
 
             if (completionCandidates.Any())
             {
@@ -552,14 +552,14 @@ namespace TerraAngel.Client.ClientWindows
                 for (int i = startCandidate; i < endCandidate; i++)
                 {
                     string s = GetCandidateText(i);
-                    NVector2 textSize = ImGui.CalcTextSize(s);
+                    Vector2 textSize = ImGui.CalcTextSize(s);
                     if (textSize.X > maxSize)
                         maxSize = textSize.X;
                     drawHeight += textSize.Y + style.ItemSpacing.Y;
                 }
                 maxSize += 18f + style.ItemSpacing.X * 3.75f;
-                NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + style.ItemSpacing.Y);
-                NVector2 size = new NVector2(maxSize + style.ItemSpacing.X * 2f, drawHeight);
+                Vector2 origin = new Vector2(textboxMin.X, textboxMax.Y + style.ItemSpacing.Y);
+                Vector2 size = new Vector2(maxSize + style.ItemSpacing.X * 2f, drawHeight);
                 if (origin.X + size.X > io.DisplaySize.X)
                 {
                     origin.X -= (origin.X + size.X) - io.DisplaySize.X;
@@ -583,7 +583,7 @@ namespace TerraAngel.Client.ClientWindows
 
 
                     float offsetOffset = ImGui.CalcTextSize(s).Y + style.ItemSpacing.Y;
-                    if (Util.IsMouseHoveringRect(origin + new NVector2(style.ItemSpacing.X, offset + 1f), origin + new NVector2(maxSize, offset + offsetOffset - 1f)))
+                    if (Util.IsMouseHoveringRect(origin + new Vector2(style.ItemSpacing.X, offset + 1f), origin + new Vector2(maxSize, offset + offsetOffset - 1f)))
                     {
                         col = Color.Gray * 1.45f;
                         if (io.MouseClicked[0])
@@ -598,9 +598,9 @@ namespace TerraAngel.Client.ClientWindows
                         col = Color.White;
                     }
 
-                    drawList.AddText(origin + new NVector2(style.ItemSpacing.X * 2f + 18f, offset), col.PackedValue, s);
+                    drawList.AddText(origin + new Vector2(style.ItemSpacing.X * 2f + 18f, offset), col.PackedValue, s);
 
-                    drawList.AddText(origin + new NVector2(style.ItemSpacing.X, offset), iconColor.PackedValue, GetCandidateIcon(i));
+                    drawList.AddText(origin + new Vector2(style.ItemSpacing.X, offset), iconColor.PackedValue, GetCandidateIcon(i));
                     offset += offsetOffset;
                 }
                 if (cadidatesFlipped)
@@ -646,8 +646,8 @@ namespace TerraAngel.Client.ClientWindows
                 currentArgumentSymbolOverload = Math.Clamp(currentArgumentSymbolOverload, 0, argumentSymbols.Count - 1);
                 ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
                 string currentText = (argumentSymbols.Count > 1 ? $"({currentArgumentSymbolOverload + 1}/{argumentSymbols.Count}) " : "") + argumentSymbols[currentArgumentSymbolOverload];
-                NVector2 origin = new NVector2(textboxMin.X, textboxMax.Y + completionSize.Y + style.ItemSpacing.Y * 2f);
-                NVector2 size = new NVector2(ImGui.CalcTextSize(currentText).X + style.ItemSpacing.X * 2f, ImGui.CalcTextSize(currentText).Y + style.ItemSpacing.Y * 2f);
+                Vector2 origin = new Vector2(textboxMin.X, textboxMax.Y + completionSize.Y + style.ItemSpacing.Y * 2f);
+                Vector2 size = new Vector2(ImGui.CalcTextSize(currentText).X + style.ItemSpacing.X * 2f, ImGui.CalcTextSize(currentText).Y + style.ItemSpacing.Y * 2f);
 
                 if (origin.X + size.X > io.DisplaySize.X)
                 {

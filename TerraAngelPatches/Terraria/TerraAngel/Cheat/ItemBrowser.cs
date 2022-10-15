@@ -6,7 +6,7 @@ namespace TerraAngel.Cheat
 {
     public class ItemBrowser
     {
-        private static NVector2 itemDrawSize = new NVector2(32, 32);
+        private static Vector2 itemDrawSize = new Vector2(32, 32);
         private static string itemSearch = "";
         private static List<string> itemNames = new List<string>(ItemID.Count);
         private static string[] ItemGiveModeNames = Util.EnumFancyNames<ItemGiveMode>();
@@ -28,7 +28,7 @@ namespace TerraAngel.Cheat
             if (ImGui.BeginChild("ItemBrowserScrolling"))
             {
                 float windowMaxX = ImGui.GetWindowPos().X + ImGui.GetWindowContentRegionMax().X;
-                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new NVector2(4f));
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(4f));
                 for (int i = 1; i < ItemID.Count; i++)
                 {
                     if (searchEmpty || itemNames[i].ToLower().Contains(itemSearch.ToLower()))
