@@ -180,6 +180,8 @@ namespace TerraAngel.Client.Config
             [UIConfigElement("Show Player Inspector")]
             public Keys ShowPlayerInspector = Keys.NumPad7;
 
+            [UIConfigElement("Show Timing Metrics")]
+            public Keys ShowTimingMetrics = Keys.NumPad9;
 
             public int ConsoleHistoryLimit = 5000;
             public int ChatHistoryLimit = 3000;

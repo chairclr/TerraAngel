@@ -51,6 +51,7 @@ namespace TerraAngel.Client
             AddWindow(new PlayerInspectorWindow());
             AddWindow(ClientLoader.ChatWindow = new ChatWindow());
             AddWindow(new StyleEditorWindow());
+            AddWindow(new TimingMetricsWindow());
 
             ItemBrowser.Init();
 
@@ -144,9 +145,12 @@ namespace TerraAngel.Client
         }
         public void Render(GameTime time)
         {
+            BasicTimer renderTimer = TimeMetrics.GetTimer("Client Draw");
+            renderTimer.Start();
             PreDraw(time);
             Draw();
             PostDraw();
+            renderTimer.Stop();
         }
 
         public void PreDraw(GameTime time)

@@ -24,6 +24,16 @@
              Main.renderCount = 0;
              Main.renderNow = false;
          }
+@@ -96,7 +_,9 @@
+     {
+         Main.render = true;
+         UpdateGlobalBrightness();
++        BasicTimer timer = TimeMetrics.GetTimer("Light Tiles").Start();
+         _activeEngine.ProcessArea(new Rectangle(firstX, firstY, lastX - firstX, lastY - firstY));
++        timer.Stop();
+     }
+ 
+     private static void UpdateGlobalBrightness()
 @@ -253,6 +_,12 @@
  
      public static void GetColor9Slice(int centerX, int centerY, ref Color[] slices)

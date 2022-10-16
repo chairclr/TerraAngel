@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using DiscordRPC;
+using ImGuiNET;
 using ReLogic.OS;
 using TerraAngel.Client;
 using TerraAngel.Client.ClientWindows;

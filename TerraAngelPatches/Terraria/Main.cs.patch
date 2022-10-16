@@ -220,10 +220,13 @@
              {
                  newMusic = 8;
              }
-@@ -14916,6 +_,7 @@
+@@ -14915,7 +_,10 @@
+         if (!_isDrawingOrUpdating)
          {
              _isDrawingOrUpdating = true;
++            BasicTimer updateTimer = TimeMetrics.GetTimer("Main DoUpdate").Start();
              DoUpdate(ref gameTime);
++            updateTimer.Stop();
 +            ClientLoader.MainRenderer?.Update(gameTime);
              CinematicManager.Instance.Update(gameTime);
              if (netMode == 2)
@@ -529,6 +532,22 @@
          Asset<Texture2D> asset = TextureAssets.MapBGs[0];
          int num = -1;
          Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+@@ -56899,6 +_,7 @@
+             return;
+         }
+ 
++        BasicTimer tileTimer = TimeMetrics.GetTimer("Render Tiles").Start();
+         RenderBlack();
+         base.GraphicsDevice.SetRenderTarget(tileTarget);
+         base.GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
+@@ -56925,6 +_,7 @@
+         DrawTileEntities(solidLayer: true, overRenderTargets: false, intoRenderTargets: true);
+         TimeLogger.DetailedDrawTime(28);
+         base.GraphicsDevice.SetRenderTarget(null);
++        tileTimer.Stop();
+     }
+ 
+     protected void RenderTiles2()
 @@ -56963,6 +_,7 @@
  
      protected void RenderWater()
@@ -537,10 +556,13 @@
          if (!drawToScreen)
          {
              base.GraphicsDevice.SetRenderTarget(waterTarget);
-@@ -61562,6 +_,10 @@
+@@ -61561,7 +_,13 @@
+         {
              _isDrawingOrUpdating = true;
              EnsureRenderTargetContent();
++            BasicTimer drawTimer = TimeMetrics.GetTimer("Main DoDraw").Start();
              DoDraw(gameTime);
++            drawTimer.Stop();
 +            float y = Main.screenPosition.Y;
 +            Main.screenPosition.Y = Main.floatingCameraY;
 +            ClientLoader.MainRenderer?.Render(gameTime);
