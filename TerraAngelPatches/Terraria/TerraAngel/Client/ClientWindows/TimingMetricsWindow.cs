@@ -62,37 +62,14 @@ public class TimingMetricsWindow : ClientWindow
 
             if (ImGui.CollapsingHeader($"{text}###{timerName}"))
             {
-                Vector2 cursorPos = ImGui.GetCursorScreenPos();
-                Vector2 regionAvail = ImGui.GetContentRegionAvail();
-                float height = 100f - style.ItemSpacing.Y;
-                drawList.AddRectFilled(cursorPos, cursorPos + new Vector2(regionAvail.X, height), ImGui.GetColorU32(ImGuiCol.PopupBg));
+                TimeSpan[] timespansArray = new TimeSpan[time.Times.Count];
+                time.Times.CopyTo(timespansArray, 0);
+                float[] times = timespansArray.Select(x => (float)x.TotalMilliseconds).ToArray();
 
-                if (time.Times.Count > 1)
-                {
-                    TimeSpan[] timeSpans = new TimeSpan[time.Times.Count];
-                    time.Times.CopyTo(timeSpans, 0);
-                    float[] times = timeSpans.Select(x => (float)x.TotalMilliseconds).ToArray();
-                    float max = times.Max();
-                    float min = times.Min();
+                ImGuiUtil.DrawGraph($"graph{timerName}", 100f, times, 0f, time.MaxTimeCount, 0f, 30f, Color.Red, false, true);
 
-                    if (max > time.LerpValue) time.LerpValue = max;
-                    max = (time.LerpValue = Utils.Lerp(time.LerpValue, max, 0.1f));
-
-                    
-                    float step = regionAvail.X / times.Length;
-
-                    for (int j = 1; j < times.Length; j++)
-                    {
-                        float x0 = (j - 1) * step;
-                        float x1 = j * step;
-                        float v0 = times[j - 1] / max;
-                        float v1 = times[j] / max;
-
-                        float f = min / max * height;
-                        drawList.AddLine(cursorPos + new Vector2(x0, (1f - v0) * height + f), cursorPos + new Vector2(x1, (1f - v1) * height + f), Color.Red.PackedValue);
-                    }
-                }
-                ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 100f);
+                ImGuiUtil.GraphData data = ImGuiUtil.DrawGraphData[$"graph{timerName}"];
+                ImGui.SliderFloat2($"##min{timerName}", ref data.YMinMax, 0f, 30f);
             }
 
             Vector2 cursorPosAfter = ImGui.GetCursorScreenPos();

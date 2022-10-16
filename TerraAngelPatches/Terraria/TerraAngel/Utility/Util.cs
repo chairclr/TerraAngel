@@ -246,8 +246,6 @@ public class Util
         }
     }
 
-
-
     public static object GetDefault(Type type)
     {
         if (type.IsValueType)
@@ -323,6 +321,10 @@ public class Util
         return p[n];
     }
 
+    public static float Lerp(float x0, float x1, float t)
+    {
+        return x0 * (1 - t) + x1 * t;
+    }
 }
 public static class VectorExtensions
 {
@@ -365,6 +367,15 @@ public static class VectorExtensions
     {
         vec.Normalize();
         return vec;
+    }
+
+    public static Vector2 Lerp(Vector2 x0, Vector2 x1, float t)
+    {
+        return new Vector2(Util.Lerp(x0.X, x1.X, t), Util.Lerp(x0.Y, x1.Y, t));
+    }
+    public static Vector2 Lerp(Vector2 x0, Vector2 x1, Vector2 t)
+    {
+        return new Vector2(Util.Lerp(x0.X, x1.X, t.X), Util.Lerp(x0.Y, x1.Y, t.Y));
     }
 }
 public static class ColorExtensions

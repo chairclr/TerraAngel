@@ -35,8 +35,6 @@ public class TimeMetrics
         }
         public bool Paused = false;
 
-        public float LerpValue;
-
         public void Add(TimeSpan time)
         {
             if (Paused) return;

@@ -202,19 +202,19 @@ public class TerraImGuiRenderer
         io.DisplayFramebufferScale = new Vector2(1f, 1f);
 
         io.MousePos = new Vector2(mouse.X, mouse.Y);
-        io.AddMousePosEvent(mouse.X, mouse.Y);
+        //io.AddMousePosEvent(mouse.X, mouse.Y);
 
         io.MouseDown[0] = mouse.LeftButton == ButtonState.Pressed && _game.IsActive;
         io.MouseDown[1] = mouse.RightButton == ButtonState.Pressed && _game.IsActive;
         io.MouseDown[2] = mouse.MiddleButton == ButtonState.Pressed && _game.IsActive;
-        io.AddMouseButtonEvent(0, mouse.LeftButton == ButtonState.Pressed && _game.IsActive);
-        io.AddMouseButtonEvent(1, mouse.RightButton == ButtonState.Pressed && _game.IsActive);
-        io.AddMouseButtonEvent(2, mouse.MiddleButton == ButtonState.Pressed && _game.IsActive);
+        //io.AddMouseButtonEvent(0, mouse.LeftButton == ButtonState.Pressed && _game.IsActive);
+        //io.AddMouseButtonEvent(1, mouse.RightButton == ButtonState.Pressed && _game.IsActive);
+        //io.AddMouseButtonEvent(2, mouse.MiddleButton == ButtonState.Pressed && _game.IsActive);
 
         int scrollDelta = mouse.ScrollWheelValue - ScrollWheelValue;
         io.MouseWheel = scrollDelta > 0 ? 1 : scrollDelta < 0 ? -1 : 0;
 
-        io.AddMouseWheelEvent(io.MouseWheel, 0f);
+        //io.AddMouseWheelEvent(io.MouseWheel, 0f);
         ScrollWheelValue = mouse.ScrollWheelValue;
     }
 

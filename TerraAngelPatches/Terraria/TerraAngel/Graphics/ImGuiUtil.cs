@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ImGuiNET;
 using Terraria.GameContent;
 using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Chat;
@@ -39,6 +41,86 @@ public static class ImGuiUtil
         {
             color = new Color(v4c);
         }
+    }
+
+    public class GraphData
+    {
+        public Vector2 XMinMax;
+        public Vector2 YMinMax;
+        public Vector2 Offset; 
+        public Vector2 DragOrigin;
+        public Vector2 DragMouseOrigin;
+        public bool EditScale ;
+        public GraphData(Vector2 XMinMax, Vector2 YMinMax)
+        {
+            this.XMinMax = XMinMax;
+            this.YMinMax = YMinMax;
+            this.Offset = Vector2.Zero;
+            this.DragMouseOrigin = Vector2.Zero;
+            this.DragOrigin = Vector2.Zero;
+        }
+    }
+
+    public static Dictionary<string, GraphData> DrawGraphData = new Dictionary<string, GraphData>();
+    private static string? focusedGraph = null;
+
+    public static void DrawGraph(string id, float height, float[] values, float xMin, float xMax, float yMin, float yMax, Color lineColor, bool editX = true, bool editY = true) => DrawGraph(id, new Vector2(ImGui.GetContentRegionAvail().X, height), values, xMin, xMax, yMin, yMax, lineColor, editX, editY);
+
+    public static void DrawGraph(string id, Vector2 size, float[] values, float xMin, float xMax, float yMin, float yMax, Color lineColor, bool editX = true, bool editY = true)
+    {
+        if (!DrawGraphData.ContainsKey(id))
+            DrawGraphData.Add(id, new GraphData(new Vector2(xMin, xMax), new Vector2(yMin, yMax)));
+        GraphData data = DrawGraphData[id];
+
+        ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+        Vector2 cursorPos = ImGui.GetCursorScreenPos();
+        ImGui.InvisibleButton(id, size);
+
+        Vector2 min = cursorPos;
+        Vector2 max = cursorPos + size;
+        drawList.AddRectFilled(min, max, ImGui.GetColorU32(ImGuiCol.PopupBg));
+        drawList.PushClipRect(min, max, true);
+        Vector2 inverseScale = Vector2.One / new Vector2((data.XMinMax.Y - data.XMinMax.X), (data.YMinMax.Y - data.YMinMax.X));
+
+        Vector2 ScalePositionInverseY(Vector2 position)
+        {
+            return VectorExtensions.Lerp(min, max, new Vector2((position.X - data.XMinMax.X) * inverseScale.X, 1f - ((position.Y - data.YMinMax.X) * inverseScale.Y)));
+        }
+
+        if (values.Length > 1)
+        {
+            if (InputSystem.LeftMousePressed && ImGui.IsWindowFocused() && Util.IsMouseHoveringRect(min, max))
+            {
+                focusedGraph = id;
+                data.DragMouseOrigin = InputSystem.MousePosition;
+                data.DragOrigin = data.Offset;
+            }
+            if (InputSystem.LeftMouseDown && focusedGraph == id)
+            {
+                Vector2 diff = data.DragMouseOrigin - InputSystem.MousePosition;
+
+                data.Offset = data.DragOrigin - new Vector2(editX ? diff.X : 0f, editY ? diff.Y : 0f);
+            }
+            if (InputSystem.LeftMouseReleased && focusedGraph == id)
+            {
+                focusedGraph = null;
+            }
+
+            for (int j = 1; j < values.Length; j++)
+            {
+                float x0 = (j - 1);
+                float x1 = (j);
+
+                float v0 = values[j - 1];
+                float v1 = values[j];
+
+                drawList.AddLine(ScalePositionInverseY(new Vector2(x0, v0)) + data.Offset, ScalePositionInverseY(new Vector2(x1, v1)) + data.Offset, lineColor.PackedValue);
+            }
+        }
+
+        drawList.PopClipRect();
+
+        ImGui.SetCursorScreenPos(new Vector2(cursorPos.X, cursorPos.Y + size.Y + ImGui.GetStyle().ItemSpacing.Y));
     }
 
     public static void DrawTileRect(this ImDrawListPtr drawList, Vector2 startTile, Vector2 endTile, uint col)
