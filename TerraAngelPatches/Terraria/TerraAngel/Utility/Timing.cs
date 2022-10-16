@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 
 namespace TerraAngel.Utility;
 public class TimeMetrics
@@ -25,26 +21,47 @@ public class TimeMetrics
     public class TimeLog
     {
         public Queue<TimeSpan> Times = new Queue<TimeSpan>();
+        public int MaxTimeCount = 100;
 
-        public TimeSpan Sum { get; private set; }
-        public TimeSpan Average => Sum / Times.Count;
+        public TimeSpan Sum = TimeSpan.Zero;
+        public TimeSpan Average
+        {
+            get
+            {
+                if (Times.Count == 0 || Sum == TimeSpan.Zero)
+                    return TimeSpan.Zero;
+                return Sum / Times.Count;
+            }
+        }
+        public bool Paused = false;
 
         public float LerpValue;
 
         public void Add(TimeSpan time)
         {
+            if (Paused) return;
             Times.Enqueue(time);
 
             Sum += time;
 
-            if (Times.Count > 100) Sum -= Times.Dequeue();
+            if (Times.Count > MaxTimeCount) Sum -= Times.Dequeue();
+        }
+
+        public TimeLog()
+        {
+            MaxTimeCount = 100;
+        }
+
+        public TimeLog(int maxTimeCount)
+        {
+            MaxTimeCount = maxTimeCount;
         }
     }
 
     public static Dictionary<string, TimeLog> TimeLogs = new Dictionary<string, TimeLog>();
     private static Dictionary<string, BasicTimer> basicTimers = new Dictionary<string, BasicTimer>();
 
-    public static BasicTimer GetTimer(string name) 
+    public static BasicTimer GetTimer(string name)
     {
         BasicTimer timer;
         if (!basicTimers.ContainsKey(name))
@@ -59,7 +76,6 @@ public class TimeMetrics
 
         return timer;
     }
-
     public static void AddTime(string name, TimeSpan time)
     {
         TimeLog log;
@@ -67,7 +83,7 @@ public class TimeMetrics
         {
             log = new TimeLog();
             TimeLogs.Add(name, log);
-        } 
+        }
         else
         {
             log = TimeLogs[name];
@@ -75,6 +91,10 @@ public class TimeMetrics
 
         log.Add(time);
     }
+
+
+    public static TimeLog FramerateDeltaTimeSlices = new TimeLog(100);
+    public static TimeLog UpdateDeltaTimeSlices = new TimeLog(100);
 }
 
 public class BasicTimer : TimeMetrics.Timer

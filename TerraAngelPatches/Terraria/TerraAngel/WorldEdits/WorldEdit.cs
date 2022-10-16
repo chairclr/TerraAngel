@@ -1,4 +1,5 @@
 ﻿namespace TerraAngel.WorldEdits;
+
 public abstract class WorldEdit
 {
     public abstract bool RunEveryFrame { get; }

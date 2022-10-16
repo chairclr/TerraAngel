@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,244 @@
+@@ -3,40 +_,241 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -56,9 +56,6 @@
 +    </Reference>
 +    <Reference Include="ImGui.NET">
 +      <HintPath>Libraries\ImGui\ImGui.NET.dll</HintPath>
-+    </Reference>
-+    <Reference Include="ImPlot.NET">
-+      <HintPath>Libraries\ImGui\ImPlot.NET.dll</HintPath>
 +    </Reference>
 +    <Reference Include="Mono.Cecil">
 +      <HintPath>Libraries\MonoMod\Mono.Cecil.dll</HintPath>

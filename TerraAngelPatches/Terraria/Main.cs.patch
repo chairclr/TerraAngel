@@ -220,17 +220,6 @@
              {
                  newMusic = 8;
              }
-@@ -14915,7 +_,10 @@
-         if (!_isDrawingOrUpdating)
-         {
-             _isDrawingOrUpdating = true;
-+            BasicTimer updateTimer = TimeMetrics.GetTimer("Main DoUpdate").Start();
-             DoUpdate(ref gameTime);
-+            updateTimer.Stop();
-+            ClientLoader.MainRenderer?.Update(gameTime);
-             CinematicManager.Instance.Update(gameTime);
-             if (netMode == 2)
-             {
 @@ -14978,8 +_,6 @@
          {
              UpdateAudio();
@@ -240,8 +229,12 @@
              return;
          }
  
-@@ -15100,8 +_,6 @@
+@@ -15098,10 +_,10 @@
+         }
+ 
          DoUpdate_AutoSave();
++        BasicTimer updateTimer = TimeMetrics.GetTimer("Main DoUpdate").Start();
++
          if (!dedServ)
          {
 -            ChromaInitializer.UpdateEvents();
@@ -249,6 +242,14 @@
              if (superFast)
              {
                  base.IsFixedTimeStep = false;
+@@ -15201,6 +_,7 @@
+ 
+             uCount++;
+             drawSkip = false;
++            ClientLoader.MainRenderer?.Update(gameTime);
+             PlayerInput.AllowExecutionOfGamepadInstructions = true;
+             TryPlayingCreditsRoll();
+             PlayerInput.SetZoom_UI();
 @@ -15319,11 +_,8 @@
              hasFocus = base.IsActive;
              if (Platform.IsWindows)
@@ -263,7 +264,7 @@
                  {
                      hasFocus = false;
                  }
-@@ -15512,10 +_,8 @@
+@@ -15512,11 +_,10 @@
          {
              DoUpdateInWorld(_worldUpdateTimeTester);
          }
@@ -272,8 +273,10 @@
          {
 -            ChromaPainter.Update();
          }
++        updateTimer.Stop();
      }
  
+     internal static void UpdateCreativeGameModeOverride()
 @@ -19026,7 +_,7 @@
                      {
                          toolTipLine[numLines] = Lang.tip[13].Value;
@@ -556,6 +559,14 @@
          if (!drawToScreen)
          {
              base.GraphicsDevice.SetRenderTarget(waterTarget);
+@@ -57686,6 +_,7 @@
+ 
+     protected void DrawBlack(bool force = false)
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false) return;
+         if (shimmerAlpha == 1f)
+         {
+             return;
 @@ -61561,7 +_,13 @@
          {
              _isDrawingOrUpdating = true;

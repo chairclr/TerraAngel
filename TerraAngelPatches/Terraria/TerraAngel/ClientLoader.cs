@@ -11,6 +11,7 @@ using TerraAngel.Plugin;
 using TerraAngel.UI;
 
 namespace TerraAngel;
+
 public unsafe class ClientLoader
 {
     public static bool SetupRenderer = false;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
@@ -139,10 +140,16 @@ public class ClientRenderer : TerraImGuiRenderer
         ClientConfig.Settings.UIConfig.Set();
     }
 
+    private Stopwatch updateWatch = new Stopwatch();
+    private Stopwatch renderWatch = new Stopwatch();
+
     public void Update(GameTime time)
     {
-
+        updateWatch.Stop();
+        TimeMetrics.UpdateDeltaTimeSlices.Add(updateWatch.Elapsed);
+        updateWatch.Restart();
     }
+
     public void Render(GameTime time)
     {
         BasicTimer renderTimer = TimeMetrics.GetTimer("Client Draw");
@@ -155,6 +162,9 @@ public class ClientRenderer : TerraImGuiRenderer
 
     public void PreDraw(GameTime time)
     {
+        renderWatch.Stop();
+        TimeMetrics.FramerateDeltaTimeSlices.Add(renderWatch.Elapsed);
+        renderWatch.Restart();
         InputSystem.EndUpdateInput();
         InputSystem.UpdateInput();
         base.BeforeLayout(time);

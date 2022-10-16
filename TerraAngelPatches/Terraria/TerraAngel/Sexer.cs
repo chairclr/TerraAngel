@@ -1,4 +1,5 @@
 ﻿namespace TerraAngel;
+
 public class Sexer
 {
     public static readonly string DefaultSexerName = "DefaultSexer";

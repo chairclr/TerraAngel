@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System;
+using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Client.ClientWindows;
 
@@ -67,7 +68,8 @@ public class StatsWindow : ClientWindow
 
         ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v2.1");
 
-        ImGui.TextUnformatted($"FPS {io.Framerate:F1}");
+        ImGui.TextUnformatted($"FPS {Math.Round(1f / TimeMetrics.FramerateDeltaTimeSlices.Average.TotalSeconds):F0}");
+        ImGui.TextUnformatted($"UPS {Math.Round(1f / TimeMetrics.UpdateDeltaTimeSlices.Average.TotalSeconds):F0}");
 
         string packetsUpString = $"{PacketsUpLastSecond}";
         string packetsDownString = $"{PacketsDownLastSecond}";

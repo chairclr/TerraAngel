@@ -3,6 +3,7 @@ using TerraAngel.ID;
 using TerraAngel.Net;
 
 namespace TerraAngel.WorldEdits;
+
 public class WorldEditBrush : WorldEdit
 {
     public enum TileEditActions

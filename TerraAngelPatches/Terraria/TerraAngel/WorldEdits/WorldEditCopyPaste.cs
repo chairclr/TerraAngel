@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 namespace TerraAngel.WorldEdits;
+
 public class WorldEditCopyPaste : WorldEdit
 {
     public override bool RunEveryFrame => false;
