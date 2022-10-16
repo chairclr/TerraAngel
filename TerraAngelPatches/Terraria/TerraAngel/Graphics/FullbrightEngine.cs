@@ -8,6 +8,7 @@ using TerraAngel.Hooks.Hooks;
 using ReLogic.Threading;
 
 namespace TerraAngel.Graphics;
+
 public class FullbrightEngine : ILightingEngine
 {
     public static float Brightness = 1.0f;

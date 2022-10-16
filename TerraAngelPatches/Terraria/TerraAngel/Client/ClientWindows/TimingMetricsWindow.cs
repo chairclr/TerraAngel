@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using Terraria.Map;
 
 namespace TerraAngel.Client.ClientWindows;
+
 public class TimingMetricsWindow : ClientWindow
 {
     public override Keys ToggleKey => ClientConfig.Settings.ShowTimingMetrics;
@@ -50,7 +51,6 @@ public class TimingMetricsWindow : ClientWindow
 
                 if (max > time.LerpValue) time.LerpValue = max;
                 max = (time.LerpValue = Utils.Lerp(time.LerpValue, max, 0.1f));
-                //ImGui.PlotHistogram($"##{timerName}", ref times[0], times.Length);
 
                 Vector2 cursorPos = ImGui.GetCursorScreenPos();
                 Vector2 regionAvail = ImGui.GetContentRegionAvail();
@@ -59,7 +59,6 @@ public class TimingMetricsWindow : ClientWindow
                 float height = 100f - style.ItemSpacing.Y;
                 drawList.AddRectFilled(cursorPos, cursorPos + new Vector2(regionAvail.X, height), ImGui.GetColorU32(ImGuiCol.PopupBg));
 
-                
                 for (int j = 1; j < times.Length; j++)
                 {
                     float x0 = (j - 1) * step;

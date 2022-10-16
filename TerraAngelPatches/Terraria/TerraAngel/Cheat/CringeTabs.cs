@@ -1,12 +1,11 @@
-﻿namespace TerraAngel.Cheat
+﻿namespace TerraAngel.Cheat;
+
+public enum CringeTabs
 {
-    public enum CringeTabs
-    {
-        None,
-        MainCringes,
-        LightingCringes,
-        VisualUtility,
-        ESP,
-        AutomationCringes,
-    }
+    None,
+    MainCringes,
+    LightingCringes,
+    VisualUtility,
+    ESP,
+    AutomationCringes,
 }
