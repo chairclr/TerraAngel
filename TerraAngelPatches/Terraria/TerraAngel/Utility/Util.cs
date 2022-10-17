@@ -48,7 +48,7 @@ public class Util
         GetPublicValueTypeFields<MessageID>()
         .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
 
-    public static Vector2 ScreenSize => new Vector2((float)Main.screenWidth, (float)Main.screenHeight);
+    public static Vector2 ScreenSize => ClientLoader.WindowManager?.Size ?? Vector2.One;
 
 
     public static IEnumerable<FieldInfo> GetPublicValueTypeFields<T>()
