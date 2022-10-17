@@ -110,7 +110,7 @@ public class ResolutionUI : UIState, IHaveBackButtonCommand
 
         changeStateButton.OnClick += (x, y) =>
         {
-            SetState(GetNextState());
+            ClientLoader.WindowManager.State = GetNextState();
             changeStateButton.SetText($"Go {GetNextStateString()}");
         };
 
@@ -168,9 +168,7 @@ public class ResolutionUI : UIState, IHaveBackButtonCommand
             widthTextBox.SetText((w = Utils.Clamp(w, Main.minScreenW, 8192)).ToString());
             heightTextBox.SetText((h = Utils.Clamp(h, Main.minScreenH, 8192)).ToString());
 
-            SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, w, h);
-
-            Main.SetResolution(w, h);
+            ClientLoader.WindowManager!.Size = new Vector2i(w, h);
         }
     }
 
@@ -215,51 +213,13 @@ public class ResolutionUI : UIState, IHaveBackButtonCommand
             HandleBackButtonUsage();
     }
 
-    // windowed = 0
-    // borderless windows = 1
-    // fullscreen = 2
-    public int GetNextState()
+    public WindowManager.WindowState GetNextState()
     {
-        if (!Main.graphics.IsFullScreen && !Main.screenBorderless)
-            return 1;
-        if (Main.graphics.IsFullScreen)
-            return 0;
-        if (Main.screenBorderless)
-            return 2;
-        return 0;
+        return (WindowManager.WindowState)(((int)ClientLoader.WindowManager!.State + 1) % 3);
     }
 
     public string GetNextStateString()
     {
-        return GetNextState() == 0 ? "Windowed" : (GetNextState() == 1 ? "Borderless Fullscreen" : "Fullscreen");
-    }
-
-    public void SetState(int state)
-    {
-        if (state == 0)
-        {
-            Main.screenBorderless = false;
-            Main.graphics.IsFullScreen = false;
-            Main.SetResolution(Main.screenWidth, Main.screenHeight);
-        }
-        if (state == 1)
-        {
-            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
-            Main.screenBorderless = true;
-            Main.graphics.IsFullScreen = false;
-            Main.graphics.PreferredBackBufferWidth = Main.screenWidth = bounds.w;
-            Main.graphics.PreferredBackBufferHeight = Main.screenHeight = bounds.h;
-            Main.screenBorderlessPendingResizes = 1;
-            Main.SetResolution(bounds.w, bounds.h);
-        }
-        if (state == 2)
-        {
-            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
-            Main.screenBorderless = false;
-            Main.graphics.IsFullScreen = false;
-            Main.graphics.PreferredBackBufferWidth = Main.screenWidth = bounds.w;
-            Main.graphics.PreferredBackBufferHeight = Main.screenHeight = bounds.h;
-            Main.SetDisplayMode(bounds.w, bounds.h, true);
-        }
+        return GetNextState() == WindowManager.WindowState.Windowed ? "Windowed" : (GetNextState() == WindowManager.WindowState.BorderlessFullscreen ? "Borderless Fullscreen" : "Fullscreen");
     }
 }

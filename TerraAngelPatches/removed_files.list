@@ -1,4 +1,5 @@
 Terraria\GameContent\ChromaHotkeyPainter.cs
+Terraria\Graphics\WindowStateController.cs
 Terraria\Initializers\ChromaInitializer.cs
 Terraria\Libraries\NVorbis.System.ValueTuple.dll
 Terraria\Net\WeGameAddress.cs

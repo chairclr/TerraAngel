@@ -59,6 +59,7 @@ public class ClientRenderer : TerraImGuiRenderer
         Main.instance.Exiting += (args, o) =>
         {
             ClientConfig.WriteToFile();
+            ClientLoader.WindowManager?.SaveToFile();
         };
 
         unsafe
@@ -165,6 +166,7 @@ public class ClientRenderer : TerraImGuiRenderer
         renderWatch.Stop();
         TimeMetrics.FramerateDeltaTimeSlices.Add(renderWatch.Elapsed);
         renderWatch.Restart();
+        
         InputSystem.EndUpdateInput();
         InputSystem.UpdateInput();
         base.BeforeLayout(time);

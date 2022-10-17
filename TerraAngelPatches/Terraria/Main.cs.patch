@@ -52,6 +52,16 @@
      public static Dust[] dust = new Dust[6001];
      public static Star[] star = new Star[400];
      public static Item[] item = new Item[401];
+@@ -902,9 +_,6 @@
+     public static Vector2 screenLastPosition;
+     public static int screenWidth = 1152;
+     public static int screenHeight = 864;
+-    public static bool screenMaximized = true;
+-    public static bool screenBorderless = true;
+-    public static int screenBorderlessPendingResizes;
+     public static int teamNamePlateDistance = 2000;
+     public static int multiplayerNPCSmoothingRange = 300;
+     public static bool Setting_UseReducedMaxLiquids = false;
 @@ -981,8 +_,8 @@
      public static bool Support4K = true;
      public static float MinimumZoomComparerX = 1920f;
@@ -63,16 +73,51 @@
      private static GraphicsProfile _currentGraphicsProfile = _selectedGraphicsProfile;
      public static int LogicCheckScreenWidth = 1920;
      public static int LogicCheckScreenHeight = 1200;
-@@ -996,9 +_,6 @@
+@@ -995,10 +_,6 @@
+     private static int backSpaceCount;
      private static float backSpaceRate;
      public static string motd = "";
-     public static bool toggleFullscreen;
+-    public static bool toggleFullscreen;
 -    public static int numDisplayModes;
 -    public static int[] displayWidth = new int[99];
 -    public static int[] displayHeight = new int[99];
      public static bool gameMenu = true;
      public static bool menuBGChangedDay = false;
      public static bool menuBGChangedNight = false;
+@@ -1126,7 +_,6 @@
+     public List<int> DrawCacheFirstFractals = new List<int>(1000);
+     public static ParticleRenderer ParticleSystem_World_OverPlayers = new ParticleRenderer();
+     public static ParticleRenderer ParticleSystem_World_BehindPlayers = new ParticleRenderer();
+-    private static WindowStateController _windowMover;
+     public static AnchoredEntitiesCollection sittingManager;
+     public static AnchoredEntitiesCollection sleepingManager;
+     public static MinimapFrameManager MinimapFrameManagerInstance;
+@@ -1135,7 +_,6 @@
+     private static float newDefaultUIScale = 0f;
+     public static bool IsInTheMiddleOfLoadingSettings;
+     public static Microsoft.Xna.Framework.Point LastLoadedResolution;
+-    public static bool startFullscreen = false;
+     public static string oldStatusText = "";
+     public static string autoGenFileLocation = null;
+     public static bool autoShutdown;
+@@ -1263,7 +_,7 @@
+     private static bool _blockFancyUIWhileLoading;
+     private bool[] menuWide = new bool[100];
+     public static float GamepadCursorAlpha = 0f;
+-    private bool _needsMenuUIRecalculation;
++    public bool _needsMenuUIRecalculation;
+     public static float MenuXMovement = 0f;
+     public RejectionMenuInfo RejectionMenuInfo;
+     private float _splashFrameCount;
+@@ -1303,7 +_,7 @@
+     private static TextSnippet[] _netplayStatusTextSnippets;
+     public static int ladyBugRainBoost = 0;
+     private static bool _canShowMeteorFall;
+-    private static bool _isResizingAndRemakingTargets = false;
++    public static bool _isResizingAndRemakingTargets = false;
+     public static bool CanUpdateGameplay { get; private set; }
+ 
+     public static Vector2 ViewPosition => screenPosition + GameViewMatrix.Translation;
 @@ -2518,7 +_,6 @@
          Configuration.Clear();
          Configuration.Put("ResetDefaultUIScale", false);
@@ -81,74 +126,174 @@
          Configuration.Put("InvasionBarMode", invasionProgressMode);
          Configuration.Put("AutoSave", autoSave);
          Configuration.Put("AutoPause", autoPause);
-@@ -2674,25 +_,27 @@
+@@ -2534,26 +_,7 @@
+         Configuration.Put("UnlockMusicSwap", TOWMusicUnlocked);
+         Configuration.Put("UseExperimentalFeatures", UseExperimentalFeatures);
+         Configuration.Put("KeyFavoriteModifier", cFavoriteKey);
+-        Configuration.Put("Fullscreen", graphics.IsFullScreen);
+-        Configuration.Put("WindowMaximized", screenMaximized);
+-        Configuration.Put("WindowBorderless", screenBorderless);
+-        int num = graphics.PreferredBackBufferWidth;
+-        int num2 = graphics.PreferredBackBufferHeight;
+-        if (IsInTheMiddleOfLoadingSettings)
+-        {
+-            if (LastLoadedResolution.X != 0)
+-            {
+-                num = LastLoadedResolution.X;
+-            }
  
-         PendingBorderlessState = screenBorderless;
-         screenBorderlessPendingResizes = (screenBorderless ? 6 : 0);
--        if (Platform.IsWindows && !dedServ)
-+        if (!dedServ)
+-            if (LastLoadedResolution.Y != 0)
+-            {
+-                num2 = LastLoadedResolution.Y;
+-            }
+-        }
+-
+-        Configuration.Put("DisplayWidth", num);
+-        Configuration.Put("DisplayHeight", num2);
+         Configuration.Put("GraphicsQuality", qaStyle);
+         Configuration.Put("BackgroundEnabled", BackgroundEnabled);
+         Configuration.Put("FrameSkipMode", FrameSkipMode);
+@@ -2598,8 +_,6 @@
+         }
+ 
+         Configuration.Put("FlashIconForEvents", Enum.GetName(typeof(GameNotificationType), _flashNotificationType));
+-        Configuration.Put("Display", _windowMover.ScreenDeviceName);
+-        Configuration.Put("DisplayScreen", _windowMover.ScreenDeviceName);
+         Configuration.Put("ThrottleWhenInactive", instance.InactiveSleepTime != TimeSpan.Zero);
+         Configuration.Put("DoorAutoOpeningMode", DoorOpeningHelper.PreferenceSettings);
+         Configuration.Put("HoverControlMode", Player.Settings.HoverControl);
+@@ -2630,7 +_,7 @@
+         }
+     }
+ 
+-    private static void TryPickingDefaultUIScale(float displayHeight)
++    public static void TryPickingDefaultUIScale(float displayHeight)
+     {
+         if (shouldSetDefaultUIScale)
          {
+@@ -2664,54 +_,7 @@
+             flag = true;
+         }
+ 
+-        if (!flag)
+-        {
+-            Configuration.Get("ResetDefaultUIScale", ref shouldSetDefaultUIScale);
+-            Configuration.Get("Fullscreen", ref startFullscreen);
+-            Configuration.Get("WindowMaximized", ref screenMaximized);
+-            Configuration.Get("WindowBorderless", ref screenBorderless);
+-        }
+-
+-        PendingBorderlessState = screenBorderless;
+-        screenBorderlessPendingResizes = (screenBorderless ? 6 : 0);
+-        if (Platform.IsWindows && !dedServ)
+-        {
 -            Form form = (Form)Control.FromHandle(instance.Window.Handle);
-             if (screenBorderless)
-             {
+-            if (screenBorderless)
+-            {
 -                SetBorderlessFormStyle(form);
-+                SetBorderlessFormStyle();
-             }
-             else if (screenMaximized)
-             {
+-            }
+-            else if (screenMaximized)
+-            {
 -                form.FormBorderStyle = FormBorderStyle.Sizable;
 -                form.WindowState = FormWindowState.Maximized;
-+                SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
-+                SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
-+                SDL2.SDL.SDL_MaximizeWindow(Main.instance.Window.Handle);
-             }
-             else
-             {
+-            }
+-            else
+-            {
 -                form.FormBorderStyle = FormBorderStyle.Sizable;
-+                SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
-+                SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);
-             }
- 
+-            }
+-
 -            form.BringToFront();
-         }
-+
-+        SDL2.SDL.SDL_SetWindowInputFocus(Main.instance.Window.Handle);
- 
-         int currentValue2 = graphics.PreferredBackBufferWidth;
-         int currentValue3 = graphics.PreferredBackBufferHeight;
-@@ -2711,7 +_,6 @@
-         }
- 
+-        }
+-
+-        int currentValue2 = graphics.PreferredBackBufferWidth;
+-        int currentValue3 = graphics.PreferredBackBufferHeight;
+-        Configuration.Get("DisplayWidth", ref currentValue2);
+-        Configuration.Get("DisplayHeight", ref currentValue3);
+-        LastLoadedResolution = new Microsoft.Xna.Framework.Point(currentValue2, currentValue3);
+-        if (!startFullscreen)
+-        {
+-            if (PendingBorderlessState)
+-            {
+-                screenBorderlessPendingResizes = 1;
+-            }
+-
+-            SetDisplayMode(currentValue2, currentValue3, fullscreen: false);
+-            TryPickingDefaultUIScale(currentValue3);
+-        }
+-
          Configuration.Get("SmartCursorToggle", ref cSmartCursorModeIsToggleAndNotHold);
 -        Configuration.Get("MapEnabled", ref mapEnabled);
          Configuration.Get("InvasionBarMode", ref invasionProgressMode);
          Configuration.Get("AutoSave", ref autoSave);
          Configuration.Get("AutoPause", ref autoPause);
-@@ -3088,7 +_,7 @@
+@@ -2916,8 +_,6 @@
+ 
+         if (!flag)
+         {
+-            string screenDeviceName = Configuration.Get("DisplayScreen", "");
+-            _windowMover.TryMovingToScreen(screenDeviceName);
+             bool flag2 = Configuration.Get("ThrottleWhenInactive", defaultValue: true);
+             base.InactiveSleepTime = TimeSpan.FromMilliseconds(flag2 ? 20 : 0);
+         }
+@@ -3088,14 +_,7 @@
  
                  if (num >= 91 && binaryReader.ReadBoolean() && !dedServ && Platform.IsWindows)
                  {
 -                    ((Form)Control.FromHandle(base.Window.Handle)).WindowState = FormWindowState.Maximized;
+-                }
+-
+-                if (num >= 4)
+-                {
+-                    int width = binaryReader.ReadInt32();
+-                    int height = binaryReader.ReadInt32();
+-                    SetDisplayMode(width, height, flag);
 +                    SDL2.SDL.SDL_MaximizeWindow(base.Window.Handle);
                  }
  
-                 if (num >= 4)
-@@ -4658,6 +_,15 @@
+                 if (num >= 8)
+@@ -3168,8 +_,6 @@
+                 {
+                     placementPreview = binaryReader.ReadBoolean();
+                 }
+-
+-                SetFullScreen(flag);
+             }
+ 
+             binaryReader.Close();
+@@ -4658,6 +_,8 @@
              graphics = new GraphicsDeviceManager(this as Game);
              base.Content.RootDirectory = "Content";
          }
 +        base.Window.AllowUserResizing = true;
-+        base.Window.ClientSizeChanged += (x, y) =>
-+        {
-+            if (!graphics.IsFullScreen && !screenBorderless)
-+            {
-+                SDL2.SDL.SDL_GetWindowSize(Window.Handle, out int w, out int h);
-+                SetResolution(w, h);
-+            }
-+        };
++        ClientLoader.WindowManager = new WindowManager(this as Game);
      }
  
      private static void SetDisplayMonitor()
+@@ -4754,7 +_,6 @@
+         SetTitle();
+         lo = rand.Next(6);
+         waterfallManager = new WaterfallManager();
+-        _windowMover = new WindowStateController();
+         sittingManager = new AnchoredEntitiesCollection();
+         sleepingManager = new AnchoredEntitiesCollection();
+         gameTips = new GameTipsDisplay();
+@@ -4799,6 +_,7 @@
+         LoadContent_TryEnteringHiDef();
+         ClientInitialize();
+         base.Initialize();
++        ClientLoader.WindowManager?.Init();
+     }
+ 
+     private void Initialize_AlmostEverything()
+@@ -8716,8 +_,6 @@
+             screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+         }
+ 
+-        UpdateDisplaySettings();
+-        graphics.ApplyChanges();
+         if (Main.OnResolutionChanged != null)
+         {
+             Main.OnResolutionChanged(new Vector2(screenWidth, screenHeight));
 @@ -8736,9 +_,6 @@
          _achievementAdvisor = new AchievementAdvisor();
          OpenRecent();
@@ -264,6 +409,14 @@
                  {
                      hasFocus = false;
                  }
+@@ -15379,7 +_,6 @@
+             DoUpdate_F8_ToggleNetDiagnostics();
+             DoUpdate_F7_ToggleGraphicsDiagnostics();
+             DoUpdate_F11_ToggleUI();
+-            DoUpdate_AltEnter_ToggleFullscreen();
+             DoUpdate_HandleInput();
+             DoUpdate_HandleChat();
+             DoUpdate_Enter_ToggleChat();
 @@ -15512,11 +_,10 @@
          {
              DoUpdateInWorld(_worldUpdateTimeTester);
@@ -277,6 +430,31 @@
      }
  
      internal static void UpdateCreativeGameModeOverride()
+@@ -16556,24 +_,6 @@
+         keyState = Keyboard.GetState();
+     }
+ 
+-    private static void DoUpdate_AltEnter_ToggleFullscreen()
+-    {
+-        if ((keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) || keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt)) && keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter) && hasFocus)
+-        {
+-            if (toggleFullscreen)
+-            {
+-                ToggleFullScreen();
+-                chatRelease = false;
+-            }
+-
+-            toggleFullscreen = false;
+-        }
+-        else
+-        {
+-            toggleFullscreen = true;
+-        }
+-    }
+-
+     private static void DoUpdate_F11_ToggleUI()
+     {
+         if (keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F11))
 @@ -19026,7 +_,7 @@
                      {
                          toolTipLine[numLines] = Lang.tip[13].Value;
@@ -452,10 +630,12 @@
              }
              else if (menuMode == 1125)
              {
-@@ -51598,44 +_,43 @@
+@@ -51596,48 +_,6 @@
+         _uiScaleWanted = uiScaleWanted;
+     }
  
-     private static bool IsBorderlessDisplayAvailable()
-     {
+-    private static bool IsBorderlessDisplayAvailable()
+-    {
 -        bool result = false;
 -        if (Platform.IsWindows)
 -        {
@@ -463,59 +643,42 @@
 -        }
 -
 -        return result;
-+        return true;
-     }
- 
+-    }
+-
 -    private static void SetDisplayModeAsBorderless(ref int width, ref int height, Form form)
-+    public static void SetDisplayModeAsBorderless(ref int width, ref int height)
-     {
-         if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0)
-         {
-             screenBorderlessPendingResizes--;
+-    {
+-        if (screenBorderless && !graphics.IsFullScreen && screenBorderlessPendingResizes > 0)
+-        {
+-            screenBorderlessPendingResizes--;
 -            System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
-+            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
 -            width = bounds.Width;
-+            width = bounds.w;
 -            height = bounds.Height;
-+            height = bounds.h;
-+            ApplyBorderlessResolution();
-             TryPickingDefaultUIScale(height);
-         }
-     }
- 
+-            TryPickingDefaultUIScale(height);
+-        }
+-    }
+-
 -    private static void ApplyBorderlessResolution(Form form)
-+    private static void ApplyBorderlessResolution()
-     {
-         if (screenBorderlessPendingResizes > 0)
-         {
-             screenBorderlessPendingResizes--;
+-    {
+-        if (screenBorderlessPendingResizes > 0)
+-        {
+-            screenBorderlessPendingResizes--;
 -            System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;
 -            form.Location = new System.Drawing.Point(bounds.X, bounds.Y);
 -            form.FormBorderStyle = FormBorderStyle.None;
 -            form.Width = bounds.Width;
 -            form.Height = bounds.Height;
-+
-+            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
-+            SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
-+            SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, bounds.x, bounds.y);
-+            SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, bounds.w, bounds.h);
-+
-+            Main.screenWidth = bounds.w;
-+            Main.screenHeight = bounds.h;
-         }
-     }
- 
+-        }
+-    }
+-
 -    private static void SetBorderlessFormStyle(Form form)
-+    private static void SetBorderlessFormStyle()
-     {
+-    {
 -        form.Location = new System.Drawing.Point(0, 0);
 -        form.FormBorderStyle = FormBorderStyle.None;
-+        SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, 0, 0);
-+        SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
-+        SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
-     }
- 
+-    }
+-
      public static void OpenCharacterSelectUI()
+     {
+         menuMode = 888;
 @@ -54659,6 +_,7 @@
  
      protected void RenderBackground()
@@ -567,6 +730,19 @@
          if (shimmerAlpha == 1f)
          {
              return;
+@@ -58025,11 +_,10 @@
+         }
+     }
+ 
+-    protected void InitTargets()
++    public void InitTargets()
+     {
+         if (!PreventUpdatingTargets)
+         {
+-            UpdateDisplaySettings();
+         }
+ 
+         InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
 @@ -61561,7 +_,13 @@
          {
              _isDrawingOrUpdating = true;
@@ -581,20 +757,22 @@
              if (Main.OnPostDraw != null)
              {
                  Main.OnPostDraw(gameTime);
-@@ -62287,6 +_,13 @@
-             }
+@@ -61574,6 +_,7 @@
  
-             TimeLogger.DetailedDrawTime(26);
-+            SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
-+            w = Utils.Clamp(w, minScreenW, maxScreenW);
-+            h = Utils.Clamp(h, minScreenH, maxScreenH);
-+            SDL2.SDL.SDL_SetWindowSize(instance.Window.Handle, w, h);
-+            base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
-+            SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
-+            graphics.ApplyChanges();
-         }
+     private void DoDraw(GameTime gameTime)
+     {
++        ClientLoader.WindowManager!.Update();
+         Stopwatch stopwatch = new Stopwatch();
+         stopwatch.Start();
+         if (showSplash)
+@@ -61642,7 +_,6 @@
  
-         if (shimmerAlpha > 0f)
+         if (!dedServ)
+         {
+-            UpdateDisplaySettings();
+             if (Main.OnPreDraw != null)
+             {
+                 Main.OnPreDraw(gameTime);
 @@ -62397,7 +_,7 @@
              DrawItemTextPopups(targetScale);
              PlayerInput.SetZoom_UI();
@@ -627,12 +805,28 @@
              int hoveredSnippet;
              if (Netplay.Connection.StatusTextHasShadows)
              {
-@@ -66710,24 +_,20 @@
+@@ -66693,228 +_,9 @@
+         }
+     }
  
-     public static void SetDisplayMode(int width, int height, bool fullscreen)
-     {
-+
-         bool flag = false;
+-    public static void ToggleFullScreen()
+-    {
+-        SetFullScreen(!graphics.IsFullScreen);
+-    }
+-
+-    public static void SetFullScreen(bool fullscreen)
+-    {
+-        SetDisplayMode(PendingResolutionWidth, PendingResolutionHeight, fullscreen);
+-    }
+-
+-    public static void SetResolution(int width, int height)
+-    {
+-        SetDisplayMode(width, height, graphics.IsFullScreen);
+-    }
+-
+-    public static void SetDisplayMode(int width, int height, bool fullscreen)
+-    {
+-        bool flag = false;
 -        Form form = null;
 -        if (Platform.IsWindows)
 -        {
@@ -643,167 +837,200 @@
 -                screenMaximized = false;
 -                form.WindowState = FormWindowState.Normal;
 -            }
-+        IntPtr window = Main.instance.Window.Handle;
-+        uint flags = SDL2.SDL.SDL_GetWindowFlags(window);
-+        CacheSupportedDisplaySizes();
-+        screenMaximized = (flags & (uint)SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_MAXIMIZED) != 0;
- 
+-
 -            flag = form.FormBorderStyle == FormBorderStyle.None;
 -        }
 -        else
-+        if (screenBorderless && screenMaximized && !graphics.IsFullScreen)
-         {
-             screenMaximized = false;
-+            SDL2.SDL.SDL_RestoreWindow(window);
-         }
-+
-+        flag = (flags & (uint)SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS) != 0;
- 
-         bool flag2 = false;
-         int num3;
-@@ -66746,13 +_,10 @@
-                 }
-             }
- 
+-        {
+-            screenMaximized = false;
+-        }
+-
+-        bool flag2 = false;
+-        int num3;
+-        int num4;
+-        if (screenBorderless || screenMaximized || graphics.IsFullScreen || fullscreen)
+-        {
+-            bool flag3 = false;
+-            if (PlayerInput.SteamDeckIsUsed)
+-            {
+-                flag3 = true;
+-                if (!fullscreen && !graphics.IsFullScreen)
+-                {
+-                    width = 1280;
+-                    height = 800;
+-                    TryPickingDefaultUIScale(800f);
+-                }
+-            }
+-
 -            if (Platform.IsWindows)
-+            SDL2.SDL.SDL_SetWindowMinimumSize(window, 0, 0);
-+            if (!fullscreen && !flag3)
-             {
+-            {
 -                form.MinimumSize = new Size(0, 0);
 -                if (!fullscreen && !flag3)
 -                {
 -                    SetDisplayModeAsBorderless(ref width, ref height, form);
 -                }
-+                SetDisplayModeAsBorderless(ref width, ref height);
-             }
- 
-             if (width > maxScreenW)
-@@ -66788,14 +_,12 @@
-         else
-         {
-             PlayerInput.RawMouseScale = Vector2.One;
+-            }
+-
+-            if (width > maxScreenW)
+-            {
+-                float num = (float)height / (float)width;
+-                width = maxScreenW;
+-                height = (int)(num * (float)width);
+-            }
+-
+-            if (height > maxScreenH)
+-            {
+-                float num2 = (float)width / (float)height;
+-                height = maxScreenH;
+-                width = (int)(num2 * (float)height);
+-            }
+-
+-            PlayerInput.RawMouseScale = new Vector2((float)width / (float)instance.Window.ClientBounds.Width, (float)height / (float)instance.Window.ClientBounds.Height);
+-            if (!graphics.IsFullScreen)
+-            {
+-                num3 = Math.Max(graphics.PreferredBackBufferWidth, graphics.GraphicsDevice.Viewport.Width);
+-                num4 = Math.Max(graphics.PreferredBackBufferHeight, graphics.GraphicsDevice.Viewport.Height);
+-                if (num3 != graphics.PreferredBackBufferWidth || num4 != graphics.PreferredBackBufferHeight)
+-                {
+-                    flag2 = true;
+-                }
+-            }
+-            else
+-            {
+-                num3 = graphics.PreferredBackBufferWidth;
+-                num4 = graphics.PreferredBackBufferHeight;
+-            }
+-        }
+-        else
+-        {
+-            PlayerInput.RawMouseScale = Vector2.One;
 -            if (Platform.IsWindows)
-+
-+            SDL2.SDL.SDL_SetWindowMinimumSize(window, minScreenW, minScreenH);
-+            if (flag)
-             {
+-            {
 -                form.MinimumSize = new Size(minScreenW, minScreenH);
 -                if (flag)
 -                {
 -                    width = displayWidth[0];
 -                    height = displayHeight[0];
 -                }
-+                width = 800;
-+                height = 600;
-             }
- 
-             width = Math.Min(width, maxScreenW);
-@@ -66805,23 +_,33 @@
-             flag2 = graphics.PreferredBackBufferWidth != graphics.GraphicsDevice.Viewport.Width || graphics.PreferredBackBufferHeight != graphics.GraphicsDevice.Viewport.Height;
-         }
- 
+-            }
+-
+-            width = Math.Min(width, maxScreenW);
+-            height = Math.Min(height, maxScreenH);
+-            num3 = graphics.GraphicsDevice.Viewport.Width;
+-            num4 = graphics.GraphicsDevice.Viewport.Height;
+-            flag2 = graphics.PreferredBackBufferWidth != graphics.GraphicsDevice.Viewport.Width || graphics.PreferredBackBufferHeight != graphics.GraphicsDevice.Viewport.Height;
+-        }
+-
 -        if (Platform.IsWindows && !fullscreen && !flag2)
-+        if (!fullscreen && !flag2)
-         {
-+            SDL2.SDL.SDL_GetWindowSize(window, out int w, out int h);
+-        {
 -            if (form.ClientSize.Width < graphics.PreferredBackBufferWidth)
-+            if (w < graphics.PreferredBackBufferWidth)
-             {
+-            {
 -                width = form.ClientSize.Width;
 -                flag2 = true;
-+                width = w;
-             }
+-            }
 -
 -            if (form.ClientSize.Height < graphics.PreferredBackBufferHeight)
-+            if (h < graphics.PreferredBackBufferHeight)
-             {
+-            {
 -                height = form.ClientSize.Height;
 -                flag2 = true;
-+                height = h;
-             }
-         }
- 
+-            }
+-        }
+-
 -        width &= 0x7FFFFFFE;
-+        //width &= 0x7FFFFFFE;
 -        height &= 0x7FFFFFFE;
-+        //height &= 0x7FFFFFFE;
-+
-+        if (screenBorderless && !flag)
-+        {
-+            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);
-+            SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);
-+            SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, bounds.x, bounds.y);
-+            SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, bounds.w, bounds.h);
-+
-+            Main.screenWidth = bounds.w;
-+            Main.screenHeight = bounds.h;
-+        }
-+
-         width = Math.Max(width, minScreenW);
-         height = Math.Max(height, minScreenH);
-         if (graphics.IsFullScreen != fullscreen)
-@@ -66831,7 +_,21 @@
-             graphics.ApplyChanges();
-             graphics.ToggleFullScreen();
-         }
-+        SDL2.SDL.SDL_GetWindowSize(window, out int ww, out int wh);
- 
-+        if (graphics.PreferredBackBufferWidth != ww)
-+        {
-+            graphics.PreferredBackBufferWidth = ww;
-+        }
-+        if (graphics.PreferredBackBufferHeight != wh)
-+        {
-+            graphics.PreferredBackBufferHeight = wh;
-+        }
-+
-+        if (graphics.GraphicsDevice.Viewport.Width != ww || graphics.GraphicsDevice.Viewport.Height != wh)
-+        {
-+            graphics.GraphicsDevice.Viewport = new Viewport(0, 0, ww, wh);
-+        }
-         if (width != num3 || height != num4 || flag2)
-         {
-             mapTime = 0;
-@@ -66855,22 +_,19 @@
-             PendingResolutionWidth = screenWidth;
-             PendingResolutionHeight = screenHeight;
-             PlayerInput.CacheOriginalScreenDimensions();
+-        width = Math.Max(width, minScreenW);
+-        height = Math.Max(height, minScreenH);
+-        if (graphics.IsFullScreen != fullscreen)
+-        {
+-            graphics.PreferredBackBufferWidth = width;
+-            graphics.PreferredBackBufferHeight = height;
+-            graphics.ApplyChanges();
+-            graphics.ToggleFullScreen();
+-        }
+-
+-        if (width != num3 || height != num4 || flag2)
+-        {
+-            mapTime = 0;
+-            if (gamePaused)
+-            {
+-                renderNow = true;
+-            }
+-
+-            screenWidth = width;
+-            screenHeight = height;
+-            graphics.PreferredBackBufferWidth = screenWidth;
+-            graphics.PreferredBackBufferHeight = screenHeight;
+-            graphics.ApplyChanges();
+-            PlayerInput.CacheOriginalScreenDimensions();
+-            FixUIScale();
+-            if (Main.OnResolutionChanged != null)
+-            {
+-                Main.OnResolutionChanged(new Vector2(screenWidth, screenHeight));
+-            }
+-
+-            PendingResolutionWidth = screenWidth;
+-            PendingResolutionHeight = screenHeight;
+-            PlayerInput.CacheOriginalScreenDimensions();
 -            if (Platform.IsWindows && !fullscreen)
-+            if (!fullscreen)
-             {
-                 if (screenBorderless)
-                 {
+-            {
+-                if (screenBorderless)
+-                {
 -                    ApplyBorderlessResolution(form);
-+                    ApplyBorderlessResolution();
 -                    form.FormBorderStyle = FormBorderStyle.None;
-                 }
-                 else
-                 {
+-                }
+-                else
+-                {
 -                    form.FormBorderStyle = FormBorderStyle.Sizable;
-+                    SDL2.SDL.SDL_SetWindowResizable(window, SDL2.SDL.SDL_bool.SDL_TRUE);
-+                    SDL2.SDL.SDL_SetWindowBordered(window, SDL2.SDL.SDL_bool.SDL_TRUE);
-                 }
+-                }
 -
 -                form.SendToBack();
 -                form.BringToFront();
-+                SDL2.SDL.SDL_SetWindowInputFocus(window);
-             }
+-            }
 -
-             Lighting.Initialize();
-             if (!drawToScreen && !_isResizingAndRemakingTargets)
-             {
-@@ -66913,8 +_,13 @@
-         {
-             FullscreenStartup();
-         }
+-            Lighting.Initialize();
+-            if (!drawToScreen && !_isResizingAndRemakingTargets)
+-            {
+-                _isResizingAndRemakingTargets = true;
+-                instance.InitTargets();
+-                _isResizingAndRemakingTargets = false;
+-            }
 -
-+        SDL2.SDL.SDL_GetWindowSize(instance.Window.Handle, out int w, out int h);
-+        w = Utils.Clamp(w, minScreenW, maxScreenW);
-+        h = Utils.Clamp(h, minScreenH, maxScreenH);
-+        SDL2.SDL.SDL_SetWindowSize(instance.Window.Handle, w, h);
-+        base.GraphicsDevice.Viewport = new Viewport(0, 0, w, h);
-         SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
-+        graphics.ApplyChanges();
+-            UserInterface.ActiveInstance.Recalculate();
+-            instance._needsMenuUIRecalculation = true;
+-            Console.WriteLine(Language.GetTextValue("Misc.ResolutionChanged", width, height));
+-            chatMonitor.OnResolutionChange();
+-        }
+-
+-        if (!graphics.SynchronizeWithVerticalRetrace)
+-        {
+-            graphics.SynchronizeWithVerticalRetrace = true;
+-            graphics.ApplyChanges();
+-        }
+-    }
+-
+     public static void FixUIScale()
+     {
+         UIScale = UIScaleWanted;
+-    }
+-
+-    public void FullscreenStartup()
+-    {
+-        startFullscreen = false;
+-        int currentValue = graphics.PreferredBackBufferWidth;
+-        int currentValue2 = graphics.PreferredBackBufferHeight;
+-        Configuration.Get("DisplayWidth", ref currentValue);
+-        Configuration.Get("DisplayHeight", ref currentValue2);
+-        SetDisplayMode(currentValue, currentValue2, fullscreen: true);
+-    }
+-
+-    public void UpdateDisplaySettings()
+-    {
+-        if (startFullscreen)
+-        {
+-            FullscreenStartup();
+-        }
+-
+-        SetResolution(base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
      }
  
      public static void OpenPlayerSelect(OnPlayerSelected method)

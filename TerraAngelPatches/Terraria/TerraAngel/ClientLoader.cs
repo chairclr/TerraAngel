@@ -26,9 +26,11 @@ public unsafe class ClientLoader
     public static bool WantCaptureMouse => ImGuiIO?.WantCaptureMouse ?? false;
     public static bool WantCaptureKeyboard => ImGuiIO?.WantCaptureKeyboard ?? false;
     public static bool WantCaptureText => ImGuiIO?.WantTextInput ?? false;
+    public static WindowManager? WindowManager;
 
     public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
     public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
+    public static string WindowConfigPath => Path.Combine(SavePath, "clientWindowConfig.json");
     public static string PluginsPath => Path.Combine(SavePath, "Plugins");
     public static string TerrariaPath => Path.GetDirectoryName(typeof(Main).Assembly.Location)!;
     public static string AssetPath => "Assets";
@@ -142,6 +144,8 @@ public unsafe class ClientLoader
         {
             InitDiscord();
         }
+
+        
     }
 
     public static void LoadClient()
@@ -177,6 +181,8 @@ public unsafe class ClientLoader
             MainRenderer = new ClientRenderer(main);
             ClientConfig.Settings.PluginsToEnable = ClientConfig.Settings.pluginsToEnable;
         }
+
+
     }
 
     public static void InitDiscord()
