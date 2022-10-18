@@ -14,7 +14,6 @@ namespace TerraAngel;
 
 public unsafe class ClientLoader
 {
-    public static bool SetupRenderer = false;
     public static ClientRenderer? MainRenderer;
     internal static ConsoleWindow? ConsoleWindow;
     internal static ChatWindow? ChatWindow;
@@ -22,10 +21,6 @@ public unsafe class ClientLoader
     public static PluginUI PluginUI = new PluginUI();
     public static ResolutionUI ResolutionUI = new ResolutionUI();
     public static DiscordRpcClient? DiscordClient;
-    public static ImGuiIOPtr? ImGuiIO => (ImGui.GetIO().NativePtr == null ? null : ImGui.GetIO());
-    public static bool WantCaptureMouse => ImGuiIO?.WantCaptureMouse ?? false;
-    public static bool WantCaptureKeyboard => ImGuiIO?.WantCaptureKeyboard ?? false;
-    public static bool WantCaptureText => ImGuiIO?.WantTextInput ?? false;
     public static WindowManager? WindowManager;
 
     public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
@@ -175,14 +170,8 @@ public unsafe class ClientLoader
 
     public static void SetupImGuiRenderer(Game main)
     {
-        if (!SetupRenderer)
-        {
-            SetupRenderer = true;
-            MainRenderer = new ClientRenderer(main);
-            ClientConfig.Settings.PluginsToEnable = ClientConfig.Settings.pluginsToEnable;
-        }
-
-
+        MainRenderer = new ClientRenderer(main);
+        ClientConfig.Settings.PluginsToEnable = ClientConfig.Settings.pluginsToEnable;
     }
 
     public static void InitDiscord()

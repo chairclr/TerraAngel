@@ -89,7 +89,7 @@ public class PlayerInspectorWindow : ClientWindow
 
                 if (ImGui.Button($"{Icon.CircleSlash}"))
                 {
-                    Butcher.ButcherPlayer(player, CringeManager.ButcherDamage);
+                    Butcher.ButcherPlayer(player, CringeManager.GetCringe<ButcherCringe>().ButcherDamage);
                 }
                 if (ImGui.IsItemHovered())
                 {

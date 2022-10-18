@@ -133,7 +133,7 @@ public class DrawHooks
     {
         if (!Main.instance.IsActive)
             return;
-        if (ClientLoader.WantCaptureMouse || ClientLoader.WantCaptureKeyboard)
+        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
         {
             return;
         }
@@ -143,7 +143,7 @@ public class DrawHooks
     {
         if (!Main.instance.IsActive)
             return Vector2.Zero;
-        if (ClientLoader.WantCaptureMouse || ClientLoader.WantCaptureKeyboard)
+        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
         {
             return Vector2.Zero;
         }

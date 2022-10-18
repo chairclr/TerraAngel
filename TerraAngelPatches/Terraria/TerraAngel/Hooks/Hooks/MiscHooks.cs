@@ -37,13 +37,13 @@ public class MiscHooks
 
     public static bool TriggerSetGetHook1(Func<TriggersSet, bool> orig, TriggersSet self)
     {
-        if (ClientLoader.WantCaptureKeyboard)
+        if (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantCaptureKeyboard)
             return false;
         return orig(self);
     }
     public static bool TriggerSetGetHook2(Func<TriggersSet, bool> orig, TriggersSet self)
     {
-        if (ClientLoader.WantCaptureKeyboard || ClientLoader.WantCaptureMouse)
+        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureKeyboard || ImGui.GetIO().WantCaptureMouse))
             return false;
         return orig(self);
     }
@@ -56,7 +56,7 @@ public class MiscHooks
     }
     public static void set_IsMouseVisibleHook(Action<Game, bool> orig, Game self, bool visible)
     {
-        if (ClientLoader.SetupRenderer && (ImGui.GetIO().WantCaptureMouse || (ImGui.GetIO().WantCaptureKeyboard && !(ImGui.GetIO().KeyAlt && (ClientLoader.ChatWindow?.IsChatting ?? false) && lastCursorOverride == 2))))
+        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || (ImGui.GetIO().WantCaptureKeyboard && !(ImGui.GetIO().KeyAlt && (ClientLoader.ChatWindow?.IsChatting ?? false) && lastCursorOverride == 2))))
             visible = true;
         if (!Main.instance?.IsActive ?? false)
             visible = true;
@@ -121,7 +121,7 @@ public class MiscHooks
     private static int framesSinceStopped = 0;
     public static void MouseInputHook(Action orig)
     {
-        if (ClientLoader.WantCaptureMouse)
+        if (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantCaptureMouse)
         {
             PlayerInput.ScrollWheelDelta = 0;
             PlayerInput.ScrollWheelDeltaForUI = 0;
@@ -153,7 +153,7 @@ public class MiscHooks
     {
         if (!Main.instance.IsActive)
             return;
-        if (ClientLoader.SetupRenderer)
+        if (ClientLoader.MainRenderer is not null)
         {
             ImGuiIOPtr io = ImGui.GetIO();
 

@@ -41,18 +41,18 @@ public class PlayerHooks
     }
     public static void PlayerItemCheckHook(Action<Player, int> orig, Player self, int i)
     {
-        if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AutoAttackCringe>().Enabled)
+        if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AutoAimCringe>().Enabled)
         {
 
             int mx = Main.mouseX;
             int my = Main.mouseY;
 
 
-            if (CringeManager.GetCringe<AutoAttackCringe>().LockedOnToTarget)
+            if (CringeManager.GetCringe<AutoAimCringe>().LockedOnToTarget)
             {
-                Vector2 point = Util.WorldToScreenWorld(CringeManager.GetCringe<AutoAttackCringe>().TargetPoint);
+                Vector2 point = Util.WorldToScreenWorld(CringeManager.GetCringe<AutoAimCringe>().TargetPoint);
 
-                CringeManager.GetCringe<AutoAttackCringe>().LockedOnToTarget = false;
+                CringeManager.GetCringe<AutoAimCringe>().LockedOnToTarget = false;
                 Main.mouseX = (int)point.X;
                 Main.mouseY = (int)point.Y;
             }
@@ -109,19 +109,6 @@ public class PlayerHooks
                     {
                         SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
                     }
-                }
-            }
-
-            if (CringeManager.AutoButcherHostileNPCs)
-            {
-                Butcher.ButcherAllHostileNPCs(CringeManager.ButcherDamage);
-            }
-
-            if (CringeManager.NebulaSpam)
-            {
-                for (int i = 0; i < CringeManager.NebulaSpamPower; i++)
-                {
-                    NetMessage.SendData(102, -1, -1, null, Main.myPlayer, 173, Main.LocalPlayer.position.X, Main.LocalPlayer.position.Y);
                 }
             }
 

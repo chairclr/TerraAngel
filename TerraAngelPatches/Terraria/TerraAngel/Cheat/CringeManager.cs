@@ -71,12 +71,4 @@ public class CringeManager
             cringe.Update();
         }
     }
-
-
-    public static int ButcherDamage = 1000;
-
-    public static bool AutoButcherHostileNPCs = false;
-
-    public static bool NebulaSpam = false;
-    public static int NebulaSpamPower = 100;
 }

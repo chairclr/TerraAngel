@@ -57,25 +57,6 @@ public class MainWindow : ClientWindow
                         }
                         ImGui.EndTabItem();
                     }
-                    if (ImGui.BeginTabItem("Butcher"))
-                    {
-                        if (ImGui.Button("Butcher All Hostile NPCs"))
-                        {
-                            Butcher.ButcherAllHostileNPCs(CringeManager.ButcherDamage);
-                        }
-                        ImGui.Checkbox("Auto-Butcher Hostiles", ref CringeManager.AutoButcherHostileNPCs);
-                        if (ImGui.Button("Butcher All Friendly NPCs"))
-                        {
-                            Butcher.ButcherAllFriendlyNPCs(CringeManager.ButcherDamage);
-                        }
-                        if (ImGui.Button("Butcher All Players"))
-                        {
-                            Butcher.ButcherAllPlayers(CringeManager.ButcherDamage);
-                        }
-                        ImGui.SliderInt("Butcher Damage", ref CringeManager.ButcherDamage, 1, (int)short.MaxValue);
-
-                        ImGui.EndTabItem();
-                    }
                     if (ImGui.BeginTabItem("Items"))
                     {
                         if (ImGui.BeginTabBar("ItemBar"))
@@ -97,6 +78,16 @@ public class MainWindow : ClientWindow
                         }
                         ImGui.EndTabItem();
                     }
+
+                    foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.NewTab))
+                    {
+                        if (ImGui.BeginTabItem(cringe.Name))
+                        {
+                            cringe.DrawUI(io);
+                            ImGui.EndTabItem();
+                        }
+                    }
+
                     ImGui.EndTabBar();
                 }
                 ImGui.EndTabItem();
@@ -180,24 +171,10 @@ public class MainWindow : ClientWindow
 
             if (ImGui.BeginTabItem("Misc"))
             {
-                if (ImGui.Checkbox("Nebula Spam", ref CringeManager.NebulaSpam))
+                foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.MiscCringes))
                 {
-                    if (CringeManager.NebulaSpam && CringeManager.NebulaSpamPower > 30)
-                    {
-                        CringeManager.GetCringe<Cheat.Cringes.OptimizationCringe>().DisableGore = true;
-                    }
+                    cringe.DrawUI(io);
                 }
-                if (ImGui.CollapsingHeader("Nebula Settings"))
-                {
-                    if (ImGui.SliderInt("Nebula Spam Power", ref CringeManager.NebulaSpamPower, 1, 500))
-                    {
-                        if (CringeManager.NebulaSpam && CringeManager.NebulaSpamPower > 30)
-                        {
-                            CringeManager.GetCringe<Cheat.Cringes.OptimizationCringe>().DisableGore = true;
-                        }
-                    }
-                }
-
                 ImGui.EndTabItem();
             }
             ImGui.EndTabBar();

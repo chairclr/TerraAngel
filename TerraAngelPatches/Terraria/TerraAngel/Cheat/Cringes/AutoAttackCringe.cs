@@ -1,8 +1,8 @@
 ﻿namespace TerraAngel.Cheat.Cringes;
 
-public class AutoAttackCringe : Cringe
+public class AutoAimCringe : Cringe
 {
-    public override string Name => "Auto-Attack";
+    public override string Name => "Auto-Aim";
     public override CringeTabs Tab => CringeTabs.AutomationCringes;
 
     public ref bool FavorBosses => ref ClientConfig.Settings.AutoAttackFavorBosses;
