@@ -197,11 +197,10 @@ public class Program
             failed = true;
         }
 
-        if (AutoStart || failed)
-        {
-            Console.Write("Press enter to exit...");
-            Console.ReadLine();
-        }
+        if (failed) { Console.WriteLine("Failed. Open an issue and attach the output."); }
+
+        Console.Write("Press enter to exit...");
+        Console.ReadLine();
     }
     public static void DecompileTerraria()
     {

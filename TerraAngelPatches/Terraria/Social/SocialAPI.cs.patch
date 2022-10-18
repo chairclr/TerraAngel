@@ -1,14 +1,15 @@
 --- src/Terraria/Terraria/Social/SocialAPI.cs
 +++ src/TerraAngel/Terraria/Social/SocialAPI.cs
-@@ -1,7 +_,5 @@
+@@ -2,8 +_,6 @@
  using System.Collections.Generic;
+ using ReLogic.OS;
  using Terraria.Social.Base;
 -using Terraria.Social.Steam;
 -using Terraria.Social.WeGame;
  
  namespace Terraria.Social;
  public static class SocialAPI
-@@ -47,11 +_,10 @@
+@@ -59,11 +_,10 @@
  
      public static void Shutdown()
      {
@@ -24,25 +25,28 @@
      }
  
      private static T LoadModule<T>()
-@@ -83,16 +_,14 @@
-         Workshop = LoadModule<Terraria.Social.Steam.WorkshopSocialModule>();
-         Platform = LoadModule<Terraria.Social.Steam.PlatformSocialModule>();
-         Network = LoadModule<Terraria.Social.Steam.NetClientSocialModule>();
+@@ -107,24 +_,9 @@
+             Network = LoadModule<Terraria.Social.Steam.NetClientSocialModule>();
+         }
+ 
 -        WeGameHelper.WriteDebugString("LoadSteam modules");
      }
  
      private static void LoadWeGame()
      {
 -        LoadModule<Terraria.Social.WeGame.CoreSocialModule>();
-+        //LoadModule<Terraria.Social.WeGame.CoreSocialModule>();
 -        Cloud = LoadModule<Terraria.Social.WeGame.CloudSocialModule>();
-+        //Cloud = LoadModule<Terraria.Social.WeGame.CloudSocialModule>();
 -        Friends = LoadModule<Terraria.Social.WeGame.FriendsSocialModule>();
-+        //Friends = LoadModule<Terraria.Social.WeGame.FriendsSocialModule>();
 -        Overlay = LoadModule<Terraria.Social.WeGame.OverlaySocialModule>();
-+        //Overlay = LoadModule<Terraria.Social.WeGame.OverlaySocialModule>();
--        Network = LoadModule<Terraria.Social.WeGame.NetClientSocialModule>();
-+        //Network = LoadModule<Terraria.Social.WeGame.NetClientSocialModule>();
+-        if (Main.dedServ)
+-        {
+-            Network = LoadModule<Terraria.Social.WeGame.NetServerSocialModule>();
+-        }
+-        else
+-        {
+-            Network = LoadModule<Terraria.Social.WeGame.NetClientSocialModule>();
+-        }
+-
 -        WeGameHelper.WriteDebugString("LoadWeGame modules");
      }
  }

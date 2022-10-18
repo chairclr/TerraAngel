@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/GameContent/Biomes/CaveHouse/HouseBuilder.cs
 +++ src/TerraAngel/Terraria/GameContent/Biomes/CaveHouse/HouseBuilder.cs
-@@ -45,7 +_,7 @@
+@@ -46,7 +_,7 @@
      public Rectangle TopRoom => Rooms.First();
      public Rectangle BottomRoom => Rooms.Last();
      private UnifiedRandom _random => WorldGen.genRand;

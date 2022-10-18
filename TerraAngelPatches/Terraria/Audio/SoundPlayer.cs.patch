@@ -6,7 +6,7 @@
  using Microsoft.Xna.Framework;
  using ReLogic.Utilities;
  
-@@ -76,19 +_,22 @@
+@@ -92,19 +_,22 @@
  
      public void Update()
      {

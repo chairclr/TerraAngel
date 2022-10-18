@@ -1,23 +1,22 @@
-﻿namespace TerraAngel
+﻿namespace TerraAngel;
+
+public class Sexer
 {
-    public class Sexer
+    public static readonly string DefaultSexerName = "DefaultSexer";
+
+    public readonly string SexerName;
+
+    public static Sexer CreateDefaultSexer()
     {
-        public static readonly string DefaultSexerName = "DefaultSexer";
+        return new Sexer();
+    }
 
-        public readonly string SexerName;
-
-        public static Sexer CreateDefaultSexer()
-        {
-            return new Sexer();
-        }
-
-        public Sexer()
-        {
-            SexerName = DefaultSexerName;
-        }
-        public Sexer(string name)
-        {
-            SexerName = name;
-        }
+    public Sexer()
+    {
+        SexerName = DefaultSexerName;
+    }
+    public Sexer(string name)
+    {
+        SexerName = name;
     }
 }

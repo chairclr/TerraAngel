@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/NPC.cs
 +++ src/TerraAngel/Terraria/NPC.cs
-@@ -13,7 +_,6 @@
+@@ -14,7 +_,6 @@
  using Terraria.GameContent.Drawing;
  using Terraria.GameContent.Events;
  using Terraria.GameContent.ItemDropRules;
@@ -8,7 +8,16 @@
  using Terraria.GameContent.Tile_Entities;
  using Terraria.GameContent.UI;
  using Terraria.Graphics.CameraModifiers;
-@@ -884,7 +_,6 @@
+@@ -420,7 +_,7 @@
+         }
+     }
+ 
+-    public string TypeName => Lang.GetNPCNameValue(netID);
++    public string TypeName => Lang.GetNPCNameValue(netID) + (ClientConfig.Settings.ShowDetailedTooltips ? $" [{type}{(Util.NPCFields.ContainsKey(type) ? ("/" + Util.NPCFields[type].Name) : "")}{(netID != type ? ("/" + netID) : "")}]" : ""); // kind of aids but shhhhhh
+     public string FullName
+     {
+         get
+@@ -1132,7 +_,6 @@
              highestTierBossOrEvent = 398;
          }
  
@@ -16,11 +25,11 @@
      }
  
      public void SpawnWithHigherTime(int timeMult)
-@@ -91925,6 +_,7 @@
+@@ -96498,6 +_,7 @@
  
      private void UpdateCollision()
      {
-+        if (!(TerraAngel.Cheat.CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)) return;
++        if (!Main.tile.IsTileInLoadedSection(((int)(position.X / 16f)), ((int)(position.Y / 16f)))) return;
          Collision_WalkDownSlopes();
          bool lava = Collision_LavaCollision();
          lava = Collision_WaterCollision(lava);

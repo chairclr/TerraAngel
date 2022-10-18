@@ -1,0 +1,15 @@
+--- src/Terraria/Terraria/Social/Steam/PlatformSocialModule.cs
++++ src/TerraAngel/Terraria/Social/Steam/PlatformSocialModule.cs
+@@ -21,12 +_,6 @@
+ 
+             if (num)
+             {
+-                Main.graphics.PreferredBackBufferWidth = (Main.screenWidth = 1280);
+-                Main.graphics.PreferredBackBufferHeight = (Main.screenHeight = 800);
+-                Main.startFullscreen = true;
+-                Main.toggleFullscreen = true;
+-                Main.screenBorderless = false;
+-                Main.screenMaximized = false;
+                 Main.InitialMapScale = (Main.MapScale = 0.73f);
+                 Main.UIScale = 1.07f;
+             }

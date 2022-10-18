@@ -364,7 +364,7 @@ FodyWeavers.xsd
 
 # stuff
 src/
-src_backup/
+src_*/
 
 Build/
 
@@ -375,6 +375,9 @@ Build/
 
 build_log_*.txt
 
-!TerraAngelPatches/Terraria/LibNew/x64
-!TerraAngelPatches/Terraria/LibNew/x86
+!TerraAngelPatches/Terraria/Libraries/x64
+!TerraAngelPatches/Terraria/Libraries/x86
+!TerraAngelPatches/Terraria/Libraries/*/x64
+!TerraAngelPatches/Terraria/Libraries/*/x86
 TerraAngelPatches/Terraria/Properties/launchSettings.json
+TerraAngelSetup/TerraAngelSetup/Properties/launchSettings.json

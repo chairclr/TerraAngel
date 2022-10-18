@@ -1,6 +1,6 @@
 --- src/Terraria/ReLogic/ReLogic.csproj
 +++ src/TerraAngel/ReLogic/ReLogic.csproj
-@@ -7,20 +_,16 @@
+@@ -7,20 +_,20 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © Re-Logic 2017</Company>
      <RootNamespace>ReLogic</RootNamespace>
@@ -18,13 +18,19 @@
 -    <Reference Include="System.Core" />
 -    <Reference Include="System.Drawing" />
 -    <Reference Include="System.Windows.Forms" />
-+    <Reference Include="../Terraria/Libraries/DotNetZip/**" />
-+    <Reference Include="../Terraria/Libraries/JSON.NET/**" />
-   </ItemGroup>
-   <ItemGroup>
+-  </ItemGroup>
+-  <ItemGroup>
 -    <EmbeddedResource Include="Microsoft/**" />
++
++  </ItemGroup>
++  <ItemGroup>
 +    <Reference Include="FNA">
-+      <HintPath>..\Terraria\LibNew\FNA\FNA.dll</HintPath>
++      <HintPath>..\Terraria\Libraries\FNA\FNA.dll</HintPath>
 +    </Reference>
++  </ItemGroup>
++
++  <ItemGroup>
++    <PackageReference Include="DotNetZip" Version="1.16.0" />
++    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
    </ItemGroup>
  </Project>

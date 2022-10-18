@@ -1,6 +1,18 @@
 --- src/Terraria/Terraria/Utils.cs
 +++ src/TerraAngel/Terraria/Utils.cs
-@@ -1734,7 +_,7 @@
+@@ -53,6 +_,11 @@
+         return value1 + (value2 - value1) * amount;
+     }
+ 
++    public static float Lerp(float value1, float value2, float amount)
++    {
++        return value1 + (value2 - value1) * amount;
++    }
++
+     public static Vector2 Round(Vector2 input)
+     {
+         return new Vector2((float)Math.Round(input.X), (float)Math.Round(input.Y));
+@@ -1997,7 +_,7 @@
  
      public static string ReadEmbeddedResource(string path)
      {

@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Player.cs
 +++ src/TerraAngel/Terraria/Player.cs
-@@ -472,6 +_,7 @@
+@@ -533,6 +_,7 @@
          }
      }
  
@@ -8,42 +8,137 @@
      public int emoteTime;
      public CreativeUnlocksTracker creativeTracker;
      private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
-@@ -16648,7 +_,7 @@
+@@ -11547,6 +_,7 @@
+ 
+     public void Yoraiz0rEye()
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false || ClientConfig.Settings.IgnoreReLogicBullshit) return;
+         int num = 0;
+         num += bodyFrame.Y / 56;
+         if (num >= Main.OffsetsPlayerHeadgear.Length)
+@@ -16346,6 +_,7 @@
+         ZoneLihzhardTemple = false;
+         int num3 = (int)base.Center.X / 16;
+         int num4 = (int)base.Center.Y / 16;
++        if (!Main.tile.InWorld(num3, num4)) return;
+         if (Main.tile[num3, num4] != null && Main.tile[num3, num4].wall == 87)
+         {
+             ZoneLihzhardTemple = true;
+@@ -17800,7 +_,7 @@
                  }
  
                  int num5 = tile.frameY / 22;
--                if (num5 < 22)
+-                if (num5 < 24)
 +                if (num5 < 22 && num5 >= 0)
                  {
                      nearbyTorch[num5] = true;
                      if (num5 == 17 && (tile.liquid == 0 || tile.liquidType() != 0))
-@@ -18171,7 +_,7 @@
+@@ -19543,7 +_,7 @@
  
          int num = (int)(position.X + (float)(width / 2)) / 16;
          int num2 = (int)(position.Y - 8f) / 16;
--        if (Main.tile[num, num2] == null || !Main.tile[num, num2].active() || !Main.tileRope[Main.tile[num, num2].type])
+-        if (!WorldGen.IsRope(num, num2))
 +        if (!WorldGen.InWorld(num, num2) || Main.tile[num, num2] == null || !Main.tile[num, num2].active() || !Main.tileRope[Main.tile[num, num2].type])
          {
              return;
          }
-@@ -26485,6 +_,8 @@
+@@ -23727,7 +_,7 @@
+ 
+     public static int GetFloorTileType(int x, int y)
+     {
+-        return ((int?)GetFloorTile(x, y)?.type) ?? (-1);
++        return (int)GetFloorTile(x, y).type;
+     }
+ 
+     private void MakeFloorDust(bool Falling, int type, int paintColor)
+@@ -28337,28 +_,35 @@
              CheckCrackedBrickBreak();
          }
  
-+        if ((!TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && (TerraAngel.Cheat.CringeManager.LoadedTileSections?[((int)position.X / 16) / Main.sectionWidth, ((int)position.Y / 16) / Main.sectionHeight] ?? true)))
++        if ((!CringeManager.GetCringe<NoClipCringe>().Enabled && i == Main.myPlayer) || (i != Main.myPlayer && Main.tile.IsTileInLoadedSection(((int)(position.X / 16f)), ((int)(position.Y / 16f)))))
 +        {
-         SlopeDownMovement();
-         bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
-         if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
-@@ -26695,6 +_,7 @@
+         if (!shimmering)
+         {
+             SlopeDownMovement();
++            // patch context
+             bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
+             if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
+             {
+                 Collision.StepDown(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, waterWalk || waterWalk2);
+             }
+-
++            // patch context
+             if (gravDir == -1f)
+             {
++                // patch context
+                 if ((carpetFrame != -1 || velocity.Y <= gravity) && !controlUp)
+                 {
+                     Collision.StepUp(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, controlUp);
+                 }
++                // patch context
+             }
+             else if ((carpetFrame != -1 || velocity.Y >= gravity) && !controlDown && !mount.Cart && !flag26 && grappling[0] == -1)
+             {
+                 Collision.StepUp(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, controlUp);
+             }
++            // patch context
+         }
  
++        // patch context
+         oldPosition = position;
+         oldDirection = direction;
+         bool falling = false;
+@@ -28553,20 +_,22 @@
+         {
+             FloorVisuals(falling);
+         }
+-
++        // patch context
+         if (whoAmI == Main.myPlayer && !shimmering)
+         {
+             Collision.SwitchTiles(position, width, height, oldPosition, 1);
+         }
+-
++        // patch context
          PressurePlateHelper.UpdatePlayerPosition(this);
          BordersMovement();
-+        }
          numMinions = 0;
          slotsMinions = 0f;
++        // patch context
          if (mount.Type != 8)
-@@ -39761,7 +_,7 @@
+         {
+             ItemCheck_ManageRightClickFeatures();
+         }
++        }
+ 
+         ItemCheckWrapped(i);
+         PlayerFrame();
+@@ -28684,6 +_,7 @@
+         return result;
+     }
+ 
++
+     private void AdjustRemainingPotionSickness()
+     {
+         if (whoAmI == Main.myPlayer)
+@@ -38143,6 +_,7 @@
+             bool flag = false;
+             for (int j = -1; j <= 1; j++)
+             {
++                if (!Main.tile.InWorld(x + j, y + i)) continue;
+                 Tile tile = Main.tile[x + j, y + i];
+                 if (tile.nactive() && (Main.tileSolid[tile.type] || !Main.tileSolidTop[tile.type]))
+                 {
+@@ -38191,7 +_,7 @@
+         {
+             for (int j = floorY - 3; j < floorY; j++)
+             {
+-                if (Main.tile[i, j] != null)
++                if (Main.tile.InWorld(i, j))
+                 {
+                     if (Main.tile[i, j].nactive() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type])
+                     {
+@@ -42941,7 +_,7 @@
          return num;
      }
  

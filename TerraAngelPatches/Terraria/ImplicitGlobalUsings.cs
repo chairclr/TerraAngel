@@ -11,8 +11,5 @@ global using TerraAngel.Input;
 global using TerraAngel.Utility;
 global using Terraria;
 global using Terraria.ID;
-global using NVector2 = System.Numerics.Vector2;
-global using NVector3 = System.Numerics.Vector3;
-global using NVector4 = System.Numerics.Vector4;
 global using NRectangle = System.Drawing.Rectangle;
 global using Rectangle = Microsoft.Xna.Framework.Rectangle;

@@ -11,9 +11,11 @@ TerraAngel is a modern and heavily featured utility client for Terraria.
 Installation
 </h2>
 
+(Windows only for now)
+
 You need to have [git](https://git-scm.com/download/win) installed
 
-You need to have the [dotnet runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed 
+You need to have the [dotnet 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed 
 
 First, open command prompt or some other terminal, and clone the repository
 
@@ -61,6 +63,7 @@ Features for Terraria developers
   - Logging send and received
   - Stack traces of packets that are sent
   - Send messages with custom values and generate NetMessage.SendData calls
+- Disable tile framing
 - Plugin system that supports hot-reloading
 - Supports any CPU (x64 and x86)
 
@@ -75,26 +78,26 @@ Other useful features
 - Noclip
 - Item browser
 - Revealing the map
+- Infinity reach, mana, and minions
 - Tools for butchering NPCs
 - Projectile prediction
-- Actually good looking and customizable UI
+- Customizable UI
 - World edit 
   - Tile brush
     - Basic tile manipulation
     - Basic liquid manipluation
-- Switch from the decades old Microsoft XNA framework to use FNA (significant performance boost)
-- Re-write of how the game stores tiles (game uses 400~500mb less memory)
+- Switch from the decades old Microsoft XNA framework to use FNA
+- Re-write of how the game stores tiles (game uses 500mb less memory)
 - Viewing other players inventories
-- Many bugfixes for vanilla
+- Many bugfixes
+- Some minor optimizations and performance improvements
 
 <h2>
 Planned features
 </h2>
 
 - Re-write of the multiplayer UI
-- Syntax highlighting for the C# [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)
-- Better completion for the console
-- More console commands
+- Some epic optimizations
 
 <h2>
 System Requirements

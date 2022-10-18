@@ -1,206 +1,234 @@
 ﻿using Microsoft.Xna.Framework.Input;
 
-namespace TerraAngel.Input
+namespace TerraAngel.Input;
+
+public class InputSystem
 {
-    public class InputSystem
+    public static KeyboardState keyboardState;
+    public static KeyboardState lastKeyboardState;
+    public static MouseState mouseState;
+    public static MouseState lastMouseState;
+
+    public static void UpdateInput()
     {
-        public static KeyboardState keyboardState;
-        public static KeyboardState lastKeyboardState;
-        public static MouseState mouseState;
-        public static MouseState lastMouseState;
+        mouseState = Mouse.GetState();
+        keyboardState = Keyboard.GetState();
+    }
+    public static void EndUpdateInput()
+    {
+        lastMouseState = mouseState;
+        lastKeyboardState = keyboardState;
+    }
 
-        public static void UpdateInput()
-        {
-            mouseState = Mouse.GetState();
-            keyboardState = Keyboard.GetState();
-        }
-        public static void EndUpdateInput()
-        {
-            lastMouseState = mouseState;
-            lastKeyboardState = keyboardState;
-        }
+    /// <returns>Whether or not a key is currently down</returns>
+    public static bool IsKeyDown(Keys key)
+    {
+        if (!Main.instance.IsActive || key == Keys.None || (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantTextInput))
+            return false;
+        return keyboardState.IsKeyDown(key);
+    }
+    /// <returns>Whether or not a key is currently up</returns>
+    public static bool IsKeyUp(Keys key)
+    {
+        if (!Main.instance.IsActive || key == Keys.None || (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantTextInput))
+            return false;
+        return !keyboardState.IsKeyDown(key);
+    }
+    /// <returns>Whether or not a key was pressed this frame</returns>
+    public static bool IsKeyPressed(Keys key)
+    {
+        if (!Main.instance.IsActive || key == Keys.None || (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantTextInput))
+            return false;
+        return keyboardState.IsKeyDown(key) && !lastKeyboardState.IsKeyDown(key);
+    }
+    /// <returns>Whether or not a key was released this frame</returns>
+    public static bool IsKeyReleased(Keys key)
+    {
+        if (!Main.instance.IsActive || key == Keys.None || (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantTextInput))
+            return false;
+        return !keyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyDown(key);
+    }
 
-        /// <returns>Whether or not a key is currently down</returns>
-        public static bool IsKeyDown(Keys key)
-        {
-            if (!Main.instance.IsActive || key == Keys.None)
-                return false;
-            return keyboardState.IsKeyDown(key);
-        }
-        /// <returns>Whether or not a key is currently up</returns>
-        public static bool IsKeyUp(Keys key)
-        {
-            if (!Main.instance.IsActive || key == Keys.None)
-                return false;
-            return !keyboardState.IsKeyDown(key);
-        }
-        /// <returns>Whether or not a key was pressed this frame</returns>
-        public static bool IsKeyPressed(Keys key)
-        {
-            if (!Main.instance.IsActive || key == Keys.None)
-                return false;
-            return keyboardState.IsKeyDown(key) && !lastKeyboardState.IsKeyDown(key);
-        }
-        /// <returns>Whether or not a key was released this frame</returns>
-        public static bool IsKeyReleased(Keys key)
-        {
-            if (!Main.instance.IsActive || key == Keys.None)
-                return false;
-            return !keyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyDown(key);
-        }
+    /// <returns>Whether or not a key is currently down</returns>
+    public static bool IsKeyDownRaw(Keys key)
+    {
+        if (!Main.instance.IsActive)
+            return false;
+        return keyboardState.IsKeyDown(key);
+    }
+    /// <returns>Whether or not a key is currently up</returns>
+    public static bool IsKeyUpRaw(Keys key)
+    {
+        if (!Main.instance.IsActive)
+            return false;
+        return !keyboardState.IsKeyDown(key);
+    }
+    /// <returns>Whether or not a key was pressed this frame</returns>
+    public static bool IsKeyPressedRaw(Keys key)
+    {
+        if (!Main.instance.IsActive)
+            return false;
+        return keyboardState.IsKeyDown(key) && !lastKeyboardState.IsKeyDown(key);
+    }
+    /// <returns>Whether or not a key was released this frame</returns>
+    public static bool IsKeyReleasedRaw(Keys key)
+    {
+        if (!Main.instance.IsActive)
+            return false;
+        return !keyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyDown(key);
+    }
 
-        public static Vector2 MousePosition
+    public static Vector2 MousePosition
+    {
+        get
         {
-            get
-            {
-                return new Vector2(mouseState.X, mouseState.Y);
-            }
+            return new Vector2(mouseState.X, mouseState.Y);
         }
-        public static bool LeftMouseDown
+    }
+    public static bool LeftMouseDown
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.LeftButton == ButtonState.Pressed;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.LeftButton == ButtonState.Pressed;
         }
-        public static bool LeftMousePressed
+    }
+    public static bool LeftMousePressed
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Released;
         }
-        public static bool LeftMouseReleased
+    }
+    public static bool LeftMouseReleased
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.LeftButton == ButtonState.Released && lastMouseState.LeftButton == ButtonState.Pressed;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.LeftButton == ButtonState.Released && lastMouseState.LeftButton == ButtonState.Pressed;
         }
-        public static bool RightMouseDown
+    }
+    public static bool RightMouseDown
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.RightButton == ButtonState.Pressed;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.RightButton == ButtonState.Pressed;
         }
-        public static bool RightMousePressed
+    }
+    public static bool RightMousePressed
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
         }
-        public static bool RightMouseReleased
+    }
+    public static bool RightMouseReleased
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.RightButton == ButtonState.Released && lastMouseState.RightButton == ButtonState.Pressed;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.RightButton == ButtonState.Released && lastMouseState.RightButton == ButtonState.Pressed;
         }
-        public static bool MiddleMouseDown
+    }
+    public static bool MiddleMouseDown
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.MiddleButton == ButtonState.Pressed;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.MiddleButton == ButtonState.Pressed;
         }
-        public static bool MiddleMousePressed
+    }
+    public static bool MiddleMousePressed
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.MiddleButton == ButtonState.Pressed && lastMouseState.MiddleButton == ButtonState.Released;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.MiddleButton == ButtonState.Pressed && lastMouseState.MiddleButton == ButtonState.Released;
         }
-        public static bool MiddleMouseReleased
+    }
+    public static bool MiddleMouseReleased
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return false;
-                return mouseState.MiddleButton == ButtonState.Released && lastMouseState.MiddleButton == ButtonState.Pressed;
-            }
+            if (!Main.instance.IsActive)
+                return false;
+            return mouseState.MiddleButton == ButtonState.Released && lastMouseState.MiddleButton == ButtonState.Pressed;
         }
-        public static bool KeyCtrl
+    }
+    public static bool KeyCtrl
+    {
+        get
         {
-            get
-            {
-                return InputSystem.IsKeyDown(Keys.LeftControl) | InputSystem.IsKeyDown(Keys.RightControl);
-            }
+            return InputSystem.IsKeyDown(Keys.LeftControl) | InputSystem.IsKeyDown(Keys.RightControl);
         }
-        public static bool KeyAlt
+    }
+    public static bool KeyAlt
+    {
+        get
         {
-            get
-            {
-                return InputSystem.IsKeyDown(Keys.LeftAlt) | InputSystem.IsKeyDown(Keys.RightAlt);
-            }
+            return InputSystem.IsKeyDown(Keys.LeftAlt) | InputSystem.IsKeyDown(Keys.RightAlt);
         }
-        public static bool KeyShift
+    }
+    public static bool KeyShift
+    {
+        get
         {
-            get
-            {
-                return InputSystem.IsKeyDown(Keys.LeftShift) | InputSystem.IsKeyDown(Keys.RightShift);
-            }
+            return InputSystem.IsKeyDown(Keys.LeftShift) | InputSystem.IsKeyDown(Keys.RightShift);
         }
+    }
 
-        public static int ScrollDelta
+    public static int ScrollDelta
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return 0;
-                if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
-                    return 1;
-                if (mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
-                    return -1;
+            if (!Main.instance.IsActive)
                 return 0;
-            }
+            if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
+                return 1;
+            if (mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
+                return -1;
+            return 0;
         }
-        public static int ScrollDeltaXNA
+    }
+    public static int ScrollDeltaXNA
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return 0;
-                if (ImGui.GetIO().WantCaptureMouse)
-                    return 0;
-                if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
-                    return 1;
-                if (mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
-                    return -1;
+            if (!Main.instance.IsActive)
                 return 0;
-            }
+            if (ImGui.GetIO().WantCaptureMouse)
+                return 0;
+            if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
+                return 1;
+            if (mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
+                return -1;
+            return 0;
         }
-        public static int ScrollDeltaImGui
+    }
+    public static int ScrollDeltaImGui
+    {
+        get
         {
-            get
-            {
-                if (!Main.instance.IsActive)
-                    return 0;
-                if (!ImGui.GetIO().WantCaptureMouse)
-                    return 0;
-                if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
-                    return 1;
-                if (mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
-                    return -1;
+            if (!Main.instance.IsActive)
                 return 0;
-            }
+            if (!ImGui.GetIO().WantCaptureMouse)
+                return 0;
+            if (mouseState.ScrollWheelValue > lastMouseState.ScrollWheelValue)
+                return 1;
+            if (mouseState.ScrollWheelValue < lastMouseState.ScrollWheelValue)
+                return -1;
+            return 0;
         }
     }
 }

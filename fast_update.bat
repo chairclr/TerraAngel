@@ -1,8 +1,9 @@
 @echo off
 
-echo Building TerraAngelSetup
-git reset --hard HEAD > NUL
+echo Pulling changes
 git pull > NUL
+
+echo Building TerraAngelSetup
 git submodule update --remote --recursive > NUL
 dotnet build TerraAngelSetup\TerraAngelSetup\TerraAngelSetup.csproj -c=Release > NUL
 

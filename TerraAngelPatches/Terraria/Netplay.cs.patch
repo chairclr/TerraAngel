@@ -1,0 +1,18 @@
+--- src/Terraria/Terraria/Netplay.cs
++++ src/TerraAngel/Terraria/Netplay.cs
+@@ -470,6 +_,7 @@
+             int num = -1;
+             while (!Disconnect)
+             {
++                BasicTimer netTimer = TimeMetrics.GetTimer("Netplay Client Loop").Start();
+                 if (Connection.Socket.IsConnected())
+                 {
+                     if (Connection.ServerWantsToRunCheckBytesInClientLoopThread && NetMessage.buffer[256].checkBytes)
+@@ -566,6 +_,7 @@
+                 }
+ 
+                 num = Connection.State;
++                netTimer.Stop();
+             }
+ 
+             try

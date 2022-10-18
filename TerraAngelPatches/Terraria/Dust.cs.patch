@@ -1,0 +1,18 @@
+--- src/Terraria/Terraria/Dust.cs
++++ src/TerraAngel/Terraria/Dust.cs
+@@ -53,6 +_,7 @@
+ 
+     public static int NewDust(Vector2 Position, int Width, int Height, int Type, float SpeedX = 0f, float SpeedY = 0f, int Alpha = 0, Color newColor = default(Color), float Scale = 1f)
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false) return 6000;
+         if (Main.gameMenu)
+         {
+             return 6000;
+@@ -359,6 +_,7 @@
+ 
+     public static void UpdateDust()
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false) return;
+         int num = 0;
+         lavaBubbles = 0;
+         Main.snowDust = 0;

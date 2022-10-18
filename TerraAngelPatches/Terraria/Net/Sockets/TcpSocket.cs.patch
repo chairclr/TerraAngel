@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Net/Sockets/TcpSocket.cs
 +++ src/TerraAngel/Terraria/Net/Sockets/TcpSocket.cs
-@@ -16,6 +_,7 @@
+@@ -17,6 +_,7 @@
      private SocketConnectionAccepted _listenerCallback;
      private RemoteAddress _remoteAddress;
      private bool _isListening;
@@ -8,7 +8,7 @@
      public int MessagesInQueue => _messagesInQueue;
      public TcpSocket()
      {
-@@ -51,12 +_,13 @@
+@@ -52,12 +_,13 @@
          TcpAddress tcpAddress = (TcpAddress)address;
          _connection.Connect(tcpAddress.Address, tcpAddress.Port);
          _remoteAddress = address;
@@ -23,8 +23,8 @@
      }
  
      private void SendCallback(IAsyncResult result)
-@@ -64,7 +_,7 @@
-         Tuple<SocketSendCallback, object> tuple = (Tuple<SocketSendCallback, object>)result.AsyncState;
+@@ -76,7 +_,7 @@
+ 
          try
          {
 -            _connection.GetStream().EndWrite(result);
@@ -32,12 +32,18 @@
              tuple.Item1(tuple.Item2);
          }
          catch (Exception)
-@@ -79,12 +_,12 @@
- 
-     void ISocket.AsyncSend(byte[] data, int offset, int size, SocketSendCallback callback, object state)
-     {
--        _connection.GetStream().BeginWrite(data, 0, size, SendCallback, new Tuple<SocketSendCallback, object>(callback, state));
-+        networkStream.BeginWrite(data, 0, size, SendCallback, new Tuple<SocketSendCallback, object>(callback, state));
+@@ -94,17 +_,17 @@
+         if (!Platform.IsWindows)
+         {
+             byte[] array = LegacyNetBufferPool.RequestBuffer(data, offset, size);
+-            _connection.GetStream().BeginWrite(array, 0, size, SendCallback, new object[2] { new Tuple<SocketSendCallback, object>(callback, state), array });
++            networkStream.BeginWrite(array, 0, size, SendCallback, new object[2] { new Tuple<SocketSendCallback, object>(callback, state), array });
+         }
+         else
+         {
+-            _connection.GetStream().BeginWrite(data, 0, size, SendCallback, new Tuple<SocketSendCallback, object>(callback, state));
++            networkStream.BeginWrite(data, 0, size, SendCallback, new Tuple<SocketSendCallback, object>(callback, state));
+         }
      }
  
      void ISocket.AsyncReceive(byte[] data, int offset, int size, SocketReceiveCallback callback, object state)
@@ -47,7 +53,7 @@
      }
  
      bool ISocket.IsDataAvailable()
-@@ -94,7 +_,7 @@
+@@ -114,7 +_,7 @@
              return false;
          }
  

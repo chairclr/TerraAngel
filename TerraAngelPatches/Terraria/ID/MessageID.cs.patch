@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/ID/MessageID.cs
 +++ src/TerraAngel/Terraria/ID/MessageID.cs
-@@ -20,15 +_,15 @@
+@@ -21,15 +_,15 @@
      public const byte PlayerActive = 14;
      [Old("Deprecated.")]
      public const byte Unknown15 = 15;
@@ -19,12 +19,10 @@
      [Old("Deprecated. Use NetTextModule instead.")]
      public const byte Unused25 = 25;
      [Old("Deprecated.")]
-@@ -47,36 +_,36 @@
-     public const byte SendPassword = 38;
+@@ -49,13 +_,13 @@
      public const byte ReleaseItemOwnership = 39;
      public const byte SyncTalkNPC = 40;
--    public const byte Unknown41 = 41;
-+    public const byte PlayerItemAnimation = 41;
+     public const byte ShotAnimationAndSound = 41;
 -    public const byte Unknown42 = 42;
 +    public const byte PlayerMana = 42;
 -    public const byte Unknown43 = 43;
@@ -39,17 +37,9 @@
 +    public const byte UpdateSign = 47;
      [Old("Deprecated. Use NetLiquidModule instead.")]
      public const byte LiquidUpdate = 48;
--    public const byte Unknown49 = 49;
-+    public const byte CompleteConnectionAndSpawn = 49;
--    public const byte Unknown50 = 50;
-+    public const byte UpdatePlayerBuff = 50;
-     public const byte MiscDataSync = 51;
--    public const byte Unknown52 = 52;
-+    public const byte UnlockTile = 52;
--    public const byte Unknown53 = 53;
-+    public const byte AddNPCBuff = 53;
--    public const byte Unknown54 = 54;
-+    public const byte UpdateNPCBuff = 54;
+     public const byte InitialSpawn = 49;
+@@ -66,18 +_,18 @@
+     public const byte NPCBuffs = 54;
      public const byte AddPlayerBuff = 55;
      public const byte UniqueTownNPCInfoSyncRequest = 56;
 -    public const byte Unknown57 = 57;
@@ -58,8 +48,7 @@
      public const byte HitSwitch = 59;
 -    public const byte Unknown60 = 60;
 +    public const byte UpdateNPCHome = 60;
--    public const byte Unknown61 = 61;
-+    public const byte SpawnBoss = 61;
+     public const byte SpawnBossUseLicenseStartEvent = 61;
 -    public const byte Unknown62 = 62;
 +    public const byte PlayerDodge = 62;
 -    public const byte Unknown63 = 63;

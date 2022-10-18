@@ -1,0 +1,38 @@
+--- src/Terraria/Terraria/Graphics/SpriteViewMatrix.cs
++++ src/TerraAngel/Terraria/Graphics/SpriteViewMatrix.cs
+@@ -7,6 +_,7 @@
+     private Vector2 _zoom = Vector2.One;
+     private Vector2 _translation = Vector2.Zero;
+     private Matrix _zoomMatrix = Matrix.Identity;
++    private Matrix _inverseZoomMatrix = Matrix.Identity;
+     private Matrix _transformationMatrix = Matrix.Identity;
+     private Matrix _normalizedTransformationMatrix = Matrix.Identity;
+     private SpriteEffects _effects;
+@@ -58,6 +_,19 @@
+         }
+     }
+ 
++    public Matrix InverseZoomMatrix
++    {
++        get
++        {
++            if (ShouldRebuild())
++            {
++                Rebuild();
++            }
++
++            return _inverseZoomMatrix;
++        }
++    }
++
+     public Matrix TransformationMatrix
+     {
+         get
+@@ -143,6 +_,7 @@
+         Matrix matrix = Matrix.CreateOrthographicOffCenter(0f, vector.X, vector.Y, 0f, 0f, 1f);
+         _translation = translation;
+         _zoomMatrix = Matrix.CreateTranslation(0f - translation.X, 0f - translation.Y, 0f) * Matrix.CreateScale(_zoom.X, _zoom.Y, 1f);
++        Matrix.Invert(ref _zoomMatrix, out _inverseZoomMatrix);
+         _effectMatrix = identity;
+         _transformationMatrix = identity * _zoomMatrix;
+         _normalizedTransformationMatrix = Matrix.Invert(identity) * _zoomMatrix * matrix;

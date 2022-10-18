@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Projectile.cs
 +++ src/TerraAngel/Terraria/Projectile.cs
-@@ -16359,6 +_,7 @@
+@@ -17918,6 +_,7 @@
              flag = true;
          }
  
