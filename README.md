@@ -53,10 +53,14 @@ Features for Terraria developers
 - Freecam
 - Visual utilites
    - View player hitboxes
+   - View player held items
+   - View player inventories
    - View NPC hitboxes and visualize NPC lag
    - View projectile hitboxes
    - View tile section borders
-   - Disable dust and gore
+   - Disable dust
+   - Disable gore
+   - Show detailed item tooltips
 - Interactive C# execution engine (aka [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop))
   - Real time auto-completion
 - Net message debugger
@@ -78,19 +82,22 @@ Other useful features
 - Noclip
 - Item browser
 - Revealing the map
-- Infinity reach, mana, and minions
-- Tools for butchering NPCs
+- Infinite reach, mana, and minions
+- Access to journey UI
+- Butchering NPCs
 - Projectile prediction
 - Customizable UI
 - World edit 
   - Tile brush
     - Basic tile manipulation
     - Basic liquid manipluation
+  - Copy-pasting parts of the world
 - Switch from the decades old Microsoft XNA framework to use FNA
 - Re-write of how the game stores tiles (game uses 500mb less memory)
 - Viewing other players inventories
 - Many bugfixes
 - Some minor optimizations and performance improvements
+- Ability to change FPS cap
 
 <h2>
 Planned features

@@ -17,7 +17,7 @@
 +        {
 +            Lighting.AbleToProcessPerFrameLights = false;
 -        _perFrameLights.Clear();
-+            _perFrameLights.Clear();]
++            _perFrameLights.Clear();
 +        }
      }
  
