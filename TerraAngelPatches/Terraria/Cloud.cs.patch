@@ -1,0 +1,43 @@
+--- src/Terraria/Terraria/Cloud.cs
++++ src/TerraAngel/Terraria/Cloud.cs
+@@ -1,3 +_,4 @@
++using System;
+ using Microsoft.Xna.Framework;
+ using Microsoft.Xna.Framework.Graphics;
+ using Terraria.GameContent;
+@@ -251,7 +_,7 @@
+         return MemberwiseClone();
+     }
+ 
+-    public static void UpdateClouds()
++    public static void UpdateClouds(GameTime gameTime)
+     {
+         if (Main.netMode == 2)
+         {
+@@ -263,7 +_,7 @@
+         {
+             if (Main.cloud[i].active)
+             {
+-                Main.cloud[i].Update();
++                Main.cloud[i].Update(gameTime);
+                 if (!Main.cloud[i].kill)
+                 {
+                     num++;
+@@ -309,7 +_,7 @@
+         }
+     }
+ 
+-    public void Update()
++    public void Update(GameTime gameTime)
+     {
+         if (WorldGen.drunkWorldGenText && Main.gameMenu)
+         {
+@@ -350,7 +_,7 @@
+             num *= num4;
+         }
+ 
+-        position.X += Main.windSpeedCurrent * 9f * num * (float)Main.dayRate;
++        position.X += Main.windSpeedCurrent * 9f * num * (float)Main.dayRate * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+         float num5 = Main.screenPosition.X - Main.screenLastPosition.X;
+         position.X -= num5 * num;
+         float num6 = 600f;

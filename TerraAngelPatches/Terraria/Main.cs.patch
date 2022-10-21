@@ -526,6 +526,15 @@
              DoUpdate_HandleInput();
              DoUpdate_HandleChat();
              DoUpdate_Enter_ToggleChat();
+@@ -15482,7 +_,7 @@
+             if ((double)screenPosition.Y < worldSurface * 16.0 + 16.0)
+             {
+                 Star.UpdateStars();
+-                Cloud.UpdateClouds();
++                Cloud.UpdateClouds(gameTime);
+             }
+             else if (shimmerAlpha > 0f)
+             {
 @@ -15512,11 +_,10 @@
          {
              DoUpdateInWorld(_worldUpdateTimeTester);
@@ -616,6 +625,94 @@
          CaptureManager.Instance.Dispose();
          audioSystem.Dispose();
      }
+@@ -47312,7 +_,7 @@
+         chatMonitor.Clear();
+         screenLastPosition = screenPosition;
+         screenPosition.Y = (float)(worldSurface * 16.0 - (double)screenHeight);
+-        MenuXMovement = 4f;
++        MenuXMovement = 4f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+         if (alreadyGrabbingSunOrMoon)
+         {
+             playOldTile = true;
+@@ -47334,17 +_,17 @@
+         }
+ 
+         Star.UpdateStars();
+-        Cloud.UpdateClouds();
++        Cloud.UpdateClouds(gameTime);
+         DrawFPS();
+         background = 0;
+         byte b = (byte)((255 + tileColor.R * 2) / 3);
+         Microsoft.Xna.Framework.Color color = new Microsoft.Xna.Framework.Color(b, b, b, 255);
+         if (WorldGen.remixWorldGen)
+         {
+-            logoRotation += logoRotationSpeed * 4E-05f;
++            logoRotation += logoRotationSpeed * 4E-05f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+             if ((double)logoRotation < 3.04)
+             {
+-                logoRotation += logoRotationSpeed * 0.0016f;
++                logoRotation += logoRotationSpeed * 0.0016f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                 if (logoRotationSpeed < 0f)
+                 {
+                     logoRotationSpeed = 0f;
+@@ -47369,7 +_,7 @@
+                 logoRotationSpeed -= 1f;
+             }
+ 
+-            logoScale += logoScaleSpeed * 9E-05f;
++            logoScale += logoScaleSpeed * 9E-05f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+             if (logoScale > 1f)
+             {
+                 logoScaleDirection = -1f;
+@@ -47390,7 +_,7 @@
+         }
+         else if (WorldGen.drunkWorldGen)
+         {
+-            logoRotation += logoRotationSpeed * 4E-06f;
++            logoRotation += logoRotationSpeed * 4E-06f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+             if (logoRotationSpeed > 0f)
+             {
+                 logoRotationSpeed += 1500f;
+@@ -47410,14 +_,14 @@
+         {
+             if ((double)logoRotation > 0.09)
+             {
+-                logoRotation += logoRotationSpeed * 0.0016f;
++                logoRotation += logoRotationSpeed * 0.0016f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                 if (logoRotationSpeed > 0f)
+                 {
+                     logoRotationSpeed = 0f;
+                 }
+             }
+ 
+-            logoRotation += logoRotationSpeed * 4E-06f;
++            logoRotation += logoRotationSpeed * 4E-06f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+             if ((double)logoRotation > 0.08)
+             {
+                 logoRotationDirection = -1f;
+@@ -47436,7 +_,7 @@
+                 logoRotationSpeed -= 1f;
+             }
+ 
+-            logoScale += logoScaleSpeed * 9E-06f;
++            logoScale += logoScaleSpeed * 9E-06f * 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+             if ((double)logoScale > 1.35)
+             {
+                 logoScaleDirection = -1f;
+@@ -47458,12 +_,7 @@
+ 
+         Microsoft.Xna.Framework.Color color2 = new Microsoft.Xna.Framework.Color((byte)((float)(int)color.R * ((float)LogoA / 255f)), (byte)((float)(int)color.G * ((float)LogoA / 255f)), (byte)((float)(int)color.B * ((float)LogoA / 255f)), (byte)((float)(int)color.A * ((float)LogoA / 255f)));
+         Microsoft.Xna.Framework.Color color3 = new Microsoft.Xna.Framework.Color((byte)((float)(int)color.R * ((float)LogoB / 255f)), (byte)((float)(int)color.G * ((float)LogoB / 255f)), (byte)((float)(int)color.B * ((float)LogoB / 255f)), (byte)((float)(int)color.A * ((float)LogoB / 255f)));
+-        if (playOldTile)
+-        {
+-            spriteBatch.Draw(TextureAssets.Logo3.Value, new Vector2(screenWidth / 2, 100f), new Microsoft.Xna.Framework.Rectangle(0, 0, TextureAssets.Logo.Width(), TextureAssets.Logo.Height()), color2, logoRotation, new Vector2(TextureAssets.Logo.Width() / 2, TextureAssets.Logo.Height() / 2), logoScale, SpriteEffects.None, 0f);
+-            spriteBatch.Draw(TextureAssets.Logo4.Value, new Vector2(screenWidth / 2, 100f), new Microsoft.Xna.Framework.Rectangle(0, 0, TextureAssets.Logo.Width(), TextureAssets.Logo.Height()), color3, logoRotation, new Vector2(TextureAssets.Logo.Width() / 2, TextureAssets.Logo.Height() / 2), logoScale, SpriteEffects.None, 0f);
+-        }
+-        else
++        
+         {
+             spriteBatch.Draw(TextureAssets.Logo.Value, new Vector2(screenWidth / 2, 100f), new Microsoft.Xna.Framework.Rectangle(0, 0, TextureAssets.Logo.Width(), TextureAssets.Logo.Height()), color2, logoRotation, new Vector2(TextureAssets.Logo.Width() / 2, TextureAssets.Logo.Height() / 2), logoScale, SpriteEffects.None, 0f);
+             spriteBatch.Draw(TextureAssets.Logo2.Value, new Vector2(screenWidth / 2, 100f), new Microsoft.Xna.Framework.Rectangle(0, 0, TextureAssets.Logo.Width(), TextureAssets.Logo.Height()), color3, logoRotation, new Vector2(TextureAssets.Logo.Width() / 2, TextureAssets.Logo.Height() / 2), logoScale, SpriteEffects.None, 0f);
 @@ -48114,6 +_,26 @@
              }
  
