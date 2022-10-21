@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,46 @@
+@@ -1,18 +_,42 @@
 +using System;
 +using System.Collections.Generic;
 +using System.Runtime.CompilerServices;
@@ -50,10 +50,6 @@
 +    public override bool Equals(object? obj) => obj is Tile tile && tile.Data == this.Data;
 +    public override int GetHashCode() => HashCode.Combine(*Data);
 +    public class ImplicitHack { }
-+    public int GetX() => (int)((Data - Main.tile.TileHeapPtr) % Main.tile.Width);
-+    public int GetX(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeapPtr) % tileMap.Width);
-+    public int GetY() => (int)((Data - Main.tile.TileHeapPtr) / Main.tile.Width);
-+    public int GetY(NativeTileMap tileMap) => (int)((Data - tileMap.TileHeapPtr) / tileMap.Width);
      private const int Bit0 = 1;
      private const int Bit1 = 2;
      private const int Bit2 = 4;

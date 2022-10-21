@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.Xna.Framework;
 using TerraAngel;
 using TerraAngel.Utility;
@@ -19,8 +20,7 @@ public unsafe class NativeTileMap
     /// </summary>
     public readonly long HeapSize;
 
-    public readonly TileData[,] TileHeap;
-    public readonly TileData* TileHeapPtr;
+    public readonly TileData[][] TileHeap;
 
     public bool[,] LoadedTileSections = new bool[0, 0];
 
@@ -30,8 +30,8 @@ public unsafe class NativeTileMap
         Height = (uint)height;
         HeapSize = Width * Height * sizeof(TileData);
 
-        TileHeap = new TileData[Width, Height];
-        TileHeapPtr = (TileData*)Unsafe.AsPointer(ref TileHeap[0, 0]);
+        TileHeap = new TileData[Width][];
+        ResetHeap();
 
         LoadedTileSections = new bool[Width / Main.sectionWidth, Height / Main.sectionHeight];
     }
@@ -41,12 +41,12 @@ public unsafe class NativeTileMap
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
-            return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[x, y]));
+            return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[x][y]));
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
-            TileHeap[x, y] = *value.Data;
+            TileHeap[x][y] = *value.Data;
         }
     }
     public Tile this[Vector2i position]
@@ -54,18 +54,21 @@ public unsafe class NativeTileMap
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
-            return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[position.X, position.Y]));
+            return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[position.X][position.Y]));
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
-            TileHeap[position.X, position.Y] = *value.Data;
+            TileHeap[position.X][position.Y] = *value.Data;
         }
     }
 
     public void ResetHeap()
     {
-        Unsafe.InitBlockUnaligned(TileHeapPtr, 0, (uint)HeapSize);
+        for (int i = 0; i < Width; i++)
+        {
+            TileHeap[i] = new TileData[Height];
+        }
     }
 
     public bool InWorld(Vector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
