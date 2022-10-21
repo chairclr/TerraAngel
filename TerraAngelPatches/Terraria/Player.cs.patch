@@ -42,7 +42,7 @@
          {
              return;
          }
-@@ -23727,7 +_,7 @@
+@@ -23732,7 +_,7 @@
  
      public static int GetFloorTileType(int x, int y)
      {
@@ -51,7 +51,7 @@
      }
  
      private void MakeFloorDust(bool Falling, int type, int paintColor)
-@@ -28337,28 +_,35 @@
+@@ -28342,28 +_,35 @@
              CheckCrackedBrickBreak();
          }
  
@@ -88,7 +88,7 @@
          oldPosition = position;
          oldDirection = direction;
          bool falling = false;
-@@ -28553,20 +_,22 @@
+@@ -28558,20 +_,22 @@
          {
              FloorVisuals(falling);
          }
@@ -113,7 +113,7 @@
  
          ItemCheckWrapped(i);
          PlayerFrame();
-@@ -28684,6 +_,7 @@
+@@ -28689,6 +_,7 @@
          return result;
      }
  
@@ -121,7 +121,7 @@
      private void AdjustRemainingPotionSickness()
      {
          if (whoAmI == Main.myPlayer)
-@@ -38143,6 +_,7 @@
+@@ -38148,6 +_,7 @@
              bool flag = false;
              for (int j = -1; j <= 1; j++)
              {
@@ -129,7 +129,7 @@
                  Tile tile = Main.tile[x + j, y + i];
                  if (tile.nactive() && (Main.tileSolid[tile.type] || !Main.tileSolidTop[tile.type]))
                  {
-@@ -38191,7 +_,7 @@
+@@ -38196,7 +_,7 @@
          {
              for (int j = floorY - 3; j < floorY; j++)
              {
@@ -138,7 +138,7 @@
                  {
                      if (Main.tile[i, j].nactive() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type])
                      {
-@@ -42941,7 +_,7 @@
+@@ -42965,7 +_,7 @@
          return num;
      }
  

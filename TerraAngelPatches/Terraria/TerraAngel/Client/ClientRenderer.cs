@@ -146,6 +146,7 @@ public class ClientRenderer : TerraImGuiRenderer
 
     public void Update(GameTime time)
     {
+        Lighting.AbleToProcessPerFrameLights = true;
         updateWatch.Stop();
         TimeMetrics.UpdateDeltaTimeSlices.Add(updateWatch.Elapsed);
         updateWatch.Restart();

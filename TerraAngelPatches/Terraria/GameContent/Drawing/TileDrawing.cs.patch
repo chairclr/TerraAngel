@@ -247,7 +247,7 @@
  
          if (!tileCache.active() || tileCache.inActive() || _tileSolidTop[tileCache.type] || (tileCache.halfBrick() && (tile2.liquid > 160 || tile.liquid > 160) && Main.instance.waterfallManager.CheckForWaterfall(tileX, tileY)) || (TileID.Sets.BlocksWaterDrawingBehindSelf[tileCache.type] && tileCache.slope() == 0))
          {
-@@ -5978,10 +_,6 @@
+@@ -5980,10 +_,6 @@
      private bool IsWindBlocked(int x, int y)
      {
          Tile tile = Main.tile[x, y];
@@ -258,7 +258,7 @@
  
          if (tile.wall > 0 && !WallID.Sets.AllowsWind[tile.wall])
          {
-@@ -7455,7 +_,7 @@
+@@ -7457,7 +_,7 @@
              int x = point.X;
              int y = point.Y;
              Tile tile = Main.tile[x, y];
@@ -267,7 +267,7 @@
              {
                  continue;
              }
-@@ -7777,7 +_,7 @@
+@@ -7779,7 +_,7 @@
              int x = point.X;
              int y = point.Y;
              Tile tile = Main.tile[x, y];
@@ -276,7 +276,7 @@
              {
                  continue;
              }
-@@ -7841,7 +_,7 @@
+@@ -7843,7 +_,7 @@
              int x = point.X;
              int y = point.Y;
              Tile tile = Main.tile[x, y];
@@ -285,7 +285,7 @@
              {
                  continue;
              }
-@@ -8074,7 +_,7 @@
+@@ -8076,7 +_,7 @@
          {
              Point p = _specialPositions[num][i];
              Tile tile = Main.tile[p.X, p.Y];
@@ -294,7 +294,7 @@
              {
                  Texture2D value = TextureAssets.Extra[198].Value;
                  int frameY = tile.frameX / 54;
-@@ -8109,7 +_,7 @@
+@@ -8111,7 +_,7 @@
          {
              Point p = _specialPositions[num][i];
              Tile tile = Main.tile[p.X, p.Y];
@@ -303,7 +303,7 @@
              {
                  continue;
              }
-@@ -8213,7 +_,7 @@
+@@ -8215,7 +_,7 @@
              int sizeX = 1;
              int num4 = 1;
              Tile tile = Main.tile[x, num3];
@@ -312,7 +312,7 @@
              {
                  switch (Main.tile[x, num3].type)
                  {
-@@ -8306,7 +_,7 @@
+@@ -8308,7 +_,7 @@
              int sizeX = 1;
              int sizeY = 1;
              Tile tile = Main.tile[x, y];
@@ -321,7 +321,7 @@
              {
                  switch (Main.tile[x, y].type)
                  {
-@@ -8496,10 +_,6 @@
+@@ -8498,10 +_,6 @@
          for (int i = startY; i < Main.maxTilesY - 10; i++)
          {
              Tile tile = Main.tile[x, i];
@@ -332,7 +332,7 @@
  
              ushort type = tile.type;
              if (!tile.active() || !TileID.Sets.VineThreads[type])
-@@ -8609,7 +_,6 @@
+@@ -8611,7 +_,6 @@
          for (int num6 = startY; num6 > 10; num6--)
          {
              Tile tile = Main.tile[x, num6];
@@ -340,7 +340,7 @@
              {
                  ushort type = tile.type;
                  if (!tile.active() || !TileID.Sets.ReverseVineThreads[type])
-@@ -8712,7 +_,7 @@
+@@ -8714,7 +_,7 @@
          }
  
          Tile tile = Main.tile[x, y - 1];

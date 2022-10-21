@@ -373,6 +373,7 @@ Build/
 !TerraAngelPatches/Terraria/Terraria.sln
 !TerraAngelSetup/TerraAngelSetup/TerraAngelSetup.sln
 
+build_log.txt
 build_log_*.txt
 
 !TerraAngelPatches/Terraria/Libraries/x64

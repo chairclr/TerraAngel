@@ -17,7 +17,7 @@
      {
          if (Main.netMode == 0)
          {
-@@ -1731,281 +_,7 @@
+@@ -1732,281 +_,7 @@
                      }
                  }
              }
@@ -299,7 +299,7 @@
          }
      }
  
-@@ -2042,8 +_,6 @@
+@@ -2043,8 +_,6 @@
                      continue;
                  }
  
@@ -308,7 +308,7 @@
                      if (num4 > 0)
                      {
                          array[num5] = (byte)((uint)num4 & 0xFFu);
-@@ -2063,7 +_,6 @@
+@@ -2064,7 +_,6 @@
                      array[num6] = b;
                      writer.Write(array, num6, num5 - num6);
                      num4 = 0;
@@ -316,7 +316,7 @@
  
                  num5 = 4;
                  byte b3;
-@@ -2387,9 +_,9 @@
+@@ -2388,9 +_,9 @@
          DecompressTileBlock_Inner(binaryReader, binaryReader.ReadInt32(), binaryReader.ReadInt32(), binaryReader.ReadInt16(), binaryReader.ReadInt16());
      }
  
@@ -328,7 +328,7 @@
          int num = 0;
          for (int i = yStart; i < yStart + height; i++)
          {
-@@ -2398,15 +_,7 @@
+@@ -2399,15 +_,7 @@
                  if (num != 0)
                  {
                      num--;
@@ -345,7 +345,7 @@
                      continue;
                  }
  
-@@ -2414,15 +_,7 @@
+@@ -2415,15 +_,7 @@
                  byte b;
                  byte b3 = (b2 = (b = 0));
                  tile = Main.tile[j, i];
@@ -362,7 +362,7 @@
  
                  byte b4 = reader.ReadByte();
                  bool flag = false;
-@@ -2652,23 +_,33 @@
+@@ -2653,23 +_,33 @@
      {
          lock (buffer[i])
          {
@@ -404,7 +404,7 @@
                  }
              }
          }
-@@ -2692,6 +_,8 @@
+@@ -2693,6 +_,8 @@
                  while (num2 >= 2)
                  {
                      int num3 = BitConverter.ToUInt16(buffer[bufferIndex].readBuffer, num);

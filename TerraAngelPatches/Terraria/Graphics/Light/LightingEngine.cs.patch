@@ -1,5 +1,14 @@
 --- src/Terraria/Terraria/Graphics/Light/LightingEngine.cs
 +++ src/TerraAngel/Terraria/Graphics/Light/LightingEngine.cs
+@@ -198,7 +_,7 @@
+         workingLightMap.LightDecayThroughAir *= Player.airLightDecay;
+         workingLightMap.LightDecayThroughSolid *= Player.solidLightDecay;
+     }
+-
++    
+     private void ApplyPerFrameLights()
+     {
+         for (int i = 0; i < _perFrameLights.Count; i++)
 @@ -213,7 +_,11 @@
              }
          }
@@ -8,7 +17,7 @@
 +        {
 +            Lighting.AbleToProcessPerFrameLights = false;
 -        _perFrameLights.Clear();
-+            _perFrameLights.Clear();
++            _perFrameLights.Clear();]
 +        }
      }
  
