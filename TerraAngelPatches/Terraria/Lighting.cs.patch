@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Lighting.cs
 +++ src/TerraAngel/Terraria/Lighting.cs
-@@ -14,8 +_,9 @@
+@@ -14,9 +_,11 @@
      public static int OffScreenTiles = 45;
      private static LightMode _mode = LightMode.Color;
      private static readonly LightingEngine NewEngine = new LightingEngine();
@@ -10,8 +10,10 @@
 -    private static ILightingEngine _activeEngine;
 +    public static ILightingEngine _activeEngine;
      public static float GlobalBrightness { get; set; }
++    public static bool AbleToProcessPerFrameLights = false;
  
      public static LightMode Mode
+     {
 @@ -49,6 +_,11 @@
                      break;
              }

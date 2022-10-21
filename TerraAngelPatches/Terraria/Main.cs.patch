@@ -84,6 +84,14 @@
      public static bool gameMenu = true;
      public static bool menuBGChangedDay = false;
      public static bool menuBGChangedNight = false;
+@@ -1111,7 +_,6 @@
+     public static int signY = 0;
+     public static bool hideUI;
+     public static bool releaseUI;
+-    public static FrameSkipMode FrameSkipMode = FrameSkipMode.Subtle;
+     public static bool terrariasFixedTiming = true;
+     private int splashCounter;
+     public List<int> DrawCacheNPCsMoonMoon = new List<int>(200);
 @@ -1126,7 +_,6 @@
      public List<int> DrawCacheFirstFractals = new List<int>(1000);
      public static ParticleRenderer ParticleSystem_World_OverPlayers = new ParticleRenderer();
@@ -126,7 +134,7 @@
          Configuration.Put("InvasionBarMode", invasionProgressMode);
          Configuration.Put("AutoSave", autoSave);
          Configuration.Put("AutoPause", autoPause);
-@@ -2534,26 +_,7 @@
+@@ -2534,29 +_,9 @@
          Configuration.Put("UnlockMusicSwap", TOWMusicUnlocked);
          Configuration.Put("UseExperimentalFeatures", UseExperimentalFeatures);
          Configuration.Put("KeyFavoriteModifier", cFavoriteKey);
@@ -152,7 +160,10 @@
 -        Configuration.Put("DisplayHeight", num2);
          Configuration.Put("GraphicsQuality", qaStyle);
          Configuration.Put("BackgroundEnabled", BackgroundEnabled);
-         Configuration.Put("FrameSkipMode", FrameSkipMode);
+-        Configuration.Put("FrameSkipMode", FrameSkipMode);
+         Configuration.Put("LightingMode", Lighting.Mode);
+         Configuration.Put("BackgroundParallax", bgScroll);
+         Configuration.Put("ShowItemText", showItemText);
 @@ -2598,8 +_,6 @@
          }
  
@@ -226,6 +237,41 @@
          Configuration.Get("InvasionBarMode", ref invasionProgressMode);
          Configuration.Get("AutoSave", ref autoSave);
          Configuration.Get("AutoPause", ref autoPause);
+@@ -2751,34 +_,6 @@
+             Configuration.Get("BackgroundEnabled", ref BackgroundEnabled);
+         }
+ 
+-        if (Configuration.GetAllKeys().Contains("FrameSkip"))
+-        {
+-            bool currentValue4 = false;
+-            Configuration.Get("FrameSkip", ref currentValue4);
+-            terrariasFixedTiming = !currentValue4;
+-            if (terrariasFixedTiming)
+-            {
+-                FrameSkipMode = FrameSkipMode.Subtle;
+-            }
+-            else
+-            {
+-                FrameSkipMode = FrameSkipMode.On;
+-            }
+-        }
+-
+-        int currentValue5 = (int)FrameSkipMode;
+-        Configuration.Get("FrameSkipMode", ref currentValue5);
+-        if (currentValue5 < 0)
+-        {
+-            currentValue5 = 0;
+-        }
+-
+-        if (currentValue5 > 2)
+-        {
+-            currentValue5 = 2;
+-        }
+-
+-        FrameSkipMode = (FrameSkipMode)currentValue5;
+         int currentValue6 = (int)Lighting.Mode;
+         if (!flag)
+         {
 @@ -2916,8 +_,6 @@
  
          if (!flag)
@@ -374,19 +420,65 @@
              return;
          }
  
-@@ -15098,10 +_,10 @@
+@@ -15098,37 +_,11 @@
          }
  
          DoUpdate_AutoSave();
 +        BasicTimer updateTimer = TimeMetrics.GetTimer("Main DoUpdate").Start();
++        Lighting.AbleToProcessPerFrameLights = true;
 +
          if (!dedServ)
          {
 -            ChromaInitializer.UpdateEvents();
 -            Chroma.Update(GlobalTimeWrappedHourly);
-             if (superFast)
+-            if (superFast)
+-            {
+-                base.IsFixedTimeStep = false;
+-                graphics.SynchronizeWithVerticalRetrace = false;
+-            }
+-            else
+-            {
+-                if (FrameSkipMode == FrameSkipMode.Off || FrameSkipMode == FrameSkipMode.Subtle)
+-                {
+-                    if (base.IsActive)
+-                    {
+-                        base.IsFixedTimeStep = false;
+-                    }
+-                    else
+-                    {
+-                        base.IsFixedTimeStep = true;
+-                    }
+-                }
+-                else
+-                {
+-                    base.IsFixedTimeStep = true;
+-                    graphics.SynchronizeWithVerticalRetrace = true;
+-                }
+-
+-                graphics.SynchronizeWithVerticalRetrace = true;
+-            }
+-
+             if (showSplash)
              {
-                 base.IsFixedTimeStep = false;
+                 return;
+@@ -15181,16 +_,11 @@
+                 }
+             }
+ 
+-            if (FrameSkipMode == FrameSkipMode.Off || FrameSkipMode == FrameSkipMode.Subtle)
++            if (true)
+             {
+                 UpdateTimeAccumulator += gameTime.ElapsedGameTime.TotalSeconds;
+                 if (UpdateTimeAccumulator < 0.01666666753590107 && !superFast)
+                 {
+-                    if (FrameSkipMode == FrameSkipMode.Subtle)
+-                    {
+-                        instance.SuppressDraw();
+-                    }
+-
+                     return;
+                 }
+ 
 @@ -15201,6 +_,7 @@
  
              uCount++;
@@ -395,6 +487,23 @@
              PlayerInput.AllowExecutionOfGamepadInstructions = true;
              TryPlayingCreditsRoll();
              PlayerInput.SetZoom_UI();
+@@ -15254,11 +_,11 @@
+                 }
+             }
+ 
+-            if (superFast)
+-            {
+-                graphics.SynchronizeWithVerticalRetrace = false;
+-                drawSkip = false;
+-            }
++            //if (superFast)
++            //{
++            //    graphics.SynchronizeWithVerticalRetrace = false;
++            //    drawSkip = false;
++            //}
+ 
+             if ((double)gfxQuality < 0.2)
+             {
 @@ -15319,11 +_,8 @@
              hasFocus = base.IsActive;
              if (Platform.IsWindows)
@@ -543,6 +652,30 @@
                  num20++;
                  array9[num20] = Lang.menu[210].Value;
                  if (selectedMenu == num20)
+@@ -49158,7 +_,7 @@
+             {
+                 bgScroll = (int)Math.Round((1f - caveParallax) * 500f);
+                 int num25 = 0;
+-                array9[num25] = Lang.menu[51].Value;
++                array9[num25] = "Graphics";
+                 if (selectedMenu == num25)
+                 {
+                     SoundEngine.PlaySound(10);
+@@ -49174,14 +_,6 @@
+                 }
+ 
+                 num25++;
+-                array9[num25] = Lang.menu[(int)(247 + FrameSkipMode)].Value;
+-                if (selectedMenu == num25)
+-                {
+-                    SoundEngine.PlaySound(12);
+-                    CycleFrameSkipMode();
+-                }
+-
+-                num25++;
+                 array9[num25] = Language.GetTextValue("UI.LightMode_" + Lighting.Mode);
+                 if (selectedMenu == num25)
+                 {
 @@ -49321,83 +_,9 @@
              }
              else if (menuMode == 111)
@@ -626,10 +759,29 @@
 -                num5 = num30;
 +                SoundEngine.PlaySound(10);
 +                menuMode = 888;
-+                MenuUI.SetState(ClientLoader.ResolutionUI);
++                MenuUI.SetState(ClientLoader.GraphicsUI);
              }
              else if (menuMode == 1125)
              {
+@@ -51247,18 +_,6 @@
+         }
+     }
+ 
+-    public static void CycleFrameSkipMode()
+-    {
+-        int frameSkipMode = (int)FrameSkipMode;
+-        frameSkipMode++;
+-        if (frameSkipMode < 0 || frameSkipMode > 2)
+-        {
+-            frameSkipMode = 0;
+-        }
+-
+-        FrameSkipMode = (FrameSkipMode)frameSkipMode;
+-    }
+-
+     private static void OnSubmitServerPasswordFromRequest(string passwordCandidate)
+     {
+         Netplay.ServerPassword = passwordCandidate;
 @@ -51596,48 +_,6 @@
          _uiScaleWanted = uiScaleWanted;
      }
@@ -757,11 +909,12 @@
              if (Main.OnPostDraw != null)
              {
                  Main.OnPostDraw(gameTime);
-@@ -61574,6 +_,7 @@
+@@ -61574,6 +_,8 @@
  
      private void DoDraw(GameTime gameTime)
      {
 +        ClientLoader.WindowManager!.Update();
++
          Stopwatch stopwatch = new Stopwatch();
          stopwatch.Start();
          if (showSplash)

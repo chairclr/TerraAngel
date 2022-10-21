@@ -19,7 +19,7 @@ public unsafe class ClientLoader
     internal static ChatWindow? ChatWindow;
     public static ConfigUI ConfigUI = new ConfigUI();
     public static PluginUI PluginUI = new PluginUI();
-    public static ResolutionUI ResolutionUI = new ResolutionUI();
+    public static GraphicsUI GraphicsUI = new GraphicsUI();
     public static DiscordRpcClient? DiscordClient;
     public static WindowManager? WindowManager;
 

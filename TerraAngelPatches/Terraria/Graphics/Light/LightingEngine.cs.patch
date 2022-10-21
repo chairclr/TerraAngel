@@ -1,0 +1,15 @@
+--- src/Terraria/Terraria/Graphics/Light/LightingEngine.cs
++++ src/TerraAngel/Terraria/Graphics/Light/LightingEngine.cs
+@@ -213,7 +_,11 @@
+             }
+         }
+ 
++        if (Lighting.AbleToProcessPerFrameLights)
++        {
++            Lighting.AbleToProcessPerFrameLights = false;
+-        _perFrameLights.Clear();
++            _perFrameLights.Clear();
++        }
+     }
+ 
+     public void Rebuild()

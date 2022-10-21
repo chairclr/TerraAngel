@@ -45,3 +45,21 @@
              vector6.X -= num;
              if (DrawRightSide(sb, Lang.menu[52].Value + ": " + Main.bgScroll + "%", num18, vector6, vector7, rightScale[num18], (rightScale[num18] - num4) / (num5 - num4)))
              {
+@@ -971,17 +_,6 @@
+             if (rightHover == num18)
+             {
+                 UILinkPointNavigator.Shortcuts.OPTIONS_BUTTON_SPECIALFEATURE = 1;
+-            }
+-
+-            num18++;
+-            vector6.X += num;
+-            if (DrawRightSide(sb, Lang.menu[(int)(247 + Main.FrameSkipMode)].Value, num18, vector6, vector7, rightScale[num18], (rightScale[num18] - num4) / (num5 - num4)))
+-            {
+-                rightHover = num18;
+-                if (flag4)
+-                {
+-                    Main.CycleFrameSkipMode();
+-                }
+             }
+ 
+             num18++;

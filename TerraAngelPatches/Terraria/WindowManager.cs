@@ -27,12 +27,21 @@ public class WindowManager
     private bool maximized = false;
     [JsonProperty("WindowState")]
     private WindowState windowState = WindowState.Windowed;
+    [JsonProperty("Vsync")]
+    private bool vsync = true;
+    [JsonProperty("CapFPS")]
+    private bool capFPS = false;
+    [JsonProperty("FPSCap")]
+    private int fPSCap = 200;
 
     private bool wantToResizeGraphics = false;
     private bool wantToMoveGraphics = false;
+    private bool wantToApplyGraphics = false;
     private bool centerWindow = false;
 
+    [JsonIgnore]
     private int x;
+    [JsonIgnore]
     private int y;
 
     [JsonIgnore]
@@ -136,6 +145,50 @@ public class WindowManager
         }
     }
 
+    [JsonIgnore]
+    public Vector2i MaximumWindowSize
+    {
+        get
+        {
+            SDL.SDL_GetDisplayBounds(SDL.SDL_GetWindowDisplayIndex(WindowHandle), out SDL.SDL_Rect rect);
+            return new Vector2i(rect.w, rect.h);
+        }
+    }
+
+    [JsonIgnore]
+    public bool Vsync
+    {
+        get => vsync;
+        set
+        {
+            vsync = value;
+            Main.graphics.SynchronizeWithVerticalRetrace = vsync;
+            wantToApplyGraphics = true;
+        }
+    }
+
+    [JsonIgnore]
+    public bool CapFPS
+    {
+        get => capFPS;
+        set
+        {
+            capFPS = value;
+            Main.instance.IsFixedTimeStep = value;
+        }
+    }
+
+    [JsonIgnore]
+    public int FPSCap
+    {
+        get => fPSCap;
+        set
+        {
+            fPSCap = value;
+            Main.instance.TargetElapsedTime = TimeSpan.FromSeconds(1d / (double)fPSCap);
+        }
+    }
+
     public WindowManager() { }
     public WindowManager(Game game)
     {
@@ -168,6 +221,9 @@ public class WindowManager
                 Size = windowSettings.Size;
                 Maximized = windowSettings.maximized;
             }
+            Vsync = windowSettings.Vsync;
+            FPSCap = windowSettings.FPSCap;
+            CapFPS = windowSettings.CapFPS;
         }
 
         if (State == WindowState.Windowed) SDL.SDL_GetWindowPosition(WindowHandle, out x, out y);
@@ -223,6 +279,11 @@ public class WindowManager
             wantToMoveGraphics = false;
             HandleMove();
         }
+        if (wantToApplyGraphics)
+        {
+            wantToApplyGraphics = false;
+            ApplyGraphics();
+        }
 
         if (updateCount % 300 == 0) SaveToFile();
     }
@@ -259,6 +320,11 @@ public class WindowManager
 
             MoveGraphics(w, h);
         }
+    }
+
+    public void ApplyGraphics()
+    {
+        Main.graphics.ApplyChanges();
     }
 
     public void ResizeGraphics(int w, int h)
@@ -308,6 +374,11 @@ public class WindowManager
         PlayerInput.CacheOriginalScreenDimensions();
         UserInterface.ActiveInstance.Recalculate();
         Main.instance._needsMenuUIRecalculation = true;
+    }
+
+    public void CenterWindow()
+    {
+        centerWindow = true;
     }
 
     public void SaveToFile()
