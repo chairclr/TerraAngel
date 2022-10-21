@@ -62,8 +62,7 @@ Features for Terraria developers
    - Disable gore
    - Show detailed item tooltips
    
-   ![image](https://user-images.githubusercontent.com/87276335/197304509-b921de4a-b0d8-49c5-af8a-96ae753960ea.png)
-
+   ![image](https://user-images.githubusercontent.com/87276335/197304559-292de6a7-bed1-4cc9-a452-89d70e890981.png)
 - Interactive C# execution engine (aka [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop))
   - Real time auto-completion
 - Net message debugger
