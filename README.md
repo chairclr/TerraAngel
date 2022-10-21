@@ -61,6 +61,7 @@ Features for Terraria developers
    - Disable dust
    - Disable gore
    - Show detailed item tooltips
+   
    ![image](https://user-images.githubusercontent.com/87276335/197304509-b921de4a-b0d8-49c5-af8a-96ae753960ea.png)
 
 - Interactive C# execution engine (aka [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop))
