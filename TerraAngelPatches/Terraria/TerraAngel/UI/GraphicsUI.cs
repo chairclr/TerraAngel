@@ -21,17 +21,11 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
     private UIText? resolutionLeftText;
     private UIText? resolutionRightText;
 
-    private UIPanel? changeFramerate;
-    private UIText? framerateText;
-    private UIColoredSlider? framerateSlider;
-    private float framerateValue = 0f;
+    private UITextSliderInt? changeFramerate;
 
     private UITextCheckbox? vsyncCheckbox;
 
-    private UIPanel? changeLightingPasses;
-    private UIText? lightingPassesText;
-    private UIColoredSlider? lightingPassesSlider;
-    private float lightingPassesValue = 0f;
+    private UITextSliderInt? changeLightingPasses;
 
     private List<Vector2i> validWindowSizes = new List<Vector2i>();
     private int currentWindowSizeIndex = 0;
@@ -167,16 +161,9 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         changeResolution.Append(resolutionRightText);
         changeResolution.Append(resolutionLeftText);
 
-
-        if (!ClientLoader.WindowManager!.CapFPS) framerateValue = 1f;
-        else
+        changeFramerate = new UITextSliderInt(30, 200, () => ClientLoader.WindowManager.FPSCap, x => { if (x == 200) { ClientLoader.WindowManager.CapFPS = false; } else { ClientLoader.WindowManager.CapFPS = true; ClientLoader.WindowManager.FPSCap = x; } }, () => $"FPS Cap: {GetFramerateText()}")
         {
-            framerateValue = Util.Lerp(0f, 1f, (ClientLoader.WindowManager!.FPSCap - 30f) / 300f);
-        }
-
-        changeFramerate = new UIPanel()
-        {
-            Width = { Pixels = -10, Percent = 0.6f },
+            Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },
             BorderColor = Color.Black,
             BackgroundColor = UIUtil.ButtonColor * 0.98f,
@@ -184,36 +171,10 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         };
-        framerateText = new UIText($"FPS Cap: {GetFramerateText()}")
+
+        changeLightingPasses = new UITextSliderInt(1, 8, () => Lighting.NewEngine.BlurPassCount, x => { Lighting.NewEngine.BlurPassCount = x; }, () => $"Light Passes: {GetLightingPassesText()}")
         {
-            HAlign = 0f,
-            VAlign = 0.5f,
-        };
-        framerateSlider = new UIColoredSlider(Terraria.Localization.LocalizedText.Empty, () => framerateValue, UpdateFramerateValue, () => { }, (x) => Color.White, Color.White)
-        {
-            HAlign = 1f,
-            VAlign = -0.5f,
-            Width = { Percent = 0.6f },
-        };
-
-        changeFramerate.Append(framerateText);
-        changeFramerate.Append(framerateSlider);
-
-
-        vsyncCheckbox = new UITextCheckbox("Vsync", () => ClientLoader.WindowManager.Vsync, x => ClientLoader.WindowManager.Vsync = x, UIUtil.ButtonColor * 0.98f, 1f)
-        {
-            Width = { Pixels = -10, Percent = 0.6f },
-            Height = { Pixels = 40 },
-            Top = { Pixels = -140 },
-            VAlign = 0.5f,
-            HAlign = 0.5f,
-            Colorize = false,
-        };
-
-
-        changeLightingPasses = new UIPanel()
-        {
-            Width = { Pixels = -10, Percent = 0.6f },
+            Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },
             BorderColor = Color.Black,
             BackgroundColor = UIUtil.ButtonColor * 0.98f,
@@ -221,20 +182,20 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         };
-        lightingPassesText = new UIText($"Light Passes: {GetLightingPassesText()}")
+
+        vsyncCheckbox = new UITextCheckbox("Vsync", () => ClientLoader.WindowManager.Vsync, x => ClientLoader.WindowManager.Vsync = x, 1f)
         {
-            HAlign = 0f,
+            Width = { Pixels = -10, Percent = 0.8f },
+            Height = { Pixels = 40 },
+            Top = { Pixels = -140 },
             VAlign = 0.5f,
-        };
-        lightingPassesSlider = new UIColoredSlider(Terraria.Localization.LocalizedText.Empty, () => lightingPassesValue, UpdateLightingPassesValue, () => { }, (x) => Color.White, Color.White)
-        {
-            HAlign = 1f,
-            VAlign = -0.5f,
-            Width = { Percent = 0.4f },
+            HAlign = 0.5f,
+            Colorize = false,
+            BackgroundColor = UIUtil.ButtonColor * 0.98f,
         };
 
-        changeLightingPasses.Append(lightingPassesText);
-        changeLightingPasses.Append(lightingPassesSlider);
+
+        
 
         element.Append(backButton);
         element.Append(changeStateButton);
@@ -285,31 +246,6 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         if (currentWindowSizeIndex <= 0)
             return false;
         return true;
-    }
-
-    public void UpdateFramerateValue(float x)
-    {
-        framerateValue = x;
-        if (x >= 1f)
-        {
-            ClientLoader.WindowManager!.CapFPS = false;
-        }
-        else
-        {
-            ClientLoader.WindowManager!.CapFPS = true;
-            ClientLoader.WindowManager!.FPSCap = (int)MathF.Round(Util.Lerp(30, 200, x));
-        }
-
-        framerateText!.SetText($"FPS Cap: {GetFramerateText()}");
-    }
-
-    public void UpdateLightingPassesValue(float x)
-    {
-        lightingPassesValue = x;
-
-        Lighting.NewEngine.BlurPassCount = ((int)MathF.Round(Util.Lerp(1, 8, x)));
-
-        lightingPassesText!.SetText($"Light Passes: {GetLightingPassesText()}");
     }
 
     public WindowManager.WindowState GetNextState()
