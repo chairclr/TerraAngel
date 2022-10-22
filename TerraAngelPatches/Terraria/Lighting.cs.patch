@@ -1,9 +1,11 @@
 --- src/Terraria/Terraria/Lighting.cs
 +++ src/TerraAngel/Terraria/Lighting.cs
-@@ -14,9 +_,11 @@
+@@ -13,10 +_,12 @@
+     [Old]
      public static int OffScreenTiles = 45;
      private static LightMode _mode = LightMode.Color;
-     private static readonly LightingEngine NewEngine = new LightingEngine();
++    public static readonly LightingEngine NewEngine = new LightingEngine();
+-    private static readonly LightingEngine NewEngine = new LightingEngine();
 +    public static readonly FullbrightEngine FullbrightEngine = new FullbrightEngine();
 -    private static readonly LegacyLighting LegacyEngine = new LegacyLighting(Main.Camera);
 +    public static readonly LegacyLighting LegacyEngine = new LegacyLighting(Main.Camera);

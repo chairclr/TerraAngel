@@ -73,6 +73,7 @@ public class ClientRenderer : TerraImGuiRenderer
                 }
             };
         }
+
     }
 
     protected override void SetupInput()
@@ -138,7 +139,7 @@ public class ClientRenderer : TerraImGuiRenderer
         colors[(int)ImGuiCol.NavWindowingDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.20f);
         colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.35f);
 
-        ClientConfig.Settings.UIConfig.Set();
+        ClientConfig.AfterReadLater();
     }
 
     private Stopwatch updateWatch = new Stopwatch();

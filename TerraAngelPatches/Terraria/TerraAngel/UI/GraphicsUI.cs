@@ -7,6 +7,7 @@ using ReLogic.OS;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
+using Terraria.Graphics.Light;
 using Terraria.UI;
 namespace TerraAngel.UI;
 
@@ -27,8 +28,12 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
 
     private UITextCheckbox? vsyncCheckbox;
 
-    private List<Vector2i> validWindowSizes = new List<Vector2i>();
+    private UIPanel? changeLightingPasses;
+    private UIText? lightingPassesText;
+    private UIColoredSlider? lightingPassesSlider;
+    private float lightingPassesValue = 0f;
 
+    private List<Vector2i> validWindowSizes = new List<Vector2i>();
     private int currentWindowSizeIndex = 0;
 
     public void HandleBackButtonUsage()
@@ -71,7 +76,6 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         }.WithFadedMouseOver();
-
         changeStateButton.OnClick += (x, y) =>
         {
             ClientLoader.WindowManager!.State = GetNextState();
@@ -89,13 +93,11 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         };
-
         resolutionText = new UIText($"{ClientLoader.WindowManager!.Width} x {ClientLoader.WindowManager!.Height}")
         {
             HAlign = 0.5f,
             VAlign = 0.5f
         };
-
         resolutionLeftText = new UIText("<")
         {
             Width = { Pixels = 30, },
@@ -103,7 +105,6 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 0f,
             VAlign = 0.5f,
         };
-
         resolutionLeftText.OnMouseOver += (x, y) => 
         {
             if (IsSmallerResoAvailable()) resolutionLeftText.TextColor = Color.Yellow;
@@ -129,7 +130,6 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
                 resolutionLeftText.TextColor = Color.Gray;
             }
         };
-
         resolutionRightText = new UIText(">")
         {
             Width = { Pixels = 30, },
@@ -137,7 +137,6 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 1f,
             VAlign = 0.5f,
         };
-
         resolutionRightText.OnMouseOver += (x, y) =>
         {
             if (IsLargerResoAvailable()) resolutionRightText.TextColor = Color.Yellow;
@@ -168,6 +167,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         changeResolution.Append(resolutionRightText);
         changeResolution.Append(resolutionLeftText);
 
+
         if (!ClientLoader.WindowManager!.CapFPS) framerateValue = 1f;
         else
         {
@@ -184,13 +184,11 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         };
-
         framerateText = new UIText($"FPS Cap: {GetFramerateText()}")
         {
             HAlign = 0f,
             VAlign = 0.5f,
         };
-
         framerateSlider = new UIColoredSlider(Terraria.Localization.LocalizedText.Empty, () => framerateValue, UpdateFramerateValue, () => { }, (x) => Color.White, Color.White)
         {
             HAlign = 1f,
@@ -200,6 +198,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
 
         changeFramerate.Append(framerateText);
         changeFramerate.Append(framerateSlider);
+
 
         vsyncCheckbox = new UITextCheckbox("Vsync", () => ClientLoader.WindowManager.Vsync, x => ClientLoader.WindowManager.Vsync = x, UIUtil.ButtonColor * 0.98f, 1f)
         {
@@ -211,11 +210,38 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             Colorize = false,
         };
 
+
+        changeLightingPasses = new UIPanel()
+        {
+            Width = { Pixels = -10, Percent = 0.6f },
+            Height = { Pixels = 40 },
+            BorderColor = Color.Black,
+            BackgroundColor = UIUtil.ButtonColor * 0.98f,
+            Top = { Pixels = -190 },
+            VAlign = 0.5f,
+            HAlign = 0.5f,
+        };
+        lightingPassesText = new UIText($"Light Passes: {GetLightingPassesText()}")
+        {
+            HAlign = 0f,
+            VAlign = 0.5f,
+        };
+        lightingPassesSlider = new UIColoredSlider(Terraria.Localization.LocalizedText.Empty, () => lightingPassesValue, UpdateLightingPassesValue, () => { }, (x) => Color.White, Color.White)
+        {
+            HAlign = 1f,
+            VAlign = -0.5f,
+            Width = { Percent = 0.4f },
+        };
+
+        changeLightingPasses.Append(lightingPassesText);
+        changeLightingPasses.Append(lightingPassesSlider);
+
         element.Append(backButton);
         element.Append(changeStateButton);
         element.Append(changeResolution);
         element.Append(changeFramerate);
         element.Append(vsyncCheckbox);
+        element.Append(changeLightingPasses);
 
         Append(element);
     }
@@ -277,6 +303,15 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         framerateText!.SetText($"FPS Cap: {GetFramerateText()}");
     }
 
+    public void UpdateLightingPassesValue(float x)
+    {
+        lightingPassesValue = x;
+
+        Lighting.NewEngine.BlurPassCount = ((int)MathF.Round(Util.Lerp(1, 8, x)));
+
+        lightingPassesText!.SetText($"Light Passes: {GetLightingPassesText()}");
+    }
+
     public WindowManager.WindowState GetNextState()
     {
         return (WindowManager.WindowState)(((int)ClientLoader.WindowManager!.State + 1) % 3);
@@ -290,5 +325,9 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
     public string GetFramerateText()
     {
         return ClientLoader.WindowManager!.CapFPS ? $"{ClientLoader.WindowManager!.FPSCap}" : "None";
+    }
+    public string GetLightingPassesText()
+    {
+        return Lighting.NewEngine.BlurPassCount.ToString();
     }
 }

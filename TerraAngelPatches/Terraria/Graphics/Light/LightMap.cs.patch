@@ -5,6 +5,25 @@
  using Microsoft.Xna.Framework;
  using ReLogic.Threading;
  using Terraria.Utilities;
+@@ -24,6 +_,8 @@
+ 
+     public Vector3 LightDecayThroughHoney { get; set; }
+ 
++    public int BlurPassCount = 4;
++
+     public Vector3 this[int x, int y]
+     {
+         get
+@@ -77,8 +_,7 @@
+ 
+     public void Blur()
+     {
+-        BlurPass();
+-        BlurPass();
++        for (int i = 0; i < BlurPassCount; i++) BlurPass();
+         _random.NextSeed();
+     }
+ 
 @@ -204,7 +_,7 @@
                      break;
                  case LightMaskMode.Water:

@@ -237,6 +237,8 @@ public class ClientConfig
 
         public float StatsWindowHoveredTransperency = 0.65f;
 
+        public int LightingBlurPassCount = 4;
+
         public ClientUIConfig UIConfig = new ClientUIConfig();
 
         [JsonIgnore]
@@ -335,16 +337,21 @@ public class ClientConfig
         Formatting = Formatting.Indented,
     };
 
+    public static void BeforeWrite()
+    {
+        Settings.pluginsToEnable = Settings.PluginsToEnable;
+        Settings.UIConfig.Get();
+        if (Settings.PreserveConsoleHistory)
+            Settings.ConsoleHistorySave = Settings.ConsoleHistory;
+        Settings.LightingBlurPassCount = Lighting.NewEngine.BlurPassCount;
+    }
+
     private static object FileLock = new object();
     public static void WriteToFile()
     {
         lock (FileLock)
         {
-            Settings.pluginsToEnable = Settings.PluginsToEnable;
-            Settings.UIConfig.Get();
-            if (Settings.PreserveConsoleHistory)
-                Settings.ConsoleHistorySave = Settings.ConsoleHistory;
-
+            BeforeWrite();
             string s = JsonConvert.SerializeObject(Settings, SerializerSettings);
             Util.CreateParentDirectory(ClientLoader.ConfigPath);
             using (FileStream fs = new FileStream(ClientLoader.ConfigPath, FileMode.OpenOrCreate))
@@ -357,6 +364,18 @@ public class ClientConfig
 
             Settings.ConsoleHistorySave = null;
         }
+    }
+    public static void AfterRead()
+    {
+        if (Settings.PreserveConsoleHistory && Settings.ConsoleHistorySave is not null)
+            Settings.ConsoleHistory = Settings.ConsoleHistorySave;
+        else
+            Settings.ConsoleHistorySave = null;
+    }
+    public static void AfterReadLater()
+    {
+        Settings.UIConfig.Set();
+        Lighting.NewEngine.BlurPassCount = Settings.LightingBlurPassCount;
     }
 
     public static void ReadFromFile()
@@ -376,11 +395,7 @@ public class ClientConfig
                 fs.Close();
             }
             Settings = JsonConvert.DeserializeObject<Config>(s, SerializerSettings) ?? new Config();
-
-            if (Settings.PreserveConsoleHistory && Settings.ConsoleHistorySave is not null)
-                Settings.ConsoleHistory = Settings.ConsoleHistorySave;
-            else
-                Settings.ConsoleHistorySave = null;
+            AfterRead();
         }
     }
 

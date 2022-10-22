@@ -1,0 +1,16 @@
+--- src/Terraria/Terraria/Graphics/Light/TileLightScanner.cs
++++ src/TerraAngel/Terraria/Graphics/Light/TileLightScanner.cs
+@@ -41,12 +_,7 @@
+     {
+         if (WorldGen.InWorld(x, y, 1))
+         {
+-            if (Main.tile[x, y] != null && Main.tile[x + 1, y] != null && Main.tile[x - 1, y] != null && Main.tile[x, y - 1] != null)
+-            {
+-                return Main.tile[x, y + 1] == null;
+-            }
+-
+-            return true;
++            return false;
+         }
+ 
+         return true;
