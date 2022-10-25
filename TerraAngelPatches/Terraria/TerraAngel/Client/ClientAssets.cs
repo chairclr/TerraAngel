@@ -51,8 +51,7 @@ public class ClientAssets
         {
             LoadFont(IconFontName, size, true, new Vector2(0f, 4f), Icon.IconMin, Icon.IconMax);
         }
-        LoadFont(Chinese, size, true, 0x4e00, 0x9fa5);
-        LoadFont(Chinese, size, true, 0x3400, 0x4db5);
+        LoadFont(Chinese, size, true, 0x4e00, 0x9fa5, 0x3400, 0x4db5, 8211 ,8212,8216,8217,8220,8221,8230,8231,11289,11290,11297,12305,12308,12309,65281,65282,65288,65289,65292,65311);
     }
 
     public unsafe static ImFontPtr LoadFont(string path, float size)
