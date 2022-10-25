@@ -19,7 +19,7 @@ You need to have the [dotnet 6 SDK](https://dotnet.microsoft.com/en-us/download/
 
 First, open command prompt or some other terminal, and clone the repository
 
-```git clone https://github.com/CEO-Chair/TerraAngel.git --recursive```
+```git clone https://github.com/Leader-txt/TerraAngel-Localization.git --recursive```
 
 ![image](https://user-images.githubusercontent.com/87276335/182042166-c967bcba-cd52-4372-ad75-3bc5faaac0ea.png)
 
