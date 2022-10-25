@@ -7,9 +7,13 @@ TerraAngel is a modern and heavily featured utility client for Terraria.
 </p>
 <br>
 Modify note
+<br>
 Add Chinese support to this version.
+<br>
 Changed the font of chat window to the same font of other windows.(Because if chat window use the different font from other windows,it wouldn't show the addition characters,soo I have to do the change.)
+<br>
 If you want to exchange the font file,you can edit the path in src/Terraria/TerraAngel/Client/ClientAssets.cs Line 18 a property called Chinese.
+<br>
 And if want add more characters , you can modify the code range at the same file Line 54.
 <h2>
 Installation
