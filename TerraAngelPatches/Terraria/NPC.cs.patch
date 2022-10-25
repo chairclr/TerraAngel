@@ -25,7 +25,7 @@
      }
  
      public void SpawnWithHigherTime(int timeMult)
-@@ -96590,6 +_,7 @@
+@@ -96589,6 +_,7 @@
  
      private void UpdateCollision()
      {

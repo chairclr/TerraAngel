@@ -375,7 +375,7 @@ public static class ImGuiUtil
             }
         }
     }
-
+/*
     public static bool WrappedSelectable(string text, float wrapWidth)
     {
         Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
@@ -394,7 +394,7 @@ public static class ImGuiUtil
         windowDrawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
 
         return v;
-    }
+    }*/
     public static bool WrappedSelectable(string id, string text, float wrapWidth)
     {
         Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
@@ -437,8 +437,8 @@ public static class ImGuiUtil
             int native_text_begin_offset = Encoding.UTF8.GetBytes(textStartPtr, text.Length, nativeTextPtr, textByteCount);
             nativeTextPtr[native_text_begin_offset] = 0;
         }
-        byte* native_text_end = null;
-
+        byte* native_text_end = null; 
+        
         ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
     }
     public unsafe static Vector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)

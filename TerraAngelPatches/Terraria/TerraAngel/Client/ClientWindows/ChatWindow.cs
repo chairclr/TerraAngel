@@ -104,7 +104,7 @@ public class ChatWindow : ClientWindow
             }
         }
 
-        ImGui.PushFont(ClientAssets.GetTerrariaFont(22f));
+        ImGui.PushFont(ClientAssets.GetMonospaceFont(22f));
 
         ImGuiStylePtr style = ImGui.GetStyle();
 

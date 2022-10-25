@@ -6,8 +6,8 @@ namespace TerraAngel.Client;
 
 public class ClientAssets
 {
-    private static Dictionary<float, ImFontPtr> TerrariaFonts = new Dictionary<float, ImFontPtr>();
-    private static Dictionary<float, ImFontPtr> MonospaceFonts = new Dictionary<float, ImFontPtr>();
+    private static Dictionary<float, ImFontPtr> TerrariaFonts { get; set; } = new Dictionary<float, ImFontPtr>();
+    private static Dictionary<float, ImFontPtr> MonospaceFonts { get; set; } = new Dictionary<float, ImFontPtr>();
 
     public static readonly float[] DefaultSizes = new float[] { 14f, 16f, 18f, 22f };
 
@@ -15,17 +15,18 @@ public class ClientAssets
     public static string MonoFontName => $"{ClientLoader.AssetPath}/FiraCode.ttf";
     public static string IconFontName => $"{ClientLoader.AssetPath}/IconFont.ttf";
     public static string FallbackFontName => $"{ClientLoader.AssetPath}/Symbola.ttf";
+    public static string Chinese=> @"C:\Windows\Fonts\simsun.ttc";
 
     public static void LoadFonts(ImGuiIOPtr io)
     {
         for (int i = 0; i < DefaultSizes.Length; i++)
         {
             LoadMonospaceFont(DefaultSizes[i]);
-            LoadTerrariaFont(DefaultSizes[i]);
+            LoadTerrariaFont(DefaultSizes[i]); 
         }
     }
 
-    public static void LoadTerrariaFont(float size, bool withoutSymbols = false)
+    public unsafe static void LoadTerrariaFont(float size, bool withoutSymbols = false)
     {
         TerrariaFonts.Add(size, LoadFont(TerrariaFontName, size, 0x0020, 0x007F));
 
@@ -35,16 +36,23 @@ public class ClientAssets
         {
             LoadFont(IconFontName, size, true, new Vector2(0f, 4f), Icon.IconMin, Icon.IconMax);
         }
+        //4e00-9fa5
+        //3400,4db5
+        //LoadFont(Chinese, size, true, 0x4e00, 0x9fa5);
+        //LoadFont(Chinese, size, true, 0x3400, 0x4db5);
     }
-    public static void LoadMonospaceFont(float size, bool withoutSymbols = false)
+    public unsafe static void LoadMonospaceFont(float size, bool withoutSymbols = false)
     {
         MonospaceFonts.Add(size, LoadFont(MonoFontName, size, 0x0020, 0x00FF, 0x0400, 0x04FF, 0x2020, 0x22FF));
         LoadFont(FallbackFontName, size, true, Vector2.Zero, Vector2.Zero, 0f, float.MaxValue, 2f, 0x2320, 0x2330, 0x2000, 0x2020);
 
+        LoadFont(FallbackFontName, size, true, Vector2.Zero, Vector2.Zero, 0f, float.MaxValue, 2f, 0x0080, 0x00FF, 0x0400, 0x04FF, 0x2320, 0x2330, 0x2000, 0x2020);
         if (!withoutSymbols)
         {
             LoadFont(IconFontName, size, true, new Vector2(0f, 4f), Icon.IconMin, Icon.IconMax);
         }
+        LoadFont(Chinese, size, true, 0x4e00, 0x9fa5);
+        LoadFont(Chinese, size, true, 0x3400, 0x4db5);
     }
 
     public unsafe static ImFontPtr LoadFont(string path, float size)
@@ -102,7 +110,6 @@ public class ClientAssets
 
         if (glyphRanges.Length > 0)
         {
-
             glyphRanges = glyphRanges.Append((ushort)0).ToArray();
 
             fixed (ushort* glpyhRangesPtr = &glyphRanges[0])
@@ -118,8 +125,7 @@ public class ClientAssets
                 config.OversampleV = overSampleV;
                 config.PixelSnapH = pixelSnapH;
                 config.RasterizerMultiply = rasterizerMultiply;
-
-                ImFontPtr font = io.Fonts.AddFontFromFileTTF(path, size, config, (IntPtr)glpyhRangesPtr);
+                var font = io.Fonts.AddFontFromFileTTF(path, size, config, (IntPtr)glpyhRangesPtr);
                 config.Destroy();
                 return font;
             }
@@ -137,9 +143,7 @@ public class ClientAssets
             config.OversampleV = overSampleV;
             config.PixelSnapH = pixelSnapH;
             config.RasterizerMultiply = rasterizerMultiply;
-
-            ImFontPtr font = io.Fonts.AddFontFromFileTTF(path, size, config);
-            config.Destroy();
+            var font = io.Fonts.AddFontFromFileTTF(path, size, config);
             return font;
         }
     }

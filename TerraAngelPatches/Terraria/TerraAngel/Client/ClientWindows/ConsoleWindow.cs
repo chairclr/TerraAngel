@@ -51,10 +51,10 @@ public class ConsoleWindow : ClientWindow
 
     private bool consoleFocus = false;
     private bool consoleReclaimFocus = false;
-
     public ConsoleWindow()
     {
         Script.Init();
+        
     }
 
     public override void Draw(ImGuiIOPtr io)
