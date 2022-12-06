@@ -16,7 +16,7 @@
  using Microsoft.Win32;
  using Microsoft.Xna.Framework;
  using Microsoft.Xna.Framework.Content;
-@@ -23,7 +_,6 @@
+@@ -24,7 +_,6 @@
  using ReLogic.Graphics;
  using ReLogic.Localization.IME;
  using ReLogic.OS;
@@ -24,7 +24,7 @@
  using ReLogic.Utilities;
  using Terraria.Achievements;
  using Terraria.Audio;
-@@ -204,8 +_,6 @@
+@@ -208,8 +_,6 @@
      public static bool CaptureModeDisabled = false;
      public bool unityMouseOver;
      public static Main instance;
@@ -33,7 +33,7 @@
      public static Camera Camera = new Camera();
      public static IPlayerRenderer PlayerRenderer = new LegacyPlayerRenderer();
      public static IPlayerRenderer PotionOfReturnRenderer = new ReturnGatePlayerRenderer();
-@@ -735,7 +_,8 @@
+@@ -714,7 +_,8 @@
      public static float invAlpha = 1f;
      public static float invDir = 1f;
      [ThreadStatic]
@@ -43,7 +43,7 @@
      public static bool allChestStackHover;
      public static bool inventorySortMouseOver;
      public static float GraveyardVisualIntensity;
-@@ -879,7 +_,7 @@
+@@ -858,7 +_,7 @@
      public static HairstyleUnlocksHelper Hairstyles = new HairstyleUnlocksHelper();
      public static bool tilesLoaded = false;
      public static WorldMap Map;
@@ -52,7 +52,7 @@
      public static Dust[] dust = new Dust[6001];
      public static Star[] star = new Star[400];
      public static Item[] item = new Item[401];
-@@ -903,9 +_,6 @@
+@@ -882,9 +_,6 @@
      public static Vector2 screenLastPosition;
      public static int screenWidth = 1152;
      public static int screenHeight = 864;
@@ -62,7 +62,7 @@
      public static int teamNamePlateDistance = 2000;
      public static int multiplayerNPCSmoothingRange = 300;
      public static bool Setting_UseReducedMaxLiquids = false;
-@@ -983,8 +_,8 @@
+@@ -962,8 +_,8 @@
      public static bool Support4K = true;
      public static float MinimumZoomComparerX = 1920f;
      public static float MinimumZoomComparerY = 1200f;
@@ -73,7 +73,7 @@
      private static GraphicsProfile _currentGraphicsProfile = _selectedGraphicsProfile;
      public static int LogicCheckScreenWidth = 1920;
      public static int LogicCheckScreenHeight = 1200;
-@@ -997,10 +_,6 @@
+@@ -976,10 +_,6 @@
      private static int backSpaceCount;
      private static float backSpaceRate;
      public static string motd = "";
@@ -84,7 +84,7 @@
      public static bool gameMenu = true;
      public static bool menuBGChangedDay = false;
      public static bool menuBGChangedNight = false;
-@@ -1113,7 +_,6 @@
+@@ -1093,7 +_,6 @@
      public static int signY = 0;
      public static bool hideUI;
      public static bool releaseUI;
@@ -92,7 +92,7 @@
      public static bool terrariasFixedTiming = true;
      private int splashCounter;
      public List<int> DrawCacheNPCsMoonMoon = new List<int>(200);
-@@ -1128,7 +_,6 @@
+@@ -1108,7 +_,6 @@
      public List<int> DrawCacheFirstFractals = new List<int>(1000);
      public static ParticleRenderer ParticleSystem_World_OverPlayers = new ParticleRenderer();
      public static ParticleRenderer ParticleSystem_World_BehindPlayers = new ParticleRenderer();
@@ -100,7 +100,7 @@
      public static AnchoredEntitiesCollection sittingManager;
      public static AnchoredEntitiesCollection sleepingManager;
      public static MinimapFrameManager MinimapFrameManagerInstance;
-@@ -1137,7 +_,6 @@
+@@ -1117,7 +_,6 @@
      private static float newDefaultUIScale = 0f;
      public static bool IsInTheMiddleOfLoadingSettings;
      public static Microsoft.Xna.Framework.Point LastLoadedResolution;
@@ -108,7 +108,7 @@
      public static string oldStatusText = "";
      public static string autoGenFileLocation = null;
      public static bool autoShutdown;
-@@ -1265,7 +_,7 @@
+@@ -1246,7 +_,7 @@
      private static bool _blockFancyUIWhileLoading;
      private bool[] menuWide = new bool[100];
      public static float GamepadCursorAlpha = 0f;
@@ -117,7 +117,7 @@
      public static float MenuXMovement = 0f;
      public RejectionMenuInfo RejectionMenuInfo;
      private float _splashFrameCount;
-@@ -1305,7 +_,7 @@
+@@ -1286,7 +_,7 @@
      private static TextSnippet[] _netplayStatusTextSnippets;
      public static int ladyBugRainBoost = 0;
      private static bool _canShowMeteorFall;
@@ -126,21 +126,21 @@
      public static bool CanUpdateGameplay { get; private set; }
  
      public static Vector2 ViewPosition => screenPosition + GameViewMatrix.Translation;
-@@ -2520,7 +_,6 @@
-         Configuration.Clear();
-         Configuration.Put("ResetDefaultUIScale", false);
-         Configuration.Put("SmartCursorToggle", cSmartCursorModeIsToggleAndNotHold);
--        Configuration.Put("MapEnabled", mapEnabled);
-         Configuration.Put("InvasionBarMode", invasionProgressMode);
-         Configuration.Put("AutoSave", autoSave);
-         Configuration.Put("AutoPause", autoPause);
-@@ -2536,29 +_,9 @@
-         Configuration.Put("UnlockMusicSwap", TOWMusicUnlocked);
-         Configuration.Put("UseExperimentalFeatures", UseExperimentalFeatures);
-         Configuration.Put("KeyFavoriteModifier", cFavoriteKey);
--        Configuration.Put("Fullscreen", graphics.IsFullScreen);
--        Configuration.Put("WindowMaximized", screenMaximized);
--        Configuration.Put("WindowBorderless", screenBorderless);
+@@ -2508,7 +_,6 @@
+         configuration.Clear();
+         configuration.Put("ResetDefaultUIScale", false);
+         configuration.Put("SmartCursorToggle", cSmartCursorModeIsToggleAndNotHold);
+-        configuration.Put("MapEnabled", mapEnabled);
+         configuration.Put("InvasionBarMode", invasionProgressMode);
+         configuration.Put("AutoSave", autoSave);
+         configuration.Put("AutoPause", autoPause);
+@@ -2524,29 +_,9 @@
+         configuration.Put("UnlockMusicSwap", TOWMusicUnlocked);
+         configuration.Put("UseExperimentalFeatures", UseExperimentalFeatures);
+         configuration.Put("KeyFavoriteModifier", cFavoriteKey);
+-        configuration.Put("Fullscreen", graphics.IsFullScreen);
+-        configuration.Put("WindowMaximized", screenMaximized);
+-        configuration.Put("WindowBorderless", screenBorderless);
 -        int num = graphics.PreferredBackBufferWidth;
 -        int num2 = graphics.PreferredBackBufferHeight;
 -        if (IsInTheMiddleOfLoadingSettings)
@@ -156,24 +156,24 @@
 -            }
 -        }
 -
--        Configuration.Put("DisplayWidth", num);
--        Configuration.Put("DisplayHeight", num2);
-         Configuration.Put("GraphicsQuality", qaStyle);
-         Configuration.Put("BackgroundEnabled", BackgroundEnabled);
--        Configuration.Put("FrameSkipMode", FrameSkipMode);
-         Configuration.Put("LightingMode", Lighting.Mode);
-         Configuration.Put("BackgroundParallax", bgScroll);
-         Configuration.Put("ShowItemText", showItemText);
-@@ -2600,8 +_,6 @@
-         }
- 
-         Configuration.Put("FlashIconForEvents", Enum.GetName(typeof(GameNotificationType), _flashNotificationType));
--        Configuration.Put("Display", _windowMover.ScreenDeviceName);
--        Configuration.Put("DisplayScreen", _windowMover.ScreenDeviceName);
-         Configuration.Put("ThrottleWhenInactive", instance.InactiveSleepTime != TimeSpan.Zero);
-         Configuration.Put("DoorAutoOpeningMode", DoorOpeningHelper.PreferenceSettings);
-         Configuration.Put("HoverControlMode", Player.Settings.HoverControl);
-@@ -2632,7 +_,7 @@
+-        configuration.Put("DisplayWidth", num);
+-        configuration.Put("DisplayHeight", num2);
+         configuration.Put("GraphicsQuality", qaStyle);
+         configuration.Put("BackgroundEnabled", BackgroundEnabled);
+-        configuration.Put("FrameSkipMode", FrameSkipMode);
+         configuration.Put("LightingMode", Lighting.Mode);
+         configuration.Put("BackgroundParallax", bgScroll);
+         configuration.Put("ShowItemText", showItemText);
+@@ -2583,8 +_,6 @@
+         configuration.Put("UIScale", _uiScaleWanted);
+         configuration.Put("MapScale", MapScale);
+         configuration.Put("FlashIconForEvents", Enum.GetName(typeof(GameNotificationType), _flashNotificationType));
+-        configuration.Put("Display", _windowMover.ScreenDeviceName);
+-        configuration.Put("DisplayScreen", _windowMover.ScreenDeviceName);
+         configuration.Put("ThrottleWhenInactive", instance.InactiveSleepTime != TimeSpan.Zero);
+         configuration.Put("DoorAutoOpeningMode", DoorOpeningHelper.PreferenceSettings);
+         configuration.Put("HoverControlMode", Player.Settings.HoverControl);
+@@ -2615,7 +_,7 @@
          }
      }
  
@@ -182,16 +182,16 @@
      {
          if (shouldSetDefaultUIScale)
          {
-@@ -2666,54 +_,7 @@
+@@ -2650,54 +_,7 @@
              flag = true;
          }
  
 -        if (!flag)
 -        {
--            Configuration.Get("ResetDefaultUIScale", ref shouldSetDefaultUIScale);
--            Configuration.Get("Fullscreen", ref startFullscreen);
--            Configuration.Get("WindowMaximized", ref screenMaximized);
--            Configuration.Get("WindowBorderless", ref screenBorderless);
+-            configuration.Get("ResetDefaultUIScale", ref shouldSetDefaultUIScale);
+-            configuration.Get("Fullscreen", ref startFullscreen);
+-            configuration.Get("WindowMaximized", ref screenMaximized);
+-            configuration.Get("WindowBorderless", ref screenBorderless);
 -        }
 -
 -        PendingBorderlessState = screenBorderless;
@@ -218,8 +218,8 @@
 -
 -        int currentValue2 = graphics.PreferredBackBufferWidth;
 -        int currentValue3 = graphics.PreferredBackBufferHeight;
--        Configuration.Get("DisplayWidth", ref currentValue2);
--        Configuration.Get("DisplayHeight", ref currentValue3);
+-        configuration.Get("DisplayWidth", ref currentValue2);
+-        configuration.Get("DisplayHeight", ref currentValue3);
 -        LastLoadedResolution = new Microsoft.Xna.Framework.Point(currentValue2, currentValue3);
 -        if (!startFullscreen)
 -        {
@@ -232,19 +232,19 @@
 -            TryPickingDefaultUIScale(currentValue3);
 -        }
 -
-         Configuration.Get("SmartCursorToggle", ref cSmartCursorModeIsToggleAndNotHold);
--        Configuration.Get("MapEnabled", ref mapEnabled);
-         Configuration.Get("InvasionBarMode", ref invasionProgressMode);
-         Configuration.Get("AutoSave", ref autoSave);
-         Configuration.Get("AutoPause", ref autoPause);
-@@ -2753,34 +_,6 @@
-             Configuration.Get("BackgroundEnabled", ref BackgroundEnabled);
+         configuration.Get("SmartCursorToggle", ref cSmartCursorModeIsToggleAndNotHold);
+-        configuration.Get("MapEnabled", ref mapEnabled);
+         configuration.Get("InvasionBarMode", ref invasionProgressMode);
+         configuration.Get("AutoSave", ref autoSave);
+         configuration.Get("AutoPause", ref autoPause);
+@@ -2737,34 +_,6 @@
+             configuration.Get("BackgroundEnabled", ref BackgroundEnabled);
          }
  
--        if (Configuration.GetAllKeys().Contains("FrameSkip"))
+-        if (configuration.GetAllKeys().Contains("FrameSkip"))
 -        {
 -            bool currentValue4 = false;
--            Configuration.Get("FrameSkip", ref currentValue4);
+-            configuration.Get("FrameSkip", ref currentValue4);
 -            terrariasFixedTiming = !currentValue4;
 -            if (terrariasFixedTiming)
 -            {
@@ -257,7 +257,7 @@
 -        }
 -
 -        int currentValue5 = (int)FrameSkipMode;
--        Configuration.Get("FrameSkipMode", ref currentValue5);
+-        configuration.Get("FrameSkipMode", ref currentValue5);
 -        if (currentValue5 < 0)
 -        {
 -            currentValue5 = 0;
@@ -272,16 +272,16 @@
          int currentValue6 = (int)Lighting.Mode;
          if (!flag)
          {
-@@ -2918,8 +_,6 @@
+@@ -2902,8 +_,6 @@
  
          if (!flag)
          {
--            string screenDeviceName = Configuration.Get("DisplayScreen", "");
+-            string screenDeviceName = configuration.Get("DisplayScreen", "");
 -            _windowMover.TryMovingToScreen(screenDeviceName);
-             bool flag2 = Configuration.Get("ThrottleWhenInactive", defaultValue: true);
+             bool flag2 = configuration.Get("ThrottleWhenInactive", defaultValue: true);
              base.InactiveSleepTime = TimeSpan.FromMilliseconds(flag2 ? 20 : 0);
          }
-@@ -3090,14 +_,7 @@
+@@ -3074,14 +_,7 @@
  
                  if (num >= 91 && binaryReader.ReadBoolean() && !dedServ && Platform.IsWindows)
                  {
@@ -297,7 +297,7 @@
                  }
  
                  if (num >= 8)
-@@ -3170,8 +_,6 @@
+@@ -3154,8 +_,6 @@
                  {
                      placementPreview = binaryReader.ReadBoolean();
                  }
@@ -306,7 +306,7 @@
              }
  
              binaryReader.Close();
-@@ -4660,6 +_,8 @@
+@@ -4644,6 +_,8 @@
              graphics = new GraphicsDeviceManager(this as Game);
              base.Content.RootDirectory = "Content";
          }
@@ -315,7 +315,7 @@
      }
  
      private static void SetDisplayMonitor()
-@@ -4756,7 +_,6 @@
+@@ -4740,7 +_,6 @@
          SetTitle();
          lo = rand.Next(6);
          waterfallManager = new WaterfallManager();
@@ -323,15 +323,23 @@
          sittingManager = new AnchoredEntitiesCollection();
          sleepingManager = new AnchoredEntitiesCollection();
          gameTips = new GameTipsDisplay();
-@@ -4801,6 +_,7 @@
+@@ -4783,6 +_,7 @@
          LoadContent_TryEnteringHiDef();
          ClientInitialize();
          base.Initialize();
 +        ClientLoader.WindowManager?.Init();
      }
  
-     private void Initialize_AlmostEverything()
-@@ -8718,8 +_,6 @@
+     private void BindSettingsTo(Preferences preferences)
+@@ -4791,7 +_,6 @@
+         MinimapFrameManagerInstance.BindTo(preferences);
+         BigBossProgressBar.BindTo(preferences);
+         ResourceSetsManager.BindTo(preferences);
+-        ChromaInitializer.BindTo(preferences);
+         Terraria.Graphics.Effects.Filters.Scene.BindTo(preferences);
+         if (SocialAPI.Cloud != null)
+         {
+@@ -8736,8 +_,6 @@
              screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
          }
  
@@ -340,7 +348,7 @@
          if (Main.OnResolutionChanged != null)
          {
              Main.OnResolutionChanged(new Vector2(screenWidth, screenHeight));
-@@ -8738,9 +_,6 @@
+@@ -8756,9 +_,6 @@
          _achievementAdvisor = new AchievementAdvisor();
          OpenRecent();
          UILinksInitializer.Load();
@@ -350,7 +358,7 @@
          CacheSupportedDisplaySizes();
          if (autoJoin)
          {
-@@ -8754,31 +_,10 @@
+@@ -8772,31 +_,10 @@
  
      private static void CacheSupportedDisplaySizes()
      {
@@ -386,7 +394,7 @@
      }
  
      public static void LoadTestLog(string logname)
-@@ -8801,6 +_,7 @@
+@@ -8819,6 +_,7 @@
          Assets = base.Services.Get<IAssetRepository>();
          Assets.AssetLoadFailHandler = OnceFailedLoadingAnAsset;
          mapSectionTexture = new RenderTarget2D(base.GraphicsDevice, 200, 150);
@@ -394,7 +402,7 @@
          ShaderContentManager = new ContentManager(base.Content.ServiceProvider, base.Content.RootDirectory);
          PixelShaderRef.Value = ShaderContentManager.Load<Effect>("PixelShader");
          VertexPixelShaderRef.Value = ShaderContentManager.Load<Effect>("PixelShader");
-@@ -8829,7 +_,6 @@
+@@ -8847,7 +_,6 @@
  
          AssetSourceController.UseResourcePacks(AssetInitializer.CreateResourcePackList(base.Services));
          AssetInitializer.LoadSplashAssets(asyncLoadForSounds: true);
@@ -402,7 +410,7 @@
          _gameContentLoadProcess = LoadContent_Deferred();
      }
  
-@@ -10766,7 +_,7 @@
+@@ -10784,7 +_,7 @@
              {
                  newMusic = 10;
              }
@@ -411,7 +419,7 @@
              {
                  newMusic = 8;
              }
-@@ -14980,8 +_,6 @@
+@@ -15016,8 +_,6 @@
          {
              UpdateAudio();
              GlobalTimeWrappedHourly = (float)(gameTime.TotalGameTime.TotalSeconds % 3600.0);
@@ -420,7 +428,7 @@
              return;
          }
  
-@@ -15100,37 +_,10 @@
+@@ -15136,37 +_,10 @@
          }
  
          DoUpdate_AutoSave();
@@ -460,7 +468,7 @@
              if (showSplash)
              {
                  return;
-@@ -15183,16 +_,11 @@
+@@ -15219,16 +_,11 @@
                  }
              }
  
@@ -478,7 +486,7 @@
                      return;
                  }
  
-@@ -15203,6 +_,7 @@
+@@ -15239,6 +_,7 @@
  
              uCount++;
              drawSkip = false;
@@ -486,7 +494,7 @@
              PlayerInput.AllowExecutionOfGamepadInstructions = true;
              TryPlayingCreditsRoll();
              PlayerInput.SetZoom_UI();
-@@ -15256,12 +_,6 @@
+@@ -15292,12 +_,6 @@
                  }
              }
  
@@ -499,7 +507,7 @@
              if ((double)gfxQuality < 0.2)
              {
                  LegacyLighting.RenderPhases = 8;
-@@ -15321,11 +_,8 @@
+@@ -15357,11 +_,8 @@
              hasFocus = base.IsActive;
              if (Platform.IsWindows)
              {
@@ -513,7 +521,7 @@
                  {
                      hasFocus = false;
                  }
-@@ -15381,7 +_,6 @@
+@@ -15417,7 +_,6 @@
              DoUpdate_F8_ToggleNetDiagnostics();
              DoUpdate_F7_ToggleGraphicsDiagnostics();
              DoUpdate_F11_ToggleUI();
@@ -521,7 +529,7 @@
              DoUpdate_HandleInput();
              DoUpdate_HandleChat();
              DoUpdate_Enter_ToggleChat();
-@@ -15484,7 +_,7 @@
+@@ -15520,7 +_,7 @@
              if ((double)screenPosition.Y < worldSurface * 16.0 + 16.0)
              {
                  Star.UpdateStars();
@@ -530,7 +538,7 @@
              }
              else if (shimmerAlpha > 0f)
              {
-@@ -15514,11 +_,10 @@
+@@ -15550,11 +_,10 @@
          {
              DoUpdateInWorld(_worldUpdateTimeTester);
          }
@@ -543,7 +551,7 @@
      }
  
      internal static void UpdateCreativeGameModeOverride()
-@@ -16558,24 +_,6 @@
+@@ -16594,24 +_,6 @@
          keyState = Keyboard.GetState();
      }
  
@@ -568,7 +576,7 @@
      private static void DoUpdate_F11_ToggleUI()
      {
          if (keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F11))
-@@ -19028,7 +_,7 @@
+@@ -19067,7 +_,7 @@
                      {
                          toolTipLine[numLines] = Lang.tip[13].Value;
                      }
@@ -577,7 +585,7 @@
                      numLines++;
                  }
  
-@@ -19085,6 +_,7 @@
+@@ -19124,6 +_,7 @@
                      toolTipLine[numLines] = Lang.tip[22].Value;
                  }
  
@@ -585,7 +593,7 @@
                  numLines++;
              }
  
-@@ -19593,6 +_,7 @@
+@@ -19632,6 +_,7 @@
                      toolTipLine[numLines] = "+4" + Lang.tip[47].Value;
                      preFixLine[numLines] = true;
                      numLines++;
@@ -593,7 +601,7 @@
                  }
              }
  
-@@ -20631,14 +_,18 @@
+@@ -20670,14 +_,18 @@
  
      protected void DrawPlayers_BehindNPCs()
      {
@@ -612,7 +620,7 @@
      }
  
      protected void DrawElderEye(SpriteBatch spriteBatch, Vector2 worldPosition, float opacity, float scale, int frameNumber, Microsoft.Xna.Framework.Color passedColor)
-@@ -46930,7 +_,6 @@
+@@ -46996,7 +_,6 @@
  
      private static void TryDisposingEverything()
      {
@@ -620,7 +628,7 @@
          CaptureManager.Instance.Dispose();
          audioSystem.Dispose();
      }
-@@ -47314,7 +_,7 @@
+@@ -47380,7 +_,7 @@
          chatMonitor.Clear();
          screenLastPosition = screenPosition;
          screenPosition.Y = (float)(worldSurface * 16.0 - (double)screenHeight);
@@ -629,7 +637,7 @@
          if (alreadyGrabbingSunOrMoon)
          {
              playOldTile = true;
-@@ -47336,17 +_,17 @@
+@@ -47402,17 +_,17 @@
          }
  
          Star.UpdateStars();
@@ -650,7 +658,7 @@
                  if (logoRotationSpeed < 0f)
                  {
                      logoRotationSpeed = 0f;
-@@ -47371,7 +_,7 @@
+@@ -47437,7 +_,7 @@
                  logoRotationSpeed -= 1f;
              }
  
@@ -659,7 +667,7 @@
              if (logoScale > 1f)
              {
                  logoScaleDirection = -1f;
-@@ -47392,7 +_,7 @@
+@@ -47458,7 +_,7 @@
          }
          else if (WorldGen.drunkWorldGen)
          {
@@ -668,7 +676,7 @@
              if (logoRotationSpeed > 0f)
              {
                  logoRotationSpeed += 1500f;
-@@ -47412,14 +_,14 @@
+@@ -47478,14 +_,14 @@
          {
              if ((double)logoRotation > 0.09)
              {
@@ -685,7 +693,7 @@
              if ((double)logoRotation > 0.08)
              {
                  logoRotationDirection = -1f;
-@@ -47438,7 +_,7 @@
+@@ -47504,7 +_,7 @@
                  logoRotationSpeed -= 1f;
              }
  
@@ -694,7 +702,7 @@
              if ((double)logoScale > 1.35)
              {
                  logoScaleDirection = -1f;
-@@ -47460,12 +_,7 @@
+@@ -47526,12 +_,7 @@
  
          Microsoft.Xna.Framework.Color color2 = new Microsoft.Xna.Framework.Color((byte)((float)(int)color.R * ((float)LogoA / 255f)), (byte)((float)(int)color.G * ((float)LogoA / 255f)), (byte)((float)(int)color.B * ((float)LogoA / 255f)), (byte)((float)(int)color.A * ((float)LogoA / 255f)));
          Microsoft.Xna.Framework.Color color3 = new Microsoft.Xna.Framework.Color((byte)((float)(int)color.R * ((float)LogoB / 255f)), (byte)((float)(int)color.G * ((float)LogoB / 255f)), (byte)((float)(int)color.B * ((float)LogoB / 255f)), (byte)((float)(int)color.A * ((float)LogoB / 255f)));
@@ -708,7 +716,7 @@
          {
              spriteBatch.Draw(TextureAssets.Logo.Value, new Vector2(screenWidth / 2, 100f), new Microsoft.Xna.Framework.Rectangle(0, 0, TextureAssets.Logo.Width(), TextureAssets.Logo.Height()), color2, logoRotation, new Vector2(TextureAssets.Logo.Width() / 2, TextureAssets.Logo.Height() / 2), logoScale, SpriteEffects.None, 0f);
              spriteBatch.Draw(TextureAssets.Logo2.Value, new Vector2(screenWidth / 2, 100f), new Microsoft.Xna.Framework.Rectangle(0, 0, TextureAssets.Logo.Width(), TextureAssets.Logo.Height()), color3, logoRotation, new Vector2(TextureAssets.Logo.Width() / 2, TextureAssets.Logo.Height() / 2), logoScale, SpriteEffects.None, 0f);
-@@ -48116,6 +_,26 @@
+@@ -48182,6 +_,26 @@
              }
  
              num11++;
@@ -735,7 +743,7 @@
              array9[num11] = Lang.menu[14].Value;
              if (selectedMenu == num11)
              {
-@@ -48890,6 +_,8 @@
+@@ -48956,6 +_,8 @@
                      menuMode = 112;
                  }
  
@@ -744,7 +752,7 @@
                  num20++;
                  array9[num20] = Lang.menu[210].Value;
                  if (selectedMenu == num20)
-@@ -49160,7 +_,7 @@
+@@ -49226,7 +_,7 @@
              {
                  bgScroll = (int)Math.Round((1f - caveParallax) * 500f);
                  int num25 = 0;
@@ -753,7 +761,7 @@
                  if (selectedMenu == num25)
                  {
                      SoundEngine.PlaySound(10);
-@@ -49176,14 +_,6 @@
+@@ -49242,14 +_,6 @@
                  }
  
                  num25++;
@@ -768,7 +776,7 @@
                  array9[num25] = Language.GetTextValue("UI.LightMode_" + Lighting.Mode);
                  if (selectedMenu == num25)
                  {
-@@ -49323,83 +_,9 @@
+@@ -49389,83 +_,9 @@
              }
              else if (menuMode == 111)
              {
@@ -855,7 +863,7 @@
              }
              else if (menuMode == 1125)
              {
-@@ -51249,18 +_,6 @@
+@@ -51315,18 +_,6 @@
          }
      }
  
@@ -874,7 +882,7 @@
      private static void OnSubmitServerPasswordFromRequest(string passwordCandidate)
      {
          Netplay.ServerPassword = passwordCandidate;
-@@ -51598,48 +_,6 @@
+@@ -51664,48 +_,6 @@
          _uiScaleWanted = uiScaleWanted;
      }
  
@@ -923,7 +931,7 @@
      public static void OpenCharacterSelectUI()
      {
          menuMode = 888;
-@@ -54661,6 +_,7 @@
+@@ -54668,6 +_,7 @@
  
      protected void RenderBackground()
      {
@@ -931,7 +939,7 @@
          if (drawToScreen)
          {
              return;
-@@ -56165,6 +_,10 @@
+@@ -56172,6 +_,10 @@
  
      private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)
      {
@@ -942,7 +950,7 @@
          Asset<Texture2D> asset = TextureAssets.MapBGs[0];
          int num = -1;
          Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
-@@ -56901,6 +_,7 @@
+@@ -56930,6 +_,7 @@
              return;
          }
  
@@ -950,7 +958,7 @@
          RenderBlack();
          base.GraphicsDevice.SetRenderTarget(tileTarget);
          base.GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
-@@ -56927,6 +_,7 @@
+@@ -56956,6 +_,7 @@
          DrawTileEntities(solidLayer: true, overRenderTargets: false, intoRenderTargets: true);
          TimeLogger.DetailedDrawTime(28);
          base.GraphicsDevice.SetRenderTarget(null);
@@ -958,7 +966,7 @@
      }
  
      protected void RenderTiles2()
-@@ -56965,6 +_,7 @@
+@@ -56994,6 +_,7 @@
  
      protected void RenderWater()
      {
@@ -966,7 +974,7 @@
          if (!drawToScreen)
          {
              base.GraphicsDevice.SetRenderTarget(waterTarget);
-@@ -57688,6 +_,7 @@
+@@ -57717,6 +_,7 @@
  
      protected void DrawBlack(bool force = false)
      {
@@ -974,7 +982,7 @@
          if (shimmerAlpha == 1f)
          {
              return;
-@@ -58027,11 +_,10 @@
+@@ -58056,11 +_,10 @@
          }
      }
  
@@ -987,7 +995,7 @@
          }
  
          InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
-@@ -61563,7 +_,13 @@
+@@ -61592,7 +_,13 @@
          {
              _isDrawingOrUpdating = true;
              EnsureRenderTargetContent();
@@ -1001,7 +1009,7 @@
              if (Main.OnPostDraw != null)
              {
                  Main.OnPostDraw(gameTime);
-@@ -61576,6 +_,8 @@
+@@ -61605,6 +_,8 @@
  
      private void DoDraw(GameTime gameTime)
      {
@@ -1010,7 +1018,7 @@
          Stopwatch stopwatch = new Stopwatch();
          stopwatch.Start();
          if (showSplash)
-@@ -61644,7 +_,6 @@
+@@ -61673,7 +_,6 @@
  
          if (!dedServ)
          {
@@ -1018,7 +1026,7 @@
              if (Main.OnPreDraw != null)
              {
                  Main.OnPreDraw(gameTime);
-@@ -62406,7 +_,7 @@
+@@ -62435,7 +_,7 @@
              DrawItemTextPopups(targetScale);
              PlayerInput.SetZoom_UI();
              spriteBatch.End();
@@ -1027,7 +1035,7 @@
              DrawNetplayStatusText();
              DrawFPS();
              spriteBatch.End();
-@@ -62950,10 +_,12 @@
+@@ -62979,10 +_,12 @@
          }
  
          instance.CameraModifiers.ApplyTo(ref screenPosition);
@@ -1041,7 +1049,7 @@
  
      public static bool IsItDay()
      {
-@@ -63423,7 +_,7 @@
+@@ -63452,7 +_,7 @@
                  _oldNetplayStatusText = text;
              }
  
@@ -1050,7 +1058,7 @@
              int hoveredSnippet;
              if (Netplay.Connection.StatusTextHasShadows)
              {
-@@ -66702,228 +_,9 @@
+@@ -66736,228 +_,9 @@
          }
      }
  

@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Item.cs
 +++ src/TerraAngel/Terraria/Item.cs
-@@ -320,20 +_,7 @@
+@@ -326,20 +_,7 @@
          return $"{{Name: \"{Name}\" NetID: {netID} Stack: {stack}";
      }
  
@@ -22,7 +22,7 @@
  
      public bool Prefix(int prefixWeWant)
      {
-@@ -49307,6 +_,7 @@
+@@ -49378,6 +_,7 @@
          velocity.X = vector2.Z;
          velocity.Y = vector2.W;
          Collision.StepConveyorBelt(this, 1f);

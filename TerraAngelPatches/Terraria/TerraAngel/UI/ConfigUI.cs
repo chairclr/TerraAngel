@@ -75,7 +75,7 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
             VAlign = 1f,
         }.WithFadedMouseOver();
 
-        backButton.OnClick += BackButton;
+        backButton.OnLeftClick += BackButton;
 
         element.Append(backButton);
 

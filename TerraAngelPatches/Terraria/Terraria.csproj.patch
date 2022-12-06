@@ -5,7 +5,7 @@
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
 +    <Deterministic>true</Deterministic>
-     <Version>1.4.4.7</Version>
+     <Version>1.4.4.9</Version>
      <Company>Re-Logic</Company>
      <Company>Copyright © 2022 Re-Logic</Company>
      <RootNamespace>Terraria</RootNamespace>

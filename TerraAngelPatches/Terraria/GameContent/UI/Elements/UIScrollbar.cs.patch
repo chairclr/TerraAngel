@@ -18,4 +18,4 @@
 +        DrawBar(spriteBatch, _innerTexture.Value, handleRectangle, BarColor * ((_isDragging || _isHoveringOverHandle) ? 1f : 0.85f));
      }
  
-     public override void MouseDown(UIMouseEvent evt)
+     public override void LeftMouseDown(UIMouseEvent evt)

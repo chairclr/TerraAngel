@@ -8,7 +8,7 @@
      public int emoteTime;
      public CreativeUnlocksTracker creativeTracker;
      private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
-@@ -11547,6 +_,7 @@
+@@ -11562,6 +_,7 @@
  
      public void Yoraiz0rEye()
      {
@@ -16,7 +16,7 @@
          int num = 0;
          num += bodyFrame.Y / 56;
          if (num >= Main.OffsetsPlayerHeadgear.Length)
-@@ -16346,6 +_,7 @@
+@@ -16368,6 +_,7 @@
          ZoneLihzhardTemple = false;
          int num3 = (int)base.Center.X / 16;
          int num4 = (int)base.Center.Y / 16;
@@ -24,16 +24,16 @@
          if (Main.tile[num3, num4] != null && Main.tile[num3, num4].wall == 87)
          {
              ZoneLihzhardTemple = true;
-@@ -17800,7 +_,7 @@
+@@ -17823,7 +_,7 @@
                  }
  
                  int num5 = tile.frameY / 22;
--                if (num5 < 24)
+-                if (num5 < TorchID.Count)
 +                if (num5 < 22 && num5 >= 0)
                  {
                      nearbyTorch[num5] = true;
                      if (num5 == 17 && (tile.liquid == 0 || tile.liquidType() != 0))
-@@ -19543,7 +_,7 @@
+@@ -19562,7 +_,7 @@
  
          int num = (int)(position.X + (float)(width / 2)) / 16;
          int num2 = (int)(position.Y - 8f) / 16;
@@ -42,7 +42,7 @@
          {
              return;
          }
-@@ -23732,7 +_,7 @@
+@@ -23730,7 +_,7 @@
  
      public static int GetFloorTileType(int x, int y)
      {
@@ -51,7 +51,7 @@
      }
  
      private void MakeFloorDust(bool Falling, int type, int paintColor)
-@@ -28342,28 +_,35 @@
+@@ -28333,28 +_,35 @@
              CheckCrackedBrickBreak();
          }
  
@@ -61,8 +61,8 @@
          {
              SlopeDownMovement();
 +            // patch context
-             bool flag26 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
-             if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag26)))
+             bool flag27 = mount.Type == 7 || mount.Type == 8 || mount.Type == 12 || mount.Type == 44 || mount.Type == 49;
+             if (velocity.Y == gravity && (!mount.Active || (!mount.Cart && mount.Type != 48 && !flag27)))
              {
                  Collision.StepDown(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, waterWalk || waterWalk2);
              }
@@ -77,7 +77,7 @@
                  }
 +                // patch context
              }
-             else if ((carpetFrame != -1 || velocity.Y >= gravity) && !controlDown && !mount.Cart && !flag26 && grappling[0] == -1)
+             else if ((carpetFrame != -1 || velocity.Y >= gravity) && !controlDown && !mount.Cart && !flag27 && grappling[0] == -1)
              {
                  Collision.StepUp(ref position, ref velocity, width, height, ref stepSpeed, ref gfxOffY, (int)gravDir, controlUp);
              }
@@ -88,7 +88,7 @@
          oldPosition = position;
          oldDirection = direction;
          bool falling = false;
-@@ -28558,20 +_,22 @@
+@@ -28549,20 +_,22 @@
          {
              FloorVisuals(falling);
          }
@@ -105,7 +105,7 @@
          numMinions = 0;
          slotsMinions = 0f;
 +        // patch context
-         if (mount.Type != 8)
+         if (Main.netMode != 2 && mount.Type != 8)
          {
              ItemCheck_ManageRightClickFeatures();
          }
@@ -113,7 +113,7 @@
  
          ItemCheckWrapped(i);
          PlayerFrame();
-@@ -28689,6 +_,7 @@
+@@ -28715,6 +_,7 @@
          return result;
      }
  
@@ -121,7 +121,7 @@
      private void AdjustRemainingPotionSickness()
      {
          if (whoAmI == Main.myPlayer)
-@@ -38151,6 +_,7 @@
+@@ -38190,6 +_,7 @@
              bool flag = false;
              for (int j = -1; j <= 1; j++)
              {
@@ -129,7 +129,7 @@
                  Tile tile = Main.tile[x + j, y + i];
                  if (tile.nactive() && (Main.tileSolid[tile.type] || !Main.tileSolidTop[tile.type]))
                  {
-@@ -38199,7 +_,7 @@
+@@ -38238,7 +_,7 @@
          {
              for (int j = floorY - 3; j < floorY; j++)
              {
@@ -138,7 +138,7 @@
                  {
                      if (Main.tile[i, j].nactive() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type])
                      {
-@@ -42968,7 +_,7 @@
+@@ -43006,7 +_,7 @@
          return num;
      }
  

@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/WorldGen.cs
 +++ src/TerraAngel/Terraria/WorldGen.cs
-@@ -3553,15 +_,9 @@
+@@ -3559,15 +_,9 @@
          LiquidBuffer.numLiquidBuffer = 0;
          if (Main.netMode == 1 || lastMaxTilesX > Main.maxTilesX || lastMaxTilesY > Main.maxTilesY)
          {
@@ -19,7 +19,7 @@
          }
  
          lastMaxTilesX = Main.maxTilesX;
-@@ -3573,22 +_,9 @@
+@@ -3579,22 +_,9 @@
  
          if (Main.netMode != 1)
          {
@@ -45,7 +45,7 @@
          }
  
          for (int n = 0; n < Main.countsAsHostForGameplay.Length; n++)
-@@ -66071,6 +_,7 @@
+@@ -66261,6 +_,7 @@
  
      public static bool SolidOrSlopedTile(int x, int y)
      {
@@ -53,7 +53,7 @@
          return SolidOrSlopedTile(Main.tile[x, y]);
      }
  
-@@ -66101,13 +_,9 @@
+@@ -66291,13 +_,9 @@
  
      public static bool SolidTile(int i, int j, bool noDoors = false)
      {
@@ -68,7 +68,7 @@
              if (Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type] && !Main.tile[i, j].halfBrick() && Main.tile[i, j].slope() == 0 && !Main.tile[i, j].inActive())
              {
                  if (noDoors && Main.tile[i, j].type == 10)
-@@ -83150,6 +_,7 @@
+@@ -83347,6 +_,7 @@
          {
              for (int j = 0; j < height; j++)
              {

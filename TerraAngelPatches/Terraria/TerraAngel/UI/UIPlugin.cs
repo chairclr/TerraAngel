@@ -63,7 +63,7 @@ public class UIPlugin : UIElement
             VAlign = 0.5f
         };
 
-        backgroundPanel.OnClick += (e, _) =>
+        backgroundPanel.OnLeftClick += (e, _) =>
         {
             valueSet(!valueGet());
             this.otherText.SetText(valueGet() ? "Enabled" : "Disabled");

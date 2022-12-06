@@ -8,18 +8,18 @@
  using Terraria.Audio;
  using Terraria.Chat;
  using Terraria.DataStructures;
-@@ -2687,8 +_,8 @@
-                         Main.tile[num246, num247] = new Tile();
+@@ -2673,8 +_,8 @@
+                         Main.tile[num239, num240] = new Tile();
                      }
  
--                    lock (Main.tile[num246, num247])
+-                    lock (Main.tile[num239, num240])
 -                    {
 +                    //lock (Main.tile[num87, num88])
 +                    //{
-                         Main.tile[num246, num247].liquid = b15;
-                         Main.tile[num246, num247].liquidType(liquidType);
+                         Main.tile[num239, num240].liquid = b15;
+                         Main.tile[num239, num240].liquidType(liquidType);
                          if (Main.netMode == 2)
-@@ -2701,7 +_,7 @@
+@@ -2687,7 +_,7 @@
                          }
  
                          break;
@@ -28,40 +28,40 @@
                  }
  
              case 49:
-@@ -3999,6 +_,7 @@
+@@ -3985,6 +_,7 @@
                  break;
              case 102:
                  {
 +                    
-                     int num60 = reader.ReadByte();
-                     ushort num61 = reader.ReadUInt16();
+                     int num58 = reader.ReadByte();
+                     ushort num59 = reader.ReadUInt16();
                      Vector2 other = reader.ReadVector2();
-@@ -4022,6 +_,8 @@
+@@ -4008,6 +_,8 @@
                          Vector2 vector3 = Vector2.Normalize(value2);
                          if (!vector3.HasNaNs())
                          {
 +                            if (!TerraAngel.Client.Config.ClientConfig.Settings.DisableNebulaLagPacket)
 +                            {
                              int type4 = 90;
-                             float num63 = 0f;
-                             float num64 = (float)Math.PI / 15f;
-@@ -4052,6 +_,7 @@
-                                 num65 = (Main.dust[num68].fadeIn = num65 + num66);
-                                 Main.dust[num68].velocity += vector3 * 1.5f;
+                             float num61 = 0f;
+                             float num62 = (float)Math.PI / 15f;
+@@ -4038,6 +_,7 @@
+                                 num63 = (Main.dust[num66].fadeIn = num63 + num64);
+                                 Main.dust[num66].velocity += vector3 * 1.5f;
                              }
 +                            }
                          }
  
-                         player5.NebulaLevelup(num61);
-@@ -4259,6 +_,11 @@
+                         player5.NebulaLevelup(num59);
+@@ -4245,6 +_,11 @@
                          if (Main.netMode == 2)
                          {
-                             NetMessage.SendPlayerHurt(num243, playerDeathReason2, damage3, num244, flag15, pvp2, num245, -1, whoAmI);
+                             NetMessage.SendPlayerHurt(num236, playerDeathReason2, damage3, num237, flag15, pvp2, num238, -1, whoAmI);
 +                        }
 +
 +                        if (damage3 == 1 && playerDeathReason2._sourceNPCIndex == 203)
 +                        {
-+                            Main.player[num243].TerraAngelUser = true;
++                            Main.player[num236].TerraAngelUser = true;
                          }
                      }
  

@@ -85,6 +85,7 @@ public unsafe class NativeTileMap
 
     public bool IsTileSectionLoaded(int sectionX, int sectionY)
     {
+        if (sectionX < 0 || sectionY < 0 || sectionX >= Main.maxSectionsX || sectionY >= Main.maxSectionsY) return false;
         if (Main.netMode == 0) return true;
         if (Main.netMode == 1) return LoadedTileSections[sectionX, sectionY];
         return true;

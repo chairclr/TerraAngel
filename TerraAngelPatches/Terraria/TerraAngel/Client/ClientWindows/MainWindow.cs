@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.WorldEdits;
@@ -107,22 +108,29 @@ public class MainWindow : ClientWindow
                         {
                             Task.Run(() =>
                             {
-                                Stopwatch watch = Stopwatch.StartNew();
-                                int xlen = Main.Map.MaxWidth;
-                                int ylen = Main.Map.MaxHeight;
-                                for (int x = 0; x < xlen; x++)
+                                try
                                 {
-                                    for (int y = 0; y < ylen; y++)
+                                    Stopwatch watch = Stopwatch.StartNew();
+                                    int xlen = Main.Map.MaxWidth;
+                                    int ylen = Main.Map.MaxHeight;
+                                    for (int x = 0; x < xlen; x++)
                                     {
-                                        if (Main.netMode == 0 || Main.tile.IsTileInLoadedSection(x, y))
+                                        for (int y = 0; y < ylen; y++)
                                         {
-                                            Main.Map.Update(x, y, 255);
+                                            if (Main.netMode == 0 || Main.tile.IsTileInLoadedSection(x, y))
+                                            {
+                                                Main.Map.Update(x, y, 255);
+                                            }
                                         }
                                     }
+                                    watch.Stop();
+                                    ClientLoader.Console.WriteLine($"Map took {watch.Elapsed.Milliseconds}ms");
+                                    Main.refreshMap = true;
                                 }
-                                watch.Stop();
-                                ClientLoader.Console.WriteLine($"Map took {watch.Elapsed.Milliseconds}ms");
-                                Main.refreshMap = true;
+                                catch (Exception e)
+                                {
+                                    ClientLoader.Console.WriteError($"{e}");
+                                }
                             });
                         }
                         ImGui.EndTabItem();

@@ -57,7 +57,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f
         }.WithFadedMouseOver();
 
-        backButton.OnClick += (x, y) => HandleBackButtonUsage();
+        backButton.OnLeftClick += (x, y) => HandleBackButtonUsage();
 
         SetValidWindowSizes();
 
@@ -70,7 +70,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         }.WithFadedMouseOver();
-        changeStateButton.OnClick += (x, y) =>
+        changeStateButton.OnLeftClick += (x, y) =>
         {
             ClientLoader.WindowManager!.State = GetNextState();
             changeStateButton.SetText($"Go {GetNextStateString()}");
@@ -109,7 +109,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             resolutionLeftText.TextColor = IsSmallerResoAvailable() ? Color.White : Color.Gray;
             SoundEngine.PlaySound(SoundID.MenuTick);
         };
-        resolutionLeftText.OnClick += (x, y) =>
+        resolutionLeftText.OnLeftClick += (x, y) =>
         {
             if (IsSmallerResoAvailable())
             {
@@ -141,7 +141,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             resolutionRightText.TextColor = IsLargerResoAvailable() ? Color.White : Color.Gray;
             SoundEngine.PlaySound(SoundID.MenuTick);
         };
-        resolutionRightText.OnClick += (x, y) => 
+        resolutionRightText.OnLeftClick += (x, y) => 
         {
             if (IsLargerResoAvailable())
             {

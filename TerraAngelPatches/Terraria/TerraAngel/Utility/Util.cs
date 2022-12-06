@@ -53,7 +53,7 @@ public class Util
 
     public static IEnumerable<FieldInfo> GetPublicValueTypeFields<T>()
     {
-        return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType);
+        return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType && x.IsLiteral && !x.IsInitOnly);
     }
     public static int UnboxRawFieldToInt(FieldInfo field)
     {

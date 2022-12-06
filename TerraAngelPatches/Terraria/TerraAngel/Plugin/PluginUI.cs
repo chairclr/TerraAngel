@@ -76,7 +76,7 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             VAlign = 1f,
         }.WithFadedMouseOver();
 
-        backButton.OnClick += BackButton;
+        backButton.OnLeftClick += BackButton;
 
         reloadPluginsButton = new UIAutoScaleTextTextPanel<string>("Reload Plugins")
         {
@@ -88,7 +88,7 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f
         }.WithFadedMouseOver();
 
-        reloadPluginsButton.OnClick += ReloadButton;
+        reloadPluginsButton.OnLeftClick += ReloadButton;
 
         openPluginsFolderButton = new UIAutoScaleTextTextPanel<string>("Open Plugins Folder")
         {
@@ -100,7 +100,7 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             HAlign = 1f
         }.WithFadedMouseOver();
 
-        openPluginsFolderButton.OnClick += OpenButton;
+        openPluginsFolderButton.OnLeftClick += OpenButton;
 
 
         element.Append(backButton);

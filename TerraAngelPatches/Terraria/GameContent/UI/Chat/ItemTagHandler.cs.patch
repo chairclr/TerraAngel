@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/GameContent/UI/Chat/ItemTagHandler.cs
 +++ src/TerraAngel/Terraria/GameContent/UI/Chat/ItemTagHandler.cs
-@@ -7,9 +_,9 @@
+@@ -8,9 +_,9 @@
  namespace Terraria.GameContent.UI.Chat;
  public class ItemTagHandler : ITagHandler
  {

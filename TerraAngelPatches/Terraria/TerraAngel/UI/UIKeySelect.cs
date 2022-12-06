@@ -49,7 +49,7 @@ public class UIKeySelect : UIElement
         backgroundPanel.Append(nameText);
         backgroundPanel.Append(keyText);
 
-        backgroundPanel.OnClick += (x, _) =>
+        backgroundPanel.OnLeftClick += (x, _) =>
         {
             SoundEngine.PlaySound(SoundID.MenuTick);
 

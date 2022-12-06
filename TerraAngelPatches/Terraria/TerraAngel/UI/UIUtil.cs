@@ -34,11 +34,11 @@ public static class UIUtil
         {
             elem.BackgroundColor = origColor;
         };
-        elem.OnMouseDown += (evt, _) =>
+        elem.OnLeftMouseDown += (evt, _) =>
         {
             elem.BackgroundColor = pressedColor;
         };
-        elem.OnMouseUp += (evt, _) =>
+        elem.OnLeftMouseUp += (evt, _) =>
         {
             elem.BackgroundColor = origColor;
         };

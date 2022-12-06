@@ -36,7 +36,7 @@ public class UITextCheckbox : UIPanel
             VAlign = 0.5f
         };
 
-        OnClick += (e, _) =>
+        OnLeftClick += (e, _) =>
         {
             valueSet(!valueGet());
             this.otherText.SetText(valueGet().ToString());

@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/GameInput/PlayerInput.cs
 +++ src/TerraAngel/Terraria/GameInput/PlayerInput.cs
-@@ -1050,8 +_,6 @@
+@@ -1056,8 +_,6 @@
                      MouseY = num10 + num5;
                      flag6 = true;
                  }
@@ -9,7 +9,7 @@
              }
  
              if (CurrentInputMode == InputMode.XBoxGamepad)
-@@ -1221,8 +_,6 @@
+@@ -1227,8 +_,6 @@
              {
                  flag2 = true;
              }
@@ -18,7 +18,7 @@
          }
  
          if (Main.blockKey != Keys.None.ToString())
-@@ -1423,7 +_,6 @@
+@@ -1429,7 +_,6 @@
              ListenFor(null, InputMode.Keyboard);
              Main.blockKey = newKey;
              Main.blockInput = false;
@@ -26,7 +26,7 @@
          }
  
          if (CurrentlyRebinding && _listeningInputMode == InputMode.KeyboardUI)
-@@ -1443,7 +_,6 @@
+@@ -1449,7 +_,6 @@
              ListenFor(null, InputMode.KeyboardUI);
              Main.blockKey = newKey;
              Main.blockInput = false;

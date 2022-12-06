@@ -17,7 +17,7 @@
      {
          if (Main.netMode == 0)
          {
-@@ -1732,281 +_,7 @@
+@@ -1722,281 +_,7 @@
                      }
                  }
              }
@@ -28,15 +28,15 @@
 -                    case 34:
 -                    case 69:
 -                        {
--                            for (int num25 = 0; num25 < 256; num25++)
+-                            for (int num23 = 0; num23 < 256; num23++)
 -                            {
--                                if (num25 != ignoreClient && buffer[num25].broadcast && Netplay.Clients[num25].IsConnected())
+-                                if (num23 != ignoreClient && buffer[num23].broadcast && Netplay.Clients[num23].IsConnected())
 -                                {
 -                                    try
 -                                    {
--                                        buffer[num25].spamCount++;
--                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                                        Netplay.Clients[num25].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[num25].ServerWriteCallBack);
+-                                        buffer[num23].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                                        Netplay.Clients[num23].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[num23].ServerWriteCallBack);
 -                                    }
 -                                    catch
 -                                    {
@@ -49,15 +49,15 @@
 -
 -                    case 20:
 -                        {
--                            for (int num29 = 0; num29 < 256; num29++)
+-                            for (int num27 = 0; num27 < 256; num27++)
 -                            {
--                                if (num29 != ignoreClient && buffer[num29].broadcast && Netplay.Clients[num29].IsConnected() && Netplay.Clients[num29].SectionRange((int)Math.Max(number3, number4), number, (int)number2))
+-                                if (num27 != ignoreClient && buffer[num27].broadcast && Netplay.Clients[num27].IsConnected() && Netplay.Clients[num27].SectionRange((int)Math.Max(number3, number4), number, (int)number2))
 -                                {
 -                                    try
 -                                    {
--                                        buffer[num29].spamCount++;
--                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                                        Netplay.Clients[num29].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[num29].ServerWriteCallBack);
+-                                        buffer[num27].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                                        Netplay.Clients[num27].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[num27].ServerWriteCallBack);
 -                                    }
 -                                    catch
 -                                    {
@@ -71,9 +71,9 @@
 -                    case 23:
 -                        {
 -                            NPC nPC4 = Main.npc[number];
--                            for (int num30 = 0; num30 < 256; num30++)
+-                            for (int num28 = 0; num28 < 256; num28++)
 -                            {
--                                if (num30 == ignoreClient || !buffer[num30].broadcast || !Netplay.Clients[num30].IsConnected())
+-                                if (num28 == ignoreClient || !buffer[num28].broadcast || !Netplay.Clients[num28].IsConnected())
 -                                {
 -                                    continue;
 -                                }
@@ -85,7 +85,7 @@
 -                                }
 -                                else if (nPC4.netSkip <= 0)
 -                                {
--                                    Rectangle rect5 = Main.player[num30].getRect();
+-                                    Rectangle rect5 = Main.player[num28].getRect();
 -                                    Rectangle rect6 = nPC4.getRect();
 -                                    rect6.X -= 2500;
 -                                    rect6.Y -= 2500;
@@ -105,9 +105,9 @@
 -                                {
 -                                    try
 -                                    {
--                                        buffer[num30].spamCount++;
--                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                                        Netplay.Clients[num30].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[num30].ServerWriteCallBack);
+-                                        buffer[num28].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                                        Netplay.Clients[num28].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[num28].ServerWriteCallBack);
 -                                    }
 -                                    catch
 -                                    {
@@ -127,9 +127,9 @@
 -                    case 28:
 -                        {
 -                            NPC nPC3 = Main.npc[number];
--                            for (int num27 = 0; num27 < 256; num27++)
+-                            for (int num25 = 0; num25 < 256; num25++)
 -                            {
--                                if (num27 == ignoreClient || !buffer[num27].broadcast || !Netplay.Clients[num27].IsConnected())
+-                                if (num25 == ignoreClient || !buffer[num25].broadcast || !Netplay.Clients[num25].IsConnected())
 -                                {
 -                                    continue;
 -                                }
@@ -141,7 +141,7 @@
 -                                }
 -                                else
 -                                {
--                                    Rectangle rect3 = Main.player[num27].getRect();
+-                                    Rectangle rect3 = Main.player[num25].getRect();
 -                                    Rectangle rect4 = nPC3.getRect();
 -                                    rect4.X -= 3000;
 -                                    rect4.Y -= 3000;
@@ -157,9 +157,9 @@
 -                                {
 -                                    try
 -                                    {
--                                        buffer[num27].spamCount++;
--                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                                        Netplay.Clients[num27].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[num27].ServerWriteCallBack);
+-                                        buffer[num25].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                                        Netplay.Clients[num25].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[num25].ServerWriteCallBack);
 -                                    }
 -                                    catch
 -                                    {
@@ -172,15 +172,15 @@
 -
 -                    case 13:
 -                        {
--                            for (int num28 = 0; num28 < 256; num28++)
+-                            for (int num26 = 0; num26 < 256; num26++)
 -                            {
--                                if (num28 != ignoreClient && buffer[num28].broadcast && Netplay.Clients[num28].IsConnected())
+-                                if (num26 != ignoreClient && buffer[num26].broadcast && Netplay.Clients[num26].IsConnected())
 -                                {
 -                                    try
 -                                    {
--                                        buffer[num28].spamCount++;
--                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                                        Netplay.Clients[num28].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[num28].ServerWriteCallBack);
+-                                        buffer[num26].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                                        Netplay.Clients[num26].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[num26].ServerWriteCallBack);
 -                                    }
 -                                    catch
 -                                    {
@@ -200,9 +200,9 @@
 -                    case 27:
 -                        {
 -                            Projectile projectile2 = Main.projectile[number];
--                            for (int num26 = 0; num26 < 256; num26++)
+-                            for (int num24 = 0; num24 < 256; num24++)
 -                            {
--                                if (num26 == ignoreClient || !buffer[num26].broadcast || !Netplay.Clients[num26].IsConnected())
+-                                if (num24 == ignoreClient || !buffer[num24].broadcast || !Netplay.Clients[num24].IsConnected())
 -                                {
 -                                    continue;
 -                                }
@@ -214,7 +214,7 @@
 -                                }
 -                                else
 -                                {
--                                    Rectangle rect = Main.player[num26].getRect();
+-                                    Rectangle rect = Main.player[num24].getRect();
 -                                    Rectangle rect2 = projectile2.getRect();
 -                                    rect2.X -= 5000;
 -                                    rect2.Y -= 5000;
@@ -230,9 +230,9 @@
 -                                {
 -                                    try
 -                                    {
--                                        buffer[num26].spamCount++;
--                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                                        Netplay.Clients[num26].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[num26].ServerWriteCallBack);
+-                                        buffer[num24].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                                        Netplay.Clients[num24].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[num24].ServerWriteCallBack);
 -                                    }
 -                                    catch
 -                                    {
@@ -245,15 +245,15 @@
 -
 -                    default:
 -                        {
--                            for (int num24 = 0; num24 < 256; num24++)
+-                            for (int num22 = 0; num22 < 256; num22++)
 -                            {
--                                if (num24 != ignoreClient && (buffer[num24].broadcast || (Netplay.Clients[num24].State >= 3 && msgType == 10)) && Netplay.Clients[num24].IsConnected())
+-                                if (num22 != ignoreClient && (buffer[num22].broadcast || (Netplay.Clients[num22].State >= 3 && msgType == 10)) && Netplay.Clients[num22].IsConnected())
 -                                {
 -                                    try
 -                                    {
--                                        buffer[num24].spamCount++;
--                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                                        Netplay.Clients[num24].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[num24].ServerWriteCallBack);
+-                                        buffer[num22].spamCount++;
+-                                        Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                                        Netplay.Clients[num22].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[num22].ServerWriteCallBack);
 -                                    }
 -                                    catch
 -                                    {
@@ -270,8 +270,8 @@
 -                try
 -                {
 -                    buffer[remoteClient].spamCount++;
--                    Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num23);
--                    Netplay.Clients[remoteClient].Socket.AsyncSend(buffer[num].writeBuffer, 0, num23, Netplay.Clients[remoteClient].ServerWriteCallBack);
+-                    Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
+-                    Netplay.Clients[remoteClient].Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Clients[remoteClient].ServerWriteCallBack);
 -                }
 -                catch
 -                {
@@ -280,13 +280,13 @@
 -
 -            if (Main.verboseNetplay)
 -            {
--                for (int num31 = 0; num31 < num23; num31++)
+-                for (int num29 = 0; num29 < num21; num29++)
 -                {
 -                }
 -
--                for (int num32 = 0; num32 < num23; num32++)
+-                for (int num30 = 0; num30 < num21; num30++)
 -                {
--                    _ = buffer[num].writeBuffer[num32];
+-                    _ = buffer[num].writeBuffer[num30];
 -                }
 -            }
 -
@@ -299,7 +299,7 @@
          }
      }
  
-@@ -2043,8 +_,6 @@
+@@ -2047,8 +_,6 @@
                      continue;
                  }
  
@@ -308,7 +308,7 @@
                      if (num4 > 0)
                      {
                          array[num5] = (byte)((uint)num4 & 0xFFu);
-@@ -2064,7 +_,6 @@
+@@ -2068,7 +_,6 @@
                      array[num6] = b;
                      writer.Write(array, num6, num5 - num6);
                      num4 = 0;
@@ -316,7 +316,7 @@
  
                  num5 = 4;
                  byte b3;
-@@ -2388,9 +_,9 @@
+@@ -2392,9 +_,9 @@
          DecompressTileBlock_Inner(binaryReader, binaryReader.ReadInt32(), binaryReader.ReadInt32(), binaryReader.ReadInt16(), binaryReader.ReadInt16());
      }
  
@@ -328,7 +328,7 @@
          int num = 0;
          for (int i = yStart; i < yStart + height; i++)
          {
-@@ -2399,15 +_,7 @@
+@@ -2403,15 +_,7 @@
                  if (num != 0)
                  {
                      num--;
@@ -345,7 +345,7 @@
                      continue;
                  }
  
-@@ -2415,15 +_,7 @@
+@@ -2419,15 +_,7 @@
                  byte b;
                  byte b3 = (b2 = (b = 0));
                  tile = Main.tile[j, i];
@@ -362,7 +362,7 @@
  
                  byte b4 = reader.ReadByte();
                  bool flag = false;
-@@ -2653,23 +_,33 @@
+@@ -2657,23 +_,33 @@
      {
          lock (buffer[i])
          {
@@ -404,7 +404,7 @@
                  }
              }
          }
-@@ -2693,6 +_,8 @@
+@@ -2697,6 +_,8 @@
                  while (num2 >= 2)
                  {
                      int num3 = BitConverter.ToUInt16(buffer[bufferIndex].readBuffer, num);
