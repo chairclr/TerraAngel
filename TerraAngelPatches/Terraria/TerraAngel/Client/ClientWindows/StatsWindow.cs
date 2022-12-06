@@ -14,6 +14,8 @@ public class StatsWindow : ClientWindow
     public override string Title => "Stat Window";
     public override bool IsPartOfGlobalUI => false;
 
+    private float PacketCountElapsedTime = 0f;
+
     private static int PacketsUpLastSecond = 0;
     private static int BytesUpLastSecond = 0;
 
@@ -66,7 +68,7 @@ public class StatsWindow : ClientWindow
         ImGui.Begin("##StatWindow", flags);
         ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
-        ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v2.1");
+        ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v2.2");
 
         ImGui.TextUnformatted($"FPS {Math.Round(1f / TimeMetrics.FramerateDeltaTimeSlices.Average.TotalSeconds):F0}");
         ImGui.TextUnformatted($"UPS {Math.Round(1f / TimeMetrics.UpdateDeltaTimeSlices.Average.TotalSeconds):F0}");
@@ -99,8 +101,12 @@ public class StatsWindow : ClientWindow
             ImGui.PopStyleColor(2);
         }
 
-        if (Main.GameUpdateCount % 60 == 0)
+        PacketCountElapsedTime += ImGui.GetIO().DeltaTime;
+
+        if (PacketCountElapsedTime >= 1f)
         {
+            PacketCountElapsedTime = 0f;
+
             PacketsUpLastSecond = PacketsUpLastSecondCounting;
             PacketsDownLastSecond = PacketsDownLastSecondCounting;
 

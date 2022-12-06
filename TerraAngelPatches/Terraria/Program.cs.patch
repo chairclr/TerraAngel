@@ -23,6 +23,32 @@
      public static bool IsMono = Type.GetType("Mono.Runtime") != null;
      public const bool IsDebug = false;
      public static Dictionary<string, string> LaunchParameters = new Dictionary<string, string>();
+@@ -43,16 +_,16 @@
+ 
+     public static void StartForceLoad()
+     {
+-        if (!Main.SkipAssemblyLoad)
+-        {
+-            Thread thread = new Thread(ForceLoadThread);
+-            thread.IsBackground = true;
+-            thread.Start();
+-        }
+-        else
+-        {
++        //if (!Main.SkipAssemblyLoad)
++        //{
++        //    Thread thread = new Thread(ForceLoadThread);
++        //    thread.IsBackground = true;
++        //    thread.Start();
++        //}
++        //else
++        //{
+             LoadedEverything = true;
+-        }
++        //}
+     }
+ 
+     public static void ForceLoadThread(object threadContext)
 @@ -187,6 +_,7 @@
  
          LaunchParameters = Utils.ParseArguements(args);
