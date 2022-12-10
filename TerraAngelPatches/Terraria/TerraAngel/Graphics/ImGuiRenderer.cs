@@ -3,33 +3,10 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 namespace TerraAngel.Graphics;
 
-public static class DrawVertDeclaration
+
+public class ImGuiRenderer
 {
-    public static readonly VertexDeclaration Declaration;
-
-    public static readonly int Size;
-
-    static DrawVertDeclaration()
-    {
-        unsafe { Size = sizeof(ImDrawVert); }
-
-        Declaration = new VertexDeclaration(
-            Size,
-
-            // Position
-            new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
-
-            // UV
-            new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-
-            // Color
-            new VertexElement(16, VertexElementFormat.Color, VertexElementUsage.Color, 0)
-        );
-    }
-}
-public class TerraImGuiRenderer
-{
-    private Game _game;
+    private Game TargetGame;
 
     // Graphics
     public GraphicsDevice GraphicsDevice;
@@ -53,7 +30,7 @@ public class TerraImGuiRenderer
 
     private Queue<Action> preDrawActionQueue = new Queue<Action>(5);
 
-    public TerraImGuiRenderer(Game game)
+    public ImGuiRenderer(Game game)
     {
         SetupContext();
         SetupGraphics(game);
@@ -66,7 +43,7 @@ public class TerraImGuiRenderer
     }
     protected virtual void SetupGraphics(Game game)
     {
-        _game = game ?? throw new ArgumentNullException(nameof(game));
+        TargetGame = game ?? throw new ArgumentNullException(nameof(game));
         GraphicsDevice = game.GraphicsDevice;
 
         LoadedTextures = new Dictionary<IntPtr, Texture2D>
@@ -146,7 +123,7 @@ public class TerraImGuiRenderer
     public virtual void AfterLayout()
     {
         ImGui.Render();
-        unsafe { RenderDrawData(ImGui.GetDrawData()); }
+        RenderDrawData(ImGui.GetDrawData());
     }
 
     public virtual unsafe void RebuildFontAtlas()
@@ -180,27 +157,27 @@ public class TerraImGuiRenderer
 
         for (int i = 0; i < 256; i++)
         {
-            io.KeysDown[i] = keyboard.IsKeyDown((Keys)i) && _game.IsActive;
+            io.KeysDown[i] = keyboard.IsKeyDown((Keys)i) && TargetGame.IsActive;
         }
 
         for (int i = 0; i < keyRemappings.Count; i++)
         {
-            io.KeysDown[keyRemappings[i]] = keyboard.IsKeyDown((Keys)keyRemappings[i]) && _game.IsActive;
+            io.KeysDown[keyRemappings[i]] = keyboard.IsKeyDown((Keys)keyRemappings[i]) && TargetGame.IsActive;
         }
 
-        io.KeyShift = (keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift)) && _game.IsActive;
-        io.KeyCtrl = (keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl)) && _game.IsActive;
-        io.KeyAlt = (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt)) && _game.IsActive;
-        io.KeySuper = (keyboard.IsKeyDown(Keys.LeftWindows) || keyboard.IsKeyDown(Keys.RightWindows)) && _game.IsActive;
+        io.KeyShift = (keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift)) && TargetGame.IsActive;
+        io.KeyCtrl = (keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl)) && TargetGame.IsActive;
+        io.KeyAlt = (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt)) && TargetGame.IsActive;
+        io.KeySuper = (keyboard.IsKeyDown(Keys.LeftWindows) || keyboard.IsKeyDown(Keys.RightWindows)) && TargetGame.IsActive;
 
         io.DisplaySize = new Vector2(GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
         io.DisplayFramebufferScale = new Vector2(1f, 1f);
 
         io.MousePos = new Vector2(mouse.X, mouse.Y);
 
-        io.MouseDown[0] = mouse.LeftButton == ButtonState.Pressed && _game.IsActive;
-        io.MouseDown[1] = mouse.RightButton == ButtonState.Pressed && _game.IsActive;
-        io.MouseDown[2] = mouse.MiddleButton == ButtonState.Pressed && _game.IsActive;
+        io.MouseDown[0] = mouse.LeftButton == ButtonState.Pressed && TargetGame.IsActive;
+        io.MouseDown[1] = mouse.RightButton == ButtonState.Pressed && TargetGame.IsActive;
+        io.MouseDown[2] = mouse.MiddleButton == ButtonState.Pressed && TargetGame.IsActive;
 
         int scrollDelta = mouse.ScrollWheelValue - ScrollWheelValue;
         io.MouseWheel = scrollDelta > 0 ? 1 : scrollDelta < 0 ? -1 : 0;
@@ -341,5 +318,30 @@ public class TerraImGuiRenderer
     public void EnqueuePreDrawAction(Action action)
     {
         preDrawActionQueue.Enqueue(action);
+    }
+
+    public static class DrawVertDeclaration
+    {
+        public static readonly VertexDeclaration Declaration;
+
+        public static readonly int Size;
+
+        static DrawVertDeclaration()
+        {
+            unsafe { Size = sizeof(ImDrawVert); }
+
+            Declaration = new VertexDeclaration(
+                Size,
+
+                // Position
+                new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
+
+                // UV
+                new VertexElement(8, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+
+                // Color
+                new VertexElement(16, VertexElementFormat.Color, VertexElementUsage.Color, 0)
+            );
+        }
     }
 }

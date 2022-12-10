@@ -76,7 +76,6 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             changeStateButton.SetText($"Go {GetNextStateString()}");
         };
 
-
         changeResolution = new UIPanel()
         {
             Width = { Pixels = -10, Percent = 0.6f },
@@ -161,7 +160,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         changeResolution.Append(resolutionRightText);
         changeResolution.Append(resolutionLeftText);
 
-        changeFramerate = new UITextSliderInt(30, 200, () => ClientLoader.WindowManager.FPSCap, x => { if (x == 200) { ClientLoader.WindowManager.CapFPS = false; } else { ClientLoader.WindowManager.CapFPS = true; ClientLoader.WindowManager.FPSCap = x; } }, () => $"FPS Cap: {GetFramerateText()}")
+        changeFramerate = new UITextSliderInt(30, 201, () => (ClientLoader.WindowManager.CapFPS ? 201 : ClientLoader.WindowManager.FPSCap), x => { if (x > 200) { ClientLoader.WindowManager.CapFPS = false; } else { ClientLoader.WindowManager.CapFPS = true; ClientLoader.WindowManager.FPSCap = x; } }, () => $"FPS Cap: {GetFramerateText()}")
         {
             Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },

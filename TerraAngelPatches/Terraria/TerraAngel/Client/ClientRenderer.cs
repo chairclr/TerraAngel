@@ -10,7 +10,7 @@ using Terraria.GameContent;
 
 namespace TerraAngel.Client;
 
-public class ClientRenderer : TerraImGuiRenderer
+public class ClientRenderer : ImGuiRenderer
 {
     public List<ClientWindow> ClientWindows = new List<ClientWindow>();
     public List<WorldEdit> WorldEdits = new List<WorldEdit>() { new WorldEditBrush(), new WorldEditCopyPaste() };
