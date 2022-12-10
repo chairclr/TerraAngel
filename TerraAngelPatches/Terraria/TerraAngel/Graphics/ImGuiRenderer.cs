@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
-
 namespace TerraAngel.Graphics;
 
 public static class DrawVertDeclaration
@@ -51,8 +50,6 @@ public class TerraImGuiRenderer
 
     private int ScrollWheelValue;
     private List<int> keyRemappings = new List<int>();
-
-    private DateTime lastTime = DateTime.UtcNow;
 
     private Queue<Action> preDrawActionQueue = new Queue<Action>(5);
 
@@ -134,12 +131,11 @@ public class TerraImGuiRenderer
         LoadedTextures.Remove(textureId);
     }
 
-    public virtual void BeforeLayout(GameTime gameTime)
+    public virtual void BeforeLayout()
     {
         ImGuiIOPtr io = ImGui.GetIO();
-        io.DeltaTime = (float)(DateTime.UtcNow - lastTime).TotalSeconds;
-        lastTime = DateTime.UtcNow;
-        UpdateInput(gameTime);
+        io.DeltaTime = Time.DrawDeltaTime;
+        UpdateInput();
 
         while (preDrawActionQueue.Count > 0)
             preDrawActionQueue.Dequeue()?.Invoke();
@@ -175,7 +171,7 @@ public class TerraImGuiRenderer
     {
         ImGuiShader.Texture = texture;
     }
-    protected virtual void UpdateInput(GameTime gameTime)
+    protected virtual void UpdateInput()
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
@@ -192,7 +188,6 @@ public class TerraImGuiRenderer
             io.KeysDown[keyRemappings[i]] = keyboard.IsKeyDown((Keys)keyRemappings[i]) && _game.IsActive;
         }
 
-
         io.KeyShift = (keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift)) && _game.IsActive;
         io.KeyCtrl = (keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl)) && _game.IsActive;
         io.KeyAlt = (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt)) && _game.IsActive;
@@ -202,19 +197,14 @@ public class TerraImGuiRenderer
         io.DisplayFramebufferScale = new Vector2(1f, 1f);
 
         io.MousePos = new Vector2(mouse.X, mouse.Y);
-        //io.AddMousePosEvent(mouse.X, mouse.Y);
 
         io.MouseDown[0] = mouse.LeftButton == ButtonState.Pressed && _game.IsActive;
         io.MouseDown[1] = mouse.RightButton == ButtonState.Pressed && _game.IsActive;
         io.MouseDown[2] = mouse.MiddleButton == ButtonState.Pressed && _game.IsActive;
-        //io.AddMouseButtonEvent(0, mouse.LeftButton == ButtonState.Pressed && _game.IsActive);
-        //io.AddMouseButtonEvent(1, mouse.RightButton == ButtonState.Pressed && _game.IsActive);
-        //io.AddMouseButtonEvent(2, mouse.MiddleButton == ButtonState.Pressed && _game.IsActive);
 
         int scrollDelta = mouse.ScrollWheelValue - ScrollWheelValue;
         io.MouseWheel = scrollDelta > 0 ? 1 : scrollDelta < 0 ? -1 : 0;
 
-        //io.AddMouseWheelEvent(io.MouseWheel, 0f);
         ScrollWheelValue = mouse.ScrollWheelValue;
     }
 

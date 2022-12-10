@@ -8,6 +8,7 @@ using ImGuiNET;
 using Terraria.GameContent;
 using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Chat;
+using TerraAngel.Physics;
 using Terraria.UI.Chat;
 
 namespace TerraAngel.Graphics;

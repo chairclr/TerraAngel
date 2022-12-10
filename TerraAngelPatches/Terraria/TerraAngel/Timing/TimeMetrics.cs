@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace TerraAngel.Utility;
+namespace TerraAngel.Timing;
+
 public class TimeMetrics
 {
     public abstract class Timer
@@ -89,7 +90,6 @@ public class TimeMetrics
 
         log.Add(time);
     }
-
 
     public static TimeLog FramerateDeltaTimeSlices = new TimeLog(100);
     public static TimeLog UpdateDeltaTimeSlices = new TimeLog(100);

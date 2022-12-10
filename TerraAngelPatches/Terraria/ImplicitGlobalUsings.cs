@@ -9,6 +9,8 @@ global using TerraAngel.Graphics;
 global using TerraAngel.Hooks;
 global using TerraAngel.Input;
 global using TerraAngel.Utility;
+global using TerraAngel.Timing;
+global using TerraAngel.Vectors;
 global using Terraria;
 global using Terraria.ID;
 global using NRectangle = System.Drawing.Rectangle;

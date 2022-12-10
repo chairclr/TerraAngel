@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Input;
 using TerraAngel.Client.ClientWindows;
 using TerraAngel.WorldEdits;
 using Terraria.GameContent;
-using static Terraria.WorldBuilding.Searches;
 
 namespace TerraAngel.Client;
 
@@ -142,44 +141,42 @@ public class ClientRenderer : TerraImGuiRenderer
         ClientConfig.AfterReadLater();
     }
 
-    private Stopwatch updateWatch = new Stopwatch();
-    private Stopwatch renderWatch = new Stopwatch();
-
-    public void Update(GameTime time)
+    public void Update()
     {
         Lighting.AbleToProcessPerFrameLights = true;
-        updateWatch.Stop();
-        TimeMetrics.UpdateDeltaTimeSlices.Add(updateWatch.Elapsed);
-        updateWatch.Restart();
+
+        Time.UpdateUpdate();
     }
 
-    public void Render(GameTime time)
+    public void Render()
     {
         BasicTimer renderTimer = TimeMetrics.GetTimer("Client Draw");
         renderTimer.Start();
-        PreDraw(time);
+        PreDraw();
         Draw();
         PostDraw();
         renderTimer.Stop();
+
     }
 
-    public void PreDraw(GameTime time)
+    public void PreDraw()
     {
-        renderWatch.Stop();
-        TimeMetrics.FramerateDeltaTimeSlices.Add(renderWatch.Elapsed);
-        renderWatch.Restart();
+        Time.UpdateDraw();
         
         InputSystem.EndUpdateInput();
         InputSystem.UpdateInput();
-        base.BeforeLayout(time);
+        base.BeforeLayout();
     }
+
+    private float SaveConfigTimer = 5.0f;
 
     public void PostDraw()
     {
-        updateCount++;
-        if (updateCount % 600 == 0)
+        if (SaveConfigTimer <= 0.0f)
         {
+            SaveConfigTimer = 5.0f;
             ClientConfig.WriteToFile();
+            ClientLoader.WindowManager?.SaveToFile();
         }
 
         if (Main.netMode == 1 && Netplay.Connection.State <= 3)

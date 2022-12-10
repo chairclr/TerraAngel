@@ -1,4 +1,6 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿using TerraAngel.Physics;
+
+namespace TerraAngel.Cheat.Cringes;
 
 public class AutoAimCringe : Cringe
 {

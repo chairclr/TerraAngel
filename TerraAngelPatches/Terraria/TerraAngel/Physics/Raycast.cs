@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TerraAngel.Utility;
+namespace TerraAngel.Physics;
 
 public struct RaycastData
 {
@@ -57,7 +57,7 @@ public class Raycast
 
     public static RaycastData Cast(Vector2 position, Vector2 direction, float maxDistance)
     {
-        Vector2 unitRayStepSize = new Vector2(MathF.Sqrt(1f + (direction.Y / direction.X) * (direction.Y / direction.X)), MathF.Sqrt(1f + (direction.X / direction.Y) * (direction.X / direction.Y)));
+        Vector2 unitRayStepSize = new Vector2(MathF.Sqrt(1f + direction.Y / direction.X * (direction.Y / direction.X)), MathF.Sqrt(1f + direction.X / direction.Y * (direction.X / direction.Y)));
         Vector2 originalPosition = position;
         Vector2i tilePoint = position / 16f;
 
@@ -185,7 +185,7 @@ public class Raycast
     /// </summary>
     public static RaycastData CastNoSlopeCheck(Vector2 position, Vector2 direction, float maxDistance)
     {
-        Vector2 unitRayStepSize = new Vector2(MathF.Sqrt(1f + (direction.Y / direction.X) * (direction.Y / direction.X)), MathF.Sqrt(1f + (direction.X / direction.Y) * (direction.X / direction.Y)));
+        Vector2 unitRayStepSize = new Vector2(MathF.Sqrt(1f + direction.Y / direction.X * (direction.Y / direction.X)), MathF.Sqrt(1f + direction.X / direction.Y * (direction.X / direction.Y)));
         Vector2 originalPosition = position;
         Vector2i tilePoint = position / 16f;
         maxDistance /= 16f;

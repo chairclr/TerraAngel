@@ -419,6 +419,26 @@
              {
                  newMusic = 8;
              }
+@@ -14913,6 +_,8 @@
+         }
+     }
+ 
++    public static int CoinAnimationFrameCount = 0;
++
+     public static void DoUpdate_AnimateItemIcons()
+     {
+         for (int i = 0; i < itemAnimationsRegistered.Count; i++)
+@@ -14923,6 +_,10 @@
+                 itemAnimations[num].Update();
+             }
+         }
++
++        CoinAnimationFrameCount++;
++        if (CoinAnimationFrameCount > 6 * 8)
++            CoinAnimationFrameCount = 0;
+     }
+ 
+     public static void QueueMainThreadAction(Action action)
 @@ -15016,8 +_,6 @@
          {
              UpdateAudio();
@@ -490,7 +510,7 @@
  
              uCount++;
              drawSkip = false;
-+            ClientLoader.MainRenderer?.Update(gameTime);
++            ClientLoader.MainRenderer?.Update();
              PlayerInput.AllowExecutionOfGamepadInstructions = true;
              TryPlayingCreditsRoll();
              PlayerInput.SetZoom_UI();
@@ -620,6 +640,16 @@
      }
  
      protected void DrawElderEye(SpriteBatch spriteBatch, Vector2 worldPosition, float opacity, float scale, int frameNumber, Microsoft.Xna.Framework.Color passedColor)
+@@ -36363,8 +_,7 @@
+                     {
+                         int num = item.type - 71;
+                         texture = TextureAssets.Coin[num].Value;
+-                        DrawItem_AnimateSlot(slot, 6, 8);
+-                        frame = (glowmaskFrame = _coinOnWorldAnimation.GetFrame(texture, itemFrameCounter[slot]));
++                        frame = (glowmaskFrame = _coinOnWorldAnimation.GetFrame(texture, CoinAnimationFrameCount));
+                         return;
+                     }
+ 
 @@ -46996,7 +_,6 @@
  
      private static void TryDisposingEverything()
@@ -1004,7 +1034,7 @@
 +            drawTimer.Stop();
 +            float y = Main.screenPosition.Y;
 +            Main.screenPosition.Y = Main.floatingCameraY;
-+            ClientLoader.MainRenderer?.Render(gameTime);
++            ClientLoader.MainRenderer?.Render();
 +            Main.screenPosition.Y = y;
              if (Main.OnPostDraw != null)
              {

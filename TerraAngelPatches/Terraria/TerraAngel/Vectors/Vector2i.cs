@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TerraAngel.Utility;
+namespace TerraAngel.Vectors;
 
 public struct Vector2i
 {
