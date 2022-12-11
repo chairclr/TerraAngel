@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class StyleEditorWindow : ClientWindow
 {

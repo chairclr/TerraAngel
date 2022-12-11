@@ -1,33 +1,34 @@
 ﻿using System.Reflection;
 
-namespace TerraAngel.Plugin
+namespace TerraAngel.Plugin;
+
+public abstract class Plugin
 {
-    public abstract class Plugin
+    public bool IsInited = false;
+
+    public abstract string Name { get; }
+
+    public readonly Assembly PluginAssembly;
+    public readonly string PluginPath;
+
+    public Plugin(string path)
     {
-        public abstract string Name { get; }
+        PluginAssembly = GetType().Assembly;
+        PluginPath = path;
+    }
 
-        public readonly Assembly PluginAssembly;
-        public readonly string PluginPath;
+    public virtual void Load()
+    {
 
-        public Plugin(string path)
-        {
-            PluginAssembly = GetType().Assembly;
-            PluginPath = path;
-        }
+    }
 
-        public virtual void Load()
-        {
+    public virtual void Unload()
+    {
 
-        }
+    }
 
-        public virtual void Unload()
-        {
+    public virtual void Update()
+    {
 
-        }
-
-        public virtual void Update()
-        {
-
-        }
     }
 }

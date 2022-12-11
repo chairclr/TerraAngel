@@ -92,7 +92,7 @@ public class ImGuiRenderer
         keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Z] =          (int)Keys.Z);
 
         io.Fonts.AddFontDefault();
-        Client.ClientAssets.LoadFonts(ImGui.GetIO());
+        ClientAssets.LoadFonts(ImGui.GetIO());
     }
 
     public virtual IntPtr BindTexture(Texture2D texture)

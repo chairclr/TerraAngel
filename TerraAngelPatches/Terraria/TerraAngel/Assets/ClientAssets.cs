@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TerraAngel.Client;
+namespace TerraAngel.Assets;
 
 public class ClientAssets
 {

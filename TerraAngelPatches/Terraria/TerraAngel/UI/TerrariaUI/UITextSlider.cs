@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace TerraAngel.UI;
+namespace TerraAngel.UI.TerrariaUI;
+
 public class UITextSliderFloat : UIPanel
 {
     private float value = 0f;

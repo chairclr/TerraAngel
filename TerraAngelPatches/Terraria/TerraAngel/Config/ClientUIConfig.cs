@@ -5,7 +5,7 @@ using DiscordRPC.Logging;
 using Newtonsoft.Json;
 
 
-namespace TerraAngel.Client.Config;
+namespace TerraAngel.Config;
 
 public class ClientUIConfig
 {

@@ -13,7 +13,7 @@ using Microsoft.Win32.SafeHandles;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Scripting;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class ConsoleWindow : ClientWindow
 {

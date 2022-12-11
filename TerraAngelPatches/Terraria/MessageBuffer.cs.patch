@@ -40,7 +40,7 @@
                          Vector2 vector3 = Vector2.Normalize(value2);
                          if (!vector3.HasNaNs())
                          {
-+                            if (!TerraAngel.Client.Config.ClientConfig.Settings.DisableNebulaLagPacket)
++                            if (!ClientConfig.Settings.DisableNebulaLagPacket)
 +                            {
                              int type4 = 90;
                              float num61 = 0f;

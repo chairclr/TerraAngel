@@ -5,10 +5,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using DiscordRPC;
 using ReLogic.OS;
-using TerraAngel.Client;
-using TerraAngel.Client.ClientWindows;
+using TerraAngel.UI.ClientWindows;
 using TerraAngel.Plugin;
 using TerraAngel.UI;
+using TerraAngel.UI.TerrariaUI;
 
 namespace TerraAngel;
 
@@ -186,7 +186,7 @@ public unsafe class ClientLoader
             {
                 Start = DateTime.UtcNow
             },
-            Assets = new Assets()
+            Assets = new DiscordRPC.Assets()
             {
                 LargeImageKey = "angel-icon",
                 LargeImageText = "TerraAngel Client",

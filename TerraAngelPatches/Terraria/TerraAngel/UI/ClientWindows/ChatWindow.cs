@@ -3,10 +3,9 @@ using Microsoft.Xna.Framework.Input;
 using Terraria.Audio;
 using Terraria.Chat;
 using Terraria.GameInput;
-
 using Terraria.UI.Chat;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class ChatWindow : ClientWindow
 {

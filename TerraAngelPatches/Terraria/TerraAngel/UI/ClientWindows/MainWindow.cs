@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Input;
 using TerraAngel.WorldEdits;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class MainWindow : ClientWindow
 {

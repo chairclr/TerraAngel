@@ -3,7 +3,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI.Chat;
 
-namespace TerraAngel.UI;
+namespace TerraAngel.UI.TerrariaUI;
 
 public class UIAutoScaleTextTextPanel<T> : UIPanel
 {

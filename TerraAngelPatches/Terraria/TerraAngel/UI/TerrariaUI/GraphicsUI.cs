@@ -9,7 +9,8 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameInput;
 using Terraria.Graphics.Light;
 using Terraria.UI;
-namespace TerraAngel.UI;
+
+namespace TerraAngel.UI.TerrariaUI;
 
 public class GraphicsUI : UIState, IHaveBackButtonCommand
 {

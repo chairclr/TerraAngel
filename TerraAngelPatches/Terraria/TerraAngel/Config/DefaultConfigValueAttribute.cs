@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TerraAngel.Client.Config;
+namespace TerraAngel.Config;
 
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 public class DefaultConfigValueAttribute : Attribute

@@ -5,7 +5,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
 using Terraria.UI;
 
-namespace TerraAngel.UI;
+namespace TerraAngel.UI.TerrariaUI;
 
 public class ConfigUI : UIState, IHaveBackButtonCommand
 {

@@ -2,7 +2,7 @@
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
-namespace TerraAngel.UI;
+namespace TerraAngel.UI.TerrariaUI;
 
 public static class UIUtil
 {

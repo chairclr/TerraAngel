@@ -8,7 +8,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Runtime.CompilerServices;
 using Terraria.Map;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class TimingMetricsWindow : ClientWindow
 {

@@ -197,7 +197,7 @@ public class WindowManager
 
         if (!File.Exists(ClientLoader.WindowConfigPath))
         {
-            SaveToFile();
+            WriteToFile();
         }
     }
 
@@ -285,7 +285,7 @@ public class WindowManager
             ApplyGraphics();
         }
 
-        if (updateCount % 300 == 0) SaveToFile();
+        if (updateCount % 300 == 0) WriteToFile();
     }
 
     public void HandleResize()
@@ -381,16 +381,23 @@ public class WindowManager
         centerWindow = true;
     }
 
-    public void SaveToFile()
-    {
-        string s = JsonConvert.SerializeObject(this);
+    private static object FileLock = new object();
 
-        using (FileStream fs = new FileStream(ClientLoader.WindowConfigPath, FileMode.OpenOrCreate))
+    public Task WriteToFile()
+    {
+        lock (FileLock)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(s);
-            fs.SetLength(bytes.Length);
-            fs.Write(bytes);
-            fs.Close();
+            string s = JsonConvert.SerializeObject(this);
+
+            using (FileStream fs = new FileStream(ClientLoader.WindowConfigPath, FileMode.OpenOrCreate))
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(s);
+                fs.SetLength(bytes.Length);
+                fs.Write(bytes);
+                fs.Close();
+            }
         }
+
+        return Task.CompletedTask;
     }
 }

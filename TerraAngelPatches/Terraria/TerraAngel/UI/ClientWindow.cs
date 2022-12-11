@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 
-namespace TerraAngel.Client;
+namespace TerraAngel.UI;
 
 public abstract class ClientWindow
 {

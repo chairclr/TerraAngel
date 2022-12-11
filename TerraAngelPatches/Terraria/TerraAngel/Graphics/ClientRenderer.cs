@@ -4,11 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
-using TerraAngel.Client.ClientWindows;
 using TerraAngel.WorldEdits;
 using Terraria.GameContent;
 
-namespace TerraAngel.Client;
+namespace TerraAngel.Graphics;
 
 public class ClientRenderer : ImGuiRenderer
 {
@@ -58,7 +57,7 @@ public class ClientRenderer : ImGuiRenderer
         Main.instance.Exiting += (args, o) =>
         {
             ClientConfig.WriteToFile();
-            ClientLoader.WindowManager?.SaveToFile();
+            ClientLoader.WindowManager?.WriteToFile();
         };
 
         unsafe
@@ -146,6 +145,8 @@ public class ClientRenderer : ImGuiRenderer
         Lighting.AbleToProcessPerFrameLights = true;
 
         Time.UpdateUpdate();
+
+        ClientConfig.Update();
     }
 
     public void Render()
@@ -168,17 +169,8 @@ public class ClientRenderer : ImGuiRenderer
         base.BeforeLayout();
     }
 
-    private float SaveConfigTimer = 5.0f;
-
     public void PostDraw()
     {
-        if (SaveConfigTimer <= 0.0f)
-        {
-            SaveConfigTimer = 5.0f;
-            ClientConfig.WriteToFile();
-            ClientLoader.WindowManager?.SaveToFile();
-        }
-
         if (Main.netMode == 1 && Netplay.Connection.State <= 3)
         {
             Main.tile.LoadedTileSections = new bool[Main.tile.Width / Main.sectionWidth, Main.tile.Height / Main.sectionHeight];
@@ -196,7 +188,10 @@ public class ClientRenderer : ImGuiRenderer
 
         foreach (Plugin.Plugin plugin in Plugin.PluginLoader.LoadedPlugins)
         {
-            plugin.Update();
+            if (plugin.IsInited)
+            {
+                plugin.Update();
+            }
         }
 
         if (ClientConfig.Settings.ClearChatThroughWorldChanges && Main.gameMenu)

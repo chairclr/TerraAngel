@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Input;
 using Terraria.Localization;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class NetMessageWindow : ClientWindow
 {

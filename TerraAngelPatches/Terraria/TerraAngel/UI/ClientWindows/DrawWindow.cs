@@ -1,8 +1,7 @@
 ﻿using System;
 using TerraAngel.WorldEdits;
-using static Terraria.WorldBuilding.Conditions;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class DrawWindow : ClientWindow
 {

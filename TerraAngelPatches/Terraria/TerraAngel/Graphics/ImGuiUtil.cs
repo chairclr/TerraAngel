@@ -269,7 +269,7 @@ public static class ImGuiUtil
                 if (item.stack > 1)
                 {
                     string s = item.stack.ToString();
-                    ImFontPtr font = Client.ClientAssets.GetTerrariaFont(countFontSize);
+                    ImFontPtr font = ClientAssets.GetTerrariaFont(countFontSize);
                     ImGui.PushFont(font);
                     Vector2 pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
 
@@ -351,7 +351,7 @@ public static class ImGuiUtil
                 if (item.stack > 1)
                 {
                     string s = item.stack.ToString();
-                    ImFontPtr font = Client.ClientAssets.GetTerrariaFont(countFontSize);
+                    ImFontPtr font = ClientAssets.GetTerrariaFont(countFontSize);
                     ImGui.PushFont(font);
                     Vector2 pos = ((position + size / 2f) - new Vector2(ImGui.CalcTextSize(s).X / 2f, 0f));
 

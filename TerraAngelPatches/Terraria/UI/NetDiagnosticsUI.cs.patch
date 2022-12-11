@@ -4,13 +4,13 @@
      public void CountReadMessage(int messageId, int messageLength)
      {
          _counterByMessageId[messageId].CountReadMessage(messageLength);
-+        TerraAngel.Client.ClientWindows.StatsWindow.CountReadMessage(messageLength);
++        StatsWindow.CountReadMessage(messageLength);
      }
  
      public void CountSentMessage(int messageId, int messageLength)
      {
          _counterByMessageId[messageId].CountSentMessage(messageLength);
-+        TerraAngel.Client.ClientWindows.StatsWindow.CountSentMessage(messageLength);
++        StatsWindow.CountSentMessage(messageLength);
      }
  
      public void CountReadModuleMessage(int moduleMessageId, int messageLength)

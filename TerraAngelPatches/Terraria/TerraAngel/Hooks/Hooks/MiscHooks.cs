@@ -84,15 +84,15 @@ public class MiscHooks
     }
     public static void SendDataHook(Action<int, int, int, NetworkText, int, float, float, float, int, int, int> orig, int msgType, int remoteClient, int ignoreClient, NetworkText text, int number, float number2, float number3, float number4, int number5, int number6, int number7)
     {
-        if (Client.ClientWindows.NetMessageWindow.LoggingMessages)
+        if (NetMessageWindow.LoggingMessages)
         {
             string stackTrace = "";
-            if (Client.ClientWindows.NetMessageWindow.MessagesToLogTraces.Contains(msgType))
+            if (NetMessageWindow.MessagesToLogTraces.Contains(msgType))
             {
                 stackTrace = new StackTrace(2, true).ToString();
 
             }
-            Client.ClientWindows.NetMessageWindow.AddPacket(new Client.ClientWindows.NetPacketInfo(msgType, true, number, number2, number3, number4, number5, number6, number7, stackTrace));
+            NetMessageWindow.AddPacket(new NetPacketInfo(msgType, true, number, number2, number3, number4, number5, number6, number7, stackTrace));
         }
 
         orig(msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
@@ -104,9 +104,9 @@ public class MiscHooks
     {
         orig(self, start, length, out messageType);
 
-        if (Client.ClientWindows.NetMessageWindow.LoggingMessages)
+        if (NetMessageWindow.LoggingMessages)
         {
-            Client.ClientWindows.NetMessageWindow.AddPacket(new Client.ClientWindows.NetPacketInfo(messageType, false, 0, 0, 0, 0, 0, 0, 0));
+            NetMessageWindow.AddPacket(new NetPacketInfo(messageType, false, 0, 0, 0, 0, 0, 0, 0));
         }
     }
 

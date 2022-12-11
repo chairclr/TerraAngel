@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Runtime.Versioning;
 using TerraAngel.UI;
+using TerraAngel.UI.TerrariaUI;
 using Terraria.UI;
 
 namespace TerraAngel.Plugin;
@@ -92,13 +94,22 @@ public class PluginLoader
     {
         foreach (Plugin? plugin in LoadedPlugins)
         {
-            try
+            if (plugin is not null)
             {
-                plugin?.Load();
+                try
+                {
+                    plugin?.Load();
+
+                    plugin.IsInited = true;
+                }
+                catch (Exception ex)
+                {
+                    ClientLoader.Console.WriteError($"Error loading {plugin.Name}/{plugin.PluginAssembly.FullName}: {ex}");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                ClientLoader.Console.WriteError($"Error loading {plugin.Name}/{plugin.PluginAssembly.FullName}: {ex}");
+                ClientLoader.Console.WriteError($"Error loading a plugin: Plugin was null");
             }
         }
     }

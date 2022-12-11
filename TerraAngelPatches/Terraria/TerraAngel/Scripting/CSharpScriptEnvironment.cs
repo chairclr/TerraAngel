@@ -49,9 +49,8 @@ public class CSharpScriptEnvironment
         "Terraria.DataStructures",
         "Terraria.ID",
         "TerraAngel",
-        "TerraAngel.Client",
-        "TerraAngel.Client.ClientWindows",
-        "TerraAngel.Client.Config",
+        "TerraAngel.UI.ClientWindows",
+        "TerraAngel.Config",
         "TerraAngel.Cheat",
         "TerraAngel.Cheat.Cringes",
         "TerraAngel.Graphics",
@@ -92,22 +91,29 @@ public class CSharpScriptEnvironment
         return Task.Run(
             async () =>
             {
-                await CreateScriptState();
-                if (scriptState is null) throw new InvalidOperationException("Failed to create script state.");
+                try
+                {
+                    await CreateScriptState();
+                    if (scriptState is null) throw new InvalidOperationException("Failed to create script state.");
 
-                CreateWorkspace();
+                    CreateWorkspace();
 
-                ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp)
-                    .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(DefaultAssemblies).Select(x => MetadataReference.CreateFromFile(x.Location)))
-                    .WithCompilationOptions(scriptCompilationOptions)
-                    .WithParseOptions(new CSharpParseOptions(languageVersion: LanguageVersion.Latest, kind: SourceCodeKind.Script));
+                    ProjectInfo? scriptProjectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "Script", "Script", LanguageNames.CSharp)
+                        .WithMetadataReferences(MefHostServices.DefaultAssemblies.Concat(DefaultAssemblies).Select(x => MetadataReference.CreateFromFile(x.Location)))
+                        .WithCompilationOptions(scriptCompilationOptions)
+                        .WithParseOptions(new CSharpParseOptions(languageVersion: LanguageVersion.Latest, kind: SourceCodeKind.Script));
 
-                scriptProject = scriptWorkspace?.AddProject(scriptProjectInfo);
+                    scriptProject = scriptWorkspace?.AddProject(scriptProjectInfo);
 
-                SubmitCodeToDocument("using System;");
+                    SubmitCodeToDocument("using System;");
 
-                Ready = true;
-                ClientLoader.Console.WriteLine("C# Scripting Engine Initialized");
+                    Ready = true;
+                    ClientLoader.Console.WriteLine("C# Scripting Engine Initialized");
+                }
+                catch (Exception ex)
+                {
+                    ClientLoader.Console.WriteLine($"Exception occured when initializing C# scripting engine: {ex}");
+                }
             });
     }
 

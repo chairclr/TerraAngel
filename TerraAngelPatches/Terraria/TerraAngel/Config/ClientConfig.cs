@@ -4,13 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.RulesetToEditorconfig;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using TerraAngel.UI;
+using TerraAngel.UI.TerrariaUI;
 using Terraria.UI;
 
-namespace TerraAngel.Client.Config;
+namespace TerraAngel.Config;
 
 public class ClientConfig
 {
@@ -347,7 +350,7 @@ public class ClientConfig
     }
 
     private static object FileLock = new object();
-    public static void WriteToFile()
+    public static Task WriteToFile()
     {
         lock (FileLock)
         {
@@ -364,6 +367,8 @@ public class ClientConfig
 
             Settings.ConsoleHistorySave = null;
         }
+
+        return Task.CompletedTask;
     }
     public static void AfterRead()
     {
@@ -396,6 +401,23 @@ public class ClientConfig
             }
             Settings = JsonConvert.DeserializeObject<Config>(s, SerializerSettings) ?? new Config();
             AfterRead();
+        }
+    }
+
+    private static float SaveTimer;
+    public static void Update()
+    {
+        SaveTimer -= Time.UpdateDeltaTime;
+        if (SaveTimer <= 0.0f)
+        {
+            SaveTimer = 5.0f;
+            
+            Task.Run(WriteToFile);
+
+            if (ClientLoader.WindowManager is not null)
+            {
+                Task.Run(ClientLoader.WindowManager.WriteToFile);
+            }
         }
     }
 

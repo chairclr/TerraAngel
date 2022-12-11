@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Hooks.Hooks;
 
-namespace TerraAngel.Client.ClientWindows;
+namespace TerraAngel.UI.ClientWindows;
 
 public class PlayerInspectorWindow : ClientWindow
 {

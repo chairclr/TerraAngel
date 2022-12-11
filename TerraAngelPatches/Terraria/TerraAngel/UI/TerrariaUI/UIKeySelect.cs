@@ -4,7 +4,7 @@ using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
-namespace TerraAngel.UI;
+namespace TerraAngel.UI.TerrariaUI;
 
 public class UIKeySelect : UIElement
 {

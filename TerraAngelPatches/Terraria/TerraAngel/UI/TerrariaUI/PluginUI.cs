@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using TerraAngel.Plugin;
 using TerraAngel.UI;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
 using Terraria.UI;
 
-namespace TerraAngel.Plugin;
+namespace TerraAngel.UI.TerrariaUI;
 
 public class PluginUI : UIState, IHaveBackButtonCommand
 {
