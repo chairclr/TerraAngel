@@ -42,8 +42,8 @@ public class ClientRenderer : ImGuiRenderer
     {
         TileUtil.Init();
         this.RebuildFontAtlas();
-        AddWindow(new DrawWindow());
         AddWindow(new MainWindow());
+        AddWindow(new DrawWindow());
         ConsoleSetup.SetConsoleInitialCommands(ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow()));
         AddWindow(new StatsWindow());
         AddWindow(new NetMessageWindow());

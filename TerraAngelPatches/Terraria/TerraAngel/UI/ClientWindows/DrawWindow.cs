@@ -10,8 +10,6 @@ public class DrawWindow : ClientWindow
     public override bool IsEnabled { get => true; }
     public override bool IsPartOfGlobalUI => false;
 
-
-
     public override void Draw(ImGuiIOPtr io)
     {
         ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
@@ -230,8 +228,6 @@ public class DrawWindow : ClientWindow
             {
                 Vector2 mousePos = Util.ScreenToWorldDynamic(InputSystem.MousePosition) / 16f;
 
-                mousePos = new Vector2(MathF.Floor(mousePos.X), MathF.Floor(mousePos.Y));
-
                 if (worldEdit.RunEveryFrame)
                 {
                     if (InputSystem.MiddleMouseDown)
@@ -244,7 +240,6 @@ public class DrawWindow : ClientWindow
                     worldEdit.Edit(mousePos);
                 }
             }
-
         }
         CringeManager.Update();
     }
