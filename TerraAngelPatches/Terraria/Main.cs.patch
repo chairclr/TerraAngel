@@ -969,6 +969,15 @@
          if (drawToScreen)
          {
              return;
+@@ -55138,7 +_,7 @@
+ 
+         if (mapFullscreen)
+         {
+-            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap)
++            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap && !TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.MapScreenshotCheat>().SelectingArea)
+             {
+                 if (mouseLeftRelease)
+                 {
 @@ -56172,6 +_,10 @@
  
      private static void DrawMapFullscreenBackground(Vector2 screenPosition, int screenWidth, int screenHeight)

@@ -45,6 +45,7 @@ public struct Vector2i
         return HashCode.Combine(X, Y);
     }
 
+
     public static implicit operator Point(Vector2i v)
     {
         return new Point(v.X, v.Y);
@@ -155,4 +156,6 @@ public struct Vector2i
     {
         return lhs.X != rhs.X || lhs.Y != rhs.Y;
     }
+
+    public static Vector2i Zero => new Vector2i(0, 0);
 }

@@ -11,11 +11,13 @@ public class ImGuiRenderer
     // Graphics
     public GraphicsDevice GraphicsDevice;
     public BasicEffect ImGuiShader;
-    public IntPtr? FontTextureId;
-    public Dictionary<IntPtr, Texture2D> LoadedTextures;
+
+    // Textures
+    public Dictionary<nint, Texture2D> LoadedTextures;
+    private nint TextureId = 0;
+    public nint? FontTextureId;
 
     private RasterizerState RasterizerState;
-    private long TextureId = 0;
 
     private VertexBuffer VertexBuffer;
     private byte[] VertexData;
@@ -25,6 +27,7 @@ public class ImGuiRenderer
     private byte[] IndexData;
     private int IndexBufferSize;
 
+    // Input
     private int ScrollWheelValue;
     private List<int> keyRemappings = new List<int>();
 
@@ -95,15 +98,15 @@ public class ImGuiRenderer
         ClientAssets.LoadFonts(ImGui.GetIO());
     }
 
-    public virtual IntPtr BindTexture(Texture2D texture)
+    public virtual nint BindTexture(Texture2D texture)
     {
-        IntPtr id = new IntPtr(TextureId++);
+        nint id = TextureId++;
 
         LoadedTextures.Add(id, texture);
 
         return id;
     }
-    public virtual void UnbindTexture(IntPtr textureId)
+    public virtual void UnbindTexture(nint textureId)
     {
         LoadedTextures.Remove(textureId);
     }
@@ -270,7 +273,6 @@ public class ImGuiRenderer
         GraphicsDevice.Indices = IndexBuffer;
         EffectPass pass = ImGuiShader.CurrentTechnique.Passes[0];
 
-
         int vtxOffset = 0;
         int idxOffset = 0;
 
@@ -297,7 +299,6 @@ public class ImGuiRenderer
 
                 SetEffectTexture(cmdTexture);
                 pass.Apply();
-
 
                 GraphicsDevice.DrawIndexedPrimitives(
                     primitiveType: PrimitiveType.TriangleList,

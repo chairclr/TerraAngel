@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TerraAngel.Vectors;
 
 namespace TerraAngel.WorldEdits;
 
@@ -9,34 +10,34 @@ public class WorldEditCopyPaste : WorldEdit
 
     public TileSectionRenderer Renderer = new TileSectionRenderer();
     public TileSection? CopiedSection;
-    private bool isCopying = false;
-    private Vector2 startSelectTile;
-    private string[] placeModes = Util.EnumFancyNames<PlaceMode>();
-    private int currentPlaceMode = 0;
-    private bool destroyTiles = false;
+    private bool IsCopying = false;
+    private Vector2 StartSelectTile;
+    private string[] PlaceModes = Util.EnumFancyNames<PlaceMode>();
+    private int CurrentPlaceMode = 0;
+    private bool DestroyTiles = false;
 
     public override void DrawPreviewInMap(ImGuiIOPtr io, ImDrawListPtr drawList)
     {
         Vector2 worldMouse = Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition);
-        Vector2 tileMouse = (worldMouse / 16f).Floor();
+        Vector2 tileMouse = (worldMouse / 16f).Ceiling();
         if (InputSystem.IsKeyPressed(ClientConfig.Settings.WorldEditSelectKey))
         {
-            isCopying = true;
+            IsCopying = true;
 
-            startSelectTile = tileMouse;
+            StartSelectTile = (worldMouse / 16f).Floor();
         }
 
-        if (isCopying)
+        if (IsCopying)
         {
             if (InputSystem.IsKeyDown(ClientConfig.Settings.WorldEditSelectKey))
             {
-                drawList.DrawTileRect(startSelectTile, tileMouse, new Color(1f, 0f, 0f, 0.5f).PackedValue);
+                drawList.DrawTileRect(StartSelectTile, tileMouse, new Color(1f, 0f, 0f, 0.5f).PackedValue);
             }
 
             if (InputSystem.IsKeyUp(ClientConfig.Settings.WorldEditSelectKey))
             {
-                isCopying = false;
-                Copy(startSelectTile, tileMouse);
+                IsCopying = false;
+                Copy(StartSelectTile, tileMouse);
             }
         }
         else
@@ -53,22 +54,22 @@ public class WorldEditCopyPaste : WorldEdit
         Vector2 tileMouse = (worldMouse / 16f).Floor();
         if (InputSystem.IsKeyPressed(ClientConfig.Settings.WorldEditSelectKey))
         {
-            isCopying = true;
+            IsCopying = true;
 
-            startSelectTile = tileMouse;
+            StartSelectTile = tileMouse;
         }
 
-        if (isCopying)
+        if (IsCopying)
         {
             if (InputSystem.IsKeyDown(ClientConfig.Settings.WorldEditSelectKey))
             {
-                drawList.DrawTileRect(startSelectTile, tileMouse, new Color(1f, 0f, 0f, 0.5f).PackedValue);
+                drawList.DrawTileRect(StartSelectTile, tileMouse, new Color(1f, 0f, 0f, 0.5f).PackedValue);
             }
 
             if (InputSystem.IsKeyUp(ClientConfig.Settings.WorldEditSelectKey))
             {
-                isCopying = false;
-                Copy(startSelectTile, tileMouse);
+                IsCopying = false;
+                Copy(StartSelectTile, tileMouse);
             }
         }
         else
@@ -84,8 +85,8 @@ public class WorldEditCopyPaste : WorldEdit
     {
         if (ImGui.BeginTabItem("Copy/Paste"))
         {
-            ImGui.Checkbox("Destroy Tiles", ref destroyTiles);
-            ImGui.Text("Place Mode"); ImGui.SameLine(); ImGui.Combo("##PlaceMode", ref currentPlaceMode, placeModes, placeModes.Length);
+            ImGui.Checkbox("Destroy Tiles", ref DestroyTiles);
+            ImGui.Text("Place Mode"); ImGui.SameLine(); ImGui.Combo("##PlaceMode", ref CurrentPlaceMode, PlaceModes, PlaceModes.Length);
             ImGui.EndTabItem();
             return true;
         }
@@ -96,7 +97,7 @@ public class WorldEditCopyPaste : WorldEdit
     {
         if (CopiedSection is null)
             return;
-        switch ((PlaceMode)currentPlaceMode)
+        switch ((PlaceMode)CurrentPlaceMode)
         {
             case PlaceMode.SendTileRect:
                 EditSendTileRect(cursorTilePosition);
@@ -139,7 +140,7 @@ public class WorldEditCopyPaste : WorldEdit
                             continue;
 
                         bool isCopiedTileEmpty = !(copiedTile.active() || copiedTile.wall > 0);
-                        if (isCopiedTileEmpty && !destroyTiles)
+                        if (isCopiedTileEmpty && !DestroyTiles)
                             continue;
 
 
@@ -169,7 +170,7 @@ public class WorldEditCopyPaste : WorldEdit
                             continue;
 
                         bool isCopiedTileEmpty = !(copiedTile.active() || copiedTile.wall > 0);
-                        if (isCopiedTileEmpty && !destroyTiles)
+                        if (isCopiedTileEmpty && !DestroyTiles)
                             continue;
 
                         tile.CopyFrom(copiedTile);

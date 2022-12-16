@@ -1,12 +1,13 @@
 --- src/Terraria/ReLogic/ReLogic.csproj
 +++ src/TerraAngel/ReLogic/ReLogic.csproj
-@@ -7,20 +_,20 @@
+@@ -7,20 +_,18 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © Re-Logic 2017</Company>
      <RootNamespace>ReLogic</RootNamespace>
 +    <TargetFramework>net6.0</TargetFramework>
 +    <Platforms>AnyCPU</Platforms>
    </PropertyGroup>
++
    <ItemGroup>
 -    <Reference Include="Ionic.Zip.CF" />
 -    <Reference Include="Microsoft.Xna.Framework" />
@@ -18,18 +19,13 @@
 -    <Reference Include="System.Core" />
 -    <Reference Include="System.Drawing" />
 -    <Reference Include="System.Windows.Forms" />
--  </ItemGroup>
--  <ItemGroup>
--    <EmbeddedResource Include="Microsoft/**" />
-+
-+  </ItemGroup>
-+  <ItemGroup>
 +    <Reference Include="FNA">
 +      <HintPath>..\Terraria\Libraries\FNA\FNA.dll</HintPath>
 +    </Reference>
-+  </ItemGroup>
+   </ItemGroup>
 +
-+  <ItemGroup>
+   <ItemGroup>
+-    <EmbeddedResource Include="Microsoft/**" />
 +    <PackageReference Include="DotNetZip" Version="1.16.0" />
 +    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
    </ItemGroup>

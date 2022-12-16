@@ -185,6 +185,9 @@ public class ClientConfig
         [UIConfigElement("Show Timing Metrics")]
         public Keys ShowTimingMetrics = Keys.NumPad9;
 
+        [UIConfigElement("Take Map Screenshot")]
+        public Keys TakeMapScreenshot = Keys.F12;
+
         public int ConsoleHistoryLimit = 5000;
         public int ChatHistoryLimit = 3000;
         public int ChatMessageLimit = 2000;
@@ -241,6 +244,9 @@ public class ClientConfig
         public float StatsWindowHoveredTransperency = 0.65f;
 
         public int LightingBlurPassCount = 4;
+
+        public int MapScreenshotPixelsPerTile = 4;
+
 
         public ClientUIConfig UIConfig = new ClientUIConfig();
 
