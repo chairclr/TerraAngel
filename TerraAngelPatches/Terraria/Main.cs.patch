@@ -961,6 +961,30 @@
      public static void OpenCharacterSelectUI()
      {
          menuMode = 888;
+@@ -54615,23 +_,8 @@
+ 
+     private static bool ShouldDrawBackgroundTileAt(int i, int j)
+     {
+-        if (tile[i, j] == null)
+-        {
+-            tile[i, j] = new Tile();
+-        }
+-
+         if (caveParallax != 0f)
+         {
+-            if (tile[i - 1, j] == null)
+-            {
+-                tile[i - 1, j] = new Tile();
+-            }
+-
+-            if (tile[i + 1, j] == null)
+-            {
+-                tile[i + 1, j] = new Tile();
+-            }
+-
+             if (WallLightAt(i, j) || WallLightAt(i - 1, j) || WallLightAt(i + 1, j))
+             {
+                 return true;
 @@ -54668,6 +_,7 @@
  
      protected void RenderBackground()
@@ -974,7 +998,7 @@
          if (mapFullscreen)
          {
 -            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap)
-+            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap && !TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.MapScreenshotCheat>().SelectingArea)
++            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap && !TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.MapScreenshotCringe>().SelectingArea)
              {
                  if (mouseLeftRelease)
                  {

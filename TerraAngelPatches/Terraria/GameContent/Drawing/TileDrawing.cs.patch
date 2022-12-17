@@ -1,5 +1,14 @@
 --- src/Terraria/Terraria/GameContent/Drawing/TileDrawing.cs
 +++ src/TerraAngel/Terraria/GameContent/Drawing/TileDrawing.cs
+@@ -90,8 +_,6 @@
+     private Color _highQualityLightingRequirement;
+     private Color _mediumQualityLightingRequirement;
+     private static readonly Vector2 _zero;
+-    private ThreadLocal<TileDrawInfo> _currentTileDrawInfo = new ThreadLocal<TileDrawInfo>(() => new TileDrawInfo());
+-    private TileDrawInfo _currentTileDrawInfoNonThreaded = new TileDrawInfo();
+     private Vector3[] _glowPaintColorSlices = new Vector3[9] { Vector3.One, Vector3.One, Vector3.One, Vector3.One, Vector3.One, Vector3.One, Vector3.One, Vector3.One, Vector3.One };
+     private List<DrawData> _voidLensData = new List<DrawData>();
+     private bool[] _tileSolid => Main.tileSolid;
 @@ -138,10 +_,6 @@
              for (int j = firstTileX - 2; j < lastTileX + 2; j++)
              {
@@ -19,10 +28,12 @@
                  {
                      DrawTile_LiquidBehindTile(solidLayer: false, inFrontOfPlayers: false, waterStyleOverride, unscaledPosition, vector, j, i, tile);
                  }
-@@ -430,30 +_,23 @@
+@@ -429,31 +_,24 @@
+         GetScreenDrawArea(unscaledPosition, vector + (Main.Camera.UnscaledPosition - Main.Camera.ScaledPosition), out var firstTileX, out var lastTileX, out var firstTileY, out var lastTileY);
          byte b = (byte)(100f + 150f * Main.martianLight);
          _martianGlow = new Color(b, b, b, 0);
-         TileDrawInfo value = _currentTileDrawInfo.Value;
+-        TileDrawInfo value = _currentTileDrawInfo.Value;
++        TileDrawInfo value = new TileDrawInfo();
 +        SpriteBatch spriteBatch = Main.spriteBatch;
          for (int i = firstTileY; i < lastTileY + 4; i++)
          {
@@ -52,10 +63,12 @@
                      short frameX = tile.frameX;
                      short frameY = tile.frameY;
                      if (!TextureAssets.Tile[type].IsLoaded)
-@@ -672,8 +_,97 @@
+@@ -672,8 +_,98 @@
                              break;
                      }
  
+-                    DrawSingleTile(value, solidLayer, waterStyleOverride, unscaledPosition, vector, j, i);
+-                }
 +                    if (TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false)
 +                    {
 +                    Color tileColor = new Color(new Vector3(TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache.Brightness));
@@ -146,11 +159,22 @@
 +                    continue;
 +                    }
 +
-                     DrawSingleTile(value, solidLayer, waterStyleOverride, unscaledPosition, vector, j, i);
--                }
++                    unsafe { value.tileDataCache = *tile.Data; }
++                    DrawSingleTile(ref value, solidLayer, waterStyleOverride, unscaledPosition, vector, j, i);
              }
          }
  
+@@ -742,9 +_,8 @@
+         }
+     }
+ 
+-    private void DrawSingleTile(TileDrawInfo drawData, bool solidLayer, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY)
++    private void DrawSingleTile(ref TileDrawInfo drawData, bool solidLayer, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY)
+     {
+-        drawData.tileCache = Main.tile[tileX, tileY];
+         drawData.typeCache = drawData.tileCache.type;
+         drawData.tileFrameX = drawData.tileCache.frameX;
+         drawData.tileFrameY = drawData.tileCache.frameY;
 @@ -757,7 +_,6 @@
          GetTileDrawData(tileX, tileY, drawData.tileCache, drawData.typeCache, ref drawData.tileFrameX, ref drawData.tileFrameY, out drawData.tileWidth, out drawData.tileHeight, out drawData.tileTop, out drawData.halfBrickHeight, out drawData.addFrX, out drawData.addFrY, out drawData.tileSpriteEffect, out drawData.glowTexture, out drawData.glowSourceRect, out drawData.glowColor);
          drawData.drawTexture = GetTileDrawTexture(drawData.tileCache, tileX, tileY);
@@ -159,6 +183,25 @@
          Color highlightColor = Color.Transparent;
          if (TileID.Sets.HasOutlines[drawData.typeCache])
          {
+@@ -1011,15 +_,15 @@
+ 
+         if (drawData.typeCache == 314)
+         {
+-            DrawTile_MinecartTrack(screenPosition, screenOffset, tileX, tileY, drawData);
++            DrawTile_MinecartTrack(screenPosition, screenOffset, tileX, tileY, ref drawData);
+         }
+         else if (drawData.typeCache == 171)
+         {
+-            DrawXmasTree(screenPosition, screenOffset, tileX, tileY, drawData);
++            DrawXmasTree(screenPosition, screenOffset, tileX, tileY, ref drawData);
+         }
+         else
+         {
+-            DrawBasicTile(screenPosition, screenOffset, tileX, tileY, drawData, rectangle, vector);
++            DrawBasicTile(screenPosition, screenOffset, tileX, tileY, ref drawData, rectangle, vector);
+         }
+ 
+         if (Main.tileGlowMask[drawData.tileCache.type] != -1)
 @@ -1205,10 +_,8 @@
  
          if (highlightTexture != null)
@@ -172,9 +215,12 @@
          }
      }
  
-@@ -1304,7 +_,7 @@
+@@ -1302,9 +_,9 @@
+         return result;
+     }
  
-     private void DrawBasicTile(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData, Rectangle normalTileRect, Vector2 normalTilePosition)
+-    private void DrawBasicTile(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData, Rectangle normalTileRect, Vector2 normalTilePosition)
++    private void DrawBasicTile(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, ref TileDrawInfo drawData, Rectangle normalTileRect, Vector2 normalTilePosition)
      {
 -        if (TileID.Sets.Platforms[drawData.typeCache] && WorldGen.IsRope(tileX, tileY) && Main.tile[tileX, tileY - 1] != null)
 +        if (TileID.Sets.Platforms[drawData.typeCache] && WorldGen.IsRope(tileX, tileY))
@@ -190,6 +236,15 @@
              {
                  Main.spriteBatch.Draw(drawData.drawTexture, normalTilePosition, normalTileRect, drawData.finalColor, 0f, _zero, 1f, drawData.tileSpriteEffect, 0f);
                  if (drawData.tileCache.slope() == 1 && Main.tile[tileX + 1, tileY + 1].active() && Main.tileSolid[Main.tile[tileX + 1, tileY + 1].type] && Main.tile[tileX + 1, tileY + 1].slope() != 2 && !Main.tile[tileX + 1, tileY + 1].halfBrick() && (!Main.tile[tileX, tileY + 1].active() || (Main.tile[tileX, tileY + 1].blockType() != 0 && Main.tile[tileX, tileY + 1].blockType() != 5) || (!TileID.Sets.BlocksStairs[Main.tile[tileX, tileY + 1].type] && !TileID.Sets.BlocksStairsAbove[Main.tile[tileX, tileY + 1].type])))
+@@ -1439,7 +_,7 @@
+ 
+         if (Lighting.NotRetro && _tileSolid[drawData.typeCache] && !drawData.tileCache.halfBrick() && !TileID.Sets.DontDrawTileSliced[drawData.tileCache.type])
+         {
+-            DrawSingleTile_SlicedBlock(normalTilePosition, tileX, tileY, drawData);
++            DrawSingleTile_SlicedBlock(normalTilePosition, tileX, tileY, ref drawData);
+             return;
+         }
+ 
 @@ -1545,7 +_,7 @@
  
      public static int GetTreeVariant(int x, int y)
@@ -199,16 +254,107 @@
          {
              return -1;
          }
-@@ -3035,7 +_,7 @@
+@@ -2869,7 +_,7 @@
+         return num;
+     }
  
-     private void DrawXmasTree(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData)
+-    private void DrawSingleTile_SlicedBlock(Vector2 normalTilePosition, int tileX, int tileY, TileDrawInfo drawData)
++    private void DrawSingleTile_SlicedBlock(Vector2 normalTilePosition, int tileX, int tileY, ref TileDrawInfo drawData)
+     {
+         Color color = default(Color);
+         Vector2 origin = default(Vector2);
+@@ -2878,7 +_,7 @@
+         Vector2 position = default(Vector2);
+         if (drawData.tileLight.R > _highQualityLightingRequirement.R || drawData.tileLight.G > _highQualityLightingRequirement.G || drawData.tileLight.B > _highQualityLightingRequirement.B)
+         {
+-            Vector3[] slices = drawData.colorSlices;
++            Span<Vector3> slices = drawData.colorSlices;
+             Lighting.GetColor9Slice(tileX, tileY, ref slices);
+             Vector3 vector = drawData.tileLight.ToVector3();
+             Vector3 tint = drawData.colorTint.ToVector3();
+@@ -2940,23 +_,9 @@
+                 position.Y = normalTilePosition.Y + (float)value.Y;
+                 value.X += drawData.tileFrameX + drawData.addFrX;
+                 value.Y += drawData.tileFrameY + drawData.addFrY;
+-                int num = (int)(tileLight.X * 255f);
+-                int num2 = (int)(tileLight.Y * 255f);
+-                int num3 = (int)(tileLight.Z * 255f);
+-                if (num > 255)
+-                {
+-                    num = 255;
+-                }
+-
+-                if (num2 > 255)
+-                {
+-                    num2 = 255;
+-                }
+-
+-                if (num3 > 255)
+-                {
+-                    num3 = 255;
+-                }
++                int num = Math.Clamp((int)(tileLight.X * 255f), 0, 255);
++                int num2 = Math.Clamp((int)(tileLight.Y * 255f), 0, 255);
++                int num3 = Math.Clamp((int)(tileLight.Z * 255f), 0, 255);
+ 
+                 num3 <<= 16;
+                 num2 <<= 8;
+@@ -2966,7 +_,7 @@
+         }
+         else if (drawData.tileLight.R > _mediumQualityLightingRequirement.R || drawData.tileLight.G > _mediumQualityLightingRequirement.G || drawData.tileLight.B > _mediumQualityLightingRequirement.B)
+         {
+-            Vector3[] slices2 = drawData.colorSlices;
++            Span<Vector3> slices2 = drawData.colorSlices;
+             Lighting.GetColor4Slice(tileX, tileY, ref slices2);
+             Vector3 vector2 = drawData.tileLight.ToVector3();
+             Vector3 tint2 = drawData.colorTint.ToVector3();
+@@ -3003,23 +_,9 @@
+                 position.Y = normalTilePosition.Y + (float)value.Y;
+                 value.X += drawData.tileFrameX + drawData.addFrX;
+                 value.Y += drawData.tileFrameY + drawData.addFrY;
+-                int num4 = (int)(tileLight.X * 255f);
+-                int num5 = (int)(tileLight.Y * 255f);
+-                int num6 = (int)(tileLight.Z * 255f);
+-                if (num4 > 255)
+-                {
+-                    num4 = 255;
+-                }
+-
+-                if (num5 > 255)
+-                {
+-                    num5 = 255;
+-                }
+-
+-                if (num6 > 255)
+-                {
+-                    num6 = 255;
+-                }
++                int num4 = Math.Clamp((int)(tileLight.X * 255f), 0, 255);
++                int num5 = Math.Clamp((int)(tileLight.Y * 255f), 0, 255);
++                int num6 = Math.Clamp((int)(tileLight.Z * 255f), 0, 255);
+ 
+                 num6 <<= 16;
+                 num5 <<= 8;
+@@ -3033,9 +_,9 @@
+         }
+     }
+ 
+-    private void DrawXmasTree(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData)
++    private void DrawXmasTree(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, ref TileDrawInfo drawData)
      {
 -        if (tileY - drawData.tileFrameY > 0 && drawData.tileFrameY == 7 && Main.tile[tileX, tileY - drawData.tileFrameY] != null)
 +        if (tileY - drawData.tileFrameY > 0 && drawData.tileFrameY == 7)
          {
              drawData.tileTop -= 16 * drawData.tileFrameY;
              drawData.tileFrameX = Main.tile[tileX, tileY - drawData.tileFrameY].frameX;
-@@ -3160,7 +_,7 @@
+@@ -3154,13 +_,13 @@
+         }
+     }
+ 
+-    private void DrawTile_MinecartTrack(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData)
++    private void DrawTile_MinecartTrack(Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, ref TileDrawInfo drawData)
+     {
+         drawData.tileLight = GetFinalLight(drawData.tileCache, drawData.typeCache, drawData.tileLight, drawData.colorTint);
          Minecart.TrackColors(tileX, tileY, drawData.tileCache, out var frontColor, out var backColor);
          drawData.drawTexture = GetTileDrawTexture(drawData.tileCache, tileX, tileY, frontColor);
          Texture2D tileDrawTexture = GetTileDrawTexture(drawData.tileCache, tileX, tileY, backColor);

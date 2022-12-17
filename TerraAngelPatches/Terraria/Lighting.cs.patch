@@ -38,7 +38,34 @@
      }
  
      private static void UpdateGlobalBrightness()
-@@ -253,6 +_,12 @@
+@@ -227,23 +_,9 @@
+         Color result = default(Color);
+         Vector3 color = _activeEngine.GetColor(x, y);
+         float num = GlobalBrightness * 255f;
+-        int num2 = (int)(color.X * num);
+-        int num3 = (int)(color.Y * num);
+-        int num4 = (int)(color.Z * num);
+-        if (num2 > 255)
+-        {
+-            num2 = 255;
+-        }
+-
+-        if (num3 > 255)
+-        {
+-            num3 = 255;
+-        }
+-
+-        if (num4 > 255)
+-        {
+-            num4 = 255;
+-        }
++        int num2 = Math.Clamp((int)(color.X * num), 0, 255);
++        int num3 = Math.Clamp((int)(color.Y * num), 0, 255);
++        int num4 = Math.Clamp((int)(color.Z * num), 0, 255);
+ 
+         num4 <<= 16;
+         num3 <<= 8;
+@@ -253,29 +_,21 @@
  
      public static void GetColor9Slice(int centerX, int centerY, ref Color[] slices)
      {
@@ -51,7 +78,33 @@
          int num = 0;
          for (int i = centerX - 1; i <= centerX + 1; i++)
          {
-@@ -289,6 +_,12 @@
+             for (int j = centerY - 1; j <= centerY + 1; j++)
+             {
+                 Vector3 color = _activeEngine.GetColor(i, j);
+-                int num2 = (int)(255f * color.X * GlobalBrightness);
+-                int num3 = (int)(255f * color.Y * GlobalBrightness);
+-                int num4 = (int)(255f * color.Z * GlobalBrightness);
+-                if (num2 > 255)
+-                {
+-                    num2 = 255;
+-                }
+-
+-                if (num3 > 255)
+-                {
+-                    num3 = 255;
+-                }
+-
+-                if (num4 > 255)
+-                {
+-                    num4 = 255;
+-                }
++                int num2 = Math.Clamp((int)(255f * color.X * GlobalBrightness), 0, 255);
++                int num3 = Math.Clamp((int)(255f * color.Y * GlobalBrightness), 0, 255);
++                int num4 = Math.Clamp((int)(255f * color.Z * GlobalBrightness), 0, 255);
+ 
+                 num4 <<= 16;
+                 num3 <<= 8;
+@@ -289,6 +_,31 @@
  
      public static void GetColor9Slice(int x, int y, ref Vector3[] slices)
      {
@@ -61,9 +114,127 @@
 +            for (int i = 0; i < slices.Length; i++) slices[i] = c;
 +            return;
 +        }
++        slices[0] = _activeEngine.GetColor(x - 1, y - 1) * GlobalBrightness;
++        slices[3] = _activeEngine.GetColor(x - 1, y) * GlobalBrightness;
++        slices[6] = _activeEngine.GetColor(x - 1, y + 1) * GlobalBrightness;
++        slices[1] = _activeEngine.GetColor(x, y - 1) * GlobalBrightness;
++        slices[4] = _activeEngine.GetColor(x, y) * GlobalBrightness;
++        slices[7] = _activeEngine.GetColor(x, y + 1) * GlobalBrightness;
++        slices[2] = _activeEngine.GetColor(x + 1, y - 1) * GlobalBrightness;
++        slices[5] = _activeEngine.GetColor(x + 1, y) * GlobalBrightness;
++        slices[8] = _activeEngine.GetColor(x + 1, y + 1) * GlobalBrightness;
++    }
++
++    public static void GetColor9Slice(int x, int y, ref Span<Vector3> slices)
++    {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false)
++        {
++            Vector3 c = Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache.Brightness;
++            for (int i = 0; i < slices.Length; i++) slices[i] = c;
++            return;
++        }
          slices[0] = _activeEngine.GetColor(x - 1, y - 1) * GlobalBrightness;
          slices[3] = _activeEngine.GetColor(x - 1, y) * GlobalBrightness;
          slices[6] = _activeEngine.GetColor(x - 1, y + 1) * GlobalBrightness;
+@@ -313,86 +_,30 @@
+         Vector3 color8 = _activeEngine.GetColor(centerX - 1, centerY + 1);
+         Vector3 color9 = _activeEngine.GetColor(centerX + 1, centerY + 1);
+         float num = GlobalBrightness * scale * 63.75f;
+-        int num2 = (int)((color2.X + color6.X + color4.X + color.X) * num);
++        int num2 = Math.Clamp((int)((color2.X + color6.X + color4.X + color.X) * num), 0, 255);
+-        int num3 = (int)((color2.Y + color6.Y + color4.Y + color.Y) * num);
++        int num3 = Math.Clamp((int)((color2.Y + color6.Y + color4.Y + color.Y) * num), 0, 255);
+-        int num4 = (int)((color2.Z + color6.Z + color4.Z + color.Z) * num);
++        int num4 = Math.Clamp((int)((color2.Z + color6.Z + color4.Z + color.Z) * num), 0, 255);
+-        if (num2 > 255)
+-        {
+-            num2 = 255;
+-        }
+-
+-        if (num3 > 255)
+-        {
+-            num3 = 255;
+-        }
+-
+-        if (num4 > 255)
+-        {
+-            num4 = 255;
+-        }
+ 
+         num3 <<= 8;
+         num4 <<= 16;
+         vertices.TopLeftColor.PackedValue = (uint)(num2 | num3 | num4) | 0xFF000000u;
+-        num2 = (int)((color2.X + color7.X + color5.X + color.X) * num);
++        num2 = Math.Clamp((int)((color2.X + color7.X + color5.X + color.X) * num), 0, 255);
+-        num3 = (int)((color2.Y + color7.Y + color5.Y + color.Y) * num);
++        num3 = Math.Clamp((int)((color2.Y + color7.Y + color5.Y + color.Y) * num), 0, 255);
+-        num4 = (int)((color2.Z + color7.Z + color5.Z + color.Z) * num);
++        num4 = Math.Clamp((int)((color2.Z + color7.Z + color5.Z + color.Z) * num), 0, 255);
+-        if (num2 > 255)
+-        {
+-            num2 = 255;
+-        }
+-
+-        if (num3 > 255)
+-        {
+-            num3 = 255;
+-        }
+-
+-        if (num4 > 255)
+-        {
+-            num4 = 255;
+-        }
+ 
+         num3 <<= 8;
+         num4 <<= 16;
+         vertices.TopRightColor.PackedValue = (uint)(num2 | num3 | num4) | 0xFF000000u;
+-        num2 = (int)((color3.X + color8.X + color4.X + color.X) * num);
++        num2 = Math.Clamp((int)((color3.X + color8.X + color4.X + color.X) * num), 0, 255);
+-        num3 = (int)((color3.Y + color8.Y + color4.Y + color.Y) * num);
++        num3 = Math.Clamp((int)((color3.Y + color8.Y + color4.Y + color.Y) * num), 0, 255);
+-        num4 = (int)((color3.Z + color8.Z + color4.Z + color.Z) * num);
++        num4 = Math.Clamp((int)((color3.Z + color8.Z + color4.Z + color.Z) * num), 0, 255);
+-        if (num2 > 255)
+-        {
+-            num2 = 255;
+-        }
+-
+-        if (num3 > 255)
+-        {
+-            num3 = 255;
+-        }
+-
+-        if (num4 > 255)
+-        {
+-            num4 = 255;
+-        }
+ 
+         num3 <<= 8;
+         num4 <<= 16;
+         vertices.BottomLeftColor.PackedValue = (uint)(num2 | num3 | num4) | 0xFF000000u;
+-        num2 = (int)((color3.X + color9.X + color5.X + color.X) * num);
++        num2 = Math.Clamp((int)((color3.X + color9.X + color5.X + color.X) * num), 0, 255);
+-        num3 = (int)((color3.Y + color9.Y + color5.Y + color.Y) * num);
++        num3 = Math.Clamp((int)((color3.Y + color9.Y + color5.Y + color.Y) * num), 0, 255);
+-        num4 = (int)((color3.Z + color9.Z + color5.Z + color.Z) * num);
++        num4 = Math.Clamp((int)((color3.Z + color9.Z + color5.Z + color.Z) * num), 0, 255);
+-        if (num2 > 255)
+-        {
+-            num2 = 255;
+-        }
+-
+-        if (num3 > 255)
+-        {
+-            num3 = 255;
+-        }
+-
+-        if (num4 > 255)
+-        {
+-            num4 = 255;
+-        }
+ 
+         num3 <<= 8;
+         num4 <<= 16;
 @@ -401,6 +_,12 @@
  
      public static void GetColor4Slice(int centerX, int centerY, ref Color[] slices)
@@ -77,10 +248,284 @@
          Vector3 color = _activeEngine.GetColor(centerX, centerY - 1);
          Vector3 color2 = _activeEngine.GetColor(centerX, centerY + 1);
          Vector3 color3 = _activeEngine.GetColor(centerX - 1, centerY);
-@@ -592,6 +_,12 @@
+@@ -411,187 +_,134 @@
+         float num4 = color3.X + color3.Y + color3.Z;
+         if (num >= num4)
+         {
+-            int num5 = (int)(255f * color3.X * GlobalBrightness);
+-            int num6 = (int)(255f * color3.Y * GlobalBrightness);
+-            int num7 = (int)(255f * color3.Z * GlobalBrightness);
+-            if (num5 > 255)
+-            {
+-                num5 = 255;
+-            }
+-
+-            if (num6 > 255)
+-            {
+-                num6 = 255;
+-            }
+-
+-            if (num7 > 255)
+-            {
+-                num7 = 255;
+-            }
+-
+-            slices[0] = new Color((byte)num5, (byte)num6, (byte)num7, 255);
++            int num5 = Math.Clamp((int)(255f * color3.X * GlobalBrightness), 0, 255);
++            int num6 = Math.Clamp((int)(255f * color3.Y * GlobalBrightness), 0, 255);
++            int num7 = Math.Clamp((int)(255f * color3.Z * GlobalBrightness), 0, 255);
++
++            slices[0].PackedValue = (uint)(num5 | num6 | num7) | 0xFF000000u;
+         }
+         else
+         {
+-            int num8 = (int)(255f * color.X * GlobalBrightness);
+-            int num9 = (int)(255f * color.Y * GlobalBrightness);
+-            int num10 = (int)(255f * color.Z * GlobalBrightness);
+-            if (num8 > 255)
+-            {
+-                num8 = 255;
+-            }
+-
+-            if (num9 > 255)
+-            {
+-                num9 = 255;
+-            }
+-
+-            if (num10 > 255)
+-            {
+-                num10 = 255;
+-            }
+-
+-            slices[0] = new Color((byte)num8, (byte)num9, (byte)num10, 255);
++            int num8 = Math.Clamp((int)(255f * color.X * GlobalBrightness), 0, 255);
++            int num9 = Math.Clamp((int)(255f * color.Y * GlobalBrightness), 0, 255);
++            int num10 = Math.Clamp((int)(255f * color.Z * GlobalBrightness), 0, 255);
++
++            slices[0].PackedValue = (uint)(num8 | num9 | num10) | 0xFF000000u;
+         }
+ 
+         if (num >= num3)
+         {
+-            int num11 = (int)(255f * color4.X * GlobalBrightness);
+-            int num12 = (int)(255f * color4.Y * GlobalBrightness);
+-            int num13 = (int)(255f * color4.Z * GlobalBrightness);
+-            if (num11 > 255)
+-            {
+-                num11 = 255;
+-            }
+-
+-            if (num12 > 255)
+-            {
+-                num12 = 255;
+-            }
+-
+-            if (num13 > 255)
+-            {
+-                num13 = 255;
+-            }
+-
+-            slices[1] = new Color((byte)num11, (byte)num12, (byte)num13, 255);
++            int num11 = Math.Clamp((int)(255f * color4.X * GlobalBrightness), 0, 255);
++            int num12 = Math.Clamp((int)(255f * color4.Y * GlobalBrightness), 0, 255);
++            int num13 = Math.Clamp((int)(255f * color4.Z * GlobalBrightness), 0, 255);
++
++            slices[1].PackedValue = (uint)(num11 | num12 | num13) | 0xFF000000u;
+         }
+         else
+         {
+-            int num14 = (int)(255f * color.X * GlobalBrightness);
+-            int num15 = (int)(255f * color.Y * GlobalBrightness);
+-            int num16 = (int)(255f * color.Z * GlobalBrightness);
+-            if (num14 > 255)
+-            {
+-                num14 = 255;
+-            }
+-
+-            if (num15 > 255)
+-            {
+-                num15 = 255;
+-            }
+-
+-            if (num16 > 255)
+-            {
+-                num16 = 255;
+-            }
+-
+-            slices[1] = new Color((byte)num14, (byte)num15, (byte)num16, 255);
++            int num14 = Math.Clamp((int)(255f * color.X * GlobalBrightness), 0, 255);
++            int num15 = Math.Clamp((int)(255f * color.Y * GlobalBrightness), 0, 255);
++            int num16 = Math.Clamp((int)(255f * color.Z * GlobalBrightness), 0, 255);
++
++            slices[1].PackedValue = (uint)(num14 | num15 | num16) | 0xFF000000u;
+         }
+ 
+         if (num2 >= num4)
+         {
+-            int num17 = (int)(255f * color3.X * GlobalBrightness);
+-            int num18 = (int)(255f * color3.Y * GlobalBrightness);
+-            int num19 = (int)(255f * color3.Z * GlobalBrightness);
+-            if (num17 > 255)
+-            {
+-                num17 = 255;
+-            }
+-
+-            if (num18 > 255)
+-            {
+-                num18 = 255;
+-            }
+-
+-            if (num19 > 255)
+-            {
+-                num19 = 255;
+-            }
+-
+-            slices[2] = new Color((byte)num17, (byte)num18, (byte)num19, 255);
++            int num17 = Math.Clamp((int)(255f * color3.X * GlobalBrightness), 0, 255);
++            int num18 = Math.Clamp((int)(255f * color3.Y * GlobalBrightness), 0, 255);
++            int num19 = Math.Clamp((int)(255f * color3.Z * GlobalBrightness), 0, 255);
++
++            slices[2].PackedValue = (uint)(num17 | num18 | num19) | 0xFF000000u;
+         }
+         else
+         {
+-            int num20 = (int)(255f * color2.X * GlobalBrightness);
+-            int num21 = (int)(255f * color2.Y * GlobalBrightness);
+-            int num22 = (int)(255f * color2.Z * GlobalBrightness);
+-            if (num20 > 255)
+-            {
+-                num20 = 255;
+-            }
+-
+-            if (num21 > 255)
+-            {
+-                num21 = 255;
+-            }
+-
+-            if (num22 > 255)
+-            {
+-                num22 = 255;
+-            }
+-
+-            slices[2] = new Color((byte)num20, (byte)num21, (byte)num22, 255);
++            int num20 = Math.Clamp((int)(255f * color2.X * GlobalBrightness), 0, 255);
++            int num21 = Math.Clamp((int)(255f * color2.Y * GlobalBrightness), 0, 255);
++            int num22 = Math.Clamp((int)(255f * color2.Z * GlobalBrightness), 0, 255);
++
++            slices[2].PackedValue = (uint)(num20 | num21 | num22) | 0xFF000000u;
+         }
+ 
+         if (num2 >= num3)
+         {
+-            int num23 = (int)(255f * color4.X * GlobalBrightness);
+-            int num24 = (int)(255f * color4.Y * GlobalBrightness);
+-            int num25 = (int)(255f * color4.Z * GlobalBrightness);
+-            if (num23 > 255)
+-            {
+-                num23 = 255;
+-            }
+-
+-            if (num24 > 255)
+-            {
+-                num24 = 255;
+-            }
+-
+-            if (num25 > 255)
+-            {
+-                num25 = 255;
+-            }
+-
+-            slices[3] = new Color((byte)num23, (byte)num24, (byte)num25, 255);
++            int num23 = Math.Clamp((int)(255f * color4.X * GlobalBrightness), 0, 255);
++            int num24 = Math.Clamp((int)(255f * color4.Y * GlobalBrightness), 0, 255);
++            int num25 = Math.Clamp((int)(255f * color4.Z * GlobalBrightness), 0, 255);
++
++            slices[3].PackedValue = (uint)(num23 | num24 | num25) | 0xFF000000u;
+         }
+         else
+         {
+-            int num26 = (int)(255f * color2.X * GlobalBrightness);
+-            int num27 = (int)(255f * color2.Y * GlobalBrightness);
+-            int num28 = (int)(255f * color2.Z * GlobalBrightness);
+-            if (num26 > 255)
+-            {
+-                num26 = 255;
+-            }
+-
+-            if (num27 > 255)
+-            {
+-                num27 = 255;
+-            }
+-
+-            if (num28 > 255)
+-            {
+-                num28 = 255;
+-            }
+-
+-            slices[3] = new Color((byte)num26, (byte)num27, (byte)num28, 255);
++            int num26 = Math.Clamp((int)(255f * color2.X * GlobalBrightness), 0, 255);
++            int num27 = Math.Clamp((int)(255f * color2.Y * GlobalBrightness), 0, 255);
++            int num28 = Math.Clamp((int)(255f * color2.Z * GlobalBrightness), 0, 255);
++
++            slices[3].PackedValue = (uint)(num26 | num27 | num28) | 0xFF000000u;
+         }
+     }
  
      public static void GetColor4Slice(int x, int y, ref Vector3[] slices)
      {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false)
++        {
++            Vector3 c = Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache.Brightness;
++            for (int i = 0; i < slices.Length; i++) slices[i] = c;
++            return;
++        }
++        Vector3 color = _activeEngine.GetColor(x, y - 1);
++        Vector3 color2 = _activeEngine.GetColor(x, y + 1);
++        Vector3 color3 = _activeEngine.GetColor(x - 1, y);
++        Vector3 color4 = _activeEngine.GetColor(x + 1, y);
++        float num = color.X + color.Y + color.Z;
++        float num2 = color2.X + color2.Y + color2.Z;
++        float num3 = color4.X + color4.Y + color4.Z;
++        float num4 = color3.X + color3.Y + color3.Z;
++        if (num >= num4)
++        {
++            slices[0] = color3 * GlobalBrightness;
++        }
++        else
++        {
++            slices[0] = color * GlobalBrightness;
++        }
++
++        if (num >= num3)
++        {
++            slices[1] = color4 * GlobalBrightness;
++        }
++        else
++        {
++            slices[1] = color * GlobalBrightness;
++        }
++
++        if (num2 >= num4)
++        {
++            slices[2] = color3 * GlobalBrightness;
++        }
++        else
++        {
++            slices[2] = color2 * GlobalBrightness;
++        }
++
++        if (num2 >= num3)
++        {
++            slices[3] = color4 * GlobalBrightness;
++        }
++        else
++        {
++            slices[3] = color2 * GlobalBrightness;
++        }
++    }
++
++    public static void GetColor4Slice(int x, int y, ref Span<Vector3> slices)
++    {
 +        if (TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false)
 +        {
 +            Vector3 c = Vector3.One * TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache.Brightness;

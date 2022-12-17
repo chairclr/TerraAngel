@@ -61,7 +61,7 @@ Features for Terraria developers
    - Disable dust
    - Disable gore
    - Show detailed item tooltips
-   
+
    ![image](https://user-images.githubusercontent.com/87276335/197304559-292de6a7-bed1-4cc9-a452-89d70e890981.png)
 - Interactive C# execution engine (aka [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop))
   - Real time auto-completion
@@ -70,6 +70,7 @@ Features for Terraria developers
   - Stack traces of packets that are sent
   - Send messages with custom values and generate NetMessage.SendData calls
 - Disable tile framing
+- Directly screenshots of the map
 - Plugin system that supports hot-reloading
 - Supports any CPU (x64 and x86)
 

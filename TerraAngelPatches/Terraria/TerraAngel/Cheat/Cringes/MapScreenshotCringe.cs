@@ -20,7 +20,7 @@ using Steamworks;
 using Color = Microsoft.Xna.Framework.Color;
 
 namespace TerraAngel.Cheat.Cringes;
-public class MapScreenshotCheat : Cringe
+public class MapScreenshotCringe : Cringe
 {
     public override string Name => "Map Screenshot";
 
