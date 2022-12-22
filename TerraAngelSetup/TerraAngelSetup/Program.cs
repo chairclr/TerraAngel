@@ -167,7 +167,7 @@ public class Program
                 if (BuildDebug)
                 {
                     Console.WriteLine("Building TerraAngel as debug");
-                    ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Debug > build_log.txt");
+                    ExecCommand(@$"dotnet build {PatchedPath}\Terraria\Terraria.csproj -p:Configuration=Debug > build_log_debug.txt");
                 }
                 else
                 {
