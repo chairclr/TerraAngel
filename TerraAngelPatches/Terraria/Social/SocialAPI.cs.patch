@@ -9,23 +9,25 @@
  
  namespace Terraria.Social;
  public static class SocialAPI
-@@ -59,11 +_,10 @@
- 
-     public static void Shutdown()
+@@ -17,7 +_,7 @@
+     public static Terraria.Social.Base.WorkshopSocialModule Workshop;
+     public static ServerJoinRequestsManager JoinRequests;
+     public static Terraria.Social.Base.PlatformSocialModule Platform;
+-    private static List<ISocialModule> _modules;
++    private static List<ISocialModule> _modules = new List<ISocialModule>();
+     public static SocialMode Mode => _mode;
+     public static void Initialize(SocialMode? mode = null)
      {
--        _modules.Reverse();
--        foreach (ISocialModule module in _modules)
--        {
+@@ -62,7 +_,7 @@
+         _modules.Reverse();
+         foreach (ISocialModule module in _modules)
+         {
 -            module.Shutdown();
--        }
-+        //_modules.Reverse();
-+        //foreach (ISocialModule module in _modules) {
-+        //	module.Shutdown();
-+        //}
++        	module.Shutdown();
+         }
      }
  
-     private static T LoadModule<T>()
-@@ -107,24 +_,9 @@
+@@ -107,24 +_,10 @@
              Network = LoadModule<Terraria.Social.Steam.NetClientSocialModule>();
          }
  
@@ -46,7 +48,7 @@
 -        {
 -            Network = LoadModule<Terraria.Social.WeGame.NetClientSocialModule>();
 -        }
--
+ 
 -        WeGameHelper.WriteDebugString("LoadWeGame modules");
      }
  }

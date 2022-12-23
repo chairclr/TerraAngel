@@ -368,8 +368,6 @@ src_*/
 
 Build/
 
-*.sln
-
 !TerraAngelPatches/Terraria/Terraria.sln
 !TerraAngelSetup/TerraAngelSetup/TerraAngelSetup.sln
 

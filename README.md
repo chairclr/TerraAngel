@@ -115,8 +115,8 @@ System Requirements
 
 Because TerraAngel uses FNA instead of XNA, not all devices are compatible
 
-- Windows 7 or greater
-- OpenGL 3.0+
+- Windows 7+
+- OpenGL 3.0+ or D3D11
 
 <h2>
 Contributing

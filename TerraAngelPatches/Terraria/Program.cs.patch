@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Program.cs
 +++ src/TerraAngel/Terraria/Program.cs
-@@ -6,19 +_,18 @@
+@@ -6,9 +_,9 @@
  using System.Runtime.CompilerServices;
  using System.Text;
  using System.Threading;
@@ -10,9 +10,8 @@
 +using TerraAngel;
  using Terraria.Initializers;
  using Terraria.Localization;
--using Terraria.Social;
- using Terraria.Utilities;
- 
+ using Terraria.Social;
+@@ -17,8 +_,8 @@
  namespace Terraria;
  public static class Program
  {
@@ -23,32 +22,15 @@
      public static bool IsMono = Type.GetType("Mono.Runtime") != null;
      public const bool IsDebug = false;
      public static Dictionary<string, string> LaunchParameters = new Dictionary<string, string>();
-@@ -43,16 +_,16 @@
- 
-     public static void StartForceLoad()
-     {
--        if (!Main.SkipAssemblyLoad)
--        {
--            Thread thread = new Thread(ForceLoadThread);
--            thread.IsBackground = true;
--            thread.Start();
--        }
--        else
--        {
-+        //if (!Main.SkipAssemblyLoad)
-+        //{
-+        //    Thread thread = new Thread(ForceLoadThread);
-+        //    thread.IsBackground = true;
-+        //    thread.Start();
-+        //}
-+        //else
-+        //{
-             LoadedEverything = true;
--        }
-+        //}
-     }
+@@ -57,7 +_,7 @@
  
      public static void ForceLoadThread(object threadContext)
+     {
+-        ForceLoadAssembly(Assembly.GetExecutingAssembly(), initializeStaticMembers: true);
++        ForceLoadAssembly(typeof(Main).Assembly, initializeStaticMembers: true);
+         LoadedEverything = true;
+     }
+ 
 @@ -187,6 +_,7 @@
  
          LaunchParameters = Utils.ParseArguements(args);
@@ -67,7 +49,7 @@
 +#endif
              Lang.InitializeLegacyLocalization();
 -            SocialAPI.Initialize();
-+            //SocialAPI.Initialize();
++            SocialAPI.Initialize(SocialMode.None);
              LaunchInitializer.LoadParameters(main);
              Main.OnEnginePreload += StartForceLoad;
              if (Main.dedServ)

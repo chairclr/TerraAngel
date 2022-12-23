@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Terraria", "Terraria.csproj", "{14861D20-10EB-41DA-9674-BD308934CEB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Terraria", "Terraria\Terraria.csproj", "{14861D20-10EB-41DA-9674-BD308934CEB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReLogic", "..\ReLogic\ReLogic.csproj", "{704D76C7-DA69-4C9B-AC6A-5BEAB0678037}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReLogic", "ReLogic\ReLogic.csproj", "{704D76C7-DA69-4C9B-AC6A-5BEAB0678037}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerraAngelPluginAPI", "..\TerraAngelPluginAPI\TerraAngelPluginAPI.csproj", "{44C54679-D4AE-404E-95AB-1F210A7C5EF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerraAngelPluginAPI", "TerraAngelPluginAPI\TerraAngelPluginAPI.csproj", "{44C54679-D4AE-404E-95AB-1F210A7C5EF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
