@@ -21,7 +21,7 @@ public class NetMessageWindow : ClientWindow
     public override bool IsPartOfGlobalUI => false;
 
 
-    private Dictionary<int, FieldInfo> messageIDFields = typeof(MessageID).GetFields().Where(x =>
+    private readonly Dictionary<int, FieldInfo> messageIDFields = typeof(MessageID).GetFields().Where(x =>
     {
         if (!x.IsStatic) return false;
         object? ovalue = x.GetValue(null);
@@ -30,8 +30,8 @@ public class NetMessageWindow : ClientWindow
         byte value = (byte)ovalue;
         if (value < 0 || value > MessageID.Count - 1) return false;
         return true;
-    }).ToDictionary(x => (int)((byte)x.GetRawConstantValue()), y => y);
-    private Dictionary<string, FieldInfo> messageIDFieldsByName = typeof(MessageID).GetFields().Where(x =>
+    }).ToDictionary(x => (int)((byte)x.GetRawConstantValue()!), y => y);
+    private readonly Dictionary<string, FieldInfo> messageIDFieldsByName = typeof(MessageID).GetFields().Where(x =>
     {
         if (!x.IsStatic) return false;
         object? ovalue = x.GetValue(null);
@@ -60,14 +60,14 @@ public class NetMessageWindow : ClientWindow
     private bool upMessages = true;
     private bool downMessages = true;
 
-    private List<NetMessageAction> Actions = new List<NetMessageAction>();
+    private readonly List<NetMessageAction> Actions = new List<NetMessageAction>();
     private int selectedAction = 0;
-    private string[] actionNames = Util.EnumFancyNames<MessageActions>();
+    private readonly string[] actionNames = StringExtensions.EnumFancyNames<MessageActions>();
 
-    private static List<NetPacketInfo>[] allPackets = new List<NetPacketInfo>[MessageID.Count];
-    private static List<NetPacketInfo>[] sentPackets = new List<NetPacketInfo>[MessageID.Count];
-    private static List<NetPacketInfo>[] receivePackets = new List<NetPacketInfo>[MessageID.Count];
-    private static bool[] messagesShownInTree = new bool[MessageID.Count];
+    private static readonly List<NetPacketInfo>[] allPackets = new List<NetPacketInfo>[MessageID.Count];
+    private static readonly List<NetPacketInfo>[] sentPackets = new List<NetPacketInfo>[MessageID.Count];
+    private static readonly List<NetPacketInfo>[] receivePackets = new List<NetPacketInfo>[MessageID.Count];
+    private static readonly bool[] messagesShownInTree = new bool[MessageID.Count];
     public static HashSet<int> MessagesToLogTraces = new HashSet<int>();
 
     public static void AddPacket(NetPacketInfo packet)
@@ -238,7 +238,7 @@ public class NetMessageWindow : ClientWindow
                     {
                         if (messageIDFieldsByName.ContainsKey(messageName))
                         {
-                            messageIdToSend = (int)((byte)messageIDFieldsByName[messageName].GetRawConstantValue());
+                            messageIdToSend = (int)((byte)messageIDFieldsByName[messageName].GetRawConstantValue()!);
                         }
                     }
 
@@ -480,54 +480,36 @@ public class NetMessageAction
 
     public ImGuiDataType GetActionAsImGuiType()
     {
-        switch (Action)
+        return Action switch
         {
-            case MessageActions.WriteByte:
-                return ImGuiDataType.U8;
-            case MessageActions.WriteSignedByte:
-                return ImGuiDataType.S8;
-            case MessageActions.WriteShort:
-                return ImGuiDataType.S16;
-            case MessageActions.WriteUnsignedShort:
-                return ImGuiDataType.U16;
-            case MessageActions.WriteInt:
-                return ImGuiDataType.S32;
-            case MessageActions.WriteUnsignedInt:
-                return ImGuiDataType.U32;
-            case MessageActions.WriteFloat:
-                return ImGuiDataType.Float;
-            case MessageActions.WriteDouble:
-                return ImGuiDataType.Double;
-            case MessageActions.WriteLong:
-                return ImGuiDataType.S64;
-            case MessageActions.WriteUnsignedLong:
-                return ImGuiDataType.U64;
-        }
-
-        return ImGuiDataType.U8;
+            MessageActions.WriteByte => ImGuiDataType.U8,
+            MessageActions.WriteSignedByte => ImGuiDataType.S8,
+            MessageActions.WriteShort => ImGuiDataType.S16,
+            MessageActions.WriteUnsignedShort => ImGuiDataType.U16,
+            MessageActions.WriteInt => ImGuiDataType.S32,
+            MessageActions.WriteUnsignedInt => ImGuiDataType.U32,
+            MessageActions.WriteFloat => ImGuiDataType.Float,
+            MessageActions.WriteDouble => ImGuiDataType.Double,
+            MessageActions.WriteLong => ImGuiDataType.S64,
+            MessageActions.WriteUnsignedLong => ImGuiDataType.U64,
+            _ => ImGuiDataType.U8,
+        };
     }
 
     public int GetActionSize()
     {
-        switch (Action)
+        return Action switch
         {
-            case MessageActions.WriteByte:
-            case MessageActions.WriteSignedByte:
-                return 1;
-            case MessageActions.WriteShort:
-            case MessageActions.WriteUnsignedShort:
-                return 2;
-            case MessageActions.WriteInt:
-            case MessageActions.WriteUnsignedInt:
-            case MessageActions.WriteFloat:
-                return 4;
-            case MessageActions.WriteDouble:
-            case MessageActions.WriteLong:
-            case MessageActions.WriteUnsignedLong:
-                return 8;
-        }
-
-        return 8;
+            MessageActions.WriteByte or MessageActions.WriteSignedByte => 1,
+            MessageActions.WriteShort or MessageActions.WriteUnsignedShort => 2,
+            MessageActions.WriteInt or
+            MessageActions.WriteUnsignedInt or
+            MessageActions.WriteFloat => 4,
+            MessageActions.WriteDouble or
+            MessageActions.WriteLong or
+            MessageActions.WriteUnsignedLong => 8,
+            _ => 8,
+        };
     }
 }
 public enum MessageActions

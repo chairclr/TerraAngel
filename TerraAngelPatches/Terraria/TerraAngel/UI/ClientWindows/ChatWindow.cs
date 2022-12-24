@@ -327,7 +327,7 @@ public class ChatWindow : ClientWindow
                 {
                     if (!string.IsNullOrEmpty(ChatText))
                     {
-                        ChatMessage message = ChatManager.Commands.CreateOutgoingMessage(Util.EscapeString(ChatText));
+                        ChatMessage message = ChatManager.Commands.CreateOutgoingMessage(StringExtensions.EscapeString(ChatText));
 
                         if (Main.netMode == 1)
                         {

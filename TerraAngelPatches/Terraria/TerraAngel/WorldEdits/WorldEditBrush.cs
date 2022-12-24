@@ -31,9 +31,9 @@ public class WorldEditBrush : WorldEdit
     }
 
 
-    private static string[] tileActionNames = Util.EnumFancyNames<TileEditActions>();
-    private static string[] wallActionNames = Util.EnumFancyNames<WallEditActions>();
-    private static string[] liquidActionNames = Util.EnumFancyNames<LiquidEditActions>();
+    private static string[] tileActionNames = StringExtensions.EnumFancyNames<TileEditActions>();
+    private static string[] wallActionNames = StringExtensions.EnumFancyNames<WallEditActions>();
+    private static string[] liquidActionNames = StringExtensions.EnumFancyNames<LiquidEditActions>();
 
     private bool sqaureFrame = true;
     private bool drawDetailedPreview = true;

@@ -415,7 +415,7 @@ public class CSharpScriptEnvironment
 
         int dist(string s)
         {
-            return Math.Min(Util.CompareStringDist(s.ToLower(), textFilter), Util.CompareStringDist(s, textFilter));
+            return Math.Min(StringExtensions.CompareStringDist(s.ToLower(), textFilter), StringExtensions.CompareStringDist(s, textFilter));
         }
 
         List<CompletionItem> filteredItems = new List<CompletionItem>(items.Length / 10);

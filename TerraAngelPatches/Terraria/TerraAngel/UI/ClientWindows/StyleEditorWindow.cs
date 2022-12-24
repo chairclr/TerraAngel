@@ -10,7 +10,7 @@ public class StyleEditorWindow : ClientWindow
     public override string Title => "Style Editor";
     public override Keys ToggleKey => ClientConfig.Settings.ToggleStyleEditor;
 
-    public static string[] ColorNames = Util.EnumFancyNames<ImGuiCol>();
+    public static string[] ColorNames = StringExtensions.EnumFancyNames<ImGuiCol>();
 
     public override void Draw(ImGuiIOPtr io)
     {

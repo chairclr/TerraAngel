@@ -1,5 +1,10 @@
 --- src/Terraria/Terraria/Audio/OGGAudioTrack.cs
 +++ src/TerraAngel/Terraria/Audio/OGGAudioTrack.cs
+@@ -1,3 +_,4 @@
++using System;
+ using System.Collections.Generic;
+ using System.IO;
+ using Microsoft.Xna.Framework.Audio;
 @@ -56,12 +_,12 @@
  
      private void FindLoops()
@@ -15,3 +20,10 @@
      {
          if (tags.TryGetValue(entryName, out var value) && value.Count > 0 && int.TryParse(value[0], out var result2))
          {
+@@ -73,5 +_,6 @@
+     {
+         _soundEffectInstance.Dispose();
+         _vorbisReader.Dispose();
++        GC.SuppressFinalize(this);
+     }
+ }

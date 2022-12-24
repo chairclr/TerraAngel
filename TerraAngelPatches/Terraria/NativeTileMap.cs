@@ -83,6 +83,11 @@ public unsafe class NativeTileMap
         return true;
     }
 
+    public bool InWorldAndLoaded(int x, int y)
+    {
+        return InWorld(x, y) && IsTileInLoadedSection(x, y);
+    }
+
     public bool IsTileSectionLoaded(int sectionX, int sectionY)
     {
         if (sectionX < 0 || sectionY < 0 || sectionX >= Main.maxSectionsX || sectionY >= Main.maxSectionsY) return false;

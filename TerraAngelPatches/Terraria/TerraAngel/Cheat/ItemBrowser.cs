@@ -9,7 +9,7 @@ public class ItemBrowser
     private static Vector2 itemDrawSize = new Vector2(32, 32);
     private static string itemSearch = "";
     private static List<string> itemNames = new List<string>(ItemID.Count);
-    private static string[] ItemGiveModeNames = Util.EnumFancyNames<ItemGiveMode>();
+    private static string[] ItemGiveModeNames = StringExtensions.EnumFancyNames<ItemGiveMode>();
     private static int currentItemGiveMode = 0;
     private static bool syncItemWithServer = true;
 

@@ -12,7 +12,7 @@ public class WorldEditCopyPaste : WorldEdit
     public TileSection? CopiedSection;
     private bool IsCopying = false;
     private Vector2 StartSelectTile;
-    private string[] PlaceModes = Util.EnumFancyNames<PlaceMode>();
+    private string[] PlaceModes = StringExtensions.EnumFancyNames<PlaceMode>();
     private int CurrentPlaceMode = 0;
     private bool DestroyTiles = false;
 
