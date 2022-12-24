@@ -3,7 +3,7 @@
 TerraAngel
 </h1>
 <p align="center">
-TerraAngel is a modern and heavily featured utility client for Terraria.
+TerraAngel is a modern and feature-rich utility client for Terraria.
 </p>
 <br>
 
@@ -11,28 +11,36 @@ TerraAngel is a modern and heavily featured utility client for Terraria.
 Installation
 </h2>
 
-(Windows only for now)
+Please note that this client is currently only available for Windows
 
-You need to have [git](https://git-scm.com/download/win) installed
-
-You need to have the [dotnet 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed 
-
-First, open command prompt or some other terminal, and clone the repository
-
-```git clone https://github.com/CEO-Chair/TerraAngel.git --recursive```
-
-![image](https://user-images.githubusercontent.com/87276335/182042166-c967bcba-cd52-4372-ad75-3bc5faaac0ea.png)
+In order to use it, you will need to have [git](https://git-scm.com/download/win) and the [dotnet 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed  installed on your machine
 
 
-Then run `fast_start.bat` and wait for it to finish, it will take a few minutes
+To install the client, follow these steps:
 
-![image](https://user-images.githubusercontent.com/87276335/182042235-9ce87d19-61ee-4636-b3ab-eee0ccb0e428.png)
+  1. Open a terminal or command prompt
 
-If it finishes successfully, the client will be built in the src/TerraAngel/Terraria/bin/Release/net6.0/ folder
+  2. Clone the repository by running the following command: `git clone https://github.com/CEO-Chair/TerraAngel.git --recursive`
 
-![image](https://user-images.githubusercontent.com/87276335/182298612-c9aa34a2-9df7-4047-9a4f-a465c95419a1.png)
-![image](https://user-images.githubusercontent.com/87276335/182298616-e9e2299e-611c-4b7d-823e-b4d6ff828c42.png)
+  ![image](https://user-images.githubusercontent.com/87276335/182042166-c967bcba-cd52-4372-ad75-3bc5faaac0ea.png)
 
+  3. Run the `fast_start.bat` and wait for it to finish. This may take a few minutes
+
+  ![image](https://user-images.githubusercontent.com/87276335/182042235-9ce87d19-61ee-4636-b3ab-eee0ccb0e428.png)
+
+  4. If the process finishes successfully, the client will be built in the `src/TerraAngel/Terraria/bin/Release/net6.0/` folder
+
+  ![image](https://user-images.githubusercontent.com/87276335/182298612-c9aa34a2-9df7-4047-9a4f-a465c95419a1.png)
+
+  ![image](https://user-images.githubusercontent.com/87276335/182298616-e9e2299e-611c-4b7d-823e-b4d6ff828c42.png)
+
+<h2>
+Updating
+</h2>
+
+To update the client and pull any changes, run `fast_update.bat`
+
+Then run `fast_compile.bat` to build the updated client
 
 <h2>
 Development
@@ -43,15 +51,15 @@ After installing the client, you can edit the source code of the client in `src/
 Run `fast_diff.bat` to create patches based on your changes
 
 <h2>
-Main features
+Client features
 </h2>
 
 <h3>
 Features for Terraria developers
 </h3>
 
-- Freecam
-- Visual utilites
+- Freecam: allows you to move the camera freely around the game world
+- Visual utilities: a range of tools to help visualize various aspects of the game
    - View player hitboxes
    - View player held items
    - View player inventories
@@ -71,8 +79,8 @@ Features for Terraria developers
   - Send messages with custom values and generate NetMessage.SendData calls
 - Disable tile framing
 - Directly screenshots of the map
-- Plugin system that supports hot-reloading
 - Supports any CPU (x64 and x86)
+- See [PLUGINS.md](/PLUGINS.md) for information about plugins
 
 <h3>
 Other useful features
@@ -95,7 +103,6 @@ Other useful features
     - Basic tile manipulation
     - Basic liquid manipluation
   - Copy-pasting parts of the world
-- Switch from the decades old Microsoft XNA framework to use FNA
 - Re-write of how the game stores tiles (game uses 500mb less memory)
 - Viewing other players inventories
 - Many bugfixes
@@ -119,15 +126,18 @@ Because TerraAngel uses FNA instead of XNA, not all devices are compatible
 - OpenGL 3.0+ or D3D11
 
 <h2>
-Contributing
+How to Contribute
 </h2>
 
+  1. Fork the repository to your own GitHub account.
+  2. Make the desired changes in your forked repository.
+  3. Open a pull request from your forked repository to the original repository.
+  4. The project maintainer will review your pull request and may suggest changes or accept it if it is suitable.
 
-To contribute, open a pull request and I will review it and accept the PR if it suitable.
+We welcome contributions of all kinds, including code improvements, bug fixes, and new features.
 
 <h2>
 Questions?
 </h2>
 
-
-Open an issue!
+Open an issue
