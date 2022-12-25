@@ -15,6 +15,7 @@ public class Sexer
     {
         SexerName = DefaultSexerName;
     }
+
     public Sexer(string name)
     {
         SexerName = name;
