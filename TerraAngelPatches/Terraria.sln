@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Terraria", "Terraria\Terrar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReLogic", "ReLogic\ReLogic.csproj", "{704D76C7-DA69-4C9B-AC6A-5BEAB0678037}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerraAngelPluginAPI", "TerraAngelPluginAPI\TerraAngelPluginAPI.csproj", "{44C54679-D4AE-404E-95AB-1F210A7C5EF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerraAngel.PluginAPI", "TerraAngel.PluginAPI\TerraAngel.PluginAPI.csproj", "{44C54679-D4AE-404E-95AB-1F210A7C5EF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraAngelTests", "TerraAngelTests\TerraAngelTests.csproj", "{D20A6DB2-87A2-40EC-AE96-AA534CA52D37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerraAngel.Tests", "TerraAngel.Tests\TerraAngel.Tests.csproj", "{FF3E36B7-95D4-496C-8D0B-311F41EC7167}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{44C54679-D4AE-404E-95AB-1F210A7C5EF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44C54679-D4AE-404E-95AB-1F210A7C5EF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44C54679-D4AE-404E-95AB-1F210A7C5EF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D20A6DB2-87A2-40EC-AE96-AA534CA52D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D20A6DB2-87A2-40EC-AE96-AA534CA52D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D20A6DB2-87A2-40EC-AE96-AA534CA52D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D20A6DB2-87A2-40EC-AE96-AA534CA52D37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF3E36B7-95D4-496C-8D0B-311F41EC7167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF3E36B7-95D4-496C-8D0B-311F41EC7167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF3E36B7-95D4-496C-8D0B-311F41EC7167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF3E36B7-95D4-496C-8D0B-311F41EC7167}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

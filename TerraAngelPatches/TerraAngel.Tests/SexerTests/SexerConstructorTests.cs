@@ -1,15 +1,10 @@
-using TerraAngel;
+using System.Reflection;
+using Terraria;
 
-namespace TerraAngelTests;
+namespace TerraAngel.Tests.SexerTests;
 
-public class SexerTests
+public class SexerConstructorTests
 {
-    [SetUp]
-    public void Setup()
-    {
-
-    }
-
     [Test]
     public void TestEmptyConstructor()
     {

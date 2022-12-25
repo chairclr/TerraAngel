@@ -18,8 +18,26 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReLogic\ReLogic.csproj" />
-    <ProjectReference Include="..\TerraAngelPluginAPI\TerraAngelPluginAPI.csproj" />
+    <ProjectReference Include="..\TerraAngel.PluginAPI\TerraAngel.PluginAPI.csproj" />
     <ProjectReference Include="..\Terraria\Terraria.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FNA">
+      <HintPath>..\Terraria\Libraries\FNA\FNA.dll</HintPath>
+    </Reference>
+    <Reference Include="ImGui.NET">
+      <HintPath>..\Terraria\Libraries\ImGui\ImGui.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\Terraria\Libraries\MonoMod\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour">
+      <HintPath>..\Terraria\Libraries\MonoMod\MonoMod.RuntimeDetour.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>..\Terraria\Libraries\MonoMod\MonoMod.Utils.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

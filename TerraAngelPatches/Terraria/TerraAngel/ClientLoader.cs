@@ -22,6 +22,7 @@ public unsafe class ClientLoader
     public static GraphicsUI GraphicsUI = new GraphicsUI();
     public static DiscordRpcClient? DiscordClient;
     public static WindowManager? WindowManager;
+    public static bool ClientLoaded = false;
 
     public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
     public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
@@ -140,7 +141,7 @@ public unsafe class ClientLoader
             InitDiscord();
         }
 
-        
+        ClientLoaded = true;
     }
 
     public static void LoadClient()

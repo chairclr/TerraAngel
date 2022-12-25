@@ -26,12 +26,9 @@ public class ClientRenderer : ImGuiRenderer
                 return WorldEdits[CurrentWorldEditIndex];
         }
     }
-
-    public static int updateCount = 0;
-
     public bool ShowMetricsWindow = false;
-    public bool GlobalUIState = true;
 
+    public bool GlobalUIState = true;
 
     public ClientRenderer(Game game) : base(game)
     {
@@ -188,7 +185,7 @@ public class ClientRenderer : ImGuiRenderer
 
         foreach (Plugin.Plugin plugin in Plugin.PluginLoader.LoadedPlugins)
         {
-            if (plugin.IsInited)
+            if (plugin is not null && plugin.IsInited)
             {
                 plugin.Update();
             }

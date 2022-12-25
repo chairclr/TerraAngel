@@ -45,6 +45,7 @@
 -    <Reference Include="System.Windows.Forms" />
 -    <Reference Include="WindowsBase" />
 -  </ItemGroup>
++    <Reference Include="Libraries/x64/Steamworks/Steamworks.NET.dll" />
 +  </ItemGroup>
 +
 +  
@@ -66,8 +67,7 @@
 +    <Reference Include="MonoMod.Utils">
 +      <HintPath>Libraries\MonoMod\MonoMod.Utils.dll</HintPath>
 +    </Reference>
-+    <Reference Include="Libraries/x64/Steamworks/Steamworks.NET.dll" />
-+    <ProjectReference Include="../TerraAngelPluginAPI/TerraAngelPluginAPI.csproj" />
++    <ProjectReference Include="..\TerraAngel.PluginAPI\TerraAngel.PluginAPI.csproj" />
 +  </ItemGroup>
 +
    <ItemGroup>

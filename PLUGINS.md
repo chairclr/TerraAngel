@@ -9,9 +9,10 @@ TerraAngel supports extensions in the form of plugins.
 # Getting Started
 
 ## Plugin Loading
+
 TerraAngel will recognize any .NET class library ending with `.TAPlugin.dll` in the `Plugins` folder as a plugin.
 
-When a plugin is loaded, TerraAngel will look for a class in the plugin assembly that inherits from the `Plugin` class defined in `TerraAngelPluginAPI.dll`.
+When a plugin is loaded, TerraAngel will look for a class in the plugin assembly that inherits from the `Plugin` class defined in `TerraAngel.PluginAPI`.
 
 ## Example Plugin
 
@@ -58,7 +59,7 @@ This requires a reference to `TerraAngelPluginAPI.dll` and `Terraria.dll`
 
 It is also recommended that you add a reference to the following:
  - `Terraria.dll`
- - `TerraAngelPluginAPI.dll`
+ - `TerraAngel.PluginAPI.dll`
  - `ReLogic.dll`
  - `ImGui.NET.dll`
  - `FNA.dll`
