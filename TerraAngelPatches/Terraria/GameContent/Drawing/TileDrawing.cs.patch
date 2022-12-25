@@ -486,15 +486,3 @@
              {
                  ushort type = tile.type;
                  if (!tile.active() || !TileID.Sets.ReverseVineThreads[type])
-@@ -9102,11 +_,6 @@
-     private bool IsAlchemyPlantHarvestable(int style)
-     {
-         if (style == 0 && Main.dayTime)
--        {
--            return true;
--        }
--
--        if (style == 1 && !Main.dayTime)
-         {
-             return true;
-         }

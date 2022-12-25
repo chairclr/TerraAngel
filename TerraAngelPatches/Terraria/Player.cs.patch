@@ -8,6 +8,19 @@
      public int emoteTime;
      public CreativeUnlocksTracker creativeTracker;
      private static byte[] ENCRYPTION_KEY = new UnicodeEncoding().GetBytes("h3y_gUyZ");
+@@ -907,8 +_,10 @@
+     public int potionDelay;
+     public byte difficulty;
+     public byte wetSlime;
+-    public HitTile hitTile;
++    public HitTile? _hitTile;
+-    public HitTile hitReplace;
++    public HitTile? _hitReplace;
++    public HitTile hitTile { get { if (_hitTile is null) _hitTile = new HitTile(); return _hitTile; } }
++    public HitTile hitReplace { get { if (_hitReplace is null) _hitReplace = new HitTile(); return _hitReplace; } }
+     public int jump;
+     public int head = -1;
+     public int body = -1;
 @@ -11562,6 +_,7 @@
  
      public void Yoraiz0rEye()
@@ -147,3 +160,12 @@
      {
          baitPower = 0;
          baitType = 0;
+@@ -56367,8 +_,6 @@
+             oldAdjTile[n] = false;
+         }
+ 
+-        hitTile = new HitTile();
+-        hitReplace = new HitTile();
+         mount = new Mount();
+         talkNPC = -1;
+         piggyBankProjTracker.Clear();

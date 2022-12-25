@@ -71,6 +71,17 @@ public class PlayerHooks
     {
         orig(self);
 
+        if (self.active && !self.dead)
+        {
+            self.legPosition = Vector2.Zero;
+            self.headPosition = Vector2.Zero;
+            self.bodyPosition = Vector2.Zero;
+
+            self.legRotation = 0f;
+            self.headRotation = 0f;
+            self.bodyRotation = 0f;
+        }
+
         if (self.whoAmI == Main.myPlayer)
         {
             if (CringeManager.GetCringe<AntiHurtCringe>().Enabled)
@@ -98,17 +109,12 @@ public class PlayerHooks
             if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket > 0)
                 CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket--;
 
-
-
-            if (!Main.mapFullscreen)
+            NoClipCringe noClip = CringeManager.GetCringe<NoClipCringe>();
+            if (noClip.Enabled)
             {
-                NoClipCringe noClip = CringeManager.GetCringe<NoClipCringe>();
-                if (noClip.Enabled)
+                if (Main.GameUpdateCount % noClip.NoClipPlayerSyncTime == 0)
                 {
-                    if (Main.GameUpdateCount % noClip.NoClipPlayerSyncTime == 0)
-                    {
-                        SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
-                    }
+                    SpecialNetMessage.SendData(MessageID.PlayerControls, null, self.whoAmI, self.position.X, self.position.Y, (float)self.selectedItem);
                 }
             }
 

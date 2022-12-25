@@ -31,7 +31,7 @@ public unsafe class NativeTileMap
         HeapSize = Width * Height * sizeof(TileData);
 
         TileHeap = new TileData[Width][];
-        ResetHeap();
+        NewHeap();
 
         LoadedTileSections = new bool[Width / Main.sectionWidth, Height / Main.sectionHeight];
     }
@@ -63,11 +63,25 @@ public unsafe class NativeTileMap
         }
     }
 
-    public void ResetHeap()
+    /// <summary>
+    /// Initializes the heap
+    /// </summary>
+    public void NewHeap()
     {
         for (int i = 0; i < Width; i++)
         {
             TileHeap[i] = new TileData[Height];
+        }
+    }
+
+    /// <summary>
+    /// Clears the heap
+    /// </summary>
+    public void ResetHeap()
+    {
+        for (int i = 0; i < Width; i++)
+        {
+            Array.Clear(TileHeap[i]);
         }
     }
 
