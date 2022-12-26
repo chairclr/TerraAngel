@@ -44,6 +44,7 @@ public class ImGuiRenderer
     {
         IntPtr context = ImGui.CreateContext();
     }
+
     protected virtual void SetupGraphics(Game game)
     {
         TargetGame = game ?? throw new ArgumentNullException(nameof(game));
@@ -147,10 +148,12 @@ public class ImGuiRenderer
         io.Fonts.SetTexID(FontTextureId.Value);
         io.Fonts.ClearTexData();
     }
+
     protected virtual void SetEffectTexture(Texture2D texture)
     {
         ImGuiShader.Texture = texture;
     }
+
     protected virtual void UpdateInput()
     {
         ImGuiIOPtr io = ImGui.GetIO();
@@ -242,8 +245,6 @@ public class ImGuiRenderer
             IndexBuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.SixteenBits, IndexBufferSize, BufferUsage.None);
             IndexData = new byte[IndexBufferSize * sizeof(ushort)];
         }
-
-
 
         // idk feels like it could be opimtized -chair
         int vtxOffset = 0;

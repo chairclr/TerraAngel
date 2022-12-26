@@ -55,6 +55,15 @@ public class WindowManager
         get => width;
         set
         {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Value must be greater than zero");
+            }
+            if (value > 16384)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Value must be less than 16384");
+            }
+
             width = value;
             SDL.SDL_SetWindowSize(WindowHandle, width, height);
             wantToResizeGraphics = true;
@@ -67,6 +76,15 @@ public class WindowManager
         get => height;
         set
         {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Value must be greater than or equal to zero");
+            }
+            if (value > 16384)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Value must be less than 16384");
+            }
+
             height = value;
             SDL.SDL_SetWindowSize(WindowHandle, width, height);
             wantToResizeGraphics = true;

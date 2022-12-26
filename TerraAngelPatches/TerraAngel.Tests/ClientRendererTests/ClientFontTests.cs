@@ -3,18 +3,16 @@ using ImGuiNET;
 using Terraria;
 
 namespace TerraAngel.Tests.ClientRendererTests;
+
 public class ClientFontTests
 {
-    private GameRunner Game = new GameRunner();
-
     [Test]
-    public async Task VerifyImGuiFont()
+    public void VerifyImGuiFont()
     {
-        Game.StartGame();
-        await Game.WaitForClientToLoad();
-
-        Assert.That(ClientLoader.MainRenderer!.FontTextureId!.Value, Is.EqualTo(ImGui.GetIO().Fonts.TexID));
-
-        await Game.StopGame();
+        Assert.Multiple(() =>
+        {
+            Assert.That(ClientLoader.MainRenderer!.FontTextureId!.HasValue);
+            Assert.That(ClientLoader.MainRenderer!.FontTextureId!.Value, Is.EqualTo(ImGui.GetIO().Fonts.TexID));
+        });
     }
 }
