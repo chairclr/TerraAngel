@@ -1,7 +1,10 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
-@@ -3,6 +_,7 @@
- using Ionic.Zlib;
+@@ -1,8 +_,9 @@
+ using System;
+ using System.IO;
+-using Ionic.Zlib;
++using System.IO.Compression;
  using Microsoft.Xna.Framework;
  using Microsoft.Xna.Framework.Graphics.PackedVector;
 +using TerraAngel;

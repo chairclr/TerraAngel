@@ -240,6 +240,11 @@ public class DrawWindow : ClientWindow
                     worldEdit.Edit(mousePos);
                 }
             }
+
+            for (int i = 0; i < (ClientLoader.MainRenderer?.WorldEdits.Count ?? 0); i++)
+            {
+                ClientLoader.MainRenderer?.WorldEdits[i].Update();
+            }
         }
         CringeManager.Update();
     }

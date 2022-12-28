@@ -11,4 +11,6 @@ public abstract class WorldEdit
     public abstract void DrawPreviewInMap(ImGuiIOPtr io, ImDrawListPtr drawList);
 
     public abstract void Edit(Vector2 cursorTilePosition);
+
+    public virtual void Update() { }
 }

@@ -8,7 +8,7 @@
      public int MessagesInQueue => _messagesInQueue;
      public TcpSocket()
      {
-@@ -52,12 +_,13 @@
+@@ -52,20 +_,27 @@
          TcpAddress tcpAddress = (TcpAddress)address;
          _connection.Connect(tcpAddress.Address, tcpAddress.Port);
          _remoteAddress = address;
@@ -19,11 +19,26 @@
      {
          Tuple<SocketReceiveCallback, object> tuple = (Tuple<SocketReceiveCallback, object>)result.AsyncState;
 -        tuple.Item1(tuple.Item2, _connection.GetStream().EndRead(result));
-+        tuple.Item1(tuple.Item2, networkStream.EndRead(result));
++        int messageLength = networkStream.EndRead(result);
++        StatsWindow.CountReadMessage(messageLength);
++        tuple.Item1(tuple.Item2, messageLength);
      }
  
      private void SendCallback(IAsyncResult result)
-@@ -76,7 +_,7 @@
+     {
+         Tuple<SocketSendCallback, object> tuple;
++        int messageLength = 0;
+         if (Platform.IsWindows)
+         {
++            object[] data = (object[])result.AsyncState!;
+-            tuple = (Tuple<SocketSendCallback, object>)result.AsyncState;
++            tuple = (Tuple<SocketSendCallback, object>)data[0];
++            messageLength = (int)data[1];
++            StatsWindow.CountSentMessage(messageLength);
+         }
+         else
+         {
+@@ -76,13 +_,14 @@
  
          try
          {
@@ -32,17 +47,24 @@
              tuple.Item1(tuple.Item2);
          }
          catch (Exception)
+         {
+             ((ISocket)this).Close();
+         }
++
+     }
+ 
+     void ISocket.SendQueuedPackets()
 @@ -94,17 +_,17 @@
          if (!Platform.IsWindows)
          {
              byte[] array = LegacyNetBufferPool.RequestBuffer(data, offset, size);
 -            _connection.GetStream().BeginWrite(array, 0, size, SendCallback, new object[2] { new Tuple<SocketSendCallback, object>(callback, state), array });
-+            networkStream.BeginWrite(array, 0, size, SendCallback, new object[2] { new Tuple<SocketSendCallback, object>(callback, state), array });
++            networkStream.BeginWrite(array, 0, size, SendCallback, new object[] { new Tuple<SocketSendCallback, object>(callback, state), array });
          }
          else
          {
 -            _connection.GetStream().BeginWrite(data, 0, size, SendCallback, new Tuple<SocketSendCallback, object>(callback, state));
-+            networkStream.BeginWrite(data, 0, size, SendCallback, new Tuple<SocketSendCallback, object>(callback, state));
++            networkStream.BeginWrite(data, 0, size, SendCallback, new object[] { new Tuple<SocketSendCallback, object>(callback, state), size });
          }
      }
  

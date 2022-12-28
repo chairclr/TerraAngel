@@ -45,7 +45,6 @@ public class WindowResizeTests
             Assert.Throws<ArgumentOutOfRangeException>(() => ClientLoader.WindowManager!.Width = -1);
             Assert.Throws<ArgumentOutOfRangeException>(() => ClientLoader.WindowManager!.Height = -1);
 
-
             Assert.Throws<ArgumentOutOfRangeException>(() => ClientLoader.WindowManager!.Width = int.MaxValue / 2);
             Assert.Throws<ArgumentOutOfRangeException>(() => ClientLoader.WindowManager!.Height = int.MaxValue / 2);
         });
