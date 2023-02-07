@@ -70,6 +70,8 @@ To install a plugin, copy the plugin DLL to the TerraAngel plugins directory.
 
 # Other Examples
 
+## Adding a Console Command
+
 ```cs
 using TerraAngel;
 using TerraAngel.Plugin;
