@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,42 @@
+@@ -1,18 +_,43 @@
 +using System;
 +using System.Collections.Generic;
 +using System.Runtime.CompilerServices;
@@ -22,6 +22,7 @@
 -    public short frameX;
 -    public short frameY;
 +    public readonly TileData* Data;
++    public readonly ref TileData RefData => ref Unsafe.AsRef<TileData>(Data);
 +    public ref ushort type => ref Data->type;
 +    public ref ushort wall => ref Data->wall;
 +    public ref short frameX => ref Data->frameX;
@@ -53,7 +54,7 @@
      private const int Bit0 = 1;
      private const int Bit1 = 2;
      private const int Bit2 = 4;
-@@ -62,52 +_,6 @@
+@@ -62,140 +_,16 @@
          }
      }
  
@@ -103,10 +104,29 @@
 -        return MemberwiseClone();
 -    }
 -
-     public void ClearEverything()
-     {
-         type = 0;
-@@ -131,15 +_,7 @@
+-    public void ClearEverything()
+-    {
+-        type = 0;
+-        wall = 0;
+-        liquid = 0;
+-        sTileHeader = 0;
+-        bTileHeader = 0;
+-        bTileHeader2 = 0;
+-        bTileHeader3 = 0;
+-        frameX = 0;
+-        frameY = 0;
+-    }
+-
+-    public void ClearTile()
+-    {
+-        slope(0);
+-        halfBrick(halfBrick: false);
+-        active(active: false);
+-        inActive(inActive: false);
+-    }
++    public void ClearEverything() => Data->ClearEverything();
++
++    public void ClearTile() => Data->ClearTile();
  
      public void CopyFrom(Tile from)
      {
@@ -122,4 +142,177 @@
 +        *Data = *from.Data;
      }
  
-     public bool isTheSameAs(Tile compTile)
+-    public bool isTheSameAs(Tile compTile)
+-    {
+-        if (compTile == null)
+-        {
+-            return false;
+-        }
+-
+-        if (sTileHeader != compTile.sTileHeader)
+-        {
+-            return false;
+-        }
+-
+-        if (active())
+-        {
+-            if (type != compTile.type)
+-            {
+-                return false;
+-            }
+-
+-            if (Main.tileFrameImportant[type] && (frameX != compTile.frameX || frameY != compTile.frameY))
+-            {
+-                return false;
+-            }
+-        }
+-
+-        if (wall != compTile.wall || liquid != compTile.liquid)
+-        {
+-            return false;
+-        }
+-
+-        if (compTile.liquid == 0)
+-        {
+-            if (wallColor() != compTile.wallColor())
+-            {
+-                return false;
+-            }
+-
+-            if (wire4() != compTile.wire4())
+-            {
+-                return false;
+-            }
+-        }
+-        else if (bTileHeader != compTile.bTileHeader)
+-        {
+-            return false;
+-        }
+-
+-        if (invisibleBlock() != compTile.invisibleBlock() || invisibleWall() != compTile.invisibleWall() || fullbrightBlock() != compTile.fullbrightBlock() || fullbrightWall() != compTile.fullbrightWall())
+-        {
+-            return false;
+-        }
+-
+-        return true;
+-    }
++    public bool isTheSameAs(Tile compTile) => Data->isTheSameAs(compTile);
+ 
+     public int blockType()
+     {
+@@ -247,28 +_,9 @@
+         return false;
+     }
+ 
+-    public void ResetToType(ushort type)
+-    {
+-        liquid = 0;
+-        sTileHeader = 32;
+-        bTileHeader = 0;
+-        bTileHeader2 = 0;
+-        bTileHeader3 = 0;
+-        frameX = 0;
+-        frameY = 0;
+-        this.type = type;
+-    }
++    public void ResetToType(ushort type) => Data->ResetToType(type);
+ 
+-    internal void ClearMetadata()
+-    {
+-        liquid = 0;
+-        sTileHeader = 0;
+-        bTileHeader = 0;
+-        bTileHeader2 = 0;
+-        bTileHeader3 = 0;
+-        frameX = 0;
+-        frameY = 0;
+-    }
++    internal void ClearMetadata() => Data->ClearMetadata();
+ 
+     public Color actColor(Color oldColor)
+     {
+@@ -697,60 +_,7 @@
+         }
+     }
+ 
+-    public void Clear(TileDataType types)
+-    {
+-        if ((types & TileDataType.Tile) != 0)
+-        {
+-            type = 0;
+-            active(active: false);
+-            frameX = 0;
+-            frameY = 0;
+-        }
+-
+-        if ((types & TileDataType.Wall) != 0)
+-        {
+-            wall = 0;
+-            wallFrameX(0);
+-            wallFrameY(0);
+-        }
+-
+-        if ((types & TileDataType.TilePaint) != 0)
+-        {
+-            ClearBlockPaintAndCoating();
+-        }
+-
+-        if ((types & TileDataType.WallPaint) != 0)
+-        {
+-            ClearWallPaintAndCoating();
+-        }
+-
+-        if ((types & TileDataType.Liquid) != 0)
+-        {
+-            liquid = 0;
+-            liquidType(0);
+-            checkingLiquid(checkingLiquid: false);
+-        }
+-
+-        if ((types & TileDataType.Slope) != 0)
+-        {
+-            slope(0);
+-            halfBrick(halfBrick: false);
+-        }
+-
+-        if ((types & TileDataType.Wiring) != 0)
+-        {
+-            wire(wire: false);
+-            wire2(wire2: false);
+-            wire3(wire3: false);
+-            wire4(wire4: false);
+-        }
+-
+-        if ((types & TileDataType.Actuator) != 0)
+-        {
+-            actuator(actuator: false);
+-            inActive(inActive: false);
+-        }
+-    }
++    public void Clear(TileDataType types) => Data->Clear(types);
+ 
+     public static void SmoothSlope(int x, int y, bool applyToNeighbors = true, bool sync = false)
+     {
+@@ -762,7 +_,7 @@
+             SmoothSlope(x, y - 1, applyToNeighbors: false, sync);
+         }
+ 
+-        Tile tile = Main.tile[x, y];
++        ref TileData tile = ref Main.tile.GetTileRef(x, y);
+         if (!WorldGen.CanPoundTile(x, y) || !WorldGen.SolidOrSlopedTile(x, y))
+         {
+             return;
+@@ -832,12 +_,7 @@
+         }
+     }
+ 
+-    public void CopyPaintAndCoating(Tile other)
+-    {
+-        color(other.color());
+-        invisibleBlock(other.invisibleBlock());
+-        fullbrightBlock(other.fullbrightBlock());
+-    }
++    public void CopyPaintAndCoating(Tile other) => Data->CopyPaintAndCoating(ref other.RefData);
+ 
+     public TileColorCache BlockColorAndCoating()
+     {

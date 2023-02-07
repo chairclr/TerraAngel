@@ -1,0 +1,19 @@
+--- src/Terraria/Terraria/Minecart.cs
++++ src/TerraAngel/Terraria/Minecart.cs
+@@ -535,13 +_,10 @@
+         }
+     }
+ 
+-    public static bool IsPressurePlate(Tile tile)
+-    {
+-        if (tile == null)
+-        {
+-            return false;
+-        }
++    public static bool IsPressurePlate(Tile tile) => IsPressurePlate(ref tile.RefData);
+ 
++    public static bool IsPressurePlate(ref TileData tile)
++    {
+         if (tile.active() && tile.type == 314 && (tile.frameX == 20 || tile.frameX == 21))
+         {
+             return true;

@@ -185,54 +185,50 @@ public class WorldEditBrush : WorldEdit
         if (!WorldGen.InWorld(x, y))
             return;
 
-        Tile tile = Main.tile[x, y];
-
-        if (tile == null)
-            return;
-
+        ref TileData tile = ref Main.tile.GetTileRef(x, y);
 
         switch ((TileEditActions)currentTileAction)
         {
             case TileEditActions.Break:
-                KillTile(tile, x, y);
+                KillTile(ref tile, x, y);
                 break;
             case TileEditActions.Place:
-                PlaceTile(tile, currentPlayerCreateTile, currentPlayerCreateStyle, x, y, false);
+                PlaceTile(ref tile, currentPlayerCreateTile, currentPlayerCreateStyle, x, y, false);
                 break;
             case TileEditActions.Replace:
-                PlaceTile(tile, currentPlayerCreateTile, currentPlayerCreateStyle, x, y, true);
+                PlaceTile(ref tile, currentPlayerCreateTile, currentPlayerCreateStyle, x, y, true);
                 break;
         }
 
         switch ((WallEditActions)currentWallAction)
         {
             case WallEditActions.Break:
-                KillWall(tile, x, y);
+                KillWall(ref tile, x, y);
                 break;
             case WallEditActions.Place:
-                PlaceWall(tile, currentPlayerCreateWall, x, y, false);
+                PlaceWall(ref tile, currentPlayerCreateWall, x, y, false);
                 break;
             case WallEditActions.Replace:
-                PlaceWall(tile, currentPlayerCreateWall, x, y, true);
+                PlaceWall(ref tile, currentPlayerCreateWall, x, y, true);
                 break;
         }
 
         switch ((LiquidEditActions)currentLiquidAction)
         {
             case LiquidEditActions.Remove:
-                KillLiquid(tile, x, y);
+                KillLiquid(ref tile, x, y);
                 break;
             case LiquidEditActions.Water:
-                PlaceLiquid(tile, x, y, Tile.Liquid_Water);
+                PlaceLiquid(ref tile, x, y, Tile.Liquid_Water);
                 break;
             case LiquidEditActions.Lava:
-                PlaceLiquid(tile, x, y, Tile.Liquid_Lava);
+                PlaceLiquid(ref tile, x, y, Tile.Liquid_Lava);
                 break;
             case LiquidEditActions.Honey:
-                PlaceLiquid(tile, x, y, Tile.Liquid_Honey);
+                PlaceLiquid(ref tile, x, y, Tile.Liquid_Honey);
                 break;
             case LiquidEditActions.Shimmer:
-                PlaceLiquid(tile, x, y, Tile.Liquid_Shimmer);
+                PlaceLiquid(ref tile, x, y, Tile.Liquid_Shimmer);
                 break;
         }
 
@@ -243,7 +239,7 @@ public class WorldEditBrush : WorldEdit
         }
     }
 
-    public void KillTile(Tile tile, int x, int y)
+    public void KillTile(ref TileData tile, int x, int y)
     {
         if (WorldGen.CanKillTile(x, y))
         {
@@ -254,7 +250,7 @@ public class WorldEditBrush : WorldEdit
                 WorldGen.SquareTileFrame(x, y);
         }
     }
-    public void PlaceTile(Tile tile, int otherType, int otherStyle, int x, int y, bool replace)
+    public void PlaceTile(ref TileData tile, int otherType, int otherStyle, int x, int y, bool replace)
     {
         if (!tile.active() || (replace && tile.type != otherType))
         {
@@ -277,7 +273,7 @@ public class WorldEditBrush : WorldEdit
         }
     }
 
-    public void KillWall(Tile tile, int x, int y)
+    public void KillWall(ref TileData tile, int x, int y)
     {
         if (tile.wall != 0)
         {
@@ -287,7 +283,7 @@ public class WorldEditBrush : WorldEdit
                 WorldGen.SquareWallFrame(x, y);
         }
     }
-    public void PlaceWall(Tile tile, int otherType, int x, int y, bool replace)
+    public void PlaceWall(ref TileData tile, int otherType, int x, int y, bool replace)
     {
         if (tile.wall == 0 || (replace && tile.wall != otherType))
         {
@@ -310,7 +306,7 @@ public class WorldEditBrush : WorldEdit
         }
     }
 
-    public void KillLiquid(Tile tile, int x, int y)
+    public void KillLiquid(ref TileData tile, int x, int y)
     {
         if (tile.liquid != 0)
         {
@@ -332,7 +328,7 @@ public class WorldEditBrush : WorldEdit
         }
     }
 
-    public void PlaceLiquid(Tile tile, int x, int y, int liquid)
+    public void PlaceLiquid(ref TileData tile, int x, int y, int liquid)
     {
         if (tile.liquidType() != liquid || tile.liquid != 255)
         {

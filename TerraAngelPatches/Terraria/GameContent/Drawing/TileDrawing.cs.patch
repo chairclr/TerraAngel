@@ -39,7 +39,7 @@
          {
              for (int j = firstTileX - 2; j < lastTileX + 2; j++)
              {
-                 Tile tile = Main.tile[j, i];
+-                Tile tile = Main.tile[j, i];
 -                if (tile == null)
 -                {
 -                    tile = new Tile();
@@ -48,6 +48,7 @@
 -                }
 -                else
 -                {
++                ref TileData tile = ref Main.tile.GetTileRef(j, i);
                      if (!tile.active() || IsTileDrawLayerSolid(tile.type) != solidLayer)
                      {
                          continue;
@@ -55,7 +56,8 @@
 -
                      if (solidLayer)
                      {
-                         DrawTile_LiquidBehindTile(solidLayer, inFrontOfPlayers: false, waterStyleOverride, unscaledPosition, vector, j, i, tile);
+-                        DrawTile_LiquidBehindTile(solidLayer, inFrontOfPlayers: false, waterStyleOverride, unscaledPosition, vector, j, i, tile);
++                        DrawTile_LiquidBehindTile(solidLayer, inFrontOfPlayers: false, waterStyleOverride, unscaledPosition, vector, j, i, ref tile);
                      }
  
                      ushort type = tile.type;
@@ -63,6 +65,24 @@
                      short frameX = tile.frameX;
                      short frameY = tile.frameY;
                      if (!TextureAssets.Tile[type].IsLoaded)
+@@ -628,7 +_,7 @@
+                         case 374:
+                         case 375:
+                         case 461:
+-                            EmitLiquidDrops(i, j, tile, type);
++                            EmitLiquidDrops(i, j, ref tile, type);
+                             continue;
+                         case 491:
+                             if (flag && frameX == 18 && frameY == 18)
+@@ -659,7 +_,7 @@
+ 
+                             continue;
+                         default:
+-                            if (ShouldSwayInWind(j, i, tile))
++                            if (ShouldSwayInWind(j, i, ref tile))
+                             {
+                                 if (flag)
+                                 {
 @@ -672,8 +_,98 @@
                              break;
                      }
@@ -75,8 +95,8 @@
 +                    ushort typeCache = tile.type;
 +                    short tileFrameX = tile.frameX;
 +                    short tileFrameY = tile.frameY;
-+                    GetTileDrawData(j, i, tile, typeCache, ref tileFrameX, ref tileFrameY, out value.tileWidth, out value.tileHeight, out value.tileTop, out value.halfBrickHeight, out value.addFrX, out value.addFrY, out value.tileSpriteEffect, out value.glowTexture, out value.glowSourceRect, out value.glowColor);
-+                    Texture2D texture = GetTileDrawTexture(tile, j, i);
++                    GetTileDrawData(j, i, ref tile, typeCache, ref tileFrameX, ref tileFrameY, out value.tileWidth, out value.tileHeight, out value.tileTop, out value.halfBrickHeight, out value.addFrX, out value.addFrY, out value.tileSpriteEffect, out value.glowTexture, out value.glowSourceRect, out value.glowColor);
++                    Texture2D texture = GetTileDrawTexture(ref tile, j, i);
 +                    Rectangle normalTileRect = new Rectangle(tileFrameX + value.addFrX, tileFrameY + value.addFrY, value.tileWidth, value.tileHeight - value.halfBrickHeight);
 +                    Vector2 normalTilePosition = new Vector2((float)(j * 16 - (int)unscaledPosition.X) - ((float)value.tileWidth - 16f) / 2f, i * 16 - (int)unscaledPosition.Y + value.tileTop + value.halfBrickHeight) + vector;
 +
@@ -159,7 +179,7 @@
 +                    continue;
 +                    }
 +
-+                    unsafe { value.tileDataCache = *tile.Data; }
++                    value.tileDataCache = tile;
 +                    DrawSingleTile(ref value, solidLayer, waterStyleOverride, unscaledPosition, vector, j, i);
              }
          }
@@ -175,14 +195,40 @@
          drawData.typeCache = drawData.tileCache.type;
          drawData.tileFrameX = drawData.tileCache.frameX;
          drawData.tileFrameY = drawData.tileCache.frameY;
-@@ -757,7 +_,6 @@
-         GetTileDrawData(tileX, tileY, drawData.tileCache, drawData.typeCache, ref drawData.tileFrameX, ref drawData.tileFrameY, out drawData.tileWidth, out drawData.tileHeight, out drawData.tileTop, out drawData.halfBrickHeight, out drawData.addFrX, out drawData.addFrY, out drawData.tileSpriteEffect, out drawData.glowTexture, out drawData.glowSourceRect, out drawData.glowColor);
+@@ -754,10 +_,9 @@
+             return;
+         }
+ 
+-        GetTileDrawData(tileX, tileY, drawData.tileCache, drawData.typeCache, ref drawData.tileFrameX, ref drawData.tileFrameY, out drawData.tileWidth, out drawData.tileHeight, out drawData.tileTop, out drawData.halfBrickHeight, out drawData.addFrX, out drawData.addFrY, out drawData.tileSpriteEffect, out drawData.glowTexture, out drawData.glowSourceRect, out drawData.glowColor);
++        GetTileDrawData(tileX, tileY, ref drawData.tileDataCache, drawData.typeCache, ref drawData.tileFrameX, ref drawData.tileFrameY, out drawData.tileWidth, out drawData.tileHeight, out drawData.tileTop, out drawData.halfBrickHeight, out drawData.addFrX, out drawData.addFrY, out drawData.tileSpriteEffect, out drawData.glowTexture, out drawData.glowSourceRect, out drawData.glowColor);
          drawData.drawTexture = GetTileDrawTexture(drawData.tileCache, tileX, tileY);
          Texture2D highlightTexture = null;
 -        Rectangle empty = Rectangle.Empty;
          Color highlightColor = Color.Transparent;
          if (TileID.Sets.HasOutlines[drawData.typeCache])
          {
+@@ -848,10 +_,10 @@
+         {
+             if (!Lighting.UpdateEveryFrame || new FastRandom(Main.TileFrameSeed).WithModifier(tileX, tileY).Next(4) == 0)
+             {
+-                DrawTiles_EmitParticles(tileY, tileX, drawData.tileCache, drawData.typeCache, drawData.tileFrameX, drawData.tileFrameY, drawData.tileLight);
++                DrawTiles_EmitParticles(tileY, tileX, ref drawData.tileDataCache, drawData.typeCache, drawData.tileFrameX, drawData.tileFrameY, drawData.tileLight);
+             }
+ 
+-            drawData.tileLight = DrawTiles_GetLightOverride(tileY, tileX, drawData.tileCache, drawData.typeCache, drawData.tileFrameX, drawData.tileFrameY, drawData.tileLight);
++            drawData.tileLight = DrawTiles_GetLightOverride(tileY, tileX, ref drawData.tileDataCache, drawData.typeCache, drawData.tileFrameX, drawData.tileFrameY, drawData.tileLight);
+         }
+ 
+         bool flag = false;
+@@ -865,7 +_,7 @@
+             flag = true;
+         }
+ 
+-        flag &= IsVisible(drawData.tileCache);
++        flag &= IsVisible(ref drawData.tileDataCache);
+         CacheSpecialDraws_Part1(tileX, tileY, drawData.typeCache, drawData.tileFrameX, drawData.tileFrameY, !flag);
+         CacheSpecialDraws_Part2(tileX, tileY, drawData, !flag);
+         if (drawData.typeCache == 72 && drawData.tileFrameX >= 36)
 @@ -1011,15 +_,15 @@
  
          if (drawData.typeCache == 314)
@@ -202,7 +248,7 @@
          }
  
          if (Main.tileGlowMask[drawData.tileCache.type] != -1)
-@@ -1205,10 +_,8 @@
+@@ -1205,14 +_,12 @@
  
          if (highlightTexture != null)
          {
@@ -215,6 +261,22 @@
          }
      }
  
+-    private bool IsVisible(Tile tile)
++    private bool IsVisible(ref TileData tile)
+     {
+         bool flag = tile.invisibleBlock();
+         switch (tile.type)
+@@ -1238,7 +_,9 @@
+         return true;
+     }
+ 
++    private Texture2D GetTileDrawTexture(Tile tile, int tileX, int tileY) => GetTileDrawTexture(ref tile.RefData, tileX, tileY);
++
+-    private Texture2D GetTileDrawTexture(Tile tile, int tileX, int tileY)
++    private Texture2D GetTileDrawTexture(ref TileData tile, int tileX, int tileY)
+     {
+         Texture2D result = TextureAssets.Tile[tile.type].Value;
+         int tileStyle = 0;
 @@ -1302,9 +_,9 @@
          return result;
      }
@@ -363,10 +425,18 @@
          {
              _ = Main.tile[tileX, tileY - 1].type;
              int y = (tileY + tileX) % 3 * 18;
-@@ -3211,29 +_,6 @@
-         Tile tile2 = Main.tile[tileX - 1, tileY];
-         Tile tile3 = Main.tile[tileX, tileY - 1];
-         Tile tile4 = Main.tile[tileX, tileY + 1];
+@@ -3205,35 +_,13 @@
+         }
+     }
+ 
++    private void DrawTile_LiquidBehindTile(bool solidLayer, bool inFrontOfPlayers, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, Tile tileCache) => DrawTile_LiquidBehindTile(solidLayer, inFrontOfPlayers, waterStyleOverride, screenPosition, screenOffset, tileX, tileY, ref tileCache.RefData);
+-    private void DrawTile_LiquidBehindTile(bool solidLayer, bool inFrontOfPlayers, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, Tile tileCache)
++    private void DrawTile_LiquidBehindTile(bool solidLayer, bool inFrontOfPlayers, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, ref TileData tileCache)
+     {
+-        Tile tile = Main.tile[tileX + 1, tileY];
+-        Tile tile2 = Main.tile[tileX - 1, tileY];
+-        Tile tile3 = Main.tile[tileX, tileY - 1];
+-        Tile tile4 = Main.tile[tileX, tileY + 1];
 -        if (tile == null)
 -        {
 -            tile = new Tile();
@@ -390,9 +460,63 @@
 -            tile4 = new Tile();
 -            Main.tile[tileX, tileY + 1] = tile4;
 -        }
++        ref TileData tile =  ref Main.tile.GetTileRef(tileX + 1, tileY);
++        ref TileData tile2 = ref Main.tile.GetTileRef(tileX - 1, tileY);
++        ref TileData tile3 = ref Main.tile.GetTileRef(tileX, tileY - 1);
++        ref TileData tile4 = ref Main.tile.GetTileRef(tileX, tileY + 1);
  
          if (!tileCache.active() || tileCache.inActive() || _tileSolidTop[tileCache.type] || (tileCache.halfBrick() && (tile2.liquid > 160 || tile.liquid > 160) && Main.instance.waterfallManager.CheckForWaterfall(tileX, tileY)) || (TileID.Sets.BlocksWaterDrawingBehindSelf[tileCache.type] && tileCache.slope() == 0))
          {
+@@ -3524,7 +_,7 @@
+             {
+                 if (Main.IsLiquidStyleWater(i) && Main.liquidAlpha[i] > 0f && i != num2)
+                 {
+-                    DrawPartialLiquid(!solidLayer, tileCache, ref position, ref liquidSize, i, ref vertices);
++                    DrawPartialLiquid(!solidLayer, ref tileCache, ref position, ref liquidSize, i, ref vertices);
+                     flag7 = true;
+                     break;
+                 }
+@@ -3542,7 +_,7 @@
+             LiquidRenderer.SetShimmerVertexColors(ref colors, solidLayer ? 0.75f : 1f, tileX, tileY);
+         }
+ 
+-        DrawPartialLiquid(!solidLayer, tileCache, ref position, ref liquidSize, num2, ref colors);
++        DrawPartialLiquid(!solidLayer, ref tileCache, ref position, ref liquidSize, num2, ref colors);
+     }
+ 
+     private void CacheSpecialDraws_Part1(int tileX, int tileY, int tileType, int drawDataTileFrameX, int drawDataTileFrameY, bool skipDraw)
+@@ -3851,9 +_,11 @@
+         }
+     }
+ 
++    private static bool IsTileDangerous(Player localPlayer, Tile tileCache, ushort typeCache) => IsTileDangerous(localPlayer, ref tileCache.RefData, typeCache);
++
+-    private static bool IsTileDangerous(Player localPlayer, Tile tileCache, ushort typeCache)
++    private static bool IsTileDangerous(Player localPlayer, ref TileData tileCache, ushort typeCache)
+     {
+-        bool flag = false || typeCache == 135 || typeCache == 137 || TileID.Sets.Boulders[typeCache] || typeCache == 141 || typeCache == 210 || typeCache == 442 || typeCache == 443 || typeCache == 444 || typeCache == 411 || typeCache == 485 || typeCache == 85 || typeCache == 654 || (typeCache == 314 && Minecart.IsPressurePlate(tileCache));
++        bool flag = false || typeCache == 135 || typeCache == 137 || TileID.Sets.Boulders[typeCache] || typeCache == 141 || typeCache == 210 || typeCache == 442 || typeCache == 443 || typeCache == 444 || typeCache == 411 || typeCache == 485 || typeCache == 85 || typeCache == 654 || (typeCache == 314 && Minecart.IsPressurePlate(ref tileCache));
+         flag |= Main.getGoodWorld && typeCache == 230;
+         flag |= Main.dontStarveWorld && typeCache == 80;
+         if (tileCache.slope() == 0 && !tileCache.inActive())
+@@ -3896,7 +_,7 @@
+         }
+     }
+ 
+-    private void DrawPartialLiquid(bool behindBlocks, Tile tileCache, ref Vector2 position, ref Rectangle liquidSize, int liquidType, ref VertexColors colors)
++    private void DrawPartialLiquid(bool behindBlocks, ref TileData tileCache, ref Vector2 position, ref Rectangle liquidSize, int liquidType, ref VertexColors colors)
+     {
+         int num = tileCache.slope();
+         bool flag = !TileID.Sets.BlocksWaterDrawingBehindSelf[tileCache.type];
+@@ -3934,7 +_,7 @@
+         return WorldGen.InAPlaceWithWind(x, y, width, height);
+     }
+ 
+-    private void GetTileDrawData(int x, int y, Tile tileCache, ushort typeCache, ref short tileFrameX, ref short tileFrameY, out int tileWidth, out int tileHeight, out int tileTop, out int halfBrickHeight, out int addFrX, out int addFrY, out SpriteEffects tileSpriteEffect, out Texture2D glowTexture, out Rectangle glowSourceRect, out Color glowColor)
++    private void GetTileDrawData(int x, int y, ref TileData tileCache, ushort typeCache, ref short tileFrameX, ref short tileFrameY, out int tileWidth, out int tileHeight, out int tileTop, out int halfBrickHeight, out int addFrX, out int addFrY, out SpriteEffects tileSpriteEffect, out Texture2D glowTexture, out Rectangle glowSourceRect, out Color glowColor)
+     {
+         tileTop = 0;
+         tileWidth = 16;
 @@ -6019,10 +_,6 @@
      private bool IsWindBlocked(int x, int y)
      {
@@ -404,6 +528,45 @@
  
          if (tile.wall > 0 && !WallID.Sets.AllowsWind[tile.wall])
          {
+@@ -6130,7 +_,7 @@
+         _specialTilesCount = 0;
+     }
+ 
+-    private Color DrawTiles_GetLightOverride(int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
++    private Color DrawTiles_GetLightOverride(int j, int i, ref TileData tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
+     {
+         if (tileCache.fullbrightBlock())
+         {
+@@ -6197,9 +_,9 @@
+         return tileLight;
+     }
+ 
+-    private void DrawTiles_EmitParticles(int j, int i, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
++    private void DrawTiles_EmitParticles(int j, int i, ref TileData tileCache, ushort typeCache, short tileFrameX, short tileFrameY, Color tileLight)
+     {
+-        bool num = IsVisible(tileCache);
++        bool num = IsVisible(ref tileCache);
+         int leafFrequency = _leafFrequency;
+         leafFrequency /= 4;
+         if (typeCache == 244 && tileFrameX == 18 && tileFrameY == 18 && _rand.Next(2) == 0)
+@@ -6953,7 +_,7 @@
+         }
+     }
+ 
+-    private void EmitLiquidDrops(int j, int i, Tile tileCache, ushort typeCache)
++    private void EmitLiquidDrops(int j, int i, ref TileData tileCache, ushort typeCache)
+     {
+         int num = 60;
+         switch (typeCache)
+@@ -7075,7 +_,7 @@
+         return num2 * lerpValue;
+     }
+ 
+-    private bool ShouldSwayInWind(int x, int y, Tile tileCache)
++    private bool ShouldSwayInWind(int x, int y, ref TileData tileCache)
+     {
+         if (!Main.SettingsEnabled_TilesSwayInWind)
+         {
 @@ -7496,7 +_,7 @@
              int x = point.X;
              int y = point.Y;
@@ -413,24 +576,96 @@
              {
                  continue;
              }
-@@ -7818,7 +_,7 @@
+@@ -7817,8 +_,8 @@
+             Point point = _specialPositions[num][i];
              int x = point.X;
              int y = point.Y;
-             Tile tile = Main.tile[x, y];
+-            Tile tile = Main.tile[x, y];
 -            if (tile == null || !tile.active() || !IsVisible(tile))
-+            if (!tile.active() || !IsVisible(tile))
++            ref TileData tile = ref Main.tile.GetTileRef(x, y);
++            if (!tile.active() || !IsVisible(ref tile))
              {
                  continue;
              }
-@@ -7882,7 +_,7 @@
+@@ -7826,14 +_,14 @@
+             ushort type = tile.type;
+             short tileFrameX = tile.frameX;
+             short tileFrameY = tile.frameY;
+-            GetTileDrawData(x, y, tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var glowTexture, out var glowSourceRect, out var glowColor);
++            GetTileDrawData(x, y, ref tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var glowTexture, out var glowSourceRect, out var glowColor);
+             bool flag = _rand.Next(4) == 0;
+             Color tileLight = Lighting.GetColor(x, y);
+-            DrawAnimatedTile_AdjustForVisionChangers(x, y, tile, type, tileFrameX, tileFrameY, ref tileLight, flag);
++            DrawAnimatedTile_AdjustForVisionChangers(x, y, ref tile, type, tileFrameX, tileFrameY, ref tileLight, flag);
+-            tileLight = DrawTiles_GetLightOverride(y, x, tile, type, tileFrameX, tileFrameY, tileLight);
++            tileLight = DrawTiles_GetLightOverride(y, x, ref tile, type, tileFrameX, tileFrameY, tileLight);
+             if (_isActiveAndNotPaused && flag)
+             {
+-                DrawTiles_EmitParticles(y, x, tile, type, tileFrameX, tileFrameY, tileLight);
++                DrawTiles_EmitParticles(y, x, ref tile, type, tileFrameX, tileFrameY, tileLight);
+             }
+ 
+             if (type == 83 && IsAlchemyPlantHarvestable(tileFrameX / 18))
+@@ -7858,7 +_,7 @@
+             num3 += GetWindGridPush(x, y, 20, 0.35f);
+             position.X += num3 * 1f;
+             position.Y += Math.Abs(num3) * 1f;
+-            Texture2D tileDrawTexture = GetTileDrawTexture(tile, x, y);
++            Texture2D tileDrawTexture = GetTileDrawTexture(ref tile, x, y);
+             if (tileDrawTexture != null)
+             {
+                 Main.spriteBatch.Draw(tileDrawTexture, position, new Rectangle(tileFrameX + addFrX, tileFrameY + addFrY, tileWidth, tileHeight - halfBrickHeight), tileLight, num3 * 0.1f, new Vector2(tileWidth / 2, 16 - halfBrickHeight - tileTop), 1f, tileSpriteEffect, 0f);
+@@ -7881,8 +_,8 @@
+             Point point = _specialPositions[num][i];
              int x = point.X;
              int y = point.Y;
-             Tile tile = Main.tile[x, y];
+-            Tile tile = Main.tile[x, y];
 -            if (tile == null || !tile.active() || !IsVisible(tile))
-+            if (!tile.active() || !IsVisible(tile))
++            ref TileData tile = ref Main.tile.GetTileRef(x, y);
++            if (!tile.active() || !IsVisible(ref tile))
              {
                  continue;
              }
+@@ -7890,14 +_,14 @@
+             ushort type = tile.type;
+             short tileFrameX = tile.frameX;
+             short tileFrameY = tile.frameY;
+-            GetTileDrawData(x, y, tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var glowTexture, out var _, out var glowColor);
++            GetTileDrawData(x, y, ref tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var glowTexture, out var _, out var glowColor);
+             bool flag = _rand.Next(4) == 0;
+             Color tileLight = Lighting.GetColor(x, y);
+-            DrawAnimatedTile_AdjustForVisionChangers(x, y, tile, type, tileFrameX, tileFrameY, ref tileLight, flag);
++            DrawAnimatedTile_AdjustForVisionChangers(x, y, ref tile, type, tileFrameX, tileFrameY, ref tileLight, flag);
+-            tileLight = DrawTiles_GetLightOverride(y, x, tile, type, tileFrameX, tileFrameY, tileLight);
++            tileLight = DrawTiles_GetLightOverride(y, x, ref tile, type, tileFrameX, tileFrameY, tileLight);
+             if (_isActiveAndNotPaused && flag)
+             {
+-                DrawTiles_EmitParticles(y, x, tile, type, tileFrameX, tileFrameY, tileLight);
++                DrawTiles_EmitParticles(y, x, ref tile, type, tileFrameX, tileFrameY, tileLight);
+             }
+ 
+             if (type == 83 && IsAlchemyPlantHarvestable(tileFrameX / 18))
+@@ -7964,7 +_,7 @@
+             }
+ 
+             num3 += pushX * (float)num4 + pushY * (float)num5;
+-            Texture2D tileDrawTexture = GetTileDrawTexture(tile, x, y);
++            Texture2D tileDrawTexture = GetTileDrawTexture(ref tile, x, y);
+             if (tileDrawTexture != null)
+             {
+                 Main.spriteBatch.Draw(tileDrawTexture, position, new Rectangle(tileFrameX + addFrX, tileFrameY + addFrY, tileWidth, tileHeight - halfBrickHeight), tileLight, num3 * 0.1f, origin, 1f, tileSpriteEffect, 0f);
+@@ -7976,9 +_,9 @@
+         }
+     }
+ 
+-    private void DrawAnimatedTile_AdjustForVisionChangers(int i, int j, Tile tileCache, ushort typeCache, short tileFrameX, short tileFrameY, ref Color tileLight, bool canDoDust)
++    private void DrawAnimatedTile_AdjustForVisionChangers(int i, int j, ref TileData tileCache, ushort typeCache, short tileFrameX, short tileFrameY, ref Color tileLight, bool canDoDust)
+     {
+-        if (_localPlayer.dangerSense && IsTileDangerous(_localPlayer, tileCache, typeCache))
++        if (_localPlayer.dangerSense && IsTileDangerous(_localPlayer, ref tileCache, typeCache))
+         {
+             if (tileLight.R < byte.MaxValue)
+             {
 @@ -8115,7 +_,7 @@
          {
              Point p = _specialPositions[num][i];
@@ -467,22 +702,150 @@
              {
                  switch (Main.tile[x, y].type)
                  {
-@@ -8537,10 +_,6 @@
+@@ -8459,9 +_,9 @@
+         {
+             for (int j = topLeftY; j < topLeftY + sizeY; j++)
+             {
+-                Tile tile = Main.tile[i, j];
++                ref TileData tile = ref Main.tile.GetTileRef(i, j);
+                 ushort type2 = tile.type;
+-                if (type2 != type || !IsVisible(tile))
++                if (type2 != type || !IsVisible(ref tile))
+                 {
+                     continue;
+                 }
+@@ -8480,14 +_,14 @@
+                     num2 = 0f;
+                 }
+ 
+-                GetTileDrawData(i, j, tile, type2, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var _, out var _, out var _);
++                GetTileDrawData(i, j, ref tile, type2, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var _, out var _, out var _);
+                 bool flag2 = _rand.Next(4) == 0;
+                 Color tileLight = Lighting.GetColor(i, j);
+-                DrawAnimatedTile_AdjustForVisionChangers(i, j, tile, type2, tileFrameX, tileFrameY, ref tileLight, flag2);
++                DrawAnimatedTile_AdjustForVisionChangers(i, j, ref tile, type2, tileFrameX, tileFrameY, ref tileLight, flag2);
+-                tileLight = DrawTiles_GetLightOverride(j, i, tile, type2, tileFrameX, tileFrameY, tileLight);
++                tileLight = DrawTiles_GetLightOverride(j, i, ref tile, type2, tileFrameX, tileFrameY, tileLight);
+                 if (_isActiveAndNotPaused && flag2)
+                 {
+-                    DrawTiles_EmitParticles(j, i, tile, type2, tileFrameX, tileFrameY, tileLight);
++                    DrawTiles_EmitParticles(j, i, ref tile, type2, tileFrameX, tileFrameY, tileLight);
+                 }
+ 
+                 Vector2 vector2 = new Vector2(i * 16 - (int)screenPosition.X, j * 16 - (int)screenPosition.Y + tileTop) + offSet;
+@@ -8510,7 +_,7 @@
+ 
+                 Vector2 vector3 = new Vector2(windCycle * 1f, Math.Abs(windCycle) * 2f * num2);
+                 Vector2 origin = vector - vector2;
+-                Texture2D tileDrawTexture = GetTileDrawTexture(tile, i, j);
++                Texture2D tileDrawTexture = GetTileDrawTexture(ref tile, i, j);
+                 if (tileDrawTexture != null)
+                 {
+                     Main.spriteBatch.Draw(tileDrawTexture, vector + new Vector2(0f, vector3.Y), new Rectangle(tileFrameX + addFrX, tileFrameY + addFrY, tileWidth, tileHeight - halfBrickHeight), tileLight, windCycle * num * num2, origin, 1f, tileSpriteEffect, 0f);
+@@ -8536,11 +_,7 @@
+         float num5 = 0f;
          for (int i = startY; i < Main.maxTilesY - 10; i++)
          {
-             Tile tile = Main.tile[x, i];
+-            Tile tile = Main.tile[x, i];
 -            if (tile == null)
 -            {
 -                continue;
 -            }
++            ref TileData tile = ref Main.tile.GetTileRef(x, i);
  
              ushort type = tile.type;
              if (!tile.active() || !TileID.Sets.VineThreads[type])
-@@ -8650,7 +_,6 @@
+@@ -8577,7 +_,7 @@
+             short tileFrameX = tile.frameX;
+             short tileFrameY = tile.frameY;
+             Color color = Lighting.GetColor(x, i);
+-            GetTileDrawData(x, i, tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var glowTexture, out var glowSourceRect, out var glowColor);
++            GetTileDrawData(x, i, ref tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var glowTexture, out var glowSourceRect, out var glowColor);
+             Vector2 position = new Vector2(-(int)screenPosition.X, -(int)screenPosition.Y) + offSet + vector;
+             if (tile.fullbrightBlock())
+             {
+@@ -8617,13 +_,13 @@
+                 }
+             }
+ 
+-            Texture2D tileDrawTexture = GetTileDrawTexture(tile, x, i);
++            Texture2D tileDrawTexture = GetTileDrawTexture(ref tile, x, i);
+             if (tileDrawTexture == null)
+             {
+                 break;
+             }
+ 
+-            if (IsVisible(tile))
++            if (IsVisible(ref tile))
+             {
+                 Main.spriteBatch.Draw(tileDrawTexture, position, new Rectangle(tileFrameX + addFrX, tileFrameY + addFrY, tileWidth, tileHeight - halfBrickHeight), color, num6, new Vector2(tileWidth / 2, halfBrickHeight - tileTop), 1f, tileSpriteEffect, 0f);
+                 if (glowTexture != null)
+@@ -8649,8 +_,7 @@
+         float num5 = 0f;
          for (int num6 = startY; num6 > 10; num6--)
          {
-             Tile tile = Main.tile[x, num6];
+-            Tile tile = Main.tile[x, num6];
 -            if (tile != null)
++            ref TileData tile = ref Main.tile.GetTileRef(x, num6);
              {
                  ushort type = tile.type;
                  if (!tile.active() || !TileID.Sets.ReverseVineThreads[type])
+@@ -8680,16 +_,16 @@
+                 short tileFrameX = tile.frameX;
+                 short tileFrameY = tile.frameY;
+                 Color color = Lighting.GetColor(x, num6);
+-                GetTileDrawData(x, num6, tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var _, out var _, out var _);
++                GetTileDrawData(x, num6, ref tile, type, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var _, out var _, out var _);
+                 Vector2 position = new Vector2(-(int)screenPosition.X, -(int)screenPosition.Y) + offSet + vector;
+                 float num7 = (float)num2 * (0f - num3) * windCycle + num4;
+-                Texture2D tileDrawTexture = GetTileDrawTexture(tile, x, num6);
++                Texture2D tileDrawTexture = GetTileDrawTexture(ref tile, x, num6);
+                 if (tileDrawTexture == null)
+                 {
+                     break;
+                 }
+ 
+-                if (IsVisible(tile))
++                if (IsVisible(ref tile))
+                 {
+                     Main.spriteBatch.Draw(tileDrawTexture, position, new Rectangle(tileFrameX + addFrX, tileFrameY + addFrY, tileWidth, tileHeight - halfBrickHeight), color, num7, new Vector2(tileWidth / 2, halfBrickHeight - tileTop + tileHeight), 1f, tileSpriteEffect, 0f);
+                 }
+@@ -8952,9 +_,9 @@
+         {
+             for (int j = topLeftY; j < topLeftY + sizeY; j++)
+             {
+-                Tile tile2 = Main.tile[i, j];
++                ref TileData tile2 = ref Main.tile.GetTileRef(i, j);
+                 ushort type2 = tile2.type;
+-                if (type2 != type || !IsVisible(tile2))
++                if (type2 != type || !IsVisible(ref tile2))
+                 {
+                     continue;
+                 }
+@@ -8978,21 +_,21 @@
+                     num7 = 0f;
+                 }
+ 
+-                GetTileDrawData(i, j, tile2, type2, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var _, out var _, out var _);
++                GetTileDrawData(i, j, ref tile2, type2, ref tileFrameX, ref tileFrameY, out var tileWidth, out var tileHeight, out var tileTop, out var halfBrickHeight, out var addFrX, out var addFrY, out var tileSpriteEffect, out var _, out var _, out var _);
+                 bool flag3 = _rand.Next(4) == 0;
+                 Color tileLight = Lighting.GetColor(i, j);
+-                DrawAnimatedTile_AdjustForVisionChangers(i, j, tile2, type2, tileFrameX, tileFrameY, ref tileLight, flag3);
++                DrawAnimatedTile_AdjustForVisionChangers(i, j, ref tile2, type2, tileFrameX, tileFrameY, ref tileLight, flag3);
+-                tileLight = DrawTiles_GetLightOverride(j, i, tile2, type2, tileFrameX, tileFrameY, tileLight);
++                tileLight = DrawTiles_GetLightOverride(j, i, ref tile2, type2, tileFrameX, tileFrameY, tileLight);
+                 if (_isActiveAndNotPaused && flag3)
+                 {
+-                    DrawTiles_EmitParticles(j, i, tile2, type2, tileFrameX, tileFrameY, tileLight);
++                    DrawTiles_EmitParticles(j, i, ref tile2, type2, tileFrameX, tileFrameY, tileLight);
+                 }
+ 
+                 Vector2 vector3 = new Vector2(i * 16 - (int)screenPosition.X, j * 16 - (int)screenPosition.Y + tileTop) + offSet;
+                 vector3 += vector2;
+                 Vector2 vector4 = new Vector2(windCycle * num4, Math.Abs(windCycle) * num5 * num7);
+                 Vector2 vector5 = vector - vector3;
+-                Texture2D tileDrawTexture = GetTileDrawTexture(tile2, i, j);
++                Texture2D tileDrawTexture = GetTileDrawTexture(ref tile2, i, j);
+                 if (tileDrawTexture != null)
+                 {
+                     Vector2 vector6 = vector + new Vector2(0f, vector4.Y);

@@ -63,6 +63,11 @@ public unsafe class NativeTileMap
         }
     }
 
+    public ref TileData GetTileRef(int x, int y)
+    {
+        return ref TileHeap[x][y];
+    }
+
     /// <summary>
     /// Initializes the heap
     /// </summary>
