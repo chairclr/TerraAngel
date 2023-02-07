@@ -20,7 +20,7 @@ public class WindowResizeTests
         ClientLoader.WindowManager!.Width = ChangeToWidth;
         ClientLoader.WindowManager!.Height = ChangeToHeight;
 
-        Thread.Sleep(200);
+        Thread.Sleep(500);
 
         SDL.SDL_GetWindowSize(Main.instance.Window.Handle, out int windowWidth, out int windowHeight);
 
