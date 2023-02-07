@@ -190,7 +190,7 @@ public class ClientConfig
 
         public int ConsoleHistoryLimit = 5000;
         public int ChatHistoryLimit = 3000;
-        public int ChatMessageLimit = 2000;
+        public int ChatMessageLimit = 600;
 
         public List<string>? ConsoleHistorySave = new List<string>();
 

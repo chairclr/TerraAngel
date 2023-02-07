@@ -272,8 +272,8 @@
 -
 -            slices[0] = new Color((byte)num5, (byte)num6, (byte)num7, 255);
 +            int num5 = Math.Min((int)(255f * color3.X * GlobalBrightness), 255);
-+            int num6 = Math.Min((int)(255f * color3.Y * GlobalBrightness), 255);
-+            int num7 = Math.Min((int)(255f * color3.Z * GlobalBrightness), 255);
++            int num6 = Math.Min((int)(255f * color3.Y * GlobalBrightness), 255) << 8;
++            int num7 = Math.Min((int)(255f * color3.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[0].PackedValue = (uint)(num5 | num6 | num7) | 0xFF000000u;
          }
@@ -299,8 +299,8 @@
 -
 -            slices[0] = new Color((byte)num8, (byte)num9, (byte)num10, 255);
 +            int num8 = Math.Min((int)(255f * color.X * GlobalBrightness), 255);
-+            int num9 = Math.Min((int)(255f * color.Y * GlobalBrightness), 255);
-+            int num10 = Math.Min((int)(255f * color.Z * GlobalBrightness), 255);
++            int num9 = Math.Min((int)(255f * color.Y * GlobalBrightness), 255) << 8; 
++            int num10 = Math.Min((int)(255f * color.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[0].PackedValue = (uint)(num8 | num9 | num10) | 0xFF000000u;
          }
@@ -327,8 +327,8 @@
 -
 -            slices[1] = new Color((byte)num11, (byte)num12, (byte)num13, 255);
 +            int num11 = Math.Min((int)(255f * color4.X * GlobalBrightness), 255);
-+            int num12 = Math.Min((int)(255f * color4.Y * GlobalBrightness), 255);
-+            int num13 = Math.Min((int)(255f * color4.Z * GlobalBrightness), 255);
++            int num12 = Math.Min((int)(255f * color4.Y * GlobalBrightness), 255) << 8;
++            int num13 = Math.Min((int)(255f * color4.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[1].PackedValue = (uint)(num11 | num12 | num13) | 0xFF000000u;
          }
@@ -354,8 +354,8 @@
 -
 -            slices[1] = new Color((byte)num14, (byte)num15, (byte)num16, 255);
 +            int num14 = Math.Min((int)(255f * color.X * GlobalBrightness), 255);
-+            int num15 = Math.Min((int)(255f * color.Y * GlobalBrightness), 255);
-+            int num16 = Math.Min((int)(255f * color.Z * GlobalBrightness), 255);
++            int num15 = Math.Min((int)(255f * color.Y * GlobalBrightness), 255) << 8;
++            int num16 = Math.Min((int)(255f * color.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[1].PackedValue = (uint)(num14 | num15 | num16) | 0xFF000000u;
          }
@@ -382,8 +382,8 @@
 -
 -            slices[2] = new Color((byte)num17, (byte)num18, (byte)num19, 255);
 +            int num17 = Math.Min((int)(255f * color3.X * GlobalBrightness), 255);
-+            int num18 = Math.Min((int)(255f * color3.Y * GlobalBrightness), 255);
-+            int num19 = Math.Min((int)(255f * color3.Z * GlobalBrightness), 255);
++            int num18 = Math.Min((int)(255f * color3.Y * GlobalBrightness), 255) << 8;
++            int num19 = Math.Min((int)(255f * color3.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[2].PackedValue = (uint)(num17 | num18 | num19) | 0xFF000000u;
          }
@@ -409,8 +409,8 @@
 -
 -            slices[2] = new Color((byte)num20, (byte)num21, (byte)num22, 255);
 +            int num20 = Math.Min((int)(255f * color2.X * GlobalBrightness), 255);
-+            int num21 = Math.Min((int)(255f * color2.Y * GlobalBrightness), 255);
-+            int num22 = Math.Min((int)(255f * color2.Z * GlobalBrightness), 255);
++            int num21 = Math.Min((int)(255f * color2.Y * GlobalBrightness), 255) << 8;
++            int num22 = Math.Min((int)(255f * color2.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[2].PackedValue = (uint)(num20 | num21 | num22) | 0xFF000000u;
          }
@@ -437,8 +437,8 @@
 -
 -            slices[3] = new Color((byte)num23, (byte)num24, (byte)num25, 255);
 +            int num23 = Math.Min((int)(255f * color4.X * GlobalBrightness), 255);
-+            int num24 = Math.Min((int)(255f * color4.Y * GlobalBrightness), 255);
-+            int num25 = Math.Min((int)(255f * color4.Z * GlobalBrightness), 255);
++            int num24 = Math.Min((int)(255f * color4.Y * GlobalBrightness), 255) << 8;
++            int num25 = Math.Min((int)(255f * color4.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[3].PackedValue = (uint)(num23 | num24 | num25) | 0xFF000000u;
          }
@@ -464,8 +464,8 @@
 -
 -            slices[3] = new Color((byte)num26, (byte)num27, (byte)num28, 255);
 +            int num26 = Math.Min((int)(255f * color2.X * GlobalBrightness), 255);
-+            int num27 = Math.Min((int)(255f * color2.Y * GlobalBrightness), 255);
-+            int num28 = Math.Min((int)(255f * color2.Z * GlobalBrightness), 255);
++            int num27 = Math.Min((int)(255f * color2.Y * GlobalBrightness), 255) << 8;
++            int num28 = Math.Min((int)(255f * color2.Z * GlobalBrightness), 255) << 16;
 +
 +            slices[3].PackedValue = (uint)(num26 | num27 | num28) | 0xFF000000u;
          }

@@ -60,9 +60,9 @@ public class ChatWindow : ClientWindow
 
         public ChatItem(string text, List<TextSnippet> snippets, Color color, int CountAboue)
         {
-            this.OriginalText = text;
-            this.Color = color.PackedValue;
-            this.CountAbove = (uint)(CountAboue);
+            OriginalText = text;
+            Color = color.PackedValue;
+            CountAbove = (uint)(CountAboue);
             TextSnippets = snippets;
             TextSnippets.Add(new TextSnippet(""));
         }

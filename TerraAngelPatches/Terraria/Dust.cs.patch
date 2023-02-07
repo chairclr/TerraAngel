@@ -1,13 +1,45 @@
 --- src/Terraria/Terraria/Dust.cs
 +++ src/TerraAngel/Terraria/Dust.cs
-@@ -53,6 +_,7 @@
+@@ -51,18 +_,22 @@
+         return dust;
+     }
  
++    public static OptimizationCringe OptimizationCache;
++
++    public static Rectangle DustIntersectionRectangle = new Rectangle((int)Main.screenPosition.X - 50,  (int)Main.screenPosition.Y - 50, Main.screenWidth + 50, Main.screenHeight + 50);
++
      public static int NewDust(Vector2 Position, int Width, int Height, int Type, float SpeedX = 0f, float SpeedY = 0f, int Alpha = 0, Color newColor = default(Color), float Scale = 1f)
      {
-+        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false) return 6000;
++        if (OptimizationCache.DisableDust)
++        {
++            return 6000;
++        }
++
          if (Main.gameMenu)
          {
              return 6000;
+         }
+ 
+-        if (Main.rand == null)
+-        {
+-            Main.rand = new UnifiedRandom((int)DateTime.Now.Ticks);
+-        }
+-
+         if (Main.gamePaused)
+         {
+             return 6000;
+@@ -78,10 +_,8 @@
+             return 6000;
+         }
+ 
+-        int num = (int)(400f * (1f - dCount));
+-        Rectangle rectangle = new Rectangle((int)(Main.screenPosition.X - (float)num), (int)(Main.screenPosition.Y - (float)num), Main.screenWidth + num * 2, Main.screenHeight + num * 2);
+         Rectangle value = new Rectangle((int)Position.X, (int)Position.Y, 10, 10);
+-        if (!rectangle.Intersects(value))
++        if (!DustIntersectionRectangle.Intersects(value))
+         {
+             return 6000;
+         }
 @@ -359,6 +_,7 @@
  
      public static void UpdateDust()
