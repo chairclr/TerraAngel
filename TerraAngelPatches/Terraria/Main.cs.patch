@@ -650,6 +650,15 @@
                          return;
                      }
  
+@@ -45933,7 +_,7 @@
+                         Tile tileSafely = Framing.GetTileSafely(value);
+                         if (tileSafely.active())
+                         {
+-                            MapHelper.GetTileBaseOption(value.X, value.Y, tileSafely.type, tileSafely, ref baseOption);
++                            MapHelper.GetTileBaseOption(value.X, value.Y, tileSafely.type, ref tileSafely.RefData, ref baseOption);
+                             num10 = tileSafely.type;
+                             if (TileID.Sets.BasicChest[num10] || TileID.Sets.BasicChestFake[num10])
+                             {
 @@ -46996,7 +_,6 @@
  
      private static void TryDisposingEverything()
@@ -961,6 +970,53 @@
      public static void OpenCharacterSelectUI()
      {
          menuMode = 888;
+@@ -52660,11 +_,6 @@
+                                 continue;
+                             }
+ 
+-                            if (tile[num24, num25] == null)
+-                            {
+-                                tile[num24, num25] = new Tile();
+-                            }
+-
+                             if (num == 0f && (color4.R > 0 || color4.G > 0 || color4.B > 0))
+                             {
+                                 if (!drawToScreen)
+@@ -52894,11 +_,7 @@
+                                 if (WorldGen.InWorld(num37, num38))
+                                 {
+                                     Microsoft.Xna.Framework.Color color12 = Lighting.GetColor(num37, num38);
+-                                    if (tile[num37, num38] == null)
+-                                    {
+-                                        tile[num37, num38] = new Tile();
+-                                    }
+-
++                                    
+                                     if (color12.R > 0 || color12.G > 0 || color12.B > 0)
+                                     {
+                                         Lighting.GetCornerColors(num37, num38, out var vertices2, ugBackTransition);
+@@ -53872,10 +_,6 @@
+                             int num23 = (int)(((float)(bgStartX + num3 * n + num20 * 16 + 8) + screenPosition.X) / 16f);
+                             int num24 = (int)((num22 + screenPosition.Y) / 16f);
+                             Microsoft.Xna.Framework.Color color3 = Lighting.GetColor(num23, num24);
+-                            if (tile[num23, num24] == null)
+-                            {
+-                                tile[num23, num24] = new Tile();
+-                            }
+ 
+                             if (color3.R > 0 || color3.G > 0 || color3.B > 0)
+                             {
+@@ -54088,10 +_,6 @@
+                                 int num36 = (int)(((float)(bgStartX + num3 * num31 + num33 * 16 + 8) + screenPosition.X) / 16f);
+                                 int num37 = (int)((num35 + screenPosition.Y) / 16f);
+                                 Microsoft.Xna.Framework.Color color11 = Lighting.GetColor(num36, num37);
+-                                if (tile[num36, num37] == null)
+-                                {
+-                                    tile[num36, num37] = new Tile();
+-                                }
+ 
+                                 if (color11.R > 0 || color11.G > 0 || color11.B > 0)
+                                 {
 @@ -54615,23 +_,8 @@
  
      private static bool ShouldDrawBackgroundTileAt(int i, int j)

@@ -1,16 +1,21 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
-@@ -1,8 +_,9 @@
+@@ -1,11 +_,14 @@
  using System;
  using System.IO;
 -using Ionic.Zlib;
 +using System.IO.Compression;
++using System.Runtime.CompilerServices;
  using Microsoft.Xna.Framework;
  using Microsoft.Xna.Framework.Graphics.PackedVector;
 +using TerraAngel;
  using Terraria.Chat;
  using Terraria.DataStructures;
  using Terraria.GameContent;
++using Terraria.GameContent.Bestiary;
+ using Terraria.GameContent.Events;
+ using Terraria.GameContent.Tile_Entities;
+ using Terraria.ID;
 @@ -75,7 +_,7 @@
          return true;
      }
@@ -327,11 +332,11 @@
 +    public unsafe static void DecompressTileBlock_Inner(BinaryReader reader, int xStart, int yStart, int width, int height)
      {
 -        Tile tile = null;
-+        Tile tile = new Tile();
++        ref TileData tile = ref Unsafe.NullRef<TileData>();
          int num = 0;
          for (int i = yStart; i < yStart + height; i++)
          {
-@@ -2403,15 +_,7 @@
+@@ -2403,31 +_,15 @@
                  if (num != 0)
                  {
                      num--;
@@ -342,16 +347,16 @@
 -                    else
 -                    {
 -                        Main.tile[j, i].CopyFrom(tile);
-+                    Main.tile[j, i].CopyFrom(tile);
 -                    }
 -
++                    Main.tile.GetTileRef(j, i).CopyFrom(ref tile);
                      continue;
                  }
  
-@@ -2419,15 +_,7 @@
+                 byte b2;
                  byte b;
                  byte b3 = (b2 = (b = 0));
-                 tile = Main.tile[j, i];
+-                tile = Main.tile[j, i];
 -                if (tile == null)
 -                {
 -                    tile = new Tile();
@@ -360,8 +365,9 @@
 -                else
 -                {
 -                    tile.ClearEverything();
-+                tile.ClearEverything();
 -                }
++                tile = ref Main.tile.GetTileRef(j, i);
++                tile.ClearEverything();
  
                  byte b4 = reader.ReadByte();
                  bool flag = false;

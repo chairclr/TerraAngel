@@ -1,23 +1,24 @@
 --- src/Terraria/Terraria/Map/MapHelper.cs
 +++ src/TerraAngel/Terraria/Map/MapHelper.cs
-@@ -1756,22 +_,23 @@
+@@ -1756,22 +_,22 @@
          return oldColor;
      }
  
 +    // patch context
      public static MapTile CreateMapTile(int i, int j, byte Light)
      {
-+        // patch context
-         Tile tile = Main.tile[i, j];
+-        Tile tile = Main.tile[i, j];
 -        if (tile == null)
 -        {
 -            return default(MapTile);
 -        }
++        // patch context
++        ref TileData tile = ref Main.tile.GetTileRef(i, j);
  
          int num = 0;
          int num2 = Light;
+-        _ = Main.Map[i, j];
 +        // patch context
-         _ = Main.Map[i, j];
          int num3 = 0;
 +        // patch context
          int baseOption = 0;
@@ -28,7 +29,16 @@
              num3 = tileLookup[num4];
              bool flag = tile.invisibleBlock();
              if (tile.fullbrightBlock() && !flag)
-@@ -1885,52 +_,19 @@
+@@ -1822,7 +_,7 @@
+ 
+                 if (num3 != 0)
+                 {
+-                    GetTileBaseOption(i, j, num4, tile, ref baseOption);
++                    GetTileBaseOption(i, j, num4, ref tile, ref baseOption);
+                     num = ((num4 != 160) ? tile.color() : 0);
+                 }
+             }
+@@ -1885,59 +_,26 @@
                      num2 = 255;
                      num = 0;
                  }
@@ -87,3 +97,11 @@
              }
          }
  
+         return MapTile.Create((ushort)(num3 + baseOption), (byte)num2, (byte)num);
+     }
+ 
+-    public static void GetTileBaseOption(int x, int y, int tileType, Tile tileCache, ref int baseOption)
++    public static void GetTileBaseOption(int x, int y, int tileType, ref TileData tileCache, ref int baseOption)
+     {
+         switch (tileType)
+         {
