@@ -32,8 +32,6 @@ public class CSharpScriptEnvironment
         "Microsoft.Xna.Framework",
         "Microsoft.Xna.Framework.Graphics",
         "Microsoft.Xna.Framework.Input",
-        "MonoMod",
-        "MonoMod.RuntimeDetour",
         "System",
         "System.IO",
         "System.Collections.Generic",
