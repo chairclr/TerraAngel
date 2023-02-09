@@ -39,7 +39,13 @@
          ThreadPool.SetMinThreads(8, 8);
          InitializeConsoleOutput();
          SetupLogging();
-@@ -206,10 +_,12 @@
+@@ -201,15 +_,17 @@
+         {
+             Main.OnEngineLoad += delegate
+             {
+-                Main.instance.IsMouseVisible = false;
++                Main.instance.IsMouseVisible = TerraAngel.Hooks.Hooks.MiscHooks.ShouldMouseBeVisible(false);
+             };
          }
  
          using Main main = new Main();

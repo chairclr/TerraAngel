@@ -13,7 +13,7 @@ Installation
 
 Please note that this client is currently only available for Windows
 
-In order to use it, you will need to have [git](https://git-scm.com/download/win) and the [dotnet 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed  installed on your machine
+In order to use it, you will need to have [git](https://git-scm.com/download/win) and the [dotnet 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) installed  installed on your machine
 
 
 To install the client, follow these steps:
@@ -28,7 +28,7 @@ To install the client, follow these steps:
 
   ![image](https://user-images.githubusercontent.com/87276335/182042235-9ce87d19-61ee-4636-b3ab-eee0ccb0e428.png)
 
-  4. If the process finishes successfully, the client will be built in the `src/TerraAngel/Terraria/bin/Release/net6.0/` folder
+  4. If the process finishes successfully, the client will be built in the `src/TerraAngel/Terraria/bin/Release/net7.0/` folder
 
   ![image](https://user-images.githubusercontent.com/87276335/182298612-c9aa34a2-9df7-4047-9a4f-a465c95419a1.png)
 

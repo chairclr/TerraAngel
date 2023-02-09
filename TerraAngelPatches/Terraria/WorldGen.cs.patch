@@ -68,6 +68,16 @@
              if (Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type] && !Main.tile[i, j].halfBrick() && Main.tile[i, j].slope() == 0 && !Main.tile[i, j].inActive())
              {
                  if (noDoors && Main.tile[i, j].type == 10)
+@@ -77508,6 +_,9 @@
+ 
+     public static void TileFrame(int i, int j, bool resetFrame = false, bool noBreak = false)
+     {
++        if (TerraAngel.Hooks.Hooks.MiscHooks.framingDisabled)
++            return;
++
+         bool addToList = false;
+         try
+         {
 @@ -82521,7 +_,7 @@
          {
              for (int j = y - 1; j <= y + 1; j++)

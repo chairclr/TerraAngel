@@ -1,5 +1,16 @@
 --- src/Terraria/Terraria/GameInput/PlayerInput.cs
 +++ src/TerraAngel/Terraria/GameInput/PlayerInput.cs
+@@ -595,7 +_,9 @@
+         return _buttonsLocked.Contains(keyName);
+     }
+ 
++    public static void UpdateInput() => TerraAngel.Hooks.Hooks.MiscHooks.UpdateInputHook(_UpdateInput);
++
+-    public static void UpdateInput()
++    private static void _UpdateInput()
+     {
+         SettingsForUI.UpdateCounters();
+         Triggers.Reset();
 @@ -1056,8 +_,6 @@
                      MouseY = num10 + num5;
                      flag6 = true;
@@ -9,6 +20,17 @@
              }
  
              if (CurrentInputMode == InputMode.XBoxGamepad)
+@@ -1145,7 +_,9 @@
+         return flag;
+     }
+ 
++    private static void MouseInput() => TerraAngel.Hooks.Hooks.MiscHooks.MouseInputHook(_MouseInput);
++
+-    private static void MouseInput()
++    private static void _MouseInput()
+     {
+         bool flag = false;
+         MouseInfoOld = MouseInfo;
 @@ -1227,8 +_,6 @@
              {
                  flag2 = true;

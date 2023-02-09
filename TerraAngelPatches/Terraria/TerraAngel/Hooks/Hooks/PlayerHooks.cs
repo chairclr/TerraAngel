@@ -6,39 +6,6 @@ namespace TerraAngel.Hooks.Hooks;
 
 public class PlayerHooks
 {
-    public static void Generate()
-    {
-        HookUtil.HookGen<Player>("Hurt", PlayerHurtHook);
-        HookUtil.HookGen<Player>("KillMe", PlayerKillHook);
-        HookUtil.HookGen<Player>("ResetEffects", PlayerResetEffectsHook);
-        HookUtil.HookGen<Player>("ItemCheckWrapped", PlayerItemCheckHook);
-        HookUtil.HookGen<Player>("Spawn", PlayerSpawnHook);
-    }
-
-    public static double PlayerHurtHook(Func<Player, PlayerDeathReason, int, int, bool, bool, bool, int, bool, double> orig, Player self, PlayerDeathReason damageSource, int Damage, int hitDirection, bool pvp, bool quiet, bool Crit, int cooldownCounter, bool dodgeable)
-    {
-        if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
-        {
-            self.statLife = self.statLifeMax2;
-            if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket == 0)
-            {
-                CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket = 6;
-                NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, self.whoAmI);
-            }
-            return 0.0d;
-        }
-
-        return orig(self, damageSource, Damage, hitDirection, pvp, quiet, Crit, cooldownCounter, dodgeable);
-    }
-    public static void PlayerKillHook(Action<Player, PlayerDeathReason, double, int, bool> orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
-    {
-        if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
-        {
-            NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, self.whoAmI);
-            return;
-        }
-        orig(self, damageSource, dmg, hitDirection, pvp);
-    }
     public static void PlayerItemCheckHook(Action<Player, int> orig, Player self, int i)
     {
         if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AutoAimCringe>().Enabled)
@@ -130,9 +97,4 @@ public class PlayerHooks
         }
     }
 
-    public static void PlayerSpawnHook(Action<Player, PlayerSpawnContext> orig, Player self, PlayerSpawnContext context)
-    {
-        orig(self, context);
-        presenceUpdateCount = 0;
-    }
 }

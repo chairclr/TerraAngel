@@ -9,21 +9,6 @@ namespace TerraAngel.Hooks.Hooks;
 
 public class DrawHooks
 {
-    public static void Generate()
-    {
-        HookUtil.HookGen(Main.DrawCursor, DrawCursorHook);
-        HookUtil.HookGen(Main.DrawThickCursor, DrawThickCursorHook);
-        HookUtil.HookGen<Main>("DoDraw_UpdateCameraPosition", UpdateCameraHook);
-
-        HookUtil.HookGen<LightingEngine>("UpdateLightDecay", LightingUpdateLightDecay);
-
-        HookUtil.HookGen<Main>("DrawDust", DrawDustHook);
-        HookUtil.HookGen<Main>("DrawGore", DrawGoreHook);
-        HookUtil.HookGen<Main>("DrawGoreBehind", DrawGoreBehindHook);
-        HookUtil.HookGen(Main.MouseText_DrawItemTooltip_GetLinesInfo, GetLinesInfoHook);
-        HookUtil.HookGen<Item>("AffixName", AffixNameHook);
-    }
-
     public static string AffixNameHook(Func<Item, string> orig, Item self)
     {
         if (ClientConfig.Settings.ShowDetailedTooltips)
@@ -128,27 +113,7 @@ public class DrawHooks
             }
         }
     }
-
-    public static void DrawCursorHook(Action<Vector2, bool> orig, Vector2 bonus, bool smart)
-    {
-        if (!Main.instance.IsActive)
-            return;
-        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
-        {
-            return;
-        }
-        orig(bonus, smart);
-    }
-    public static Vector2 DrawThickCursorHook(Func<bool, Vector2> orig, bool smart)
-    {
-        if (!Main.instance.IsActive)
-            return Vector2.Zero;
-        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
-        {
-            return Vector2.Zero;
-        }
-        return orig(smart);
-    }
+    
     private static Vector2 freecamOriginPoint;
     public static int SpectateOverride = -1;
     public static void UpdateCameraHook(Action orig)
@@ -199,38 +164,6 @@ public class DrawHooks
     }
 
     public static LightingModifierCringe? LightModificationCache;
-    private static void LightingUpdateLightDecay(Action<LightingEngine> orig, LightingEngine self)
-    {
-        orig(self);
-
-        if (LightModificationCache?.PartialBright ?? false)
-        {
-            LightMap? workingLightMap = (LightMap?)typeof(LightingEngine).GetField("_workingLightMap", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(self);
-            if (workingLightMap == null)
-                return;
-            workingLightMap.LightDecayThroughAir *= LightModificationCache.ExtraAirBrightness + 1f;
-            workingLightMap.LightDecayThroughSolid *= LightModificationCache.ExtraSolidBrightness + 1f;
-        }
-    }
 
     public static OptimizationCringe? OptimizationCache;
-    public static void DrawDustHook(Action<Main> orig, Main self)
-    {
-        if (OptimizationCache?.DisableDust ?? false)
-            return;
-        orig(self);
-    }
-
-    public static void DrawGoreHook(Action<Main> orig, Main self)
-    {
-        if (OptimizationCache?.DisableGore ?? false)
-            return;
-        orig(self);
-    }
-    public static void DrawGoreBehindHook(Action<Main> orig, Main self)
-    {
-        if (OptimizationCache?.DisableGore ?? false)
-            return;
-        orig(self);
-    }
 }

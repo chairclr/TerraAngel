@@ -4,7 +4,7 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © Re-Logic 2017</Company>
      <RootNamespace>ReLogic</RootNamespace>
-+    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net7.0</TargetFramework>
 +    <Platforms>AnyCPU</Platforms>
    </PropertyGroup>
 +

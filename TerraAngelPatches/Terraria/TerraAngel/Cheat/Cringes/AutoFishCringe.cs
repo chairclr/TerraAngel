@@ -92,7 +92,7 @@ public class AutoFishCringe : Cringe
                 {
                     try
                     {
-                        bool canUse = (bool)HookUtil.GetMethod(typeof(Player), "ItemCheck_CheckFishingBobbers").Invoke(Main.LocalPlayer, new object[] { true });
+                        bool canUse = (bool)typeof(Player).GetMethod("ItemCheck_CheckFishingBobbers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(Main.LocalPlayer, new object[] { true });
                         wantPullFish = false;
                         wantToReCast = true;
                         frameCountBeforeActualCast = Main.rand.Next(frameCountRandomizationMin, frameCountRandomizationMax) + 50;

@@ -22,6 +22,17 @@
  
      public bool Prefix(int prefixWeWant)
      {
+@@ -890,7 +_,9 @@
+         return false;
+     }
+ 
++    public string AffixName() => TerraAngel.Hooks.Hooks.DrawHooks.AffixNameHook((x) => x.AffixName(), this);
++
+-    public string AffixName()
++    private string _AffixName()
+     {
+         if (prefix < 0 || prefix >= Lang.prefix.Length)
+         {
 @@ -49372,12 +_,15 @@
              velocity = Collision.TileCollision(position, velocity, width, height);
          }

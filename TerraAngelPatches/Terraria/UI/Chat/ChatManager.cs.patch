@@ -1,0 +1,11 @@
+--- src/Terraria/Terraria/UI/Chat/ChatManager.cs
++++ src/TerraAngel/Terraria/UI/Chat/ChatManager.cs
+@@ -99,6 +_,8 @@
+ 
+     public static bool AddChatText(DynamicSpriteFont font, string text, Vector2 baseScale)
+     {
++        ClientLoader.Chat.AddText(text);
++        return true;
+         int num = 470;
+         num = Main.screenWidth - 330;
+         if (GetStringSize(font, Main.chatText + text, baseScale).X > (float)num)

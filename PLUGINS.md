@@ -16,9 +16,9 @@ When a plugin is loaded, TerraAngel will look for a class in the plugin assembly
 
 ## Example Plugin
 
-Create a .NET class library for .NET 6.0, with a name ending in .TAPlugin (eg., Example.TAPlugin)
+Create a .NET class library for .NET 7.0, with a name ending in .TAPlugin (eg., Example.TAPlugin)
 
-This can be accompished from the CLI: `dotnet new classlib --name Example.TAPlugin --framework net6.0`
+This can be accompished from the CLI: `dotnet new classlib --name Example.TAPlugin --framework net7.0`
 
 ```cs
 using TerraAngel;
@@ -64,7 +64,7 @@ It is also recommended that you add a reference to the following:
  - `ImGui.NET.dll`
  - `FNA.dll`
 
-These files are located in the TerraAngel build directory. (`TerraAngel/Terraria/bin/Release/net6.0/`)
+These files are located in the TerraAngel build directory. (`TerraAngel/Terraria/bin/Release/net7.0/`)
 
 To install a plugin, copy the plugin DLL to the TerraAngel plugins directory.
 

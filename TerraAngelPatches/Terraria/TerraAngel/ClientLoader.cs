@@ -119,8 +119,6 @@ public unsafe class ClientLoader
             return handle;
         });
 
-        GameHooks.Generate();
-
         ClientConfig.ReadFromFile();
 
         Type[] cringeTypes = typeof(Cringe).Assembly.GetTypes().Where(x =>

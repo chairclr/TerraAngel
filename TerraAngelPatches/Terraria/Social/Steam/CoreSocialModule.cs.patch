@@ -16,3 +16,11 @@
              Environment.Exit(1);
          }
  
+@@ -122,6 +_,6 @@
+ 
+     public void OnOverlayActivated(GameOverlayActivated_t result)
+     {
+-        Main.instance.IsMouseVisible = result.m_bActive == 1;
++        Main.instance.IsMouseVisible = TerraAngel.Hooks.Hooks.MiscHooks.ShouldMouseBeVisible(result.m_bActive == 1);
+     }
+ }

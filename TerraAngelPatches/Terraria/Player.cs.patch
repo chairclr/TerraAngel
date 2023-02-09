@@ -46,6 +46,17 @@
                  {
                      nearbyTorch[num5] = true;
                      if (num5 == 17 && (tile.liquid == 0 || tile.liquidType() != 0))
+@@ -18292,7 +_,9 @@
+         return Main.player[FindClosest(new Vector2(x * 16, y * 16), 1, 1)].RollLuck(range);
+     }
+ 
++    public void ResetEffects() => TerraAngel.Hooks.Hooks.PlayerHooks.PlayerResetEffectsHook((x) => x._ResetEffects(), this);
++
+-    public void ResetEffects()
++    private void _ResetEffects()
+     {
+         if (extraAccessory && (Main.expertMode || Main.gameMenu))
+         {
 @@ -19562,7 +_,7 @@
  
          int num = (int)(position.X + (float)(width / 2)) / 16;
@@ -134,6 +145,26 @@
      private void AdjustRemainingPotionSickness()
      {
          if (whoAmI == Main.myPlayer)
+@@ -31201,7 +_,9 @@
+         HotbarOffset = 0;
+     }
+ 
++    private void ItemCheckWrapped(int i) => TerraAngel.Hooks.Hooks.PlayerHooks.PlayerItemCheckHook((x, y) => x._ItemCheckWrapped(y), this, i);
++
+-    private void ItemCheckWrapped(int i)
++    private void _ItemCheckWrapped(int i)
+     {
+         int num;
+         if (!controlLeft && !controlRight && !controlUp && !controlDown && PlayerInput.UsingGamepad && Main.SmartCursorIsUsed)
+@@ -38120,6 +_,8 @@
+             Main.ActivePlayerFileData.StartPlayTimer();
+             Hooks.EnterWorld(whoAmI);
+         }
++
++        TerraAngel.Hooks.Hooks.PlayerHooks.presenceUpdateCount = 0;
+     }
+ 
+     public bool Spawn_GetPositionAtWorldSpawn(ref int floorX, ref int floorY)
 @@ -38190,6 +_,7 @@
              bool flag = false;
              for (int j = -1; j <= 1; j++)
@@ -151,6 +182,37 @@
                  {
                      if (Main.tile[i, j].nactive() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type])
                      {
+@@ -38397,6 +_,17 @@
+ 
+     public double Hurt(PlayerDeathReason damageSource, int Damage, int hitDirection, bool pvp = false, bool quiet = false, bool Crit = false, int cooldownCounter = -1, bool dodgeable = true)
+     {
++        if (whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
++        {
++            statLife = statLifeMax2;
++            if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket == 0)
++            {
++                CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket = 6;
++                NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, whoAmI);
++            }
++            return 0.0d;
++        }
++
+         if (shimmering && AllowShimmerDodge(damageSource, cooldownCounter, dodgeable))
+         {
+             return 0.0;
+@@ -38991,6 +_,12 @@
+ 
+     public void KillMe(PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp = false)
+     {
++        if (whoAmI == Main.myPlayer && CringeManager.GetCringe<AntiHurtCringe>().Enabled)
++        {
++            NetMessage.SendData(MessageID.PlayerLife, -1, -1, null, whoAmI);
++            return;
++        }
++
+         if (creativeGodMode || dead)
+         {
+             return;
 @@ -43006,7 +_,7 @@
          return num;
      }

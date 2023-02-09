@@ -137,9 +137,6 @@ public class ClientConfig
         [UIConfigElement("Default ESP Tile Sections")]
         public bool DefaultTileSections = false;
 
-        [UIConfigElement("Default Partial Bright")]
-        public bool PartialBrightDefaultValue = false;
-
         [UIConfigElement("Default Full Bright")]
         public bool FullBrightDefaultValue = false;
 
@@ -200,8 +197,6 @@ public class ClientConfig
 
         public int ConsoleUndoStackSize = 3000;
 
-        public float PartialBrightSolidExtraLight = 0.3f;
-        public float PartialBrightAirExtraLight = 0.065f;
         public float FullBrightBrightness = 0.7f;
         public Color TracerColor = new Color(0f, 0f, 1f);
         public Color LocalBoxPlayerColor = new Color(0f, 1f, 0f);

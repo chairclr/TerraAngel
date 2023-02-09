@@ -9,7 +9,7 @@
      <Company>Re-Logic</Company>
      <Company>Copyright © 2022 Re-Logic</Company>
      <RootNamespace>Terraria</RootNamespace>
-+    <TargetFramework>net6.0</TargetFramework>
++    <TargetFramework>net7.0</TargetFramework>
 +    <Platforms>AnyCPU</Platforms>
    </PropertyGroup>
 +  <PropertyGroup>

@@ -315,6 +315,15 @@
      }
  
      private static void SetDisplayMonitor()
+@@ -4671,7 +_,7 @@
+     {
+         if (!dedServ)
+         {
+-            _cachedTitle = Lang.GetRandomGameTitle();
++            _cachedTitle = "TerraAngel";
+             Platform.Get<IWindowService>().SetUnicodeTitle(base.Window, _cachedTitle);
+         }
+     }
 @@ -4740,7 +_,6 @@
          SetTitle();
          lo = rand.Next(6);
@@ -339,6 +348,14 @@
          Terraria.Graphics.Effects.Filters.Scene.BindTo(preferences);
          if (SocialAPI.Cloud != null)
          {
+@@ -4972,6 +_,7 @@
+             Star.SpawnStars();
+             ItemSorting.SetupWhiteLists();
+         }
++        ClientLoader.SetupImGuiRenderer(this);
+     }
+ 
+     private void Initialize_Entities()
 @@ -8736,8 +_,6 @@
              screenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
          }
@@ -541,6 +558,24 @@
                  {
                      hasFocus = false;
                  }
+@@ -15371,7 +_,7 @@
+             {
+                 if (!Platform.IsOSX)
+                 {
+-                    base.IsMouseVisible = true;
++                    base.IsMouseVisible = TerraAngel.Hooks.Hooks.MiscHooks.ShouldMouseBeVisible(true);
+                 }
+ 
+                 if (netMode != 2 && myPlayer >= 0)
+@@ -15392,7 +_,7 @@
+ 
+             if (!Platform.IsOSX)
+             {
+-                base.IsMouseVisible = false;
++                base.IsMouseVisible = TerraAngel.Hooks.Hooks.MiscHooks.ShouldMouseBeVisible(false);
+             }
+ 
+             SkyManager.Instance.Update(gameTime);
 @@ -15417,7 +_,6 @@
              DoUpdate_F8_ToggleNetDiagnostics();
              DoUpdate_F7_ToggleGraphicsDiagnostics();
@@ -571,6 +606,38 @@
      }
  
      internal static void UpdateCreativeGameModeOverride()
+@@ -16466,6 +_,7 @@
+ 
+     private static void DoUpdate_Enter_ToggleChat()
+     {
++        return;
+         if (keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Enter) && !keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) && !keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt) && hasFocus)
+         {
+             if (chatRelease && !drawingPlayerChat && !editSign && !editChest && !gameMenu && !keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))
+@@ -16485,6 +_,7 @@
+ 
+     public static void OpenPlayerChat()
+     {
++        return;
+         if (CurrentInputTextTakerOverride == null)
+         {
+             drawingPlayerChat = true;
+@@ -16494,6 +_,7 @@
+ 
+     public static void ClosePlayerChat()
+     {
++        return;
+         drawingPlayerChat = false;
+         PlayerInput.WritingText = false;
+         player[myPlayer].releaseHook = false;
+@@ -16502,6 +_,7 @@
+ 
+     private static void DoUpdate_HandleChat()
+     {
++        return;
+         if (CurrentInputTextTakerOverride != null)
+         {
+             drawingPlayerChat = false;
 @@ -16594,24 +_,6 @@
          keyState = Keyboard.GetState();
      }
@@ -596,6 +663,16 @@
      private static void DoUpdate_F11_ToggleUI()
      {
          if (keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.F11))
+@@ -18932,6 +_,9 @@
+     }
+ 
+     public static void MouseText_DrawItemTooltip_GetLinesInfo(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine)
++        => TerraAngel.Hooks.Hooks.DrawHooks.GetLinesInfoHook(_MouseText_DrawItemTooltip_GetLinesInfo, item, ref yoyoLogo, ref researchLine, oldKB, ref numLines, toolTipLine, preFixLine, badPreFixLine);
++
++    public static void _MouseText_DrawItemTooltip_GetLinesInfo(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine)
+     {
+         toolTipLine[0] = item.HoverName;
+         if (item.favorited)
 @@ -19067,7 +_,7 @@
                      {
                          toolTipLine[numLines] = Lang.tip[13].Value;
@@ -621,6 +698,26 @@
                  }
              }
  
+@@ -20182,6 +_,9 @@
+ 
+     protected void DrawGoreBehind()
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
++            return;
++
+         for (int i = 0; i < 600; i++)
+         {
+             if (!gore[i].active || gore[i].type <= 0)
+@@ -20215,6 +_,9 @@
+ 
+     protected void DrawGore()
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
++            return;
++
+         drawBackGore = false;
+         for (int i = 0; i < 600; i++)
+         {
 @@ -20670,14 +_,18 @@
  
      protected void DrawPlayers_BehindNPCs()
@@ -650,6 +747,32 @@
                          return;
                      }
  
+@@ -36635,6 +_,9 @@
+ 
+     protected void DrawDust()
+     {
++        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false)
++            return;
++
+         Microsoft.Xna.Framework.Rectangle rectangle = new Microsoft.Xna.Framework.Rectangle((int)screenPosition.X - 500, (int)screenPosition.Y - 50, screenWidth + 1000, screenHeight + 100);
+         rectangle = new Microsoft.Xna.Framework.Rectangle((int)screenPosition.X - 1000, (int)screenPosition.Y - 1050, screenWidth + 2000, screenHeight + 2100);
+         Microsoft.Xna.Framework.Rectangle rectangle2 = rectangle;
+@@ -39092,6 +_,7 @@
+ 
+     protected void DrawPlayerChat()
+     {
++        return;
+         TextSnippet[] array = null;
+         if (drawingPlayerChat)
+         {
+@@ -43760,6 +_,7 @@
+ 
+     private static void DrawInterface_41_InterfaceLogic4()
+     {
++        TerraAngel.Hooks.Hooks.MiscHooks.lastCursorOverride = cursorOverride;
+         if (mouseRight)
+         {
+             npcChatRelease = false;
 @@ -45933,7 +_,7 @@
                          Tile tileSafely = Framing.GetTileSafely(value);
                          if (tileSafely.active())
@@ -667,6 +790,32 @@
          CaptureManager.Instance.Dispose();
          audioSystem.Dispose();
      }
+@@ -47127,6 +_,12 @@
+ 
+     public static void DrawCursor(Vector2 bonus, bool smart = false)
+     {
++        if (!Main.instance.IsActive)
++            return;
++        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
++        {
++            return;
++        }
+         if (gameMenu && alreadyGrabbingSunOrMoon)
+         {
+             return;
+@@ -47213,6 +_,12 @@
+ 
+     public static Vector2 DrawThickCursor(bool smart = false)
+     {
++        if (!Main.instance.IsActive)
++            return Vector2.Zero;
++        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || ImGui.GetIO().WantCaptureKeyboard))
++        {
++            return Vector2.Zero;
++        }
+         if (ThickMouse)
+         {
+             bool showGamepadCursor = PlayerInput.SettingsForUI.ShowGamepadCursor;
 @@ -47380,7 +_,7 @@
          chatMonitor.Clear();
          screenLastPosition = screenPosition;
@@ -1145,6 +1294,15 @@
              if (Main.OnPreDraw != null)
              {
                  Main.OnPreDraw(gameTime);
+@@ -61730,7 +_,7 @@
+         }
+ 
+         HoverItem = new Item();
+-        DoDraw_UpdateCameraPosition();
++        TerraAngel.Hooks.Hooks.DrawHooks.UpdateCameraHook(DoDraw_UpdateCameraPosition);
+         CheckMonoliths();
+         sunCircle += 0.01f;
+         if ((double)sunCircle > 6.285)
 @@ -62435,7 +_,7 @@
              DrawItemTextPopups(targetScale);
              PlayerInput.SetZoom_UI();
@@ -1177,6 +1335,23 @@
              int hoveredSnippet;
              if (Netplay.Connection.StatusTextHasShadows)
              {
+@@ -64970,14 +_,12 @@
+ 
+     public static void NewText(string newText, byte R = byte.MaxValue, byte G = byte.MaxValue, byte B = byte.MaxValue)
+     {
+-        chatMonitor.NewText(newText, R, G, B);
+-        SoundEngine.PlaySound(12);
++        ClientLoader.Chat.WriteLine(newText, new Color(R, G, B, 255));
+     }
+ 
+     public static void NewTextMultiline(string text, bool force = false, Microsoft.Xna.Framework.Color c = default(Microsoft.Xna.Framework.Color), int WidthLimit = -1)
+     {
+-        chatMonitor.NewTextMultiline(text, force, c, WidthLimit);
+-        SoundEngine.PlaySound(12);
++        ClientLoader.Chat.WriteLine(text, c);
+     }
+ 
+     public static void StopRain()
 @@ -66736,228 +_,9 @@
          }
      }

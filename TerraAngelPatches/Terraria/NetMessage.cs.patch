@@ -1,7 +1,8 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
-@@ -1,11 +_,14 @@
+@@ -1,11 +_,15 @@
  using System;
++using System.Diagnostics;
  using System.IO;
 -using Ionic.Zlib;
 +using System.IO.Compression;
@@ -16,7 +17,7 @@
  using Terraria.GameContent.Events;
  using Terraria.GameContent.Tile_Entities;
  using Terraria.ID;
-@@ -75,7 +_,7 @@
+@@ -75,13 +_,24 @@
          return true;
      }
  
@@ -25,6 +26,23 @@
      {
          if (Main.netMode == 0)
          {
+             return;
+         }
+ 
++        if (NetMessageWindow.LoggingMessages)
++        {
++            string stackTrace = "";
++            if (NetMessageWindow.MessagesToLogTraces.Contains(msgType))
++            {
++                stackTrace = new StackTrace(2, true).ToString();
++
++            }
++            NetMessageWindow.AddPacket(new NetPacketInfo(msgType, true, number, number2, number3, number4, number5, number6, number7, stackTrace));
++        }
++
+         if (msgType == 21 && (Main.item[number].shimmerTime > 0f || Main.item[number].shimmered))
+         {
+             msgType = 145;
 @@ -1722,281 +_,7 @@
                      }
                  }
@@ -324,7 +342,7 @@
  
                  num5 = 4;
                  byte b3;
-@@ -2392,9 +_,9 @@
+@@ -2392,9 +_,14 @@
          DecompressTileBlock_Inner(binaryReader, binaryReader.ReadInt32(), binaryReader.ReadInt32(), binaryReader.ReadInt16(), binaryReader.ReadInt16());
      }
  
@@ -332,6 +350,11 @@
 +    public unsafe static void DecompressTileBlock_Inner(BinaryReader reader, int xStart, int yStart, int width, int height)
      {
 -        Tile tile = null;
++        if (xStart % Main.sectionWidth == 0 && yStart % Main.sectionHeight == 0 && width == Main.sectionWidth && height == Main.sectionHeight)
++        {
++            Main.tile.LoadedTileSections[xStart / Main.sectionWidth, yStart / Main.sectionHeight] = true;
++        }
++
 +        ref TileData tile = ref Unsafe.NullRef<TileData>();
          int num = 0;
          for (int i = yStart; i < yStart + height; i++)
