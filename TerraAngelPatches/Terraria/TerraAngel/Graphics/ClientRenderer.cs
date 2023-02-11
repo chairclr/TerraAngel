@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.WorldEdits;
 using Terraria.GameContent;
@@ -160,7 +156,7 @@ public class ClientRenderer : ImGuiRenderer
     public void PreDraw()
     {
         Time.UpdateDraw();
-        
+
         InputSystem.EndUpdateInput();
         InputSystem.UpdateInput();
         base.BeforeLayout();

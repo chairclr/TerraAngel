@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
-namespace TerraAngel.Graphics;
 
+namespace TerraAngel.Graphics;
 
 public class ImGuiRenderer
 {
@@ -19,12 +19,12 @@ public class ImGuiRenderer
 
     private RasterizerState RasterizerState;
 
-    private VertexBuffer VertexBuffer;
-    private byte[] VertexData;
+    private VertexBuffer? VertexBuffer;
+    private byte[]? VertexData;
     private int VertexBufferSize;
 
-    private IndexBuffer IndexBuffer;
-    private byte[] IndexData;
+    private IndexBuffer? IndexBuffer;
+    private byte[]? IndexData;
     private int IndexBufferSize;
 
     // Input
@@ -35,18 +35,8 @@ public class ImGuiRenderer
 
     public ImGuiRenderer(Game game)
     {
-        SetupContext();
-        SetupGraphics(game);
-        SetupInput();
-    }
+        ImGui.CreateContext();
 
-    protected virtual void SetupContext()
-    {
-        IntPtr context = ImGui.CreateContext();
-    }
-
-    protected virtual void SetupGraphics(Game game)
-    {
         TargetGame = game ?? throw new ArgumentNullException(nameof(game));
         GraphicsDevice = game.GraphicsDevice;
 
@@ -69,37 +59,50 @@ public class ImGuiRenderer
         ImGuiShader = new BasicEffect(GraphicsDevice);
         ImGuiShader.TextureEnabled = true;
         ImGuiShader.VertexColorEnabled = true;
+
+        SetupGraphics();
+
+        SetupInput();
+
+        SetupFonts();
     }
+
+    protected virtual void SetupGraphics()
+    {
+
+    }
+
     protected virtual void SetupInput()
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Tab] =        (int)Keys.Tab);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] =  (int)Keys.Left);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left);
         keyRemappings.Add(io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.UpArrow] =    (int)Keys.Up);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.DownArrow] =  (int)Keys.Down);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageUp] =     (int)Keys.PageUp);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageDown] =   (int)Keys.PageDown);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Home] =       (int)Keys.Home);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.End] =        (int)Keys.End);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Delete] =     (int)Keys.Delete);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Backspace] =  (int)Keys.Back);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Enter] =      (int)Keys.Enter);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Escape] =     (int)Keys.Escape);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Space] =      (int)Keys.Space);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.A] =          (int)Keys.A);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.C] =          (int)Keys.C);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.V] =          (int)Keys.V);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.X] =          (int)Keys.X);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Y] =          (int)Keys.Y);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Z] =          (int)Keys.Z);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Back);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape);
+        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Space] = (int)Keys.Space);
 
-        io.Fonts.AddFontDefault();
+        for (ImGuiKey i = ImGuiKey.A; i <= ImGuiKey.Z; i++)
+        {
+            keyRemappings.Add(io.KeyMap[(int)i] = (i - ImGuiKey.A) + (int)Keys.A);
+        }
+    }
+
+    protected virtual void SetupFonts()
+    {
         ClientAssets.LoadFonts(ImGui.GetIO());
     }
 
-    public virtual nint BindTexture(Texture2D texture)
+    public nint BindTexture(Texture2D texture)
     {
         nint id = TextureId++;
 
@@ -107,12 +110,13 @@ public class ImGuiRenderer
 
         return id;
     }
-    public virtual void UnbindTexture(nint textureId)
+
+    public void UnbindTexture(nint textureId)
     {
         LoadedTextures.Remove(textureId);
     }
 
-    public virtual void BeforeLayout()
+    public void BeforeLayout()
     {
         ImGuiIOPtr io = ImGui.GetIO();
         io.DeltaTime = Time.DrawDeltaTime;
@@ -124,21 +128,25 @@ public class ImGuiRenderer
         ImGuiShader.Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
         ImGui.NewFrame();
     }
-    public virtual void AfterLayout()
+
+    public void AfterLayout()
     {
         ImGui.Render();
         RenderDrawData(ImGui.GetDrawData());
     }
 
-    public virtual unsafe void RebuildFontAtlas()
+    public unsafe void RebuildFontAtlas()
     {
         ImGuiIOPtr io = ImGui.GetIO();
+
         if (!io.Fonts.Build()) throw new InvalidOperationException("Failed to build font");
+
         io.Fonts.GetTexDataAsRGBA32(out byte* pixelData, out int width, out int height, out int bytesPerPixel);
 
         if (pixelData == null) throw new NullReferenceException($"Failed to get font data '{nameof(pixelData)}' was null");
 
         Texture2D tex2d = new Texture2D(GraphicsDevice, width, height, false, SurfaceFormat.Color);
+
         tex2d.SetDataPointerEXT(0, null, (IntPtr)pixelData, width * height * bytesPerPixel);
 
         if (FontTextureId.HasValue) UnbindTexture(FontTextureId.Value);
@@ -146,15 +154,16 @@ public class ImGuiRenderer
         FontTextureId = BindTexture(tex2d);
 
         io.Fonts.SetTexID(FontTextureId.Value);
+
         io.Fonts.ClearTexData();
     }
 
-    protected virtual void SetEffectTexture(Texture2D texture)
+    protected void SetEffectTexture(Texture2D texture)
     {
         ImGuiShader.Texture = texture;
     }
 
-    protected virtual void UpdateInput()
+    protected void UpdateInput()
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
@@ -198,7 +207,6 @@ public class ImGuiRenderer
         SamplerState lastSamplerState = GraphicsDevice.SamplerStates[0];
         BlendState lastBlendState = GraphicsDevice.BlendState;
         RasterizerState lastRasterizerState = GraphicsDevice.RasterizerState;
-        Viewport lastViewPort = GraphicsDevice.Viewport;
 
         GraphicsDevice.BlendFactor = Color.White;
         GraphicsDevice.BlendState = BlendState.NonPremultiplied;
@@ -219,8 +227,8 @@ public class ImGuiRenderer
         GraphicsDevice.SamplerStates[0] = lastSamplerState;
         GraphicsDevice.BlendState = lastBlendState;
         GraphicsDevice.RasterizerState = lastRasterizerState;
-        GraphicsDevice.Viewport = lastViewPort;
     }
+
     private unsafe void UpdateBuffers(ImDrawDataPtr drawData)
     {
         if (drawData.TotalVtxCount == 0)
@@ -250,24 +258,30 @@ public class ImGuiRenderer
         int vtxOffset = 0;
         int idxOffset = 0;
 
+        Span<byte> vertexDataSpan = new Span<byte>(VertexData, 0, drawData.TotalVtxCount * DrawVertDeclaration.Size);
+        Span<byte> indexDataSpan = new Span<byte>(IndexData, 0, drawData.TotalIdxCount * sizeof(ushort));
+
         for (int i = 0; i < drawData.CmdListsCount; i++)
         {
             ImDrawListPtr cmdList = drawData.CmdListsRange[i];
 
-            fixed (void* vtxDstPtr = &VertexData[vtxOffset * DrawVertDeclaration.Size])
-            fixed (void* idxDstPtr = &IndexData[idxOffset * sizeof(ushort)])
-            {
-                Buffer.MemoryCopy((void*)cmdList.VtxBuffer.Data, vtxDstPtr, VertexData.Length, cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
-                Buffer.MemoryCopy((void*)cmdList.IdxBuffer.Data, idxDstPtr, IndexData.Length, cmdList.IdxBuffer.Size * sizeof(ushort));
-            }
+            Span<byte> vertexSourceSpan = new Span<byte>((byte*)cmdList.VtxBuffer.Data, cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
+            Span<byte> indexSourceSpan = new Span<byte>((byte*)cmdList.VtxBuffer.Data, cmdList.IdxBuffer.Size * sizeof(ushort));
+
+            Span<byte> vertexDestinationSpan = vertexDataSpan.Slice(vtxOffset * DrawVertDeclaration.Size, cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
+            Span<byte> indexDestinationSpan = indexDataSpan.Slice(idxOffset * DrawVertDeclaration.Size, cmdList.IdxBuffer.Size * sizeof(ushort));
+
+            vertexSourceSpan.CopyTo(vertexDestinationSpan);
+            indexSourceSpan.CopyTo(indexDestinationSpan);
 
             vtxOffset += cmdList.VtxBuffer.Size;
             idxOffset += cmdList.IdxBuffer.Size;
         }
-        
-        VertexBuffer.SetData(VertexData, 0, drawData.TotalVtxCount * DrawVertDeclaration.Size);
-        IndexBuffer.SetData(IndexData, 0, drawData.TotalIdxCount * sizeof(ushort));
+
+        VertexBuffer!.SetData(VertexData, 0, drawData.TotalVtxCount * DrawVertDeclaration.Size);
+        IndexBuffer!.SetData(IndexData, 0, drawData.TotalIdxCount * sizeof(ushort));
     }
+
     private unsafe void RenderCommandLists(ImDrawDataPtr drawData)
     {
         GraphicsDevice.SetVertexBuffer(VertexBuffer);
@@ -299,6 +313,7 @@ public class ImGuiRenderer
                 );
 
                 SetEffectTexture(cmdTexture);
+
                 pass.Apply();
 
                 GraphicsDevice.DrawIndexedPrimitives(

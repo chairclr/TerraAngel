@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using ImGuiNET;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Tags;
-using Microsoft.Win32.SafeHandles;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Scripting;
 
@@ -395,7 +391,7 @@ public class ConsoleWindow : ClientWindow
                 return;
             }
         }
-        
+
         object? expressionValue = Script.Eval(consoleInput);
         if (expressionValue is not null) WriteLine(Script.FormatObject(expressionValue));
     }
@@ -671,7 +667,7 @@ public class ConsoleWindow : ClientWindow
     private Task TextChanged(string text, int cursorPosition)
     {
         return Task.Run(
-            async () =>
+            () =>
             {
                 lock (CandidateLock)
                 {
@@ -692,18 +688,23 @@ public class ConsoleWindow : ClientWindow
         public CmdStr(string toParse)
         {
             int firstSplit = toParse.IndexOf(" ");
+
             if (firstSplit > -1)
             {
-                this.FullArgs = toParse.Substring(firstSplit + 1);
-                this.Command = toParse.Substring(0, firstSplit);
-                string s = toParse.Substring(firstSplit);
-                this.Args = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                FullArgs = toParse[(firstSplit + 1)..];
+
+                Command = toParse[..firstSplit];
+
+                string s = toParse[firstSplit..];
+
+                Args = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             }
             else
             {
-                this.Command = toParse;
+                Command = toParse;
             }
-            this.FullMessage = toParse;
+
+            FullMessage = toParse;
         }
 
         public string FullArgsFrom(int index)
