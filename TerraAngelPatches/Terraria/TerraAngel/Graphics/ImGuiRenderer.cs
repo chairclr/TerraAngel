@@ -265,14 +265,12 @@ public class ImGuiRenderer
         {
             ImDrawListPtr cmdList = drawData.CmdListsRange[i];
 
-            Span<byte> vertexSourceSpan = new Span<byte>((byte*)cmdList.VtxBuffer.Data, cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
-            Span<byte> indexSourceSpan = new Span<byte>((byte*)cmdList.VtxBuffer.Data, cmdList.IdxBuffer.Size * sizeof(ushort));
-
-            Span<byte> vertexDestinationSpan = vertexDataSpan.Slice(vtxOffset * DrawVertDeclaration.Size, cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
-            Span<byte> indexDestinationSpan = indexDataSpan.Slice(idxOffset * DrawVertDeclaration.Size, cmdList.IdxBuffer.Size * sizeof(ushort));
-
-            vertexSourceSpan.CopyTo(vertexDestinationSpan);
-            indexSourceSpan.CopyTo(indexDestinationSpan);
+            fixed (void* vtxDstPtr = &vertexDataSpan[vtxOffset * DrawVertDeclaration.Size])
+            fixed (void* idxDstPtr = &indexDataSpan[idxOffset * sizeof(ushort)])
+            {
+                Buffer.MemoryCopy((void*)cmdList.VtxBuffer.Data, vtxDstPtr, vertexDataSpan.Length, cmdList.VtxBuffer.Size * DrawVertDeclaration.Size);
+                Buffer.MemoryCopy((void*)cmdList.IdxBuffer.Data, idxDstPtr, indexDataSpan.Length, cmdList.IdxBuffer.Size * sizeof(ushort));
+            }
 
             vtxOffset += cmdList.VtxBuffer.Size;
             idxOffset += cmdList.IdxBuffer.Size;
