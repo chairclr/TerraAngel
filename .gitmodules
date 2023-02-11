@@ -4,6 +4,3 @@
 [submodule "TNA"]
 	path = TNA
 	url = https://github.com/CEO-Chair/TNA.git
-[submodule "ImGui.NET"]
-	path = ImGui.NET
-	url = https://github.com/CEO-Chair/ImGui.NET.git
