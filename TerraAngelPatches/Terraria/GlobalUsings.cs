@@ -18,3 +18,5 @@ global using Terraria;
 global using Terraria.ID;
 global using NRectangle = System.Drawing.Rectangle;
 global using Rectangle = Microsoft.Xna.Framework.Rectangle;
+global using System.Numerics;
+global using Matrix = System.Numerics.Matrix4x4;

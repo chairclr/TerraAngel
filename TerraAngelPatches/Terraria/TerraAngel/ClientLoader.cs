@@ -9,6 +9,7 @@ using TerraAngel.UI.ClientWindows;
 using TerraAngel.Plugin;
 using TerraAngel.UI;
 using TerraAngel.UI.TerrariaUI;
+using System.Runtime.CompilerServices;
 
 namespace TerraAngel;
 
@@ -89,7 +90,7 @@ public unsafe class ClientLoader
             return handle;
         });
 
-        NativeLibrary.SetDllImportResolver(typeof(Vector2).Assembly, (libraryName, assembly, searchPath) =>
+        NativeLibrary.SetDllImportResolver(typeof(Game).Assembly, (libraryName, assembly, searchPath) =>
         {
             IntPtr handle = IntPtr.Zero;
 

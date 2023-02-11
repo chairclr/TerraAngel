@@ -85,7 +85,7 @@ public static class ImGuiUtil
 
         Vector2 ScalePositionInverseY(Vector2 position)
         {
-            return VectorExtensions.Lerp(min, max, new Vector2((position.X - data.XMinMax.X) * inverseScale.X, 1f - ((position.Y - data.YMinMax.X) * inverseScale.Y)));
+            return TAVectorExtensions.Lerp(min, max, new Vector2((position.X - data.XMinMax.X) * inverseScale.X, 1f - ((position.Y - data.YMinMax.X) * inverseScale.Y)));
         }
 
         if (values.Length > 1)

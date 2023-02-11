@@ -737,6 +737,64 @@
      }
  
      protected void DrawElderEye(SpriteBatch spriteBatch, Vector2 worldPosition, float opacity, float scale, int frameNumber, Microsoft.Xna.Framework.Color passedColor)
+@@ -25119,7 +_,7 @@
+                     float hue = ((float)i + 5f) / 10f;
+                     float num10 = 200f;
+                     float num11 = (float)timeForVisualEffects / 60f;
+-                    Vector3 vector2 = Vector3.Transform(matrix: Matrix.CreateRotationX((num11 - 0.3f + (float)i * 0.1f) * 0.7f * ((float)Math.PI * 2f)) * Matrix.CreateRotationY((num11 - 0.8f + (float)i * 0.3f) * 0.7f * ((float)Math.PI * 2f)) * Matrix.CreateRotationZ((num11 + (float)i * 0.5f) * 0.1f * ((float)Math.PI * 2f)), position: Vector3.Forward);
++                    Vector3 vector2 = Vector3.Transform(matrix: Matrix.CreateRotationX((num11 - 0.3f + (float)i * 0.1f) * 0.7f * ((float)Math.PI * 2f)) * Matrix.CreateRotationY((num11 - 0.8f + (float)i * 0.3f) * 0.7f * ((float)Math.PI * 2f)) * Matrix.CreateRotationZ((num11 + (float)i * 0.5f) * 0.1f * ((float)Math.PI * 2f)), position: -Vector3.UnitZ);
+                     num10 += Utils.GetLerpValue(-1f, 1f, vector2.Z, clamped: true) * 150f;
+                     Vector2 spinningpoint = new Vector2(vector2.X, vector2.Y) * num10 * num7;
+                     float lerpValue = Utils.GetLerpValue(90f, 0f, rCurrentNPC.ai[1], clamped: true);
+@@ -30176,7 +_,7 @@
+                         float num222 = 0.9f + num220 * 0.8f;
+                         num222 *= num222;
+                         num222 *= 0.8f;
+-                        Vector2 position7 = Vector2.SmoothStep(center2, value41, num220);
++                        Vector2 position7 = VectorExtensions.SmoothStep(center2, value41, num220);
+                         Microsoft.Xna.Framework.Rectangle rectangle8 = value40.Frame(1, 7, 0, (int)(num220 * 7f));
+                         EntitySpriteDraw(value40, position7, rectangle8, transparent, proj.rotation + (float)Math.PI * 2f * (num220 + GlobalTimeWrappedHourly * 1.2f) * 0.2f + (float)num221 * ((float)Math.PI * 2f / 5f), rectangle8.Size() / 2f, num222, SpriteEffects.None);
+                     }
+@@ -32889,10 +_,10 @@
+ 
+             if (proj.type == 434)
+             {
+-                Vector2 vector112 = new Vector2(proj.ai[0], proj.ai[1]);
++                float ai0 = proj.ai[0], ai1 = proj.ai[1];
++                Vector2 vector112 = new Vector2(ai0, ai1);
+                 Vector2 v = proj.position - vector112;
+-                float num420 = (float)Math.Sqrt(v.X * v.X + v.Y * v.Y);
+-                new Vector2(4f, num420);
++                float num420 = v.Length();
+                 float rotation30 = v.ToRotation() + (float)Math.PI / 2f;
+                 Vector2 vector113 = Vector2.Lerp(proj.position, vector112, 0.5f);
+                 Microsoft.Xna.Framework.Color red = Microsoft.Xna.Framework.Color.Red;
+@@ -35486,10 +_,9 @@
+             return 0;
+         }
+ 
+-        Matrix matrix = Matrix.Invert(GameViewMatrix.ZoomMatrix);
+         Vector2 position = ReverseGravitySupport(MouseScreen);
+-        Vector2.Transform(screenPosition, matrix);
++        Vector2.Transform(screenPosition, GameViewMatrix.InverseZoomMatrix);
+-        Vector2 v = Vector2.Transform(position, matrix) + screenPosition;
++        Vector2 v = Vector2.Transform(position, GameViewMatrix.InverseZoomMatrix) + screenPosition;
+         bool flag2 = proj.Hitbox.Contains(v.ToPoint());
+         if (!((flag2 || SmartInteractProj == proj.whoAmI) & !localPlayer.lastMouseInterface))
+         {
+@@ -35574,10 +_,9 @@
+             return 0;
+         }
+ 
+-        Matrix matrix = Matrix.Invert(GameViewMatrix.ZoomMatrix);
+         Vector2 position = ReverseGravitySupport(MouseScreen);
+-        Vector2.Transform(screenPosition, matrix);
++        Vector2.Transform(screenPosition, GameViewMatrix.InverseZoomMatrix);
+-        Vector2 v = Vector2.Transform(position, matrix) + screenPosition;
++        Vector2 v = Vector2.Transform(position, GameViewMatrix.InverseZoomMatrix) + screenPosition;
+         bool flag2 = proj.Hitbox.Contains(v.ToPoint());
+         if (!((flag2 || SmartInteractProj == proj.whoAmI) & !localPlayer.lastMouseInterface))
+         {
 @@ -36363,8 +_,7 @@
                      {
                          int num = item.type - 71;

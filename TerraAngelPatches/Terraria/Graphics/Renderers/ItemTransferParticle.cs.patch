@@ -1,0 +1,11 @@
+--- src/Terraria/Terraria/Graphics/Renderers/ItemTransferParticle.cs
++++ src/TerraAngel/Terraria/Graphics/Renderers/ItemTransferParticle.cs
+@@ -54,7 +_,7 @@
+         float fromValue = (float)_lifeTimeCounted / (float)_lifeTimeTotal;
+         float toMin = Utils.Remap(fromValue, 0.1f, 0.5f, 0f, 0.85f);
+         toMin = Utils.Remap(fromValue, 0.5f, 0.9f, toMin, 1f);
+-        Vector2.Hermite(ref StartPosition, ref BezierHelper1, ref EndPosition, ref BezierHelper2, toMin, out var result);
++        VectorExtensions.Hermite(ref StartPosition, ref BezierHelper1, ref EndPosition, ref BezierHelper2, toMin, out var result);
+         float toMin2 = Utils.Remap(fromValue, 0f, 0.1f, 0f, 1f);
+         toMin2 = Utils.Remap(fromValue, 0.85f, 0.95f, toMin2, 0f);
+         float num = Utils.Remap(fromValue, 0f, 0.25f, 0f, 1f) * Utils.Remap(fromValue, 0.85f, 0.95f, 1f, 0f);

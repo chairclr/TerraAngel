@@ -97,6 +97,7 @@ public class ConsoleWindow : ClientWindow
                 else
                 {
                     ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + (i + 1 < ConsoleItems.Count ? 1f : 0f));
+                    ImGui.Dummy(Vector2.Zero);
                 }
 
                 ImGui.PopStyleColor();

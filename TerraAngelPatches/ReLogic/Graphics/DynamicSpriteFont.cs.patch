@@ -1,0 +1,11 @@
+--- src/Terraria/ReLogic/Graphics/DynamicSpriteFont.cs
++++ src/TerraAngel/ReLogic/Graphics/DynamicSpriteFont.cs
+@@ -153,7 +_,7 @@
+             Vector2 position = zero;
+             position.X += (float)padding.X * scale.X;
+             position.Y += (float)padding.Y * scale.Y;
+-            Vector2.Transform(ref position, ref matrix, out position);
++            position = Vector2.Transform(position, matrix);
+             position += startPosition;
+             spriteBatch.Draw(characterData.Texture, position, characterData.Glyph, color, rotation, Vector2.Zero, scale, spriteEffects, depth);
+             zero.X += (kerning.Y + kerning.Z) * scale.X * one.X;

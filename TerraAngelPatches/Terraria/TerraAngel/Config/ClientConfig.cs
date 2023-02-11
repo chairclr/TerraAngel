@@ -309,34 +309,34 @@ public class ClientConfig
     }
 
 
-    public class VectorConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(Vector2) || objectType == typeof(Vector3) || objectType == typeof(Vector4);
-        }
-
-        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
-        {
-            if (objectType == typeof(Vector2)) return serializer.Deserialize<System.Numerics.Vector2>(reader).ToXNA();
-            if (objectType == typeof(Vector3)) return serializer.Deserialize<System.Numerics.Vector3>(reader).ToXNA();
-            if (objectType == typeof(Vector4)) return serializer.Deserialize<System.Numerics.Vector4>(reader).ToXNA();
-            return existingValue;
-        }
-
-        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-        {
-            if (value is Vector2 vec2) serializer.Serialize(writer, vec2.ToNumerics());
-            if (value is Vector3 vec3) serializer.Serialize(writer, vec3.ToNumerics());
-            if (value is Vector4 vec4) serializer.Serialize(writer, vec4.ToNumerics());
-        }
-    }
+    //public class VectorConverter : JsonConverter
+    //{
+    //    public override bool CanConvert(Type objectType)
+    //    {
+    //        return objectType == typeof(Vector2) || objectType == typeof(Vector3) || objectType == typeof(Vector4);
+    //    }
+    //
+    //    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    //    {
+    //        if (objectType == typeof(Vector2)) return serializer.Deserialize<System.Numerics.Vector2>(reader).ToXNA();
+    //        if (objectType == typeof(Vector3)) return serializer.Deserialize<System.Numerics.Vector3>(reader).ToXNA();
+    //        if (objectType == typeof(Vector4)) return serializer.Deserialize<System.Numerics.Vector4>(reader).ToXNA();
+    //        return existingValue;
+    //    }
+    //
+    //    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    //    {
+    //        if (value is Vector2 vec2) serializer.Serialize(writer, vec2.ToNumerics());
+    //        if (value is Vector3 vec3) serializer.Serialize(writer, vec3.ToNumerics());
+    //        if (value is Vector4 vec4) serializer.Serialize(writer, vec4.ToNumerics());
+    //    }
+    //}
 
     public static JsonSerializerSettings SerializerSettings = new JsonSerializerSettings()
     {
         Converters = new List<JsonConverter>()
         {
-            new VectorConverter(),
+        //    new VectorConverter(),
         },
         Formatting = Formatting.Indented,
     };

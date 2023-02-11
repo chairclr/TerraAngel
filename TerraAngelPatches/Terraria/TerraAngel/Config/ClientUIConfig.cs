@@ -104,7 +104,7 @@ public class ClientUIConfig
             ImGuiStylePtr styleCache = style;
 
             JsonSerializer serializer = new JsonSerializer();
-            serializer.Converters.Add(new ClientConfig.VectorConverter());
+            //serializer.Converters.Add(new ClientConfig.VectorConverter());
 
             foreach (KeyValuePair<string, object> kvp in value)
             {

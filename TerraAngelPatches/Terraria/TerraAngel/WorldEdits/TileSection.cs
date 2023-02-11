@@ -91,7 +91,7 @@ public class TileSectionRenderer
         Rectangle wallRectCache = new Rectangle(0, 0, 32, 32);
 
 
-        origin = Vector2.Transform(origin, Matrix.Invert(Main.GameViewMatrix.ZoomMatrix));
+        origin = Vector2.Transform(origin, Main.GameViewMatrix.InverseZoomMatrix);
 
         sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
         for (int x = 0; x < section.Width; x++)
@@ -139,7 +139,7 @@ public class TileSectionRenderer
 
         Rectangle rectCache = new Rectangle(0, 0, 1, 1);
 
-        origin = Vector2.Transform(origin, Matrix.Invert(Main.GameViewMatrix.ZoomMatrix));
+        origin = Vector2.Transform(origin, Main.GameViewMatrix.InverseZoomMatrix);
 
         sb.Begin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
         for (int x = 0; x < section.Width; x++)

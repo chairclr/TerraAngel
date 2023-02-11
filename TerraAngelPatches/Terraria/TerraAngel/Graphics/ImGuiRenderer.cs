@@ -99,6 +99,7 @@ public class ImGuiRenderer
 
     protected virtual void SetupFonts()
     {
+        ImGui.GetIO().Fonts.AddFontDefault();
         ClientAssets.LoadFonts(ImGui.GetIO());
     }
 

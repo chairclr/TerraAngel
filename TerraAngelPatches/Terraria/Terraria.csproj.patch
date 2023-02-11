@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,232 @@
+@@ -3,40 +_,234 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -51,12 +51,14 @@
 +
 +  <!-- New libraries added -->
 +  <ItemGroup>
-+    <Reference Include="FNA">
++    <!-- <Reference Include="FNA">
 +      <HintPath>Libraries\FNA\FNA.dll</HintPath>
 +    </Reference>
 +    <Reference Include="ImGui.NET">
 +      <HintPath>Libraries\ImGui\ImGui.NET.dll</HintPath>
-+    </Reference>
++    </Reference> -->
++    <ProjectReference Include="..\..\..\TNA\FNA.Core.csproj" />
++    <ProjectReference Include="..\..\..\ImGui.NET\src\ImGui.NET\ImGui.NET.csproj" />
 +    <ProjectReference Include="..\TerraAngel.PluginAPI\TerraAngel.PluginAPI.csproj" />
 +  </ItemGroup>
 +

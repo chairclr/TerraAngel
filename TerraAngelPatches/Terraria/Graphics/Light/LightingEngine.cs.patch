@@ -21,7 +21,13 @@
      private void ApplyPerFrameLights()
      {
          for (int i = 0; i < _perFrameLights.Count; i++)
-@@ -213,7 +_,11 @@
+@@ -208,12 +_,16 @@
+             {
+                 Vector3 value = _perFrameLights[i].Color;
+                 Vector3 value2 = _workingLightMap[position.X - _workingProcessedArea.X, position.Y - _workingProcessedArea.Y];
+-                Vector3.Max(ref value2, ref value, out value);
++                value = Vector3.Max(value2, value);
+                 _workingLightMap[position.X - _workingProcessedArea.X, position.Y - _workingProcessedArea.Y] = value;
              }
          }
  

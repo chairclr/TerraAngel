@@ -56,3 +56,16 @@
          }
  
          FixDerpedRebinds();
+@@ -1548,10 +_,9 @@
+         {
+             Main.SmartCursorWanted_GamePad = false;
+             Matrix zoomMatrix = Main.GameViewMatrix.ZoomMatrix;
+-            Matrix matrix = Matrix.Invert(zoomMatrix);
+             Vector2 mouseScreen = Main.MouseScreen;
+-            Vector2.Transform(Main.screenPosition, matrix);
++            Vector2.Transform(Main.screenPosition, Main.GameViewMatrix.InverseZoomMatrix);
+-            Vector2 vector2 = Vector2.Transform((Vector2.Transform(mouseScreen, matrix) + zero * new Vector2(16f) + Main.screenPosition).ToTileCoordinates().ToWorldCoordinates() - Main.screenPosition, zoomMatrix);
++            Vector2 vector2 = Vector2.Transform((Vector2.Transform(mouseScreen, Main.GameViewMatrix.InverseZoomMatrix) + zero * new Vector2(16f) + Main.screenPosition).ToTileCoordinates().ToWorldCoordinates() - Main.screenPosition, zoomMatrix);
+             MouseX = (int)vector2.X;
+             MouseY = (int)vector2.Y;
+             SettingsForUI.SetCursorMode(CursorMode.Gamepad);

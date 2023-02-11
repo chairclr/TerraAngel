@@ -188,7 +188,6 @@ public class ChatWindow : ClientWindow
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
             drawList.PushClipRect(drawList.GetClipRectMin(), drawList.GetClipRectMax() + new Vector2(0, 5f));
             Vector2 tip = style.ItemSpacing;
-            style.ItemSpacing = new Vector2(4f, 1f);
             float wrapWidth = ImGui.GetContentRegionAvail().X;
 
             lock (ChatLock)
@@ -199,6 +198,7 @@ public class ChatWindow : ClientWindow
 
                     if (item.CountAbove > 0) item.TextSnippets[item.TextSnippets.Count - 1].Text = $" ({item.CountAbove})";
 
+                    style.ItemSpacing = new Vector2(4f, 1f);
                     Vector2 textSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
 
                     bool showMessageFade = false;
@@ -229,6 +229,8 @@ public class ChatWindow : ClientWindow
                     else
                     {
                         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + (i + 1 < ChatItems.Count ? style.ItemSpacing.Y : 0f));
+                        style.ItemSpacing.Y = 0f;
+                        ImGui.Dummy(Vector2.Zero);
                     }
                 }
             }

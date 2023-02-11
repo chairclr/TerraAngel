@@ -28,11 +28,16 @@
      public Matrix TransformationMatrix
      {
          get
-@@ -143,6 +_,7 @@
+@@ -143,9 +_,11 @@
          Matrix matrix = Matrix.CreateOrthographicOffCenter(0f, vector.X, vector.Y, 0f, 0f, 1f);
          _translation = translation;
          _zoomMatrix = Matrix.CreateTranslation(0f - translation.X, 0f - translation.Y, 0f) * Matrix.CreateScale(_zoom.X, _zoom.Y, 1f);
-+        Matrix.Invert(ref _zoomMatrix, out _inverseZoomMatrix);
++        Matrix.Invert(_zoomMatrix, out _inverseZoomMatrix);
          _effectMatrix = identity;
          _transformationMatrix = identity * _zoomMatrix;
-         _normalizedTransformationMatrix = Matrix.Invert(identity) * _zoomMatrix * matrix;
+-        _normalizedTransformationMatrix = Matrix.Invert(identity) * _zoomMatrix * matrix;
++        Matrix.Invert(identity, out Matrix inverseIdentity);
++        _normalizedTransformationMatrix = inverseIdentity * _zoomMatrix * matrix;
+         _needsRebuild = false;
+     }
+ 
