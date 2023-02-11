@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,43 @@
+@@ -1,18 +_,47 @@
 +using System;
 +using System.Collections.Generic;
 +using System.Runtime.CompilerServices;
@@ -35,6 +35,10 @@
 +    public Tile()
 +    {
 +        Data = null;
++    }
++    public Tile(ref TileData data)
++    {
++        Data = (TileData*)Unsafe.AsPointer(ref data);
 +    }
 +    public Tile(TileData* data)
 +    {

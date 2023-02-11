@@ -41,25 +41,26 @@ public unsafe class NativeTileMap
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
-            return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[x][y]));
+            return new Tile(ref TileHeap[x][y]);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
-            TileHeap[x][y] = *value.Data;
+            TileHeap[x][y] = value.RefData;
         }
     }
+
     public Tile this[Vector2i position]
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
-            return new Tile((TileData*)Unsafe.AsPointer(ref TileHeap[position.X][position.Y]));
+            return new Tile(ref TileHeap[position.X][position.Y]);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
-            TileHeap[position.X][position.Y] = *value.Data;
+            TileHeap[position.X][position.Y] = value.RefData;
         }
     }
 

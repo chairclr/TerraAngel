@@ -45,30 +45,311 @@
          }
  
          for (int n = 0; n < Main.countsAsHostForGameplay.Length; n++)
-@@ -66261,6 +_,7 @@
+@@ -66212,11 +_,6 @@
+     {
+         try
+         {
+-            if (testTile == null)
+-            {
+-                return true;
+-            }
+-
+             if (testTile.active() && Main.tileSolid[testTile.type] && !Main.tileSolidTop[testTile.type] && !testTile.halfBrick() && testTile.slope() == 0 && !testTile.inActive())
+             {
+                 return true;
+@@ -66231,7 +_,7 @@
+ 
+     public static bool TileEmpty(int i, int j)
+     {
+-        if (Main.tile[i, j] != null && Main.tile[i, j].active())
++        if (Main.tile.IsTileInLoadedSection(i, j) && Main.tile[i, j].active())
+         {
+             return Main.tile[i, j].inActive();
+         }
+@@ -66239,9 +_,11 @@
+         return true;
+     }
+ 
++    public static bool SolidOrSlopedTile(Tile tile) => SolidOrSlopedTile(ref tile.RefData);
++
+-    public static bool SolidOrSlopedTile(Tile tile)
++    public static bool SolidOrSlopedTile(ref TileData tile)
+     {
+-        if (tile != null && tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type])
++        if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type])
+         {
+             return !tile.inActive();
+         }
+@@ -66261,12 +_,13 @@
  
      public static bool SolidOrSlopedTile(int x, int y)
      {
+-        return SolidOrSlopedTile(Main.tile[x, y]);
 +        if (!Main.tile.IsTileInLoadedSection(x, y)) return true;
-         return SolidOrSlopedTile(Main.tile[x, y]);
++        return SolidOrSlopedTile(ref Main.tile.GetTileRef(x, y));
      }
  
-@@ -66291,13 +_,9 @@
+     public static bool IsRope(int x, int y)
+     {
+-        if (Main.tile[x, y] == null || !Main.tile[x, y].active())
++        if (!Main.tile.IsTileInLoadedSection(x, y) || !Main.tile[x, y].active())
+         {
+             return false;
+         }
+@@ -66276,7 +_,7 @@
+             return true;
+         }
+ 
+-        if ((Main.tile[x, y].type == 314 || TileID.Sets.Platforms[Main.tile[x, y].type]) && Main.tile[x, y - 1] != null && Main.tile[x, y + 1] != null && Main.tile[x, y - 1].active() && Main.tile[x, y + 1].active() && Main.tileRope[Main.tile[x, y - 1].type] && Main.tileRope[Main.tile[x, y + 1].type])
++        if ((Main.tile[x, y].type == 314 || TileID.Sets.Platforms[Main.tile[x, y].type]) && Main.tile.IsTileInLoadedSection(x, y - 1) && Main.tile.IsTileInLoadedSection(x, y + 1) && Main.tile[x, y - 1].active() && Main.tile[x, y + 1].active() && Main.tileRope[Main.tile[x, y - 1].type] && Main.tileRope[Main.tile[x, y + 1].type])
+         {
+             return true;
+         }
+@@ -66291,16 +_,15 @@
  
      public static bool SolidTile(int i, int j, bool noDoors = false)
      {
 +        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
          try
          {
 -            if (Main.tile[i, j] == null)
 -            {
 -                return true;
 -            }
--
-             if (Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type] && !Main.tile[i, j].halfBrick() && Main.tile[i, j].slope() == 0 && !Main.tile[i, j].inActive())
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+-            if (Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileSolidTop[Main.tile[i, j].type] && !Main.tile[i, j].halfBrick() && Main.tile[i, j].slope() == 0 && !Main.tile[i, j].inActive())
++            if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !tile.halfBrick() && tile.slope() == 0 && !tile.inActive())
              {
-                 if (noDoors && Main.tile[i, j].type == 10)
-@@ -77508,6 +_,9 @@
+-                if (noDoors && Main.tile[i, j].type == 10)
++                if (noDoors && tile.type == 10)
+                 {
+                     return false;
+                 }
+@@ -66319,11 +_,6 @@
+     {
+         try
+         {
+-            if (testTile == null)
+-            {
+-                return true;
+-            }
+-
+             if (testTile.active() && Main.tileSolid[testTile.type] && testTile.slope() == 0 && !testTile.halfBrick() && !testTile.inActive())
+             {
+                 return true;
+@@ -66354,13 +_,11 @@
+ 
+     public static bool SolidTileAllowBottomSlope(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]) && (!tile.topSlope() || (TileID.Sets.Platforms[tile.type] && PlatformProperTopFrame(tile.frameX))) && !tile.halfBrick() && !tile.inActive())
+             {
+@@ -66376,13 +_,11 @@
+ 
+     public static bool ActiveAndWalkableTile(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && Main.tileSolid[tile.type] && !tile.inActive())
+             {
+@@ -66398,13 +_,11 @@
+ 
+     public static bool SolidTileAllowTopSlope(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && (Main.tileSolid[tile.type] || tile.type == 380) && (!tile.bottomSlope() || (TileID.Sets.Platforms[tile.type] && tile.halfBrick())) && !tile.inActive())
+             {
+@@ -66420,13 +_,11 @@
+ 
+     public static bool SolidTileAllowLeftSlope(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && Main.tileSolid[tile.type] && !tile.rightSlope() && !TileID.Sets.Platforms[tile.type] && !tile.inActive())
+             {
+@@ -66442,13 +_,11 @@
+ 
+     public static bool SolidTileAllowRightSlope(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && Main.tileSolid[tile.type] && !tile.leftSlope() && !TileID.Sets.Platforms[tile.type] && !tile.inActive())
+             {
+@@ -66464,13 +_,11 @@
+ 
+     public static bool TopEdgeCanBeAttachedTo(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]) && (!tile.topSlope() || (TileID.Sets.Platforms[tile.type] && PlatformProperTopFrame(tile.frameX))) && !tile.halfBrick() && !tile.inActive())
+             {
+@@ -66486,13 +_,11 @@
+ 
+     public static bool RightEdgeCanBeAttachedTo(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !tile.rightSlope() && !tile.halfBrick() && !tile.inActive() && !Main.tileNoAttach[tile.type])
+             {
+@@ -66508,13 +_,11 @@
+ 
+     public static bool LeftEdgeCanBeAttachedTo(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !tile.leftSlope() && !tile.halfBrick() && !tile.inActive() && !Main.tileNoAttach[tile.type])
+             {
+@@ -66530,13 +_,11 @@
+ 
+     public static bool BottomEdgeCanBeAttachedTo(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            Tile tile = Main.tile[i, j];
+-            if (tile == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+             if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !tile.bottomSlope() && !tile.inActive() && !Main.tileNoAttach[tile.type])
+             {
+@@ -66557,16 +_,13 @@
+             return false;
+         }
+ 
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         return SolidTile3(Main.tile[i, j]);
+     }
+ 
+     public static bool SolidTile3(Tile t)
+     {
+-        if (t == null)
+-        {
+-            return false;
+-        }
+-
+         if (t.active() && !t.inActive() && Main.tileSolid[t.type])
+         {
+             return !Main.tileSolidTop[t.type];
+@@ -66577,14 +_,13 @@
+ 
+     public static bool SolidTile2(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            if (Main.tile[i, j] == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+-            if (Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && ((TileID.Sets.Platforms[Main.tile[i, j].type] && (Main.tile[i, j].halfBrick() || Main.tile[i, j].topSlope())) || Main.tile[i, j].slope() == 0) && !Main.tile[i, j].halfBrick() && !Main.tile[i, j].inActive())
++            if (tile.active() && Main.tileSolid[tile.type] && ((TileID.Sets.Platforms[tile.type] && (tile.halfBrick() || tile.topSlope())) || tile.slope() == 0) && !tile.halfBrick() && !tile.inActive())
+             {
+                 return true;
+             }
+@@ -66598,14 +_,13 @@
+ 
+     public static bool SolidTileNoAttach(int i, int j)
+     {
++        if (!Main.tile.IsTileInLoadedSection(i, j)) return true;
++
+         try
+         {
+-            if (Main.tile[i, j] == null)
+-            {
+-                return true;
+-            }
++            ref TileData tile = ref Main.tile.GetTileRef(i, j);
+ 
+-            if (Main.tile[i, j].active() && Main.tileSolid[Main.tile[i, j].type] && !Main.tileNoAttach[Main.tile[i, j].type] && Main.tile[i, j].slope() == 0 && !Main.tile[i, j].halfBrick() && !Main.tile[i, j].inActive())
++            if (tile.active() && Main.tileSolid[tile.type] && !Main.tileNoAttach[tile.type] && tile.slope() == 0 && !tile.halfBrick() && !tile.inActive())
+             {
+                 return true;
+             }
+@@ -77508,10 +_,13 @@
  
      public static void TileFrame(int i, int j, bool resetFrame = false, bool noBreak = false)
      {
@@ -78,6 +359,11 @@
          bool addToList = false;
          try
          {
+-            if (i > 5 && j > 5 && i < Main.maxTilesX - 5 && j < Main.maxTilesY - 5 && Main.tile[i, j] != null)
++            if (i > 5 && j > 5 && i < Main.maxTilesX - 5 && j < Main.maxTilesY - 5)
+             {
+                 if (SkipFramingBecauseOfGen && !Main.tileFrameImportant[Main.tile[i, j].type])
+                 {
 @@ -82521,7 +_,7 @@
          {
              for (int j = y - 1; j <= y + 1; j++)
