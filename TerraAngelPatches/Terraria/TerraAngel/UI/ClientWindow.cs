@@ -17,9 +17,12 @@ public abstract class ClientWindow
     public virtual Keys ToggleKey => Keys.None;
 
     public virtual void Init() { }
+
     public virtual void OnEnable() { }
+
     public virtual void OnDisable() { }
 
     public abstract void Draw(ImGuiIOPtr io);
+
     public virtual void Update() { }
 }

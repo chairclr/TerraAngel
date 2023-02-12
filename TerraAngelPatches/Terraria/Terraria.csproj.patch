@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,234 @@
+@@ -3,40 +_,236 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -46,7 +46,7 @@
 -    <Reference Include="System.Windows.Forms" />
 -    <Reference Include="WindowsBase" />
 -  </ItemGroup>
-+    <Reference Include="Libraries/x64/Steamworks/Steamworks.NET.dll" />
++    <Reference Include="Libraries/win/x64/Steamworks/Steamworks.NET.dll" />
 +  </ItemGroup>
 +
 +  <!-- New libraries added -->
@@ -75,7 +75,6 @@
 +  <Target Name="FixOutputs" AfterTargets="Build">
 +    <Delete Files="$(OutDir)Steamworks.NET.dll" />
 +  </Target>
-+
 +
 +  <ItemGroup>
 +    <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.0.0" />
@@ -253,6 +252,9 @@
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="Libraries\x86\Steamworks\steam_api.dll">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Update="steam_appid.txt">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
    </ItemGroup>

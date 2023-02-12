@@ -146,6 +146,9 @@ public class ClientConfig
         [UIConfigElement("All Journey Items Available")]
         public bool ForceAllCreativeUnlocks = false;
 
+        [UIConfigElement("Enable Steam")]
+        public bool UseSteamSocialAPI = true;
+
         [UIConfigElement("Toggle UI")]
         public Keys ToggleUIVisibility = Keys.OemTilde;
 

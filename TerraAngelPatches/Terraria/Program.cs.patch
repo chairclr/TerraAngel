@@ -39,7 +39,7 @@
          ThreadPool.SetMinThreads(8, 8);
          InitializeConsoleOutput();
          SetupLogging();
-@@ -201,15 +_,17 @@
+@@ -201,15 +_,18 @@
          {
              Main.OnEngineLoad += delegate
              {
@@ -55,7 +55,8 @@
 +#endif
              Lang.InitializeLegacyLocalization();
 -            SocialAPI.Initialize();
-+            SocialAPI.Initialize(SocialMode.None);
++            if (!File.Exists($"{ClientLoader.TerrariaPath}/steam_appid.txt")) ClientConfig.Settings.UseSteamSocialAPI = false;
++            SocialAPI.Initialize(ClientConfig.Settings.UseSteamSocialAPI ? SocialMode.Steam : SocialMode.None);
              LaunchInitializer.LoadParameters(main);
              Main.OnEnginePreload += StartForceLoad;
              if (Main.dedServ)

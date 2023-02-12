@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
@@ -14,11 +15,12 @@ public static class ClientSteamUtils
     public readonly static string TerrariaManifestFile = $"appmanifest_{TerrariaAppId}.acf";
 
     private readonly static Regex SteamLibraryFoldersRegex = new Regex(@"^\s+""(path)""\s+""(.+)""", RegexOptions.Compiled);
+
     private readonly static Regex SteamManifestInstallDirRegex = new Regex(@"""installdir""[^\S\r\n]+""([^\r\n]+)""", RegexOptions.Compiled);
 
-    public static bool TryFindTerrariaDirectory(out string path)
+    public static bool TryFindTerrariaDirectory(out string? path)
     {
-        if (TryGetSteamDirectory(out string steamDirectory) && TryGetTerrariaDirectoryFromSteam(steamDirectory, out path))
+        if (TryGetSteamDirectory(out string? steamDirectory) && TryGetTerrariaDirectoryFromSteam(steamDirectory!, out path))
         {
             return true;
         }
@@ -28,7 +30,7 @@ public static class ClientSteamUtils
         return false;
     }
 
-    public static bool TryGetTerrariaDirectoryFromSteam(string steamDirectory, out string path)
+    public static bool TryGetTerrariaDirectoryFromSteam(string steamDirectory, out string? path)
     {
         string steamApps = Path.Combine(steamDirectory, "steamapps");
 
@@ -86,7 +88,7 @@ public static class ClientSteamUtils
         return false;
     }
 
-    public static bool TryGetSteamDirectory(out string path)
+    public static bool TryGetSteamDirectory(out string? path)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -104,12 +106,13 @@ public static class ClientSteamUtils
         return path != null && Directory.Exists(path);
     }
 
-    private static string GetSteamDirectoryWindows()
+    [SupportedOSPlatform("windows")]
+    private static string? GetSteamDirectoryWindows()
     {
         string keyPath = Environment.Is64BitOperatingSystem ? @"SOFTWARE\Wow6432Node\Valve\Steam" : @"SOFTWARE\Valve\Steam";
 
         using RegistryKey key = Registry.LocalMachine.CreateSubKey(keyPath);
 
-        return (string)key.GetValue("InstallPath");
+        return (string?)key.GetValue("InstallPath");
     }
 }

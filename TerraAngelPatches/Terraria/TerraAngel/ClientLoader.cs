@@ -154,7 +154,7 @@ public unsafe class ClientLoader
         {
             if (sargs.Name.StartsWith("Steamworks.NET"))
             {
-                return Assembly.LoadFrom($"{TerrariaPath}/{NewLibraryPath}/{ArchitectureString}/Steamworks/Steamworks.NET.dll");
+                return Assembly.LoadFrom($"{TerrariaPath}/{NewLibraryPath}/{PlatformString}/{ArchitectureString}/Steamworks/Steamworks.NET.dll");
             }
             return null;
         };

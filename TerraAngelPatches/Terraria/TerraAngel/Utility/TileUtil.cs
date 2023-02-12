@@ -55,9 +55,9 @@ public class TileUtil
                         num = num3;
                     }
                     float num6 = num;
-                    wallColor.R = (byte)((float)(int)color.R * num6);
-                    wallColor.G = (byte)((float)(int)color.G * num6);
-                    wallColor.B = (byte)((float)(int)color.B * num6);
+                    wallColor.R = (byte)((float)color.R * num6);
+                    wallColor.G = (byte)((float)color.G * num6);
+                    wallColor.B = (byte)((float)color.B * num6);
                     break;
                 }
         }
@@ -101,9 +101,9 @@ public class TileUtil
                         num = num3;
                     }
                     float num6 = num;
-                    tileColor.R = (byte)((float)(int)color.R * num6);
-                    tileColor.G = (byte)((float)(int)color.G * num6);
-                    tileColor.B = (byte)((float)(int)color.B * num6);
+                    tileColor.R = (byte)((float)color.R * num6);
+                    tileColor.G = (byte)((float)color.G * num6);
+                    tileColor.B = (byte)((float)color.B * num6);
                     break;
                 }
         }

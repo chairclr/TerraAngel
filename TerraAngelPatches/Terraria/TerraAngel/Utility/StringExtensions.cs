@@ -48,14 +48,12 @@ public static class StringExtensions
                 d[i] = Math.Min(Math.Min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
             }
 
-            int[] dPlaceholder = p; //placeholder to assist in swapping p and d
+            int[] dPlaceholder = p;
             p = d;
             d = dPlaceholder;
 
         }
 
-        // our last action in the above loop was to switch d and p, so p now 
-        // actually has the most recent cost counts
         return p[n];
     }
 

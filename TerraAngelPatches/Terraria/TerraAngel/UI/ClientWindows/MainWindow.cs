@@ -298,7 +298,5 @@ public class MainWindow : ClientWindow
     {
         base.Update();
 
-        // Optimization since WorldGen.TileFrame is called so fucking often
-        Hooks.Hooks.MiscHooks.framingDisabled = CringeManager.GetCringe<DisableFramingCringe>().Enabled;
     }
 }

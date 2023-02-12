@@ -12,10 +12,12 @@ public static class TAVectorExtensions
     {
         return new Vector3(v.X, v.Y, v.Z);
     }
+
     public static Vector2 Round(this Vector2 vec)
     {
         return new Vector2(MathF.Round(vec.X), MathF.Round(vec.Y));
     }
+
     public static Vector2 Normalized(this Vector2 vec)
     {
         vec.Normalize();
@@ -26,6 +28,7 @@ public static class TAVectorExtensions
     {
         return new Vector2(Util.Lerp(x0.X, x1.X, t), Util.Lerp(x0.Y, x1.Y, t));
     }
+
     public static Vector2 Lerp(Vector2 x0, Vector2 x1, Vector2 t)
     {
         return new Vector2(Util.Lerp(x0.X, x1.X, t.X), Util.Lerp(x0.Y, x1.Y, t.Y));
