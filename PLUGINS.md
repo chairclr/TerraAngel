@@ -58,11 +58,9 @@ public class ExamplePlugin : Plugin
 This requires a reference to `TerraAngelPluginAPI.dll` and `Terraria.dll`
 
 It is also recommended that you add a reference to the following:
- - `Terraria.dll`
- - `TerraAngel.PluginAPI.dll`
  - `ReLogic.dll`
  - `ImGui.NET.dll`
- - `FNA.dll`
+ - `TNA.dll`
 
 These files are located in the TerraAngel build directory. (`TerraAngel/Terraria/bin/Release/net7.0/`)
 
