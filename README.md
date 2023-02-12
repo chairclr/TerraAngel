@@ -34,7 +34,7 @@ To install the client, follow these steps:
 
   ![image](https://user-images.githubusercontent.com/87276335/182298616-e9e2299e-611c-4b7d-823e-b4d6ff828c42.png)
 
-  5. (Optional Steam) If you want to use steam you will need to copy the `steam_api.dll` and 'steam_appid.txt' files from your steam installation folder to the `src/TerraAngel/Terraria/bin/Release/net7.0/` folder
+  5. (Optional Steam) If you want to use steam you will need to copy the `steam_api.dll` and `steam_appid.txt` files from your steam installation folder to the `src/TerraAngel/Terraria/bin/Release/net7.0/` folder
 
 <h2>
 Updating
