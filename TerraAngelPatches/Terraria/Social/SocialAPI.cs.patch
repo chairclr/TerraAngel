@@ -1,6 +1,8 @@
 --- src/Terraria/Terraria/Social/SocialAPI.cs
 +++ src/TerraAngel/Terraria/Social/SocialAPI.cs
-@@ -2,8 +_,6 @@
+@@ -1,9 +_,8 @@
+ using System;
++using System.IO;
  using System.Collections.Generic;
  using ReLogic.OS;
  using Terraria.Social.Base;
@@ -18,6 +20,21 @@
      public static SocialMode Mode => _mode;
      public static void Initialize(SocialMode? mode = null)
      {
+@@ -36,8 +_,12 @@
+                 mode = SocialMode.Steam;
+             }
+         }
+-
+-        _mode = mode.Value;
++        if (File.Exists("steam_api.dll"))
++        {
++            _mode = SocialMode.Steam;
++        } else { 
++            _mode = mode.Value;
++        }
+         _modules = new List<ISocialModule>();
+         JoinRequests = new ServerJoinRequestsManager();
+         Main.OnTickForInternalCodeOnly += JoinRequests.Update;
 @@ -62,7 +_,7 @@
          _modules.Reverse();
          foreach (ISocialModule module in _modules)
