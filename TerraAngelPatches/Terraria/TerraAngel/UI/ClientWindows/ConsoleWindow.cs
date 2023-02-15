@@ -385,10 +385,10 @@ public class ConsoleWindow : ClientWindow
 
         if (message.StartsWith("#"))
         {
-            string realCommand = message.Remove(0, 1);
-            if (ConsoleCommands.TryGetValue(realCommand, out ConsoleCommand command))
+            CmdStr cmd = new CmdStr(message.Remove(0, 1));
+            if (ConsoleCommands.TryGetValue(cmd.Command, out ConsoleCommand command))
             {
-                command.CommandAction(new CmdStr(realCommand));
+                command.CommandAction(cmd);
                 return;
             }
         }
