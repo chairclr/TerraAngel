@@ -17,10 +17,6 @@ public class MainWindow : ClientWindow
 
     public override bool IsPartOfGlobalUI => true;
 
-    private bool DestroyingTheWorld = false;
-
-    private CancellationToken DestroyWorldCancellationToken = new CancellationToken(false);
-
     public override void Draw(ImGuiIOPtr io)
     {
         ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
@@ -187,74 +183,6 @@ public class MainWindow : ClientWindow
                 foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.MiscCringes))
                 {
                     cringe.DrawUI(io);
-                }
-
-                if (DestroyingTheWorld)
-                {
-                    if (ImGui.Button("Stop Destroying the World"))
-                    {
-                        DestroyWorldCancellationToken = new CancellationToken(true);
-                    }
-                }
-
-                if (ImGui.Button("Destroy the World"))
-                {
-                    DestroyingTheWorld = true;
-                    Task.Run(
-                    () =>
-                    {
-                        static void KillTile(ref TileData tile, int x, int y)
-                        {
-                            if (tile.active() && WorldGen.CanKillTile(x, y))
-                            {
-                                tile.active(false);
-                                tile.type = 0;
-                                NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.KillTileNoItem, number2: x, number3: y);
-                            }
-                        }
-
-                        static void KillWall(ref TileData tile, int x, int y)
-                        {
-                            if (tile.wall != 0)
-                            {
-                                tile.wall = 0;
-                                NetMessage.SendData(MessageID.TileManipulation, number: TileManipulationID.KillWall, number2: x, number3: y);
-                            }
-                        }
-
-                        int p = 0;
-
-                        for (int x = (int)(Main.LocalPlayer.position.X / 16f); x < Main.maxTilesX; x++)
-                        {
-                            for (int y = 0; y < Main.maxTilesY; y++)
-                            {
-                                if (DestroyWorldCancellationToken.IsCancellationRequested)
-                                {
-                                    DestroyingTheWorld = false;
-                                    return;
-                                }
-
-                                ref TileData tile = ref Main.tile.GetTileRef(x, y);
-                                if (tile.active())
-                                    p += 4;
-                                if (tile.wall != 0)
-                                    p += 3;
-
-                                KillTile(ref tile, x, y);
-                                KillWall(ref tile, x, y);
-
-                                if (p > 190)
-                                {
-                                    Main.LocalPlayer.Center = new Vector2(x, y) * 16f;
-                                    NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-                                    Thread.Sleep(105);
-                                    p = 0;
-                                }
-                            }
-                        }
-
-                        DestroyingTheWorld = false;
-                    });
                 }
 
                 ImGui.EndTabItem();

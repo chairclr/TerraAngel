@@ -386,7 +386,7 @@ public class ConsoleWindow : ClientWindow
         if (message.StartsWith("#"))
         {
             CmdStr cmd = new CmdStr(message.Remove(0, 1));
-            if (ConsoleCommands.TryGetValue(cmd.Command, out ConsoleCommand command))
+            if (ConsoleCommands.TryGetValue(cmd.Command, out ConsoleCommand? command))
             {
                 command.CommandAction(cmd);
                 return;
