@@ -27,6 +27,28 @@ public class TileUtil
         Color wallColor = WallColor[type];
         switch (paint)
         {
+            case 29:
+                {
+                    Color color = PaintColors[paint];
+                    float num = (float)(int)wallColor.R / 255f;
+                    float num2 = (float)(int)wallColor.G / 255f;
+                    float num3 = (float)(int)wallColor.B / 255f;
+                    if (num2 > num)
+                    {
+                        float num4 = num;
+                        num = num2;
+                    }
+                    if (num3 > num)
+                    {
+                        float num5 = num;
+                        num = num3;
+                    }
+                    float num7 = num3 * 0.3f;
+                    wallColor.R = (byte)((float)(int)color.R * num7);
+                    wallColor.G = (byte)((float)(int)color.G * num7);
+                    wallColor.B = (byte)((float)(int)color.B * num7);
+                    break;
+                }
             case 30:
                 {
                     wallColor.R = (byte)((255 - wallColor.R) / 2);
@@ -74,6 +96,28 @@ public class TileUtil
 
         switch (paint)
         {
+            case 29:
+                {
+                    Color color = PaintColors[paint];
+                    float num = (float)(int)tileColor.R / 255f;
+                    float num2 = (float)(int)tileColor.G / 255f;
+                    float num3 = (float)(int)tileColor.B / 255f;
+                    if (num2 > num)
+                    {
+                        float num4 = num;
+                        num = num2;
+                    }
+                    if (num3 > num)
+                    {
+                        float num5 = num;
+                        num = num3;
+                    }
+                    float num7 = num3 * 0.3f;
+                    tileColor.R = (byte)((float)(int)color.R * num7);
+                    tileColor.G = (byte)((float)(int)color.G * num7);
+                    tileColor.B = (byte)((float)(int)color.B * num7);
+                    break;
+                }
             case 30:
                 {
                     tileColor.R = (byte)(255 - tileColor.R);

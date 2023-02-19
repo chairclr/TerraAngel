@@ -223,7 +223,7 @@ public class ImGuiRenderer
 
         GraphicsDevice.BlendFactor = Color.White;
         GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-        GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+        GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicClamp;
         GraphicsDevice.RasterizerState = RasterizerState;
         GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
 
