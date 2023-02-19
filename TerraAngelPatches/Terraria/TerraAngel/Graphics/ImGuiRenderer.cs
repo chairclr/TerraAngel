@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Input;
+using TerraAngel.Graphics;
 
 namespace TerraAngel.Graphics;
 
 public class ImGuiRenderer
 {
-    private Game TargetGame;
+    private readonly Game TargetGame;
 
     // Graphics
     public GraphicsDevice GraphicsDevice;
-    public BasicEffect ImGuiShader;
+
+    public Stack<ImGuiEffect> ImGuiEffectStack = new Stack<ImGuiEffect>();
 
     // Textures
     public Dictionary<nint, Texture2D> LoadedTextures;
@@ -45,7 +49,7 @@ public class ImGuiRenderer
             { IntPtr.Zero, null } // bind null texture to id 0
         };
         TextureId = 1;
-
+        
         RasterizerState = new RasterizerState()
         {
             CullMode = CullMode.None,
@@ -56,9 +60,7 @@ public class ImGuiRenderer
             SlopeScaleDepthBias = 0
         };
 
-        ImGuiShader = new BasicEffect(GraphicsDevice);
-        ImGuiShader.TextureEnabled = true;
-        ImGuiShader.VertexColorEnabled = true;
+        ImGuiEffectStack.Push(new ImGuiEffect(GraphicsDevice, Path.Combine(ClientLoader.AssetPath, "ImGuiShader.xnb")));
 
         SetupGraphics();
 
@@ -126,7 +128,7 @@ public class ImGuiRenderer
         while (preDrawActionQueue.Count > 0)
             preDrawActionQueue.Dequeue()?.Invoke();
 
-        ImGuiShader.Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
+        ImGuiEffectStack.Peek().Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
         ImGui.NewFrame();
     }
 
@@ -159,9 +161,19 @@ public class ImGuiRenderer
         io.Fonts.ClearTexData();
     }
 
+    public void PushEffect(ImGuiEffect newEffect)
+    {
+        ImGuiEffectStack.Push(newEffect);
+    }
+
+    public void PopEffect() 
+    {
+        ImGuiEffectStack.Pop();
+    }
+
     protected void SetEffectTexture(Texture2D texture)
     {
-        ImGuiShader.Texture = texture;
+        ImGuiEffectStack.Peek().Texture = texture;
     }
 
     protected void UpdateInput()
@@ -281,11 +293,13 @@ public class ImGuiRenderer
         IndexBuffer!.SetData(IndexData, 0, drawData.TotalIdxCount * sizeof(ushort));
     }
 
+    public delegate void UserCallback(bool isPost);
+
     private unsafe void RenderCommandLists(ImDrawDataPtr drawData)
     {
         GraphicsDevice.SetVertexBuffer(VertexBuffer);
         GraphicsDevice.Indices = IndexBuffer;
-        EffectPass pass = ImGuiShader.CurrentTechnique.Passes[0];
+        EffectPass pass = ImGuiEffectStack.Peek().CurrentTechnique.Passes[0];
 
         int vtxOffset = 0;
         int idxOffset = 0;
@@ -297,7 +311,6 @@ public class ImGuiRenderer
             for (int j = 0; j < cmdList.CmdBuffer.Size; j++)
             {
                 ImDrawCmdPtr drawCmd = cmdList.CmdBuffer[j];
-
 
                 if (!LoadedTextures.TryGetValue(drawCmd.TextureId, out Texture2D? cmdTexture))
                 {
@@ -311,6 +324,17 @@ public class ImGuiRenderer
                     (int)(drawCmd.ClipRect.W - drawCmd.ClipRect.Y)
                 );
 
+                UserCallback? userCallback = null; 
+
+                if (drawCmd.UserCallback != -1 && drawCmd.UserCallback != 0)
+                {
+                    if (drawCmd.UserCallbackData == drawCmd.TextureId)
+                    {
+                        userCallback = Marshal.GetDelegateForFunctionPointer<UserCallback>(drawCmd.UserCallback);
+                        userCallback?.Invoke(false);
+                    }
+                }
+
                 SetEffectTexture(cmdTexture);
 
                 pass.Apply();
@@ -323,6 +347,8 @@ public class ImGuiRenderer
                     startIndex: idxOffset,
                     primitiveCount: (int)drawCmd.ElemCount / 3
                 );
+
+                userCallback?.Invoke(true);
 
                 idxOffset += (int)drawCmd.ElemCount;
             }
