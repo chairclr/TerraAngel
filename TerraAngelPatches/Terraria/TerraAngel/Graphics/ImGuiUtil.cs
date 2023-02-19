@@ -10,23 +10,34 @@ using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Chat;
 using TerraAngel.Physics;
 using Terraria.UI.Chat;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TerraAngel.Graphics;
 
 public static class ImGuiUtil
 {
+    public static Queue<int> ItemIdsToLoad = new Queue<int>();
+
+    public static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
+
+    public static Dictionary<string, GraphData> DrawGraphData = new Dictionary<string, GraphData>();
+
+    private static string? FocusedGraph = null;
+
     public static void TextColored(string text, Color color)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, color.PackedValue);
         ImGui.TextUnformatted(text);
         ImGui.PopStyleColor();
     }
+
     public static void TextColored(string text, uint color)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, color);
         ImGui.TextUnformatted(text);
         ImGui.PopStyleColor();
     }
+
     public static void ColorEdit3(string label, ref Color color)
     {
         Vector3 v3c = color.ToVector3();
@@ -35,6 +46,7 @@ public static class ImGuiUtil
             color = new Color(v3c.X, v3c.Y, v3c.Z, (color.A / 255f));
         }
     }
+
     public static void ColorEdit4(string label, ref Color color)
     {
         Vector4 v4c = color.ToVector4();
@@ -44,84 +56,77 @@ public static class ImGuiUtil
         }
     }
 
-    public class GraphData
+    public static unsafe void AddText(this ImDrawListPtr drawList, ImFontPtr font, float fontSize, Vector2 pos, string text, uint color, float wrapWidth)
     {
-        public Vector2 XMinMax;
-        public Vector2 YMinMax;
-        public Vector2 Offset; 
-        public Vector2 DragOrigin;
-        public Vector2 DragMouseOrigin;
-        public bool EditScale ;
-        public GraphData(Vector2 XMinMax, Vector2 YMinMax)
+        int textByteCount = Encoding.UTF8.GetByteCount(text);
+        byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
+        fixed (char* textStartPtr = text)
         {
-            this.XMinMax = XMinMax;
-            this.YMinMax = YMinMax;
-            this.Offset = Vector2.Zero;
-            this.DragMouseOrigin = Vector2.Zero;
-            this.DragOrigin = Vector2.Zero;
+            int native_text_begin_offset = Encoding.UTF8.GetBytes(textStartPtr, text.Length, nativeTextPtr, textByteCount);
+            nativeTextPtr[native_text_begin_offset] = 0;
         }
+        byte* native_text_end = null;
+
+        ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, font.NativePtr, fontSize, pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
     }
 
-    public static Dictionary<string, GraphData> DrawGraphData = new Dictionary<string, GraphData>();
-    private static string? focusedGraph = null;
-
-    public static void DrawGraph(string id, float height, float[] values, float xMin, float xMax, float yMin, float yMax, Color lineColor, bool editX = true, bool editY = true) => DrawGraph(id, new Vector2(ImGui.GetContentRegionAvail().X, height), values, xMin, xMax, yMin, yMax, lineColor, editX, editY);
-
-    public static void DrawGraph(string id, Vector2 size, float[] values, float xMin, float xMax, float yMin, float yMax, Color lineColor, bool editX = true, bool editY = true)
+    public static unsafe void AddText(this ImDrawListPtr drawList, Vector2 pos, string text, uint color, float wrapWidth)
     {
-        if (!DrawGraphData.ContainsKey(id))
-            DrawGraphData.Add(id, new GraphData(new Vector2(xMin, xMax), new Vector2(yMin, yMax)));
-        GraphData data = DrawGraphData[id];
-
-        ImDrawListPtr drawList = ImGui.GetWindowDrawList();
-        Vector2 cursorPos = ImGui.GetCursorScreenPos();
-        ImGui.InvisibleButton(id, size);
-
-        Vector2 min = cursorPos;
-        Vector2 max = cursorPos + size;
-        drawList.AddRectFilled(min, max, ImGui.GetColorU32(ImGuiCol.PopupBg));
-        drawList.PushClipRect(min, max, true);
-        Vector2 inverseScale = Vector2.One / new Vector2((data.XMinMax.Y - data.XMinMax.X), (data.YMinMax.Y - data.YMinMax.X));
-
-        Vector2 ScalePositionInverseY(Vector2 position)
+        int textByteCount = Encoding.UTF8.GetByteCount(text);
+        byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
+        fixed (char* textStartPtr = text)
         {
-            return TAVectorExtensions.Lerp(min, max, new Vector2((position.X - data.XMinMax.X) * inverseScale.X, 1f - ((position.Y - data.YMinMax.X) * inverseScale.Y)));
+            int native_text_begin_offset = Encoding.UTF8.GetBytes(textStartPtr, text.Length, nativeTextPtr, textByteCount);
+            nativeTextPtr[native_text_begin_offset] = 0;
         }
+        byte* native_text_end = null;
 
-        if (values.Length > 1)
-        {
-            if (InputSystem.LeftMousePressed && ImGui.IsWindowFocused() && Util.IsMouseHoveringRect(min, max))
-            {
-                focusedGraph = id;
-                data.DragMouseOrigin = InputSystem.MousePosition;
-                data.DragOrigin = data.Offset;
-            }
-            if (InputSystem.LeftMouseDown && focusedGraph == id)
-            {
-                Vector2 diff = data.DragMouseOrigin - InputSystem.MousePosition;
+        ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
+    }
 
-                data.Offset = data.DragOrigin - new Vector2(editX ? diff.X : 0f, editY ? diff.Y : 0f);
-            }
-            if (InputSystem.LeftMouseReleased && focusedGraph == id)
-            {
-                focusedGraph = null;
-            }
+    public static bool WrappedSelectable(string text, float wrapWidth)
+    {
+        Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
 
-            for (int j = 1; j < values.Length; j++)
-            {
-                float x0 = (j - 1);
-                float x1 = (j);
+        ImGui.PushID(text);
+        bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
+        ImGui.PopID();
 
-                float v0 = values[j - 1];
-                float v1 = values[j];
+        Vector2 min = ImGui.GetItemRectMin();
+        Vector2 spacing = ImGui.GetStyle().ItemSpacing;
 
-                drawList.AddLine(ScalePositionInverseY(new Vector2(x0, v0)) + data.Offset, ScalePositionInverseY(new Vector2(x1, v1)) + data.Offset, lineColor.PackedValue);
-            }
-        }
+        Vector2 pos = min + spacing;
 
-        drawList.PopClipRect();
+        ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
 
-        ImGui.SetCursorScreenPos(new Vector2(cursorPos.X, cursorPos.Y + size.Y + ImGui.GetStyle().ItemSpacing.Y));
+        windowDrawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
+
+        return v;
+    }
+
+    public static bool WrappedSelectable(string id, string text, float wrapWidth)
+    {
+        Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
+
+        ImGui.PushID(id);
+        bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
+        ImGui.PopID();
+
+        Vector2 min = ImGui.GetItemRectMin();
+        Vector2 spacing = ImGui.GetStyle().ItemSpacing;
+
+        Vector2 pos = min + spacing;
+
+        ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
+
+        windowDrawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
+
+        return v;
+    }
+
+    public static void DrawRay(this ImDrawListPtr drawList, RaycastData data, uint col)
+    {
+        drawList.AddLine(Util.WorldToScreenWorld(data.Origin), Util.WorldToScreenWorld(data.End), col);
     }
 
     public static void DrawTileRect(this ImDrawListPtr drawList, Vector2 startTile, Vector2 endTile, uint col)
@@ -141,16 +146,16 @@ public static class ImGuiUtil
         drawList.AddRectFilled(min, max, col);
     }
 
-    public static Queue<int> ItemIdsToLoad = new Queue<int>();
-    public static IntPtr[] ItemImages = new IntPtr[ItemID.Count];
     public static bool ItemButton(int id, string uid, bool showTooltip = true, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
     {
         return ItemButton(ContentSamples.ItemsByType[id], uid, new Vector2(32, 32), showTooltip, isSelected, margin, 18f, alpha);
     }
+
     public static bool ItemButton(int id, string uid, Vector2 size, bool showTooltip = true, bool isSelected = false, float margin = 6f, float alpha = 1.0f)
     {
         return ItemButton(ContentSamples.ItemsByType[id], uid, size, showTooltip, isSelected, margin, 18f, alpha);
     }
+
     public static bool ItemButton(Item item, string uid, Vector2 size, bool showTooltip = true, bool isSelected = false, float margin = 6f, float countFontSize = 18f, float alpha = 1.0f)
     {
         int id = item.type;
@@ -194,24 +199,11 @@ public static class ImGuiUtil
         return clicked;
     }
 
-    public static void DrawRay(this ImDrawListPtr drawList, RaycastData data, uint col)
-    {
-        drawList.AddLine(Util.WorldToScreenWorld(data.Origin), Util.WorldToScreenWorld(data.End), col);
-    }
-    public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
-    {
-        Vector2 v = new Vector2(size);
-        DrawItem(drawList, id, center - v / 2f, v, countFontSize, alpha);
-    }
-    public static void DrawItemCentered(ImDrawListPtr drawList, Item item, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
-    {
-        Vector2 v = new Vector2(size);
-        DrawItem(drawList, item, center - v / 2f, v, countFontSize, alpha);
-    }
     public static void DrawItem(this ImDrawListPtr drawList, int id, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
     {
         DrawItem(drawList, ContentSamples.ItemsByType[id], position, size, countFontSize, alpah);
     }
+
     public static void DrawItem(this ImDrawListPtr drawList, Item item, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
     {
         int id = item.type;
@@ -294,6 +286,7 @@ public static class ImGuiUtil
             }
         }
     }
+
     public static void DrawItemDelayedLoad(this ImDrawListPtr drawList, Item item, Vector2 position, Vector2 size, float countFontSize = 14f, float alpah = 1.0f)
     {
         int id = item.type;
@@ -377,71 +370,43 @@ public static class ImGuiUtil
         }
     }
 
-    public static bool WrappedSelectable(string text, float wrapWidth)
+    public static void DrawItemCentered(ImDrawListPtr drawList, int id, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
     {
-        Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
-
-        ImGui.PushID(text);
-        bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
-        ImGui.PopID();
-
-        Vector2 min = ImGui.GetItemRectMin();
-        Vector2 spacing = ImGui.GetStyle().ItemSpacing;
-
-        Vector2 pos = min + spacing;
-
-        ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
-
-        windowDrawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
-
-        return v;
-    }
-    public static bool WrappedSelectable(string id, string text, float wrapWidth)
-    {
-        Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
-
-        ImGui.PushID(id);
-        bool v = ImGui.Selectable("", false, ImGuiSelectableFlags.None, textSize);
-        ImGui.PopID();
-
-        Vector2 min = ImGui.GetItemRectMin();
-        Vector2 spacing = ImGui.GetStyle().ItemSpacing;
-
-        Vector2 pos = min + spacing;
-
-        ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
-
-        windowDrawList.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
-
-        return v;
+        Vector2 v = new Vector2(size);
+        DrawItem(drawList, id, center - v / 2f, v, countFontSize, alpha);
     }
 
-    public static unsafe void AddText(this ImDrawListPtr drawList, ImFontPtr font, float fontSize, Vector2 pos, string text, uint color, float wrapWidth)
+    public static void DrawItemCentered(ImDrawListPtr drawList, Item item, Vector2 center, float size, float countFontSize = 14f, float alpha = 1.0f)
     {
-        int textByteCount = Encoding.UTF8.GetByteCount(text);
-        byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
-        fixed (char* textStartPtr = text)
+        Vector2 v = new Vector2(size);
+        DrawItem(drawList, item, center - v / 2f, v, countFontSize, alpha);
+    }
+
+    public static void ImGuiItemTooltip(Item item)
+    {
+        ImGui.BeginTooltip();
+
+        int yoyoLogo = 0;
+        int researchLine = 0;
+        int numLines = 1;
+        string[] array = new string[30];
+        bool[] goodPrefixLine = new bool[30];
+        bool[] badPrefixLine = new bool[30];
+
+        Main.MouseText_DrawItemTooltip_GetLinesInfo(item, ref yoyoLogo, ref researchLine, item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
+
+        for (int i = 0; i < numLines; i++)
         {
-            int native_text_begin_offset = Encoding.UTF8.GetBytes(textStartPtr, text.Length, nativeTextPtr, textByteCount);
-            nativeTextPtr[native_text_begin_offset] = 0;
+            Color color = Color.White;
+            if (i == 0) color = ItemRarity.GetColor(item.rare);
+            if (goodPrefixLine[i]) color = new Color(117, 185, 117);
+            if (badPrefixLine[i]) color = new Color(185, 117, 117);
+            TextColored(ChatManager.ParseMessage(array[i], color).StringSum(x => x.Text), color);
         }
-        byte* native_text_end = null;
 
-        ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, font.NativePtr, fontSize, pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
+        ImGui.EndTooltip();
     }
-    public static unsafe void AddText(this ImDrawListPtr drawList, Vector2 pos, string text, uint color, float wrapWidth)
-    {
-        int textByteCount = Encoding.UTF8.GetByteCount(text);
-        byte* nativeTextPtr = stackalloc byte[textByteCount + 1];
-        fixed (char* textStartPtr = text)
-        {
-            int native_text_begin_offset = Encoding.UTF8.GetBytes(textStartPtr, text.Length, nativeTextPtr, textByteCount);
-            nativeTextPtr[native_text_begin_offset] = 0;
-        }
-        byte* native_text_end = null;
 
-        ImGuiNative.ImDrawList_AddText_FontPtr(drawList.NativePtr, ImGui.GetFont().NativePtr, ImGui.GetFontSize(), pos, color, nativeTextPtr, native_text_end, wrapWidth, null);
-    }
     public unsafe static Vector2 CalcTextSizeWithTags(List<TextSnippet> tags, float wrapWidth)
     {
         ImFontPtr font = ImGui.GetFont();
@@ -531,30 +496,6 @@ public static class ImGuiUtil
 
         return textSize;
     }
-    public static void ImGuiItemTooltip(Item item)
-    {
-        ImGui.BeginTooltip();
-
-        int yoyoLogo = 0;
-        int researchLine = 0;
-        int numLines = 1;
-        string[] array = new string[30];
-        bool[] goodPrefixLine = new bool[30];
-        bool[] badPrefixLine = new bool[30];
-
-        Main.MouseText_DrawItemTooltip_GetLinesInfo(item, ref yoyoLogo, ref researchLine, item.knockBack, ref numLines, array, goodPrefixLine, badPrefixLine);
-
-        for (int i = 0; i < numLines; i++)
-        {
-            Color color = Color.White;
-            if (i == 0) color = ItemRarity.GetColor(item.rare);
-            if (goodPrefixLine[i]) color = new Color(117, 185, 117);
-            if (badPrefixLine[i]) color = new Color(185, 117, 117);
-            TextColored(ChatManager.ParseMessage(array[i], color).StringSum(x => x.Text), color);
-        }
-
-        ImGui.EndTooltip();
-    }
 
     public static bool WrappedSelectableWithTextBorder(string text, float wrapWidth, Color borderColor)
     {
@@ -580,6 +521,7 @@ public static class ImGuiUtil
         windowDrawList.AddText(pos, text, ImGui.GetColorU32(ImGuiCol.Text), wrapWidth);
         return v;
     }
+
     public static bool WrappedSelectableWithTextBorderWithTags(string id, List<TextSnippet> tags, float wrapWidth, Color borderColor, float alpha = 1.0f)
     {
         borderColor.A = (byte)(alpha * 255f);
@@ -670,6 +612,7 @@ public static class ImGuiUtil
 
         return v;
     }
+
     public static bool WrappedSelectableWithTextBorderWithTags(string id, List<TextSnippet> tags, float wrapWidth, Color borderColor, Vector2 textSize, float alpha = 1.0f)
     {
         borderColor.A = (byte)(alpha * 255f);
@@ -790,5 +733,100 @@ public static class ImGuiUtil
         }
 
         return v;
+    }
+
+    public static void DrawGraph(string id, float height, float[] values, float xMin, float xMax, float yMin, float yMax, Color lineColor, bool editX = true, bool editY = true) => DrawGraph(id, new Vector2(ImGui.GetContentRegionAvail().X, height), values, xMin, xMax, yMin, yMax, lineColor, editX, editY);
+
+    public static void DrawGraph(string id, Vector2 size, float[] values, float xMin, float xMax, float yMin, float yMax, Color lineColor, bool editX = true, bool editY = true)
+    {
+        if (!DrawGraphData.ContainsKey(id))
+            DrawGraphData.Add(id, new GraphData(new Vector2(xMin, xMax), new Vector2(yMin, yMax)));
+        GraphData data = DrawGraphData[id];
+
+        ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+        Vector2 cursorPos = ImGui.GetCursorScreenPos();
+        ImGui.InvisibleButton(id, size);
+
+        Vector2 min = cursorPos;
+        Vector2 max = cursorPos + size;
+        drawList.AddRectFilled(min, max, ImGui.GetColorU32(ImGuiCol.PopupBg));
+        drawList.PushClipRect(min, max, true);
+        Vector2 inverseScale = Vector2.One / new Vector2((data.XMinMax.Y - data.XMinMax.X), (data.YMinMax.Y - data.YMinMax.X));
+
+        Vector2 ScalePositionInverseY(Vector2 position)
+        {
+            return TAVectorExtensions.Lerp(min, max, new Vector2((position.X - data.XMinMax.X) * inverseScale.X, 1f - ((position.Y - data.YMinMax.X) * inverseScale.Y)));
+        }
+
+        if (values.Length > 1)
+        {
+            if (InputSystem.LeftMousePressed && ImGui.IsWindowFocused() && Util.IsMouseHoveringRect(min, max))
+            {
+                FocusedGraph = id;
+                data.DragMouseOrigin = InputSystem.MousePosition;
+                data.DragOrigin = data.Offset;
+            }
+            if (InputSystem.LeftMouseDown && FocusedGraph == id)
+            {
+                Vector2 diff = data.DragMouseOrigin - InputSystem.MousePosition;
+
+                data.Offset = data.DragOrigin - new Vector2(editX ? diff.X : 0f, editY ? diff.Y : 0f);
+            }
+            if (InputSystem.LeftMouseReleased && FocusedGraph == id)
+            {
+                FocusedGraph = null;
+            }
+
+            for (int j = 1; j < values.Length; j++)
+            {
+                float x0 = (j - 1);
+                float x1 = (j);
+
+                float v0 = values[j - 1];
+                float v1 = values[j];
+
+                drawList.AddLine(ScalePositionInverseY(new Vector2(x0, v0)) + data.Offset, ScalePositionInverseY(new Vector2(x1, v1)) + data.Offset, lineColor.PackedValue);
+            }
+        }
+
+        drawList.PopClipRect();
+
+        ImGui.SetCursorScreenPos(new Vector2(cursorPos.X, cursorPos.Y + size.Y + ImGui.GetStyle().ItemSpacing.Y));
+    }
+
+    public static unsafe string GetText(this ImGuiInputTextCallbackDataPtr self) => Encoding.UTF8.GetString((byte*)self.Buf, self.BufTextLen);
+
+    public static unsafe void SetText(this ImGuiInputTextCallbackDataPtr self, string text)
+    {
+        self.DeleteChars(0, self.BufTextLen);
+        self.InsertChars(0, text);
+    }
+
+    public class GraphData
+    {
+        public Vector2 XMinMax;
+
+        public Vector2 YMinMax;
+
+        public Vector2 Offset;
+
+        public Vector2 DragOrigin;
+
+        public Vector2 DragMouseOrigin;
+
+        public bool EditScale;
+
+        public GraphData(Vector2 xMinMax, Vector2 yMinMax)
+        {
+            XMinMax = xMinMax;
+
+            YMinMax = yMinMax;
+
+            Offset = Vector2.Zero;
+
+            DragMouseOrigin = Vector2.Zero;
+
+            DragOrigin = Vector2.Zero;
+        }
     }
 }

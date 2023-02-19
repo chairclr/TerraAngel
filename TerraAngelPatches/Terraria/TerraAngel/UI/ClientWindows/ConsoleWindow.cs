@@ -21,36 +21,68 @@ public class ConsoleWindow : ClientWindow
 
     public override string Title => "Console";
 
+    private string ConsoleInput = "";
+
     public Dictionary<string, ConsoleCommand> ConsoleCommands = new Dictionary<string, ConsoleCommand>();
+
     public List<ConsoleElement> ConsoleItems = new List<ConsoleElement>();
-    public ref List<string> ConsoleHistory => ref ClientConfig.Settings.ConsoleHistory;
 
-    public ref int UndoStackSize => ref ClientConfig.Settings.ConsoleUndoStackSize;
-    private List<UndoState> undoStack = new List<UndoState>() { new UndoState(0, "") };
-    private int undoStackPointer = 1;
+    public List<string> ConsoleHistory => ClientConfig.Settings.ConsoleHistory;
 
+    private int HistoryPosition = -1;
+
+    private List<UndoState> UndoStack = new List<UndoState>() { new UndoState("", 0) };
+
+    public int UndoStackSize => ClientConfig.Settings.ConsoleUndoStackSize;
+
+    private int UndoPosition = 1;
 
     public CSharpScriptEnvironment Script = new CSharpScriptEnvironment();
 
-    private List<CompletionItem> completionCandidates = new List<CompletionItem>();
-    private int currentCompletionCandidate = 0;
-    private int completionCenterView = 0;
+    private List<CompletionItem> ScriptCompletionItems = new List<CompletionItem>();
 
-    private List<string> argumentSymbols = new List<string>();
-    private int currentArgumentSymbolOverload = 0;
+    private int SelectedCompletionItem = 0;
 
-    private object ConsoleLock = new object();
-    private object CandidateLock = new object();
+    private int CompletionViewIndex = 0;
+
+    private bool FlipCompletion = false;
+
+    private List<string> ScriptCompletionArguments = new List<string>();
+
+    private int SelectedCompletionOverload = 0;
+
+    private readonly object ConsoleLock = new object();
+
+    private readonly object CandidateLock = new object();
+
+    private bool ForceConsoleInputFocus = false;
+
+    private bool ForecConsoleReclaimFocus = false;
+
     public bool ScrollToBottom = false;
-    private string consoleInput = "";
-    private int historyPos = -1;
-
-    private bool consoleFocus = false;
-    private bool consoleReclaimFocus = false;
 
     public ConsoleWindow()
     {
         Script.Init();
+
+        AddCommand(
+            "clear",
+            (x) =>
+            {
+                ConsoleItems.Clear();
+            }, "Clears the console");
+
+        AddCommand(
+            "help",
+            (x) =>
+            {
+                foreach (ConsoleCommand command in ConsoleCommands.Values)
+                {
+                    WriteLine($"{command.CommandName}: {command.CommandDescription}");
+                }
+            }, "Prints help");
+
+        WriteLine("Type #help for a list of commands");
     }
 
     public override void Draw(ImGuiIOPtr io)
@@ -81,17 +113,17 @@ public class ConsoleWindow : ClientWindow
             for (int i = 0; i < ConsoleItems.Count; i++)
             {
                 ConsoleElement item = ConsoleItems[i];
-                ImGui.PushStyleColor(ImGuiCol.Text, item.color);
+                ImGui.PushStyleColor(ImGuiCol.Text, item.TextColor.PackedValue);
                 string text = "";
-                if (item.countAbove > 0) text = $"{item.text} ({item.countAbove})";
-                else text = item.text;
+                if (item.AboveDuplicateCount > 0) text = $"{item.Text} ({item.AboveDuplicateCount})";
+                else text = item.Text;
 
                 Vector2 textSize = ImGui.CalcTextSize(text, wrapWidth);
                 if (ImGui.IsRectVisible(textSize))
                 {
                     if (ImGuiUtil.WrappedSelectable($"coni{i}", text, wrapWidth))
                     {
-                        ImGui.SetClipboardText(item.text);
+                        ImGui.SetClipboardText(item.Text);
                     }
                 }
                 else
@@ -115,25 +147,25 @@ public class ConsoleWindow : ClientWindow
         ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
         Vector2 minInput;
         Vector2 maxInput;
-        consoleFocus = false;
+        ForceConsoleInputFocus = false;
         unsafe
         {
             lock (CandidateLock)
             {
                 // wip code for multiline W
                 //if (ImGui.InputTextMultiline("##consoleInput", ref consoleInput, 2048, new Vector2(ImGui.GetWindowWidth() - style.ItemSpacing.X * 2f, MathF.Min(ImGui.CalcTextSize(consoleInput + " ").Y, ImGui.CalcTextSize(" ").Y * 6f) + style.ItemSpacing.Y * 2f), ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CtrlEnterForNewLine | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
-                if (ImGui.InputText("##consoleInput", ref consoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
+                if (ImGui.InputText("##consoleInput", ref ConsoleInput, 2048, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackEdit | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.NoUndoRedo, (x) => { lock (CandidateLock) { return TextEditCallback(x); } }))
                 {
-                    if (consoleInput.Length > 0)
+                    if (ConsoleInput.Length > 0)
                     {
-                        WriteLine(">> " + consoleInput, new Color(0, 255, 0, 255));
-                        ExecuteMessage(consoleInput);
-                        consoleInput = "";
+                        WriteLine(">> " + ConsoleInput, new Color(0, 255, 0, 255));
+                        ExecuteMessage(ConsoleInput);
+                        ConsoleInput = "";
 
                         if (ClientConfig.Settings.ConsoleAutoScroll) ScrollToBottom = true;
                     }
 
-                    consoleReclaimFocus = true;
+                    ForecConsoleReclaimFocus = true;
                 }
             }
             minInput = ImGui.GetItemRectMin();
@@ -141,9 +173,9 @@ public class ConsoleWindow : ClientWindow
         }
 
         ImGui.SetItemDefaultFocus();
-        if (consoleReclaimFocus)
+        if (ForecConsoleReclaimFocus)
         {
-            consoleReclaimFocus = false;
+            ForecConsoleReclaimFocus = false;
             ImGui.SetKeyboardFocusHere(-1);
         }
 
@@ -151,12 +183,12 @@ public class ConsoleWindow : ClientWindow
 
         lock (CandidateLock)
         {
-            if (consoleFocus)
+            if (ForceConsoleInputFocus)
             {
-                if (consoleInput.Trim().Length == 0)
+                if (ConsoleInput.Trim().Length == 0)
                 {
-                    argumentSymbols.Clear();
-                    completionCandidates.Clear();
+                    ScriptCompletionArguments.Clear();
+                    ScriptCompletionItems.Clear();
                 }
                 RenderScriptCandidates(io, minInput, maxInput);
             }
@@ -165,211 +197,62 @@ public class ConsoleWindow : ClientWindow
         ImGui.End();
         ImGui.PopFont();
     }
-    private unsafe int TextEditCallback(ImGuiInputTextCallbackDataPtr data)
+
+    public void WriteLine(string message)
     {
-        string GetText() => Encoding.UTF8.GetString((byte*)data.Buf, data.BufTextLen);
-        void ReplaceText(string t)
+        WriteLine(message, Color.White);
+    }
+
+    public void WriteError(string error)
+    {
+        WriteLine($"[Error] {error}", Color.Red);
+    }
+
+    public void WriteLine(string message, Color color)
+    {
+        lock (ConsoleLock)
         {
-            data.DeleteChars(0, data.BufTextLen);
-            data.InsertChars(0, t);
+            if (ConsoleItems.Count > 0)
+            {
+                ConsoleElement lastElement = ConsoleItems[^1];
+                if (message == lastElement.Text)
+                {
+                    lastElement.AboveDuplicateCount++;
+                }
+                else
+                {
+                    ConsoleItems.Add(new ConsoleElement(message, color, 0));
+                }
+            }
+            else
+            {
+                ConsoleItems.Add(new ConsoleElement(message, color, 0));
+            }
         }
+    }
 
-        switch (data.EventFlag)
+    public void AddCommand(string name, Action<CmdStr> action, string description = "No Description Given")
+    {
+        if (!ConsoleCommands.ContainsKey(name))
         {
-            case ImGuiInputTextFlags.CallbackHistory:
-                {
-                    if ((!completionCandidates.Any() && argumentSymbols.Count <= 1) || (InputSystem.IsKeyDownRaw(Keys.RightControl) || InputSystem.IsKeyDownRaw(Keys.LeftControl)))
-                    {
-                        int prev_history_pos = historyPos;
-                        if (data.EventKey == ImGuiKey.UpArrow)
-                        {
-                            if (historyPos == -1)
-                                historyPos = ConsoleHistory.Count - 1;
-                            else if (historyPos > 0)
-                                historyPos--;
-                        }
-                        else if (data.EventKey == ImGuiKey.DownArrow)
-                        {
-                            if (historyPos != -1)
-                                if (++historyPos >= ConsoleHistory.Count)
-                                    historyPos = -1;
-                        }
-
-                        if (prev_history_pos != historyPos)
-                        {
-                            string history_str = (historyPos >= 0) ? ConsoleHistory[historyPos] : "";
-                            data.DeleteChars(0, data.BufTextLen);
-                            data.InsertChars(0, history_str);
-                        }
-                    }
-                    else
-                    {
-                        int amount = 1;
-                        if (InputSystem.IsKeyDownRaw(Keys.LeftShift) || InputSystem.IsKeyDownRaw(Keys.RightShift))
-                            amount = 5;
-
-                        if (argumentSymbols.Count <= 1)
-                        {
-                            if (data.EventKey == ImGuiKey.UpArrow)
-                            {
-                                currentCompletionCandidate -= cadidatesFlipped ? -amount : amount;
-                            }
-                            else if (data.EventKey == ImGuiKey.DownArrow)
-                            {
-                                currentCompletionCandidate += cadidatesFlipped ? -amount : amount;
-                            }
-
-                            if (currentCompletionCandidate + 5 < completionCenterView)
-                                completionCenterView = currentCompletionCandidate + 5;
-                            else if (currentCompletionCandidate - 4 > completionCenterView)
-                                completionCenterView = currentCompletionCandidate - 4;
-                        }
-                        else
-                        {
-                            if (data.EventKey == ImGuiKey.UpArrow)
-                            {
-                                currentArgumentSymbolOverload += amount;
-                            }
-                            else if (data.EventKey == ImGuiKey.DownArrow)
-                            {
-                                currentArgumentSymbolOverload -= amount;
-                            }
-
-                            currentArgumentSymbolOverload %= argumentSymbols.Count;
-
-                            if (currentArgumentSymbolOverload < 0)
-                                currentArgumentSymbolOverload = argumentSymbols.Count + currentArgumentSymbolOverload;
-                        }
-                    }
-                    break;
-                }
-            case ImGuiInputTextFlags.CallbackCompletion:
-                {
-                    if (completionCandidates.Count > 0)
-                    {
-                        if (currentCompletionCandidate >= completionCandidates.Count)
-                            currentCompletionCandidate = completionCandidates.Count - 1;
-
-                        string s = GetText();
-                        int cursorPosition = data.CursorPos;
-                        data.DeleteChars(0, data.BufTextLen);
-                        data.InsertChars(0, Script.GetChangedText(s, completionCandidates[currentCompletionCandidate], cursorPosition, out int newCursorPosition));
-
-                        data.CursorPos = newCursorPosition;
-                    }
-
-                    TextChanged(GetText(), data.CursorPos);
-
-                    if (undoStackPointer < undoStack.Count)
-                    {
-                        undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
-                    }
-
-                    undoStack.Add(new UndoState(data.CursorPos, GetText()));
-                    undoStackPointer++;
-
-                    if (undoStack.Count > UndoStackSize)
-                    {
-                        undoStackPointer--;
-                        undoStack.RemoveAt(0);
-                    }
-                    break;
-                }
-            case ImGuiInputTextFlags.CallbackEdit:
-                {
-                    TextChanged(GetText(), data.CursorPos);
-
-                    if (undoStackPointer < undoStack.Count)
-                    {
-                        undoStack.RemoveRange(undoStackPointer, undoStack.Count - 1 - undoStackPointer);
-                    }
-
-                    undoStack.Add(new UndoState(data.CursorPos, GetText()));
-                    undoStackPointer++;
-
-                    if (undoStack.Count > UndoStackSize)
-                    {
-                        undoStackPointer--;
-                        undoStack.RemoveAt(0);
-                    }
-                    break;
-                }
-            case ImGuiInputTextFlags.CallbackAlways:
-                {
-                    bool ctrl = InputSystem.IsKeyDownRaw(Keys.RightControl) || InputSystem.IsKeyDownRaw(Keys.LeftControl);
-
-                    if (ctrl)
-                    {
-                        if (ImGui.IsKeyPressed(ImGuiKey.Z, true))
-                        {
-                            if (undoStackPointer > 1)
-                            {
-                                UndoState state = undoStack[undoStackPointer - 2];
-                                undoStackPointer--;
-
-                                ReplaceText(state.Text);
-                                data.CursorPos = state.CursorPosition;
-
-                                TextChanged(GetText(), data.CursorPos);
-                            }
-                        }
-
-                        if (ImGui.IsKeyPressed(ImGuiKey.Y, true))
-                        {
-                            if (undoStackPointer > 1 && undoStackPointer < undoStack.Count)
-                            {
-                                UndoState state = undoStack[undoStackPointer];
-                                undoStackPointer++;
-
-                                ReplaceText(state.Text);
-                                data.CursorPos = state.CursorPosition;
-
-                                TextChanged(GetText(), data.CursorPos);
-                            }
-                        }
-                    }
-
-                    if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) || ImGui.IsKeyPressed(ImGuiKey.RightArrow))
-                    {
-                        TextChanged(GetText(), data.CursorPos);
-                    }
-
-                    if (clickedScriptCandidate)
-                    {
-                        if (completionCandidates.Count > 0)
-                        {
-                            if (currentCompletionCandidate >= completionCandidates.Count)
-                                currentCompletionCandidate = completionCandidates.Count - 1;
-
-                            string s = GetText();
-                            int cursorPosition = data.CursorPos;
-                            data.DeleteChars(0, data.BufTextLen);
-                            data.InsertChars(0, Script.GetChangedText(s, completionCandidates[currentCompletionCandidate], cursorPosition, out int newCursorPosition));
-
-                            data.CursorPos = newCursorPosition;
-                        }
-
-                        if (currentCompletionCandidate + 5 < completionCenterView)
-                            completionCenterView = currentCompletionCandidate + 5;
-                        else if (currentCompletionCandidate - 4 > completionCenterView)
-                            completionCenterView = currentCompletionCandidate - 4;
-
-                        TextChanged(GetText(), data.CursorPos);
-
-                        clickedScriptCandidate = false;
-                    }
-                    break;
-                }
+            ConsoleCommands.Add(name, new ConsoleCommand(name, action, description));
         }
+        else
+        {
+            ConsoleCommand command = ConsoleCommands[name];
+            command.CommandAction = action;
+            command.CommandDescription = description;
+        }
+    }
 
-        consoleFocus = true;
-
-        return 0;
+    public void RemoveCommand(string name) 
+    {
+        ConsoleCommands.Remove(name);
     }
 
     private void ExecuteMessage(string message)
     {
-        historyPos = -1;
+        HistoryPosition = -1;
         for (int i = ConsoleHistory.Count - 1; i >= 0; i--)
         {
             if (ConsoleHistory[i] == message)
@@ -378,6 +261,7 @@ public class ConsoleWindow : ClientWindow
                 break;
             }
         }
+
         if (ConsoleHistory.Count > ClientConfig.Settings.ConsoleHistoryLimit)
             ConsoleHistory.RemoveRange(0, ConsoleHistory.Count - ClientConfig.Settings.ConsoleHistoryLimit);
 
@@ -393,71 +277,29 @@ public class ConsoleWindow : ClientWindow
             }
         }
 
-        object? expressionValue = Script.Eval(consoleInput);
-        if (expressionValue is not null) WriteLine(Script.FormatObject(expressionValue));
-    }
-    public void WriteLine(string message, Color color)
-    {
-        lock (ConsoleLock)
+        object? expressionValue = Script.Eval(ConsoleInput);
+        if (expressionValue is not null)
         {
-            if (ConsoleItems.Count > 0)
-            {
-                if (message == ConsoleItems[ConsoleItems.Count - 1].text)
-                {
-                    if (ConsoleItems[ConsoleItems.Count - 1].countAbove == 0)
-                        ConsoleItems[ConsoleItems.Count - 1].countAbove++;
-                    ConsoleItems[ConsoleItems.Count - 1].countAbove++;
-                }
-                else
-                    ConsoleItems.Add(new ConsoleElement(message, color, 0));
-            }
-            else
-                ConsoleItems.Add(new ConsoleElement(message, color, 0));
-        }
-    }
-    public void WriteLine(string message)
-    {
-        WriteLine(message, Color.White);
-    }
-    public void WriteError(string error)
-    {
-        WriteLine($"[Error] {error}", Color.Red);
-    }
-    public void ClearConsole()
-    {
-        ConsoleItems.Clear();
-    }
-    public void AddCommand(string name, Action<CmdStr> action, string description = "No Description Given", Func<CmdStr, int, List<string>>? getCandidates = null)
-    {
-        if (!ConsoleCommands.ContainsKey(name))
-            ConsoleCommands.Add(name, new ConsoleCommand(name, action, description, getCandidates));
-        else
-        {
-            ConsoleCommand command = ConsoleCommands[name];
-            command.CommandAction = action;
-            command.CommandDescription = description;
-            command.GetCandidates = getCandidates;
+            WriteLine(Script.FormatObject(expressionValue));
         }
     }
 
-    private bool cadidatesFlipped = false;
-    private bool clickedScriptCandidate = false;
     private void RenderScriptCandidates(ImGuiIOPtr io, Vector2 textboxMin, Vector2 textboxMax)
     {
         ImGuiStylePtr style = ImGui.GetStyle();
 
-        currentCompletionCandidate = Utils.Clamp(currentCompletionCandidate, 0, completionCandidates.Count - 1);
-        completionCenterView = Utils.Clamp(completionCenterView, 0, completionCandidates.Count - 1);
+        SelectedCompletionItem = Utils.Clamp(SelectedCompletionItem, 0, ScriptCompletionItems.Count - 1);
+        CompletionViewIndex = Utils.Clamp(CompletionViewIndex, 0, ScriptCompletionItems.Count - 1);
         Vector2 completionOrigin = Vector2.Zero;
         Vector2 completionSize = Vector2.Zero;
 
-        if (completionCandidates.Any())
+        if (ScriptCompletionItems.Any())
         {
             string GetCandidateIcon(int i)
             {
-                if (completionCandidates[i].Tags.Length > 0)
+                if (ScriptCompletionItems[i].Tags.Length > 0)
                 {
-                    string tag = completionCandidates[i].Tags[0];
+                    string tag = ScriptCompletionItems[i].Tags[0];
                     switch (tag)
                     {
                         case WellKnownTags.Field:
@@ -496,9 +338,9 @@ public class ConsoleWindow : ClientWindow
             }
             Color GetIconColor(int i)
             {
-                if (completionCandidates[i].Tags.Length > 0)
+                if (ScriptCompletionItems[i].Tags.Length > 0)
                 {
-                    string tag = completionCandidates[i].Tags[0];
+                    string tag = ScriptCompletionItems[i].Tags[0];
                     switch (tag)
                     {
                         case WellKnownTags.Field:
@@ -530,7 +372,7 @@ public class ConsoleWindow : ClientWindow
             }
             string GetCandidateText(int i)
             {
-                return completionCandidates[i].DisplayText;
+                return ScriptCompletionItems[i].DisplayText;
             }
 
             ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
@@ -539,11 +381,11 @@ public class ConsoleWindow : ClientWindow
             float maxSize = 0f;
             float drawHeight = style.ItemSpacing.Y * 2f;
 
-            int startCandidate = Utils.Clamp(completionCenterView - 5, 0, completionCandidates.Count);
-            int endCandidate = Utils.Clamp(startCandidate + 10, 0, completionCandidates.Count);
+            int startCandidate = Utils.Clamp(CompletionViewIndex - 5, 0, ScriptCompletionItems.Count);
+            int endCandidate = Utils.Clamp(startCandidate + 10, 0, ScriptCompletionItems.Count);
             if ((endCandidate - startCandidate) < 10)
             {
-                startCandidate = Utils.Clamp(endCandidate - 10, 0, completionCandidates.Count);
+                startCandidate = Utils.Clamp(endCandidate - 10, 0, ScriptCompletionItems.Count);
             }
 
             for (int i = startCandidate; i < endCandidate; i++)
@@ -561,10 +403,10 @@ public class ConsoleWindow : ClientWindow
             {
                 origin.X -= (origin.X + size.X) - io.DisplaySize.X;
             }
-            cadidatesFlipped = false;
+            FlipCompletion = false;
             if (origin.Y + size.Y > io.DisplaySize.Y)
             {
-                cadidatesFlipped = true;
+                FlipCompletion = true;
                 origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
             }
             drawList.AddRectFilled(origin, origin + size, ImGui.GetColorU32(ImGuiCol.WindowBg));
@@ -583,14 +425,9 @@ public class ConsoleWindow : ClientWindow
                 if (Util.IsMouseHoveringRect(origin + new Vector2(style.ItemSpacing.X, offset + 1f), origin + new Vector2(maxSize, offset + offsetOffset - 1f)))
                 {
                     col = Color.Gray * 1.45f;
-                    if (io.MouseClicked[0])
-                    {
-                        if (currentCompletionCandidate == i) clickedScriptCandidate = true;
-                        currentCompletionCandidate = i;
-                    }
                 }
 
-                if (i == currentCompletionCandidate)
+                if (i == SelectedCompletionItem)
                 {
                     col = Color.White;
                 }
@@ -600,7 +437,7 @@ public class ConsoleWindow : ClientWindow
                 drawList.AddText(origin + new Vector2(style.ItemSpacing.X, offset), iconColor.PackedValue, GetCandidateIcon(i));
                 offset += offsetOffset;
             }
-            if (cadidatesFlipped)
+            if (FlipCompletion)
             {
                 for (int i = endCandidate - 1; i > startCandidate - 1; i--)
                 {
@@ -624,12 +461,12 @@ public class ConsoleWindow : ClientWindow
 
                 io.WantCaptureMouse = true;
 
-                if (completionCenterView > 4 && completionCenterView < completionCandidates.Count - 4)
-                    completionCenterView -= (int)io.MouseWheel;
+                if (CompletionViewIndex > 4 && CompletionViewIndex < ScriptCompletionItems.Count - 4)
+                    CompletionViewIndex -= (int)io.MouseWheel;
                 else
                 {
-                    if (completionCenterView <= 5) completionCenterView = 5;
-                    else if (completionCenterView >= completionCandidates.Count - 4) completionCenterView = completionCandidates.Count - 5;
+                    if (CompletionViewIndex <= 5) CompletionViewIndex = 5;
+                    else if (CompletionViewIndex >= ScriptCompletionItems.Count - 4) CompletionViewIndex = ScriptCompletionItems.Count - 5;
                 }
 
 
@@ -638,11 +475,11 @@ public class ConsoleWindow : ClientWindow
             }
         }
 
-        if (argumentSymbols.Any())
+        if (ScriptCompletionArguments.Any())
         {
-            currentArgumentSymbolOverload = Math.Clamp(currentArgumentSymbolOverload, 0, argumentSymbols.Count - 1);
+            SelectedCompletionOverload = Math.Clamp(SelectedCompletionOverload, 0, ScriptCompletionArguments.Count - 1);
             ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
-            string currentText = (argumentSymbols.Count > 1 ? $"({currentArgumentSymbolOverload + 1}/{argumentSymbols.Count}) " : "") + argumentSymbols[currentArgumentSymbolOverload];
+            string currentText = (ScriptCompletionArguments.Count > 1 ? $"({SelectedCompletionOverload + 1}/{ScriptCompletionArguments.Count}) " : "") + ScriptCompletionArguments[SelectedCompletionOverload];
             Vector2 origin = new Vector2(textboxMin.X, textboxMax.Y + completionSize.Y + style.ItemSpacing.Y * 2f);
             Vector2 size = new Vector2(ImGui.CalcTextSize(currentText).X + style.ItemSpacing.X * 2f, ImGui.CalcTextSize(currentText).Y + style.ItemSpacing.Y * 2f);
 
@@ -654,7 +491,7 @@ public class ConsoleWindow : ClientWindow
             {
                 origin.Y = textboxMin.Y - style.ItemSpacing.Y - size.Y;
             }
-            if (cadidatesFlipped && completionCandidates.Any())
+            if (FlipCompletion && ScriptCompletionItems.Any())
             {
                 origin.Y = textboxMin.Y - style.ItemSpacing.Y * 2f - size.Y - completionSize.Y;
             }
@@ -665,7 +502,7 @@ public class ConsoleWindow : ClientWindow
         }
     }
 
-    private Task TextChanged(string text, int cursorPosition)
+    private Task UpdateCompletion(string text, int cursorPosition)
     {
         return Task.Run(
             () =>
@@ -673,19 +510,198 @@ public class ConsoleWindow : ClientWindow
                 lock (CandidateLock)
                 {
                     Script.SetText(text);
-                    completionCandidates = Script.GetCompletionAsync(text, cursorPosition).Result;
-                    argumentSymbols = Script.GetArgumentListCompletionSymbolsAsync(text, cursorPosition).Result;
+                    ScriptCompletionItems = Script.GetCompletionAsync(text, cursorPosition).Result;
+                    ScriptCompletionArguments = Script.GetArgumentListCompletionSymbolsAsync(text, cursorPosition).Result;
                 }
             });
     }
 
+    private void PushEdit(ImGuiInputTextCallbackDataPtr data)
+    {
+        if (UndoPosition < UndoStack.Count)
+        {
+            UndoStack.RemoveRange(UndoPosition, UndoStack.Count - 1 - UndoPosition);
+        }
+
+        UndoStack.Add(new UndoState(data.GetText(), data.CursorPos));
+
+        UndoPosition++;
+    }
+
+    private void Undo(ImGuiInputTextCallbackDataPtr data)
+    {
+        if (UndoPosition > 1)
+        {
+            UndoState state = UndoStack[UndoPosition - 2];
+            UndoPosition--;
+
+            data.SetText(state.Text);
+            data.CursorPos = state.CursorPosition;
+
+            UpdateCompletion(state.Text, data.CursorPos);
+        }
+    }
+
+    private void Redo(ImGuiInputTextCallbackDataPtr data)
+    {
+        if (UndoPosition > 1 && UndoPosition < UndoStack.Count)
+        {
+            UndoState state = UndoStack[UndoPosition];
+            UndoPosition++;
+
+            data.SetText(state.Text);
+            data.CursorPos = state.CursorPosition;
+
+            UpdateCompletion(state.Text, data.CursorPos);
+        }
+    }
+
+    private unsafe int TextEditCallback(ImGuiInputTextCallbackDataPtr data)
+    {
+        switch (data.EventFlag)
+        {
+            case ImGuiInputTextFlags.CallbackHistory:
+                {
+                    if ((!ScriptCompletionItems.Any() && ScriptCompletionArguments.Count <= 1) || InputSystem.Ctrl)
+                    {
+                        int previousHistoryPosition = HistoryPosition;
+                        if (data.EventKey == ImGuiKey.UpArrow)
+                        {
+                            if (HistoryPosition == -1)
+                            {
+                                HistoryPosition = ConsoleHistory.Count - 1;
+                            }
+                            else if (HistoryPosition > 0)
+                            {
+                                HistoryPosition--;
+                            }
+                        }
+                        else if (data.EventKey == ImGuiKey.DownArrow)
+                        {
+                            if (HistoryPosition != -1)
+                            {
+                                HistoryPosition++;
+                                if (HistoryPosition >= ConsoleHistory.Count)
+                                {
+                                    HistoryPosition = -1;
+                                }
+                            }
+                        }
+
+                        if (previousHistoryPosition != HistoryPosition)
+                        {
+                            data.SetText((HistoryPosition >= 0) ? ConsoleHistory[HistoryPosition] : "");
+                        }
+                    }
+                    else
+                    {
+                        int completionItemScollAmount = 1;
+
+                        if (InputSystem.Shift)
+                            completionItemScollAmount = 5;
+
+                        if (ScriptCompletionArguments.Count > 1)
+                        {
+                            if (data.EventKey == ImGuiKey.UpArrow)
+                            {
+                                SelectedCompletionOverload += completionItemScollAmount;
+                            }
+                            else if (data.EventKey == ImGuiKey.DownArrow)
+                            {
+                                SelectedCompletionOverload -= completionItemScollAmount;
+                            }
+
+                            SelectedCompletionOverload %= ScriptCompletionArguments.Count;
+
+                            if (SelectedCompletionOverload < 0)
+                            {
+                                SelectedCompletionOverload = ScriptCompletionArguments.Count + SelectedCompletionOverload;
+                            }
+                        }
+                        else
+                        {
+                            if (data.EventKey == ImGuiKey.UpArrow)
+                            {
+                                SelectedCompletionItem -= FlipCompletion ? -completionItemScollAmount : completionItemScollAmount;
+                            }
+                            else if (data.EventKey == ImGuiKey.DownArrow)
+                            {
+                                SelectedCompletionItem += FlipCompletion ? -completionItemScollAmount : completionItemScollAmount;
+                            }
+
+                            if (SelectedCompletionItem + 5 < CompletionViewIndex)
+                                CompletionViewIndex = SelectedCompletionItem + 5;
+                            else if (SelectedCompletionItem - 4 > CompletionViewIndex)
+                                CompletionViewIndex = SelectedCompletionItem - 4;
+                        }
+                    }
+                    break;
+                }
+            case ImGuiInputTextFlags.CallbackCompletion:
+                {
+                    if (ScriptCompletionItems.Any())
+                    {
+                        SelectedCompletionItem = Math.Clamp(SelectedCompletionItem, 0, ScriptCompletionItems.Count - 1);
+
+                        string s = data.GetText();
+
+                        int cursorPosition = data.CursorPos;
+
+                        data.SetText(Script.GetChangedText(s, ScriptCompletionItems[SelectedCompletionItem], cursorPosition, out int newCursorPosition));
+
+                        data.CursorPos = newCursorPosition;
+                    }
+
+                    UpdateCompletion(data.GetText(), data.CursorPos);
+
+                    PushEdit(data);
+                    break;
+                }
+            case ImGuiInputTextFlags.CallbackEdit:
+                {
+                    UpdateCompletion(data.GetText(), data.CursorPos);
+
+                    PushEdit(data);
+                    break;
+                }
+            case ImGuiInputTextFlags.CallbackAlways:
+                {
+                    if (InputSystem.Ctrl)
+                    {
+                        if (ImGui.IsKeyPressed(ImGuiKey.Z, true))
+                        {
+                            Undo(data);
+                        }
+
+                        if (ImGui.IsKeyPressed(ImGuiKey.Y, true))
+                        {
+                            Redo(data);
+                        }
+                    }
+
+                    if (ImGui.IsKeyPressed(ImGuiKey.LeftArrow) || ImGui.IsKeyPressed(ImGuiKey.RightArrow))
+                    {
+                        UpdateCompletion(data.GetText(), data.CursorPos);
+                    }
+                    break;
+                }
+        }
+
+        ForceConsoleInputFocus = true;
+
+        return 0;
+    }
 
     public class CmdStr
     {
         public string Command = "";
+
         public List<string> Args = new List<string>();
+
         public string FullMessage = "";
+
         public string FullArgs = "";
+
         public CmdStr(string toParse)
         {
             int firstSplit = toParse.IndexOf(" ");
@@ -711,73 +727,62 @@ public class ConsoleWindow : ClientWindow
         public string FullArgsFrom(int index)
         {
             string s = "";
+
             for (int i = index; i < Args.Count; i++)
             {
                 s += Args[i] + (i + 1 < Args.Count ? " " : "");
             }
+
             return s;
         }
     }
+
     public class ConsoleElement
     {
-        public string text;
-        public uint color;
-        public uint countAbove;
+        public string Text;
 
-        public ConsoleElement(string text, Color color, int CountAboue)
+        public Color TextColor;
+
+        public uint AboveDuplicateCount;
+
+        public ConsoleElement(string text, Color textColor, int aboveDuplicateCount)
         {
-            this.text = text;
-            this.color = color.PackedValue;
-            this.countAbove = (uint)(CountAboue);
+            Text = text;
+
+            TextColor = textColor;
+
+            AboveDuplicateCount = (uint)(aboveDuplicateCount);
         }
     }
+
     public class ConsoleCommand
     {
         public string CommandName;
-        public string CommandDescription;
-        public Action<CmdStr> CommandAction;
-        public Func<CmdStr, int, List<string>>? GetCandidates;
 
-        public ConsoleCommand(string name, Action<CmdStr> function, string description = "No Description Given", Func<CmdStr, int, List<string>>? getCandidates = null)
+        public string CommandDescription;
+
+        public Action<CmdStr> CommandAction;
+
+        public ConsoleCommand(string name, Action<CmdStr> function, string description = "No Description Given")
         {
-            this.CommandName = name;
-            this.CommandAction = function;
-            this.CommandDescription = description;
-            this.GetCandidates = getCandidates;
+            CommandName = name;
+
+            CommandAction = function;
+
+            CommandDescription = description;
         }
     }
+
     public struct UndoState
     {
-        public int CursorPosition;
         public string Text;
 
-        public UndoState(int cursorPosition, string text)
+        public int CursorPosition;
+
+        public UndoState(string text, int cursorPosition)
         {
             CursorPosition = cursorPosition;
             Text = text;
         }
-    }
-}
-
-public class ConsoleSetup
-{
-    public static void SetConsoleInitialCommands(ConsoleWindow console)
-    {
-        console.AddCommand(
-            "clear",
-            (x) =>
-            {
-                console.ClearConsole();
-            }, "Clears the console");
-        console.AddCommand(
-            "help",
-            (x) =>
-            {
-                foreach (ConsoleWindow.ConsoleCommand command in console.ConsoleCommands.Values)
-                {
-                    console.WriteLine($"{command.CommandName}: {command.CommandDescription}");
-                }
-            }, "Prints help");
-        console.WriteLine("Type #help for a list of commands");
     }
 }

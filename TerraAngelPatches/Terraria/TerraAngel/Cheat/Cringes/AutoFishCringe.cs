@@ -78,7 +78,7 @@ public class AutoFishCringe : Cringe
                 ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
                 drawList.AddCircleFilled(Util.WorldToScreenWorld(specialPosition), 10f, Color.Red.PackedValue);
 
-                if (InputSystem.KeyCtrl && InputSystem.KeyAlt)
+                if (InputSystem.Ctrl && InputSystem.Alt)
                 {
                     specialPosition = Main.MouseWorld;
                 }

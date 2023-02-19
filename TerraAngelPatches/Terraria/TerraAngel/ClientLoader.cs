@@ -200,7 +200,6 @@ public unsafe class ClientLoader
         public static void WriteLine(string message, Color color) => ConsoleWindow?.WriteLine(message, color);
         public static void WriteError(string message) => ConsoleWindow?.WriteError(message);
         public static void AddCommand(string name, Action<ConsoleWindow.CmdStr> action, string description = "No Description Given") => ConsoleWindow?.AddCommand(name, action, description);
-        public static void ClearConsole() => ConsoleWindow?.ClearConsole();
     }
 
     public static class Chat
