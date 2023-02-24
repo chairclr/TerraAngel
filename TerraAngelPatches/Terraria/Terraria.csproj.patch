@@ -11,7 +11,7 @@
      <RootNamespace>Terraria</RootNamespace>
 +    <TargetFramework>net7.0</TargetFramework>
 +    <Platforms>AnyCPU</Platforms>
-+	  <LangVersion>preview</LangVersion>
++    <LangVersion>preview</LangVersion>
    </PropertyGroup>
 +  <PropertyGroup>
 +    <ApplicationIcon>app.ico</ApplicationIcon>
