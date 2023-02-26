@@ -2,7 +2,7 @@
 using TerraAngel.Net;
 using Terraria.DataStructures;
 
-namespace TerraAngel.Hooks.Hooks;
+namespace TerraAngel.Hooks;
 
 public class PlayerHooks
 {

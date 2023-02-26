@@ -563,7 +563,7 @@
                  if (!Platform.IsOSX)
                  {
 -                    base.IsMouseVisible = true;
-+                    base.IsMouseVisible = TerraAngel.Hooks.Hooks.MiscHooks.ShouldMouseBeVisible(true);
++                    base.IsMouseVisible = TerraAngel.Hooks.MiscHooks.ShouldMouseBeVisible(true);
                  }
  
                  if (netMode != 2 && myPlayer >= 0)
@@ -572,7 +572,7 @@
              if (!Platform.IsOSX)
              {
 -                base.IsMouseVisible = false;
-+                base.IsMouseVisible = TerraAngel.Hooks.Hooks.MiscHooks.ShouldMouseBeVisible(false);
++                base.IsMouseVisible = TerraAngel.Hooks.MiscHooks.ShouldMouseBeVisible(false);
              }
  
              SkyManager.Instance.Update(gameTime);
@@ -667,7 +667,7 @@
      }
  
      public static void MouseText_DrawItemTooltip_GetLinesInfo(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine)
-+        => TerraAngel.Hooks.Hooks.DrawHooks.GetLinesInfoHook(_MouseText_DrawItemTooltip_GetLinesInfo, item, ref yoyoLogo, ref researchLine, oldKB, ref numLines, toolTipLine, preFixLine, badPreFixLine);
++        => TerraAngel.Hooks.DrawHooks.GetLinesInfoHook(_MouseText_DrawItemTooltip_GetLinesInfo, item, ref yoyoLogo, ref researchLine, oldKB, ref numLines, toolTipLine, preFixLine, badPreFixLine);
 +
 +    public static void _MouseText_DrawItemTooltip_GetLinesInfo(Item item, ref int yoyoLogo, ref int researchLine, float oldKB, ref int numLines, string[] toolTipLine, bool[] preFixLine, bool[] badPreFixLine)
      {
@@ -702,7 +702,7 @@
  
      protected void DrawGoreBehind()
      {
-+        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
++        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
 +            return;
 +
          for (int i = 0; i < 600; i++)
@@ -712,7 +712,7 @@
  
      protected void DrawGore()
      {
-+        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
++        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
 +            return;
 +
          drawBackGore = false;
@@ -809,7 +809,7 @@
  
      protected void DrawDust()
      {
-+        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false)
++        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false)
 +            return;
 +
          Microsoft.Xna.Framework.Rectangle rectangle = new Microsoft.Xna.Framework.Rectangle((int)screenPosition.X - 500, (int)screenPosition.Y - 50, screenWidth + 1000, screenHeight + 100);
@@ -827,7 +827,7 @@
  
      private static void DrawInterface_41_InterfaceLogic4()
      {
-+        TerraAngel.Hooks.Hooks.MiscHooks.lastCursorOverride = cursorOverride;
++        TerraAngel.Hooks.MiscHooks.lastCursorOverride = cursorOverride;
          if (mouseRight)
          {
              npcChatRelease = false;
@@ -1304,7 +1304,7 @@
  
      protected void DrawBlack(bool force = false)
      {
-+        if (TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false) return;
++        if (TerraAngel.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false) return;
          if (shimmerAlpha == 1f)
          {
              return;
@@ -1357,7 +1357,7 @@
  
          HoverItem = new Item();
 -        DoDraw_UpdateCameraPosition();
-+        TerraAngel.Hooks.Hooks.DrawHooks.UpdateCameraHook(DoDraw_UpdateCameraPosition);
++        TerraAngel.Hooks.DrawHooks.UpdateCameraHook(DoDraw_UpdateCameraPosition);
          CheckMonoliths();
          sunCircle += 0.01f;
          if ((double)sunCircle > 6.285)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria.Graphics.Light;
-using TerraAngel.Hooks.Hooks;
+using TerraAngel.Hooks;
 using ReLogic.Threading;
 
 namespace TerraAngel.Graphics;

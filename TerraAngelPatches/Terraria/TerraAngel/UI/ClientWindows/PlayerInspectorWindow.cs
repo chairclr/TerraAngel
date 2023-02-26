@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
-using TerraAngel.Hooks.Hooks;
+using TerraAngel.Hooks;
 
 namespace TerraAngel.UI.ClientWindows;
 

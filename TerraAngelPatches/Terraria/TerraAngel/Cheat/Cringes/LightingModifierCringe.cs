@@ -33,7 +33,7 @@ public class LightingModifierCringe : Cringe
             FullBright = !FullBright;
             Lighting.Mode = Lighting.Mode;
         }
-        TerraAngel.Hooks.Hooks.DrawHooks.LightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
+        TerraAngel.Hooks.DrawHooks.LightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
         FullbrightEngine.Brightness = Brightness;
     }
 }

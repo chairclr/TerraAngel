@@ -53,7 +53,7 @@ public class CSharpScriptEnvironment
         "TerraAngel.Cheat.Cringes",
         "TerraAngel.Graphics",
         "TerraAngel.Hooks",
-        "TerraAngel.Hooks.Hooks",
+        "TerraAngel.Hooks",
         "TerraAngel.ID",
         "TerraAngel.Input",
         "TerraAngel.Net",

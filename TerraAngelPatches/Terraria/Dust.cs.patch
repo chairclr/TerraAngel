@@ -44,7 +44,7 @@
  
      public static void UpdateDust()
      {
-+        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false) return;
++        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false) return;
          int num = 0;
          lavaBubbles = 0;
          Main.snowDust = 0;

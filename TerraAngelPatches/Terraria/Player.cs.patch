@@ -25,7 +25,7 @@
  
      public void Yoraiz0rEye()
      {
-+        if (TerraAngel.Hooks.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false || ClientConfig.Settings.IgnoreReLogicBullshit) return;
++        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false || ClientConfig.Settings.IgnoreReLogicBullshit) return;
          int num = 0;
          num += bodyFrame.Y / 56;
          if (num >= Main.OffsetsPlayerHeadgear.Length)
@@ -50,7 +50,7 @@
          return Main.player[FindClosest(new Vector2(x * 16, y * 16), 1, 1)].RollLuck(range);
      }
  
-+    public void ResetEffects() => TerraAngel.Hooks.Hooks.PlayerHooks.PlayerResetEffectsHook((x) => x._ResetEffects(), this);
++    public void ResetEffects() => TerraAngel.Hooks.PlayerHooks.PlayerResetEffectsHook((x) => x._ResetEffects(), this);
 +
 -    public void ResetEffects()
 +    private void _ResetEffects()
@@ -149,7 +149,7 @@
          HotbarOffset = 0;
      }
  
-+    private void ItemCheckWrapped(int i) => TerraAngel.Hooks.Hooks.PlayerHooks.PlayerItemCheckHook((x, y) => x._ItemCheckWrapped(y), this, i);
++    private void ItemCheckWrapped(int i) => TerraAngel.Hooks.PlayerHooks.PlayerItemCheckHook((x, y) => x._ItemCheckWrapped(y), this, i);
 +
 -    private void ItemCheckWrapped(int i)
 +    private void _ItemCheckWrapped(int i)
@@ -161,7 +161,7 @@
              Hooks.EnterWorld(whoAmI);
          }
 +
-+        TerraAngel.Hooks.Hooks.PlayerHooks.presenceUpdateCount = 0;
++        TerraAngel.Hooks.PlayerHooks.presenceUpdateCount = 0;
      }
  
      public bool Spawn_GetPositionAtWorldSpawn(ref int floorX, ref int floorY)

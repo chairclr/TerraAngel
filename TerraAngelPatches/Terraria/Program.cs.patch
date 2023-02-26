@@ -44,7 +44,7 @@
              Main.OnEngineLoad += delegate
              {
 -                Main.instance.IsMouseVisible = false;
-+                Main.instance.IsMouseVisible = TerraAngel.Hooks.Hooks.MiscHooks.ShouldMouseBeVisible(false);
++                Main.instance.IsMouseVisible = TerraAngel.Hooks.MiscHooks.ShouldMouseBeVisible(false);
              };
          }
  

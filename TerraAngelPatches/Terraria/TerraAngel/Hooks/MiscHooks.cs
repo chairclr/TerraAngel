@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using Terraria.GameInput;
 using Terraria.Localization;
 
-namespace TerraAngel.Hooks.Hooks;
+namespace TerraAngel.Hooks;
 
 public class MiscHooks
 {

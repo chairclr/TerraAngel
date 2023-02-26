@@ -82,6 +82,13 @@ public class NetMessageWindow : ClientWindow
             receivePackets[packet.Type].Add(packet);
         }
     }
+
+    public NetMessageWindow()
+    {
+        maxMessageName = messageIDFields.Max((x) => x.Value.Name.Length);
+    }
+
+
     static NetMessageWindow()
     {
         for (int i = 0; i < MessageID.Count; i++)
@@ -90,11 +97,6 @@ public class NetMessageWindow : ClientWindow
             sentPackets[i] = new List<NetPacketInfo>();
             receivePackets[i] = new List<NetPacketInfo>();
         }
-    }
-
-    public override void Init()
-    {
-        maxMessageName = messageIDFields.Max((x) => x.Value.Name.Length);
     }
 
     public override void Draw(ImGuiIOPtr io)

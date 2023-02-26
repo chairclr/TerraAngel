@@ -16,6 +16,6 @@ public class DisableFramingCringe : Cringe
 
     public override void Update()
     {
-        Hooks.Hooks.MiscHooks.framingDisabled = CringeManager.GetCringe<DisableFramingCringe>().Enabled;
+        MiscHooks.framingDisabled = CringeManager.GetCringe<DisableFramingCringe>().Enabled;
     }
 }

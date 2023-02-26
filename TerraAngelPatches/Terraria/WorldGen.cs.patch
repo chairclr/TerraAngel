@@ -353,7 +353,7 @@
  
      public static void TileFrame(int i, int j, bool resetFrame = false, bool noBreak = false)
      {
-+        if (TerraAngel.Hooks.Hooks.MiscHooks.framingDisabled)
++        if (TerraAngel.Hooks.MiscHooks.framingDisabled)
 +            return;
 +
          bool addToList = false;

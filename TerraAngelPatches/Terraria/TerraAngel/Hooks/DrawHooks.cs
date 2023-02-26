@@ -5,7 +5,7 @@ using Terraria.Graphics.Light;
 using Terraria.ID;
 using Terraria.UI;
 
-namespace TerraAngel.Hooks.Hooks;
+namespace TerraAngel.Hooks;
 
 public class DrawHooks
 {

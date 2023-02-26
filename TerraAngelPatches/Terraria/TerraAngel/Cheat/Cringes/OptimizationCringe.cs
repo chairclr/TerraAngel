@@ -1,4 +1,4 @@
-﻿using TerraAngel.Hooks.Hooks;
+﻿using TerraAngel.Hooks;
 
 namespace TerraAngel.Cheat.Cringes;
 

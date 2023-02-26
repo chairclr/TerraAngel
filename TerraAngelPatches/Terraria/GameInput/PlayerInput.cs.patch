@@ -4,7 +4,7 @@
          return _buttonsLocked.Contains(keyName);
      }
  
-+    public static void UpdateInput() => TerraAngel.Hooks.Hooks.MiscHooks.UpdateInputHook(_UpdateInput);
++    public static void UpdateInput() => TerraAngel.Hooks.MiscHooks.UpdateInputHook(_UpdateInput);
 +
 -    public static void UpdateInput()
 +    private static void _UpdateInput()
@@ -24,7 +24,7 @@
          return flag;
      }
  
-+    private static void MouseInput() => TerraAngel.Hooks.Hooks.MiscHooks.MouseInputHook(_MouseInput);
++    private static void MouseInput() => TerraAngel.Hooks.MiscHooks.MouseInputHook(_MouseInput);
 +
 -    private static void MouseInput()
 +    private static void _MouseInput()
