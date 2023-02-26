@@ -4,7 +4,7 @@
  
      public static bool AddChatText(DynamicSpriteFont font, string text, Vector2 baseScale)
      {
-+        ClientLoader.Chat.AddText(text);
++        ClientLoader.Chat.AppendText(text);
 +        return true;
          int num = 470;
          num = Main.screenWidth - 330;

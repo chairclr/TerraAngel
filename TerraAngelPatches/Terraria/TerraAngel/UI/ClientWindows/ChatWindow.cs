@@ -26,48 +26,43 @@ public class ChatWindow : ClientWindow
         Main.instance.Activated += (o, args) =>
         {
             if (IsChatting)
+            {
                 ReclaimFocus = true;
+            }
         };
     }
 
+    public string ChatText = "";
+
     public bool IsChatting = false;
+
     public bool ScrollToBottom = false;
+
     public bool ReclaimFocus = false;
 
-    private bool chatLocked = true;
-    private bool justOpened = false;
-    private bool justClosed = false;
-    private bool resetPosition = false;
-    private bool autoScrollFix = false;
-    private float autoScrollFixMaxY = 0;
-    private float autoScrollFixPrevMaxY = 0;
-    public string ChatText = "";
-    private string textToAppend = "";
+    private bool IsLocked = true;
+
+    private bool OpenedThisFrame = false;
+
+    private bool ClosedThisFrame = false;
+
+    private bool ResetPosition = false;
+
+    private bool AutoScrollFix = false;
+
+    private float AutoScrollFixMaxY = 0;
+
+    private float AutoScrollFixPrevMaxY = 0;
+
+    private string TextToAppend = "";
 
     private object ChatLock = new object();
 
     public List<ChatItem> ChatItems = new List<ChatItem>(ClientConfig.Settings.ChatMessageLimit);
+
     public List<string> ChatHistory = new List<string>(100);
-    private int historyPos = -1;
 
-    public class ChatItem
-    {
-        public string OriginalText;
-        public List<TextSnippet> TextSnippets;
-        public uint Color;
-        public uint CountAbove;
-        public uint TimeMessageHasBeenVisible = 0;
-
-        public ChatItem(string text, List<TextSnippet> snippets, Color color, int CountAboue)
-        {
-            OriginalText = text;
-            Color = color.PackedValue;
-            CountAbove = (uint)(CountAboue);
-            TextSnippets = snippets;
-            TextSnippets.Add(new TextSnippet(""));
-        }
-    }
-
+    private int HistoryPosition = -1;
 
     public override void Draw(ImGuiIOPtr io)
     {
@@ -75,22 +70,22 @@ public class ChatWindow : ClientWindow
         {
             if (Main.CurrentInputTextTakerOverride != null)
             {
-                ClosePlayerChat();
+                CloseChat();
             }
 
             if (Main.editSign)
             {
-                ClosePlayerChat();
+                CloseChat();
             }
 
             if (PlayerInput.UsingGamepad)
             {
-                ClosePlayerChat();
+                CloseChat();
             }
 
             if (InputSystem.IsKeyDownRaw(Keys.Escape))
             {
-                ClosePlayerChat();
+                CloseChat();
 
                 if (ClientConfig.Settings.ChatVanillaInvetoryBehavior)
                 {
@@ -129,9 +124,9 @@ public class ChatWindow : ClientWindow
         ImGui.SetNextWindowPos(windowPosition, ImGuiCond.FirstUseEver);
         ImGui.SetNextWindowSize(windowSize, ImGuiCond.FirstUseEver);
 
-        if (resetPosition)
+        if (ResetPosition)
         {
-            resetPosition = false;
+            ResetPosition = false;
             ImGui.SetNextWindowPos(windowPosition);
             ImGui.SetNextWindowSize(windowSize);
         }
@@ -147,7 +142,8 @@ public class ChatWindow : ClientWindow
 
         ImGuiWindowFlags flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.MenuBar;
         if (!IsChatting) flags |= ImGuiWindowFlags.NoMouseInputs;
-        if (chatLocked) flags |= ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize;
+        if (IsLocked) flags |= ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize;
+
         ImGui.Begin("ChatWindow", flags);
 
         if (IsChatting && ImGui.BeginMenuBar())
@@ -155,11 +151,12 @@ public class ChatWindow : ClientWindow
             ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 1f);
             ImGui.TextUnformatted("Chat");
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0f, 1f));
-            if (ImGui.Button($"{(chatLocked ? Icon.Lock : Icon.Unlock)}")) chatLocked = !chatLocked;
+
+            if (ImGui.Button($"{(IsLocked ? Icon.Lock : Icon.Unlock)}")) IsLocked = !IsLocked;
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.Text($"Chat {(chatLocked ? "Locked" : "Unlocked")}");
+                ImGui.Text($"Chat {(IsLocked ? "Locked" : "Unlocked")}");
                 ImGui.EndTooltip();
             }
 
@@ -170,20 +167,22 @@ public class ChatWindow : ClientWindow
                 ImGui.Text("Clear Chat");
                 ImGui.EndTooltip();
             }
-            if (ImGui.Button($"{Icon.Refresh}")) resetPosition = true;
+
+            if (ImGui.Button($"{Icon.Refresh}")) ResetPosition = true;
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
                 ImGui.Text("Reset Position");
                 ImGui.EndTooltip();
             }
+
             ImGui.PopStyleVar();
             ImGui.EndMenuBar();
         }
 
         float footerHeight = style.ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
 
-        if (ImGui.BeginChild("##ChatScrolling", new Vector2(0, -footerHeight), false, IsChatting ? ImGuiWindowFlags.None : (ImGuiWindowFlags.NoInputs)))
+        if (ImGui.BeginChild("##ChatScrolling", new Vector2(0, -footerHeight), false, IsChatting ? ImGuiWindowFlags.None : ImGuiWindowFlags.NoInputs))
         {
             ImDrawListPtr drawList = ImGui.GetWindowDrawList();
             drawList.PushClipRect(drawList.GetClipRectMin(), drawList.GetClipRectMax() + new Vector2(0, 5f));
@@ -235,18 +234,18 @@ public class ChatWindow : ClientWindow
                 }
             }
 
-            autoScrollFixPrevMaxY = autoScrollFixMaxY;
-            autoScrollFixMaxY = ImGui.GetScrollMaxY();
-            if (ScrollToBottom || (ClientConfig.Settings.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || (autoScrollFix && autoScrollFixMaxY > autoScrollFixPrevMaxY))) || !IsChatting || justOpened)
+            AutoScrollFixPrevMaxY = AutoScrollFixMaxY;
+            AutoScrollFixMaxY = ImGui.GetScrollMaxY();
+            if (ScrollToBottom || (ClientConfig.Settings.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || (AutoScrollFix && AutoScrollFixMaxY > AutoScrollFixPrevMaxY))) || !IsChatting || OpenedThisFrame)
             {
-                autoScrollFix = false;
+                AutoScrollFix = false;
                 if (ClientConfig.Settings.ChatAutoScroll && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY()))
-                    autoScrollFix = true;
+                    AutoScrollFix = true;
                 ImGui.SetScrollY(ImGui.GetScrollMaxY());
             }
             else
             {
-                autoScrollFix = false;
+                AutoScrollFix = false;
             }
             style.ItemSpacing = tip;
             ScrollToBottom = false;
@@ -268,36 +267,43 @@ public class ChatWindow : ClientWindow
                         {
                             case ImGuiInputTextFlags.CallbackHistory:
                                 {
-                                    int prev_history_pos = historyPos;
+                                    int previousHistoryPosition = HistoryPosition;
                                     if (data.EventKey == ImGuiKey.UpArrow)
                                     {
-                                        if (historyPos == -1)
-                                            historyPos = ChatHistory.Count - 1;
-                                        else if (historyPos > 0)
-                                            historyPos--;
+                                        if (HistoryPosition == -1)
+                                        {
+                                            HistoryPosition = ChatHistory.Count - 1;
+                                        }
+                                        else if (HistoryPosition > 0)
+                                        {
+                                            HistoryPosition--;
+                                        }
                                     }
                                     else if (data.EventKey == ImGuiKey.DownArrow)
                                     {
-                                        if (historyPos != -1)
-                                            if (++historyPos >= ChatHistory.Count)
-                                                historyPos = -1;
+                                        if (HistoryPosition != -1)
+                                        {
+                                            HistoryPosition++;
+                                            if (HistoryPosition >= ChatHistory.Count)
+                                            {
+                                                HistoryPosition = -1;
+                                            }
+                                        }
                                     }
 
-                                    if (prev_history_pos != historyPos)
+                                    if (previousHistoryPosition != HistoryPosition)
                                     {
-                                        string history_str = (historyPos >= 0) ? ChatHistory[historyPos] : "";
-                                        data.DeleteChars(0, data.BufTextLen);
-                                        data.InsertChars(0, history_str);
+                                        data.SetText((HistoryPosition >= 0) ? ChatHistory[HistoryPosition] : "");
                                     }
                                 }
                                 break;
                             case ImGuiInputTextFlags.CallbackAlways:
-                                if (textToAppend.Length > 0)
+                                if (TextToAppend.Length > 0)
                                 {
-                                    lock (textToAppend)
+                                    lock (TextToAppend)
                                     {
-                                        data.InsertChars(data.CursorPos, textToAppend);
-                                        textToAppend = "";
+                                        data.InsertChars(data.CursorPos, TextToAppend);
+                                        TextToAppend = "";
                                     }
                                 }
                                 break;
@@ -308,7 +314,7 @@ public class ChatWindow : ClientWindow
             }
             ImGui.PopItemWidth();
 
-            if (justOpened || ReclaimFocus)
+            if (OpenedThisFrame || ReclaimFocus)
             {
                 ReclaimFocus = false;
                 ImGui.SetItemDefaultFocus();
@@ -323,41 +329,12 @@ public class ChatWindow : ClientWindow
 
         if (IsChatting)
         {
-            if (!justOpened && InputSystem.IsKeyPressedRaw(Keys.Enter))
+            if (!OpenedThisFrame && InputSystem.IsKeyPressedRaw(Keys.Enter))
             {
                 if (chatBoxFocus)
                 {
-                    if (!string.IsNullOrEmpty(ChatText))
-                    {
-                        ChatMessage message = ChatManager.Commands.CreateOutgoingMessage(StringExtensions.EscapeString(ChatText));
-
-                        if (Main.netMode == 1)
-                        {
-                            ChatHelper.SendChatMessageFromClient(message);
-                        }
-                        else if (Main.netMode == 0)
-                        {
-                            ChatManager.Commands.ProcessIncomingMessage(message, Main.myPlayer);
-                        }
-
-                        historyPos = -1;
-                        for (int i = ChatHistory.Count - 1; i >= 0; i--)
-                        {
-                            if (ChatHistory[i] == ChatText)
-                            {
-                                ChatHistory.RemoveAt(i);
-                                break;
-                            }
-                        }
-
-                        if (ChatHistory.Count > ClientConfig.Settings.ChatHistoryLimit)
-                            ChatHistory.RemoveRange(0, ChatHistory.Count - ClientConfig.Settings.ChatHistoryLimit);
-
-                        ChatHistory.Add(ChatText);
-                        ChatText = "";
-                        ScrollToBottom = true;
-                    }
-                    ClosePlayerChat();
+                    Submit();
+                    CloseChat();
                 }
                 else
                 {
@@ -369,40 +346,85 @@ public class ChatWindow : ClientWindow
 
     public override void Update()
     {
-        justOpened = false;
+        OpenedThisFrame = false;
+        ClosedThisFrame = false;
         if (!ImGui.GetIO().WantCaptureKeyboard
-            && InputSystem.IsKeyPressedRaw(ToggleKey)
-            && !InputSystem.IsKeyDownRaw(Keys.LeftAlt)
-            && !InputSystem.IsKeyDownRaw(Keys.RightAlt)
-            && Main.hasFocus
-            && !Main.editSign
-            && !Main.editChest
-            && !Main.gameMenu
-            && !InputSystem.IsKeyDownRaw(Keys.Escape)
-            && Main.CurrentInputTextTakerOverride == null
-            && !IsChatting
-            && !justClosed)
+         && InputSystem.IsKeyPressedRaw(ToggleKey)
+         && !InputSystem.IsKeyDownRaw(Keys.LeftAlt)
+         && !InputSystem.IsKeyDownRaw(Keys.RightAlt)
+         && Main.hasFocus
+         && !Main.editSign
+         && !Main.editChest
+         && !Main.gameMenu
+         && !InputSystem.IsKeyDownRaw(Keys.Escape)
+         && Main.CurrentInputTextTakerOverride == null
+         && !IsChatting
+         && !ClosedThisFrame)
         {
-            OpenPlayerchat();
+            OpenChat();
         }
-        justClosed = false;
     }
 
-    public void OpenPlayerchat()
+    public void OpenChat()
     {
         IsChatting = true;
-        justOpened = true;
+        OpenedThisFrame = true;
         SoundEngine.PlaySound(SoundID.MenuOpen);
     }
 
-    public void ClosePlayerChat()
+    public void CloseChat()
     {
         IsChatting = false;
-        justClosed = true;
+        ClosedThisFrame = true;
         SoundEngine.PlaySound(SoundID.MenuClose);
 
         if (ClientConfig.Settings.ClearChatInputOnClose)
+        {
             ChatText = "";
+        }
+    }
+
+    public void Submit()
+    {
+        if (string.IsNullOrEmpty(ChatText))
+        {
+            return;
+        }
+
+        ChatMessage message = ChatManager.Commands.CreateOutgoingMessage(StringExtensions.EscapeString(ChatText));
+
+        if (Main.netMode == 1)
+        {
+            ChatHelper.SendChatMessageFromClient(message);
+        }
+        else if (Main.netMode == 0)
+        {
+            ChatManager.Commands.ProcessIncomingMessage(message, Main.myPlayer);
+        }
+
+        HistoryPosition = -1;
+        for (int i = ChatHistory.Count - 1; i >= 0; i--)
+        {
+            if (ChatHistory[i] == ChatText)
+            {
+                ChatHistory.RemoveAt(i);
+                break;
+            }
+        }
+
+        if (ChatHistory.Count > ClientConfig.Settings.ChatHistoryLimit)
+            ChatHistory.RemoveRange(0, ChatHistory.Count - ClientConfig.Settings.ChatHistoryLimit);
+
+        ChatHistory.Add(ChatText);
+
+        ChatText = "";
+
+        ScrollToBottom = true;
+    }
+
+    public void WriteLine(string message)
+    {
+        WriteLine(message, Color.White);
     }
 
     public void WriteLine(string message, Color color)
@@ -413,11 +435,9 @@ public class ChatWindow : ClientWindow
         {
             if (ChatItems.Count > 0)
             {
-                ChatItem above = ChatItems[ChatItems.Count - 1];
-                if (message == above.OriginalText && above.Color == color.PackedValue)
+                ChatItem above = ChatItems[^1];
+                if (message == above.OriginalText && above.Color == color)
                 {
-                    if (above.CountAbove == 0)
-                        above.CountAbove++;
                     above.CountAbove++;
                     above.TimeMessageHasBeenVisible = 0;
                 }
@@ -438,20 +458,41 @@ public class ChatWindow : ClientWindow
         }
     }
 
-    public void WriteLine(string message)
-    {
-        WriteLine(message, Color.White);
-    }
-
-    public void AddText(string message)
+    public void AppendText(string message)
     {
         if (IsChatting)
         {
-            justOpened = true;
-            lock (textToAppend)
+            OpenedThisFrame = true;
+            lock (TextToAppend)
             {
-                textToAppend += message;
+                TextToAppend += message;
             }
+        }
+    }
+
+    public class ChatItem
+    {
+        public string OriginalText;
+
+        public List<TextSnippet> TextSnippets;
+
+        public Color Color;
+
+        public uint CountAbove;
+
+        public uint TimeMessageHasBeenVisible = 0;
+
+        public ChatItem(string text, List<TextSnippet> snippets, Color color, int CountAboue)
+        {
+            OriginalText = text;
+
+            Color = color;
+
+            CountAbove = (uint)(CountAboue);
+
+            TextSnippets = snippets;
+
+            TextSnippets.Add(new TextSnippet(""));
         }
     }
 }

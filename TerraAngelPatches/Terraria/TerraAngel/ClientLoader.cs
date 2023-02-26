@@ -59,9 +59,9 @@ public unsafe class ClientLoader
                 return defaultContentPath;
             }
 
-            if (ClientSteamUtils.TryFindTerrariaDirectory(out string foundSteamPath))
+            if (ClientSteamUtils.TryFindTerrariaDirectory(out string? foundSteamPath))
             {
-                foundSteamPath = Path.Combine(foundSteamPath, "Content");
+                foundSteamPath = Path.Combine(foundSteamPath!, "Content");
                 if (Directory.Exists(foundSteamPath))
                 {
                     return foundSteamPath;
@@ -206,6 +206,6 @@ public unsafe class ClientLoader
     {
         public static void WriteLine(string message) => ChatWindow?.WriteLine(message);
         public static void WriteLine(string message, Color color) => ChatWindow?.WriteLine(message, color);
-        public static void AddText(string message) => ChatWindow?.AddText(message);
+        public static void AppendText(string message) => ChatWindow?.AppendText(message);
     }
 }
