@@ -195,10 +195,18 @@ public class ChatWindow : ClientWindow
                 {
                     ChatItem item = ChatItems[i];
 
-                    if (item.CountAbove > 0) item.TextSnippets[item.TextSnippets.Count - 1].Text = $" ({item.CountAbove})";
+                    if (item.CountAbove > 0)
+                    {
+                        item.TextSnippets[^1].Text = $" ({item.CountAbove})";
+                    }
 
                     style.ItemSpacing = new Vector2(4f, 1f);
-                    Vector2 textSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
+
+                    if (item.LastWrapWidth != wrapWidth)
+                    {
+                        item.LastWrapWidth = wrapWidth;
+                        item.CachedSize = ImGuiUtil.CalcTextSizeWithTags(item.TextSnippets, wrapWidth);
+                    }
 
                     bool showMessageFade = false;
                     if (item.TimeMessageHasBeenVisible < ClientConfig.Settings.framesForMessageToBeVisible + 60)
@@ -207,19 +215,19 @@ public class ChatWindow : ClientWindow
                         item.TimeMessageHasBeenVisible++;
                     }
 
-                    if (ImGui.IsRectVisible(textSize) && (IsChatting || showMessageFade))
+                    if (ImGui.IsRectVisible(item.CachedSize) && (IsChatting || showMessageFade))
                     {
                         if (!IsChatting && showMessageFade && item.TimeMessageHasBeenVisible > (ClientConfig.Settings.framesForMessageToBeVisible))
                         {
                             float alpha = 1.0f - ((float)(item.TimeMessageHasBeenVisible - ClientConfig.Settings.framesForMessageToBeVisible) / 60f);
-                            if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, new Color(0f, 0f, 0f), textSize, alpha))
+                            if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, new Color(0f, 0f, 0f), item.CachedSize, alpha))
                             {
                                 ImGui.SetClipboardText(item.OriginalText);
                             }
                         }
                         else
                         {
-                            if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, Color.Black, textSize))
+                            if (ImGuiUtil.WrappedSelectableWithTextBorderWithTags($"CHID{i}", item.TextSnippets, wrapWidth, Color.Black, item.CachedSize))
                             {
                                 ImGui.SetClipboardText(item.OriginalText);
                             }
@@ -227,7 +235,7 @@ public class ChatWindow : ClientWindow
                     }
                     else
                     {
-                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + textSize.Y + (i + 1 < ChatItems.Count ? style.ItemSpacing.Y : 0f));
+                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + item.CachedSize.Y + (i + 1 < ChatItems.Count ? style.ItemSpacing.Y : 0f));
                         style.ItemSpacing.Y = 0f;
                         ImGui.Dummy(Vector2.Zero);
                     }
@@ -481,6 +489,10 @@ public class ChatWindow : ClientWindow
         public uint CountAbove;
 
         public uint TimeMessageHasBeenVisible = 0;
+
+        public Vector2 CachedSize = Vector2.Zero;
+
+        public float LastWrapWidth = float.MinValue;
 
         public ChatItem(string text, List<TextSnippet> snippets, Color color, int CountAboue)
         {
