@@ -6,9 +6,12 @@ namespace TerraAngel.UI.ClientWindows;
 public class DrawWindow : ClientWindow
 {
     public override bool IsToggleable => false;
+
     public override bool DefaultEnabled => true;
-    public override bool IsEnabled { get => true; }
-    public override bool IsPartOfGlobalUI => false;
+
+    public override bool IsEnabled => true;
+
+    public override bool IsGlobalToggle => false;
 
     public override void Draw(ImGuiIOPtr io)
     {

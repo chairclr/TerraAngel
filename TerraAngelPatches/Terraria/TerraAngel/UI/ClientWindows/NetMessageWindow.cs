@@ -18,7 +18,7 @@ public class NetMessageWindow : ClientWindow
     public override string Title => "Net Debugger";
 
     public override Keys ToggleKey => ClientConfig.Settings.ToggleNetDebugger;
-    public override bool IsPartOfGlobalUI => false;
+    public override bool IsGlobalToggle => false;
 
 
     private readonly Dictionary<int, FieldInfo> messageIDFields = typeof(MessageID).GetFields().Where(x =>

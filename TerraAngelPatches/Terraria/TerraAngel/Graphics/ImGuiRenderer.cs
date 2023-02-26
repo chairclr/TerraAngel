@@ -119,7 +119,7 @@ public class ImGuiRenderer
         LoadedTextures.Remove(textureId);
     }
 
-    public void BeforeLayout()
+    public void PreRender()
     {
         ImGuiIOPtr io = ImGui.GetIO();
         io.DeltaTime = Time.DrawDeltaTime;
@@ -132,7 +132,7 @@ public class ImGuiRenderer
         ImGui.NewFrame();
     }
 
-    public void AfterLayout()
+    public void PostRender()
     {
         ImGui.Render();
         RenderDrawData(ImGui.GetDrawData());

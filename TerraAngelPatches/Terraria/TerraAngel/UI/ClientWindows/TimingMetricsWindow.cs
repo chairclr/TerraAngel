@@ -18,7 +18,7 @@ public class TimingMetricsWindow : ClientWindow
 
     public override bool DefaultEnabled => false;
 
-    public override bool IsPartOfGlobalUI => false;
+    public override bool IsGlobalToggle => false;
 
     public override bool IsToggleable => true;
 

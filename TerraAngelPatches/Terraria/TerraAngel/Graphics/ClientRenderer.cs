@@ -8,33 +8,40 @@ namespace TerraAngel.Graphics;
 public class ClientRenderer : ImGuiRenderer
 {
     public List<ClientWindow> ClientWindows = new List<ClientWindow>();
+
+    public bool ShowMetricsWindow = false;
+
+    public bool GlobalToggle = true;
+
     public List<WorldEdit> WorldEdits = new List<WorldEdit>() { new WorldEditBrush(), new WorldEditCopyPaste() };
 
     public int CurrentWorldEditIndex = -1;
 
-    public WorldEdit CurrentWorldEdit
+    public WorldEdit? CurrentWorldEdit
     {
         get
         {
             if (CurrentWorldEditIndex == -1)
+            {
                 return null;
+            }
             else
+            {
                 return WorldEdits[CurrentWorldEditIndex];
+            }
         }
     }
-    public bool ShowMetricsWindow = false;
 
-    public bool GlobalUIState = true;
-
-    public ClientRenderer(Game game) : base(game)
+    public ClientRenderer(Game game) 
+        : base(game)
     {
-        this.Init();
+        Init();
     }
 
     public void Init()
     {
         TileUtil.Init();
-        this.RebuildFontAtlas();
+        RebuildFontAtlas();
         AddWindow(new MainWindow());
         AddWindow(new DrawWindow());
         ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow());
@@ -147,10 +154,11 @@ public class ClientRenderer : ImGuiRenderer
         BasicTimer renderTimer = TimeMetrics.GetTimer("Client Draw");
         renderTimer.Start();
         PreDraw();
+        PreRender();
         Draw();
         PostDraw();
+        PostRender();
         renderTimer.Stop();
-
     }
 
     public void PreDraw()
@@ -158,8 +166,8 @@ public class ClientRenderer : ImGuiRenderer
         Time.UpdateDraw();
 
         InputSystem.EndUpdateInput();
+
         InputSystem.UpdateInput();
-        base.BeforeLayout();
     }
 
     public void PostDraw()
@@ -179,8 +187,10 @@ public class ClientRenderer : ImGuiRenderer
             ClientLoader.InitDiscord();
         }
 
-        foreach (Plugin.Plugin plugin in Plugin.PluginLoader.LoadedPlugins)
+        for (int i = 0; i < Plugin.PluginLoader.LoadedPlugins.Count; i++)
         {
+            Plugin.Plugin plugin = Plugin.PluginLoader.LoadedPlugins[i];
+
             if (plugin is not null && plugin.IsInited)
             {
                 plugin.Update();
@@ -199,33 +209,41 @@ public class ClientRenderer : ImGuiRenderer
             ImGuiUtil.ItemImages[id] = BindTexture(TextureAssets.Item[id].Value);
         }
 
-        base.AfterLayout();
     }
 
     public void Draw()
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
-        if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleUIVisibility) && !(InputSystem.IsKeyDown(Keys.LeftControl) || InputSystem.IsKeyDown(Keys.RightControl)))
-            GlobalUIState = !GlobalUIState;
+        if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleUIVisibility) && !InputSystem.Ctrl)
+        {
+            GlobalToggle = !GlobalToggle;
+        }
+
         for (int i = 0; i < ClientWindows.Count; i++)
         {
             ClientWindow window = ClientWindows[i];
-            if ((!window.IsPartOfGlobalUI || GlobalUIState) && window.IsEnabled)
-            {
-                window.Draw(io);
-            }
-            window.Update();
 
             if (window.IsToggleable && InputSystem.IsKeyPressed(window.ToggleKey))
             {
                 window.IsEnabled = !window.IsEnabled;
 
                 if (window.IsEnabled)
-                    window.OnEnable();
+                {
+                    window.OnShow();
+                }
                 else
-                    window.OnDisable();
+                {
+                    window.OnHide();
+                }
             }
+
+            if ((!window.IsGlobalToggle || GlobalToggle) && window.IsEnabled)
+            {
+                window.Draw(io);
+            }
+
+            window.Update();
         }
 
         if (ShowMetricsWindow)
@@ -237,7 +255,6 @@ public class ClientRenderer : ImGuiRenderer
     public ClientWindow AddWindow(ClientWindow window)
     {
         ClientWindows.Add(window);
-        window.Init();
         window.IsEnabled = window.DefaultEnabled;
         return window;
     }

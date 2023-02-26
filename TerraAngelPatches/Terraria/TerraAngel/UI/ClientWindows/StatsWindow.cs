@@ -12,7 +12,7 @@ public class StatsWindow : ClientWindow
     public override bool IsEnabled { get => ClientConfig.Settings.ShowStatsWindow; }
 
     public override string Title => "Stat Window";
-    public override bool IsPartOfGlobalUI => false;
+    public override bool IsGlobalToggle => false;
 
     private float PacketCountElapsedTime = 0f;
 

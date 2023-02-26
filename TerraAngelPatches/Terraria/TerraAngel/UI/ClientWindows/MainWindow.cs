@@ -15,7 +15,7 @@ public class MainWindow : ClientWindow
 
     public override string Title => "Main Window";
 
-    public override bool IsPartOfGlobalUI => true;
+    public override bool IsGlobalToggle => true;
 
     public override void Draw(ImGuiIOPtr io)
     {

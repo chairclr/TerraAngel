@@ -13,7 +13,7 @@ public class ChatWindow : ClientWindow
 
     public override bool IsToggleable => false;
 
-    public override bool IsPartOfGlobalUI => false;
+    public override bool IsGlobalToggle => false;
 
     public override string Title => "Chat";
 

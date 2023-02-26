@@ -9,7 +9,7 @@ public class PlayerInspectorWindow : ClientWindow
     public override string Title => "Player Inspector";
     public override bool DefaultEnabled => false;
     public override bool IsToggleable => true;
-    public override bool IsPartOfGlobalUI => false;
+    public override bool IsGlobalToggle => false;
     public override Keys ToggleKey => ClientConfig.Settings.ShowPlayerInspector;
 
 
