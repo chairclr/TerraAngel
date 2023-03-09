@@ -119,7 +119,7 @@ public class ClientAssets
                 config.PixelSnapH = pixelSnapH;
                 config.RasterizerMultiply = rasterizerMultiply;
 
-                ImFontPtr font = io.Fonts.AddFontFromFileTTF(path, size, config, (IntPtr)glpyhRangesPtr);
+                ImFontPtr font = io.Fonts.AddFontFromFileTTF(path, size, config, (nint)glpyhRangesPtr);
                 config.Destroy();
                 return font;
             }

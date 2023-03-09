@@ -24,15 +24,17 @@
          int screenWidth = Main.screenWidth;
          int screenHeight = Main.screenHeight;
          int maxTilesX = Main.maxTilesX;
-@@ -93,14 +_,9 @@
+@@ -92,15 +_,10 @@
+         {
              for (int j = num5 - num9 + screenOverdrawOffset.X; j < num6 + num9 - screenOverdrawOffset.X; j++)
              {
-                 Tile tile = _tileArray[j, i];
+-                Tile tile = _tileArray[j, i];
 -                if (tile == null)
 -                {
 -                    tile = new Tile();
 -                    _tileArray[j, i] = tile;
 -                }
++                ref TileData tile = ref Main.tile.GetTileRef(j, i);
  
                  ushort wall = tile.wall;
 -                if (wall <= 0 || FullTile(j, i) || (wall == 318 && !_shouldShowInvisibleWalls) || (tile.invisibleWall() && !_shouldShowInvisibleWalls))
@@ -40,12 +42,15 @@
                  {
                      continue;
                  }
-@@ -134,7 +_,7 @@
+@@ -132,9 +_,9 @@
+                     value.Y = tile.wallFrameY() + 180 * (num12 / num11);
+                 }
  
-                 if (Lighting.NotRetro && !Main.wallLight[wall] && tile.wall != 241 && (tile.wall < 88 || tile.wall > 93) && !WorldGen.SolidTile(tile))
+-                if (Lighting.NotRetro && !Main.wallLight[wall] && tile.wall != 241 && (tile.wall < 88 || tile.wall > 93) && !WorldGen.SolidTile(tile))
++                if (Lighting.NotRetro && !Main.wallLight[wall] && tile.wall != 241 && (tile.wall < 88 || tile.wall > 93) && !WorldGen.SolidTile(ref tile))
                  {
 -                    Texture2D tileDrawTexture = GetTileDrawTexture(tile, j, i);
-+                    Texture2D tileDrawTexture = GetTileDrawTexture(tile);
++                    Texture2D tileDrawTexture = GetTileDrawTexture(ref tile);
                      if (tile.wall == 346)
                      {
                          vertices.TopRightColor = (vertices.TopLeftColor = (vertices.BottomRightColor = (vertices.BottomLeftColor = new Color((byte)Main.DiscoR, (byte)Main.DiscoG, (byte)Main.DiscoB))));
@@ -63,7 +68,7 @@
                      }
  
 -                    Texture2D tileDrawTexture2 = GetTileDrawTexture(tile, j, i);
-+                    Texture2D tileDrawTexture2 = GetTileDrawTexture(tile);
++                    Texture2D tileDrawTexture2 = GetTileDrawTexture(ref tile);
 -                    spriteBatch.Draw(tileDrawTexture2, new Vector2(j * 16 - (int)screenPosition.X - 8, i * 16 - (int)screenPosition.Y - 8) + vector, value, color2, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 +                    spriteBatch.Draw(tileDrawTexture2, new Vector2(j * 16 - intScreenPosition.X - 8, i * 16 - intScreenPosition.Y - 8) + vector, value, color2, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
                  }
@@ -115,7 +120,7 @@
      }
  
 -    private Texture2D GetTileDrawTexture(Tile tile, int tileX, int tileY)
-+    private Texture2D GetTileDrawTexture(Tile tile)
++    private Texture2D GetTileDrawTexture(ref TileData tile)
      {
          Texture2D result = TextureAssets.Wall[tile.wall].Value;
          int wall = tile.wall;

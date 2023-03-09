@@ -45,19 +45,33 @@
          }
  
          for (int n = 0; n < Main.countsAsHostForGameplay.Length; n++)
-@@ -66212,11 +_,6 @@
-     {
-         try
-         {
+@@ -66208,30 +_,21 @@
+         }
+     }
+ 
+-    public static bool SolidTile(Tile testTile)
+-    {
+-        try
+-        {
 -            if (testTile == null)
 -            {
 -                return true;
 -            }
--
++    public static bool SolidTile(Tile testTile) => SolidTile(ref testTile.RefData);
+ 
++    public static bool SolidTile(ref TileData testTile)
++    {
              if (testTile.active() && Main.tileSolid[testTile.type] && !Main.tileSolidTop[testTile.type] && !testTile.halfBrick() && testTile.slope() == 0 && !testTile.inActive())
              {
                  return true;
-@@ -66231,7 +_,7 @@
+             }
+-        }
+-        catch
+-        {
+-        }
+ 
+         return false;
+     }
  
      public static bool TileEmpty(int i, int j)
      {
@@ -80,7 +94,7 @@
          {
              return !tile.inActive();
          }
-@@ -66261,12 +_,13 @@
+@@ -66261,22 +_,30 @@
  
      public static bool SolidOrSlopedTile(int x, int y)
      {
@@ -91,17 +105,27 @@
  
      public static bool IsRope(int x, int y)
      {
++        if (!Main.tile.IsTileInLoadedSection(x, y))
++        {
++            return false;
++        }
++
++        ref TileData tile = ref Main.tile.GetTileRef(x, y);
++
 -        if (Main.tile[x, y] == null || !Main.tile[x, y].active())
-+        if (!Main.tile.IsTileInLoadedSection(x, y) || !Main.tile[x, y].active())
++        if (!tile.active())
          {
              return false;
          }
-@@ -66276,7 +_,7 @@
+ 
+-        if (Main.tileRope[Main.tile[x, y].type])
++        if (Main.tileRope[tile.type])
+         {
              return true;
          }
  
 -        if ((Main.tile[x, y].type == 314 || TileID.Sets.Platforms[Main.tile[x, y].type]) && Main.tile[x, y - 1] != null && Main.tile[x, y + 1] != null && Main.tile[x, y - 1].active() && Main.tile[x, y + 1].active() && Main.tileRope[Main.tile[x, y - 1].type] && Main.tileRope[Main.tile[x, y + 1].type])
-+        if ((Main.tile[x, y].type == 314 || TileID.Sets.Platforms[Main.tile[x, y].type]) && Main.tile.IsTileInLoadedSection(x, y - 1) && Main.tile.IsTileInLoadedSection(x, y + 1) && Main.tile[x, y - 1].active() && Main.tile[x, y + 1].active() && Main.tileRope[Main.tile[x, y - 1].type] && Main.tileRope[Main.tile[x, y + 1].type])
++        if ((tile.type == 314 || TileID.Sets.Platforms[tile.type]) && Main.tile.IsTileInLoadedSection(x, y - 1) && Main.tile.IsTileInLoadedSection(x, y + 1) && Main.tile[x, y - 1].active() && Main.tile[x, y + 1].active() && Main.tileRope[Main.tile[x, y - 1].type] && Main.tileRope[Main.tile[x, y + 1].type])
          {
              return true;
          }

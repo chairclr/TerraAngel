@@ -38,12 +38,10 @@ public unsafe class NativeTileMap
 
     public Tile this[int x, int y]
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
             return new Tile(ref TileHeap[x][y]);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
             TileHeap[x][y] = value.RefData;
@@ -52,12 +50,10 @@ public unsafe class NativeTileMap
 
     public Tile this[Vector2i position]
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         get
         {
             return new Tile(ref TileHeap[position.X][position.Y]);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         set
         {
             TileHeap[position.X][position.Y] = value.RefData;
@@ -92,8 +88,11 @@ public unsafe class NativeTileMap
     }
 
     public bool InWorld(Vector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
+
     public bool InWorld(Point position) => InWorld(position.X, position.Y);
+
     public bool InWorld(Vector2i position) => InWorld(position.X, position.Y);
+
     public bool InWorld(int x, int y)
     {
         if ((uint)x >= Width || (uint)y >= Height)
@@ -115,6 +114,7 @@ public unsafe class NativeTileMap
         if (Main.netMode == 1) return LoadedTileSections[sectionX, sectionY];
         return true;
     }
+
     public bool IsTileInLoadedSection(int x, int y)
     {
         if (Main.netMode == 0)
