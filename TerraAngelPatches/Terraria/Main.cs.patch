@@ -841,7 +841,7 @@
  
      private static void DrawInterface_41_InterfaceLogic4()
      {
-+        TerraAngel.Hooks.MiscHooks.lastCursorOverride = cursorOverride;
++        TerraAngel.Hooks.MiscHooks.LastCursorOverride = cursorOverride;
          if (mouseRight)
          {
              npcChatRelease = false;

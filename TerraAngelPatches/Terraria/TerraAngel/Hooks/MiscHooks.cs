@@ -10,29 +10,11 @@ namespace TerraAngel.Hooks;
 
 public class MiscHooks
 {
-    public static void Generate()
-    {
-        //foreach (PropertyInfo prop in typeof(TriggersSet).GetProperties())
-        //{
-        //    if (prop.CanRead && prop.PropertyType == typeof(bool) && prop.GetMethod is not null)
-        //    {
-        //        HookUtil.HookGen(prop.GetMethod, TriggerSetGetHook1);
-        //    }
-        //}
-    }
-
-    public static bool TriggerSetGetHook1(Func<TriggersSet, bool> orig, TriggersSet self)
-    {
-        if (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantCaptureKeyboard)
-            return false;
-        return orig(self);
-    }
-
-    public static int lastCursorOverride = -1;
+    public static int LastCursorOverride = -1;
 
     public static bool ShouldMouseBeVisible(bool visible)
     {
-        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || (ImGui.GetIO().WantCaptureKeyboard && !(ImGui.GetIO().KeyAlt && (ClientLoader.ChatWindow?.IsChatting ?? false) && lastCursorOverride == 2))))
+        if (ClientLoader.MainRenderer is not null && (ImGui.GetIO().WantCaptureMouse || (ImGui.GetIO().WantCaptureKeyboard && !(ImGui.GetIO().KeyAlt && (ClientLoader.ChatWindow?.IsChatting ?? false) && LastCursorOverride == 2))))
             visible = true;
         if (!Main.instance?.IsActive ?? false)
             visible = true;
@@ -40,11 +22,13 @@ public class MiscHooks
         return visible;
     }
 
-    public static bool framingDisabled = false;
+    public static bool FramingDisabled = false;
 
     private static int framesSinceStopped = 0;
     public static void MouseInputHook(Action orig)
     {
+        if (!Main.instance.IsActive)
+            return;
         if (ClientLoader.MainRenderer is not null && ImGui.GetIO().WantCaptureMouse)
         {
             PlayerInput.ScrollWheelDelta = 0;

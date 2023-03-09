@@ -89,7 +89,7 @@ public class NoClipCringe : Cringe
         }
         else
         {
-            if (ClientConfig.Settings.RightClickOnMapToTeleport && (InputSystem.RightMousePressed || (io.KeyCtrl && InputSystem.RightMouseDown)) && !io.WantCaptureMouse)
+            if (ClientConfig.Settings.RightClickOnMapToTeleport && (InputSystem.RightMousePressed || (io.KeyCtrl && InputSystem.RightMouseDown)) && !io.WantCaptureMouse && Util.IsMouseHoveringRect(Vector2.Zero, ImGui.GetIO().DisplaySize))
             {
                 Main.LocalPlayer.velocity = Vector2.Zero;
                 if (io.KeyCtrl)
