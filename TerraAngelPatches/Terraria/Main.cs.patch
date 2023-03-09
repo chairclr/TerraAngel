@@ -352,7 +352,7 @@
              Star.SpawnStars();
              ItemSorting.SetupWhiteLists();
          }
-+        ClientLoader.SetupImGuiRenderer(this);
++        ClientLoader.Initialize(this);
      }
  
      private void Initialize_Entities()
@@ -972,7 +972,7 @@
 +            {
 +                SoundEngine.PlaySound(10);
 +                menuMode = 888;
-+                MenuUI.SetState(ClientLoader.ConfigUI);
++                MenuUI.SetState(ClientLoader.ConfigUI!);
 +            }
 +
 +            num11++;
@@ -982,7 +982,7 @@
 +            {
 +                SoundEngine.PlaySound(10);
 +                menuMode = 888;
-+                MenuUI.SetState(ClientLoader.PluginUI);
++                MenuUI.SetState(ClientLoader.PluginUI!);
 +            }
 +
 +            num11++;
@@ -1105,7 +1105,7 @@
 -                num5 = num30;
 +                SoundEngine.PlaySound(10);
 +                menuMode = 888;
-+                MenuUI.SetState(ClientLoader.GraphicsUI);
++                MenuUI.SetState(ClientLoader.GraphicsUI!);
              }
              else if (menuMode == 1125)
              {

@@ -14,32 +14,35 @@ namespace TerraAngel.UI.TerrariaUI;
 
 public class GraphicsUI : UIState, IHaveBackButtonCommand
 {
-    private UIElement? element;
-    private UIAutoScaleTextTextPanel<string>? backButton;
-    private UIAutoScaleTextTextPanel<string>? changeStateButton;
-    private UIPanel? changeResolution;
-    private UIText? resolutionText;
-    private UIText? resolutionLeftText;
-    private UIText? resolutionRightText;
+    public readonly UIElement RootElement;
 
-    private UITextSliderInt? changeFramerate;
+    public readonly UIAutoScaleTextTextPanel<string> BackButton;
 
-    private UITextCheckbox? vsyncCheckbox;
+    public readonly UIAutoScaleTextTextPanel<string> ChangeStateButton;
 
-    private UITextSliderInt? changeLightingPasses;
+    public readonly UIPanel ResolutionPanel;
 
-    private List<Vector2i> validWindowSizes = new List<Vector2i>();
-    private int currentWindowSizeIndex = 0;
+    public readonly UIText ResolutionText;
 
-    public void HandleBackButtonUsage()
+    public readonly UIText ResolutionLeftText;
+
+    public readonly UIText ResolutionRightText;
+
+    public readonly UITextSliderInt FramerateSlider;
+
+    public readonly UITextCheckbox VsyncCheckbox;
+
+    public readonly UITextSliderInt LightingPassCountSlider;
+
+    public List<Vector2i> WindowSizeCache = new List<Vector2i>();
+
+    public int CurrentWindowSizeIndex = 0;
+
+    public GraphicsUI()
     {
-        Main.menuMode = MenuID.VideoSettings;
-        SoundEngine.PlaySound(SoundID.MenuClose);
-    }
+        CacheWindowSizes();
 
-    public override void OnInitialize()
-    {
-        element = new UIElement
+        RootElement = new UIElement
         {
             Width = { Percent = 0.8f },
             MaxWidth = new StyleDimension(600, 0),
@@ -48,7 +51,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f
         };
 
-        backButton = new UIAutoScaleTextTextPanel<string>("Back")
+        BackButton = new UIAutoScaleTextTextPanel<string>("Back")
         {
             Width = new StyleDimension(-10f, 1f / 3f),
             Height = { Pixels = 40 },
@@ -58,11 +61,9 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f
         }.WithFadedMouseOver();
 
-        backButton.OnLeftClick += (x, y) => HandleBackButtonUsage();
+        BackButton.OnLeftClick += (x, y) => HandleBackButtonUsage();
 
-        SetValidWindowSizes();
-
-        changeStateButton = new UIAutoScaleTextTextPanel<string>($"Go {GetNextStateString()}")
+        ChangeStateButton = new UIAutoScaleTextTextPanel<string>($"Go {GetNextWindowStateString()}")
         {
             Width = new StyleDimension(-10f, 1f / 2.5f),
             Height = { Pixels = 40 },
@@ -71,13 +72,14 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         }.WithFadedMouseOver();
-        changeStateButton.OnLeftClick += (x, y) =>
+
+        ChangeStateButton.OnLeftClick += (x, y) =>
         {
             ClientLoader.WindowManager!.State = GetNextState();
-            changeStateButton.SetText($"Go {GetNextStateString()}");
+            ChangeStateButton.SetText($"Go {GetNextWindowStateString()}");
         };
 
-        changeResolution = new UIPanel()
+        ResolutionPanel = new UIPanel()
         {
             Width = { Pixels = -10, Percent = 0.6f },
             Height = { Pixels = 40 },
@@ -87,81 +89,90 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             VAlign = 0.5f,
             HAlign = 0.5f,
         };
-        resolutionText = new UIText($"{ClientLoader.WindowManager!.Width} x {ClientLoader.WindowManager!.Height}")
+
+        ResolutionText = new UIText($"{ClientLoader.WindowManager!.Width} x {ClientLoader.WindowManager!.Height}")
         {
             HAlign = 0.5f,
             VAlign = 0.5f
         };
-        resolutionLeftText = new UIText("<")
+
+        ResolutionLeftText = new UIText("<")
         {
             Width = { Pixels = 30, },
             Height = { Pixels = 40, },
             HAlign = 0f,
             VAlign = 0.5f,
         };
-        resolutionLeftText.OnMouseOver += (x, y) => 
+
+        ResolutionLeftText.OnMouseOver += (x, y) =>
         {
-            if (IsSmallerResoAvailable()) resolutionLeftText.TextColor = Color.Yellow;
+            if (IsSmallerResolutionAvailable()) ResolutionLeftText.TextColor = Color.Yellow;
             SoundEngine.PlaySound(SoundID.MenuTick);
         };
-        resolutionLeftText.OnMouseOut += (x, y) =>
+
+        ResolutionLeftText.OnMouseOut += (x, y) =>
         {
-            resolutionLeftText.TextColor = IsSmallerResoAvailable() ? Color.White : Color.Gray;
+            ResolutionLeftText.TextColor = IsSmallerResolutionAvailable() ? Color.White : Color.Gray;
             SoundEngine.PlaySound(SoundID.MenuTick);
         };
-        resolutionLeftText.OnLeftClick += (x, y) =>
+
+        ResolutionLeftText.OnLeftClick += (x, y) =>
         {
-            if (IsSmallerResoAvailable())
+            if (IsSmallerResolutionAvailable())
             {
-                currentWindowSizeIndex--;
-                ClientLoader.WindowManager!.Size = validWindowSizes[currentWindowSizeIndex];
+                CurrentWindowSizeIndex--;
+                ClientLoader.WindowManager!.Size = WindowSizeCache[CurrentWindowSizeIndex];
                 ClientLoader.WindowManager.CenterWindow();
-                resolutionRightText!.TextColor = IsLargerResoAvailable() ? Color.White : Color.Gray;
+                ResolutionRightText!.TextColor = IsLargerResolutionAvailable() ? Color.White : Color.Gray;
                 SoundEngine.PlaySound(SoundID.MenuTick);
             }
             else
             {
-                resolutionLeftText.TextColor = Color.Gray;
+                ResolutionLeftText.TextColor = Color.Gray;
             }
         };
-        resolutionRightText = new UIText(">")
+
+        ResolutionRightText = new UIText(">")
         {
             Width = { Pixels = 30, },
             Height = { Pixels = 40, },
             HAlign = 1f,
             VAlign = 0.5f,
         };
-        resolutionRightText.OnMouseOver += (x, y) =>
+
+        ResolutionRightText.OnMouseOver += (x, y) =>
         {
-            if (IsLargerResoAvailable()) resolutionRightText.TextColor = Color.Yellow;
+            if (IsLargerResolutionAvailable()) ResolutionRightText.TextColor = Color.Yellow;
             SoundEngine.PlaySound(SoundID.MenuTick);
         };
-        resolutionRightText.OnMouseOut += (x, y) =>
+
+        ResolutionRightText.OnMouseOut += (x, y) =>
         {
-            resolutionRightText.TextColor = IsLargerResoAvailable() ? Color.White : Color.Gray;
+            ResolutionRightText.TextColor = IsLargerResolutionAvailable() ? Color.White : Color.Gray;
             SoundEngine.PlaySound(SoundID.MenuTick);
         };
-        resolutionRightText.OnLeftClick += (x, y) => 
+
+        ResolutionRightText.OnLeftClick += (x, y) =>
         {
-            if (IsLargerResoAvailable())
+            if (IsLargerResolutionAvailable())
             {
-                currentWindowSizeIndex++;
-                ClientLoader.WindowManager!.Size = validWindowSizes[currentWindowSizeIndex];
+                CurrentWindowSizeIndex++;
+                ClientLoader.WindowManager!.Size = WindowSizeCache[CurrentWindowSizeIndex];
                 ClientLoader.WindowManager.CenterWindow();
-                resolutionLeftText.TextColor = IsSmallerResoAvailable() ? Color.White : Color.Gray;
+                ResolutionLeftText.TextColor = IsSmallerResolutionAvailable() ? Color.White : Color.Gray;
                 SoundEngine.PlaySound(SoundID.MenuTick);
             }
             else
             {
-                resolutionRightText.TextColor = Color.Gray;
+                ResolutionRightText.TextColor = Color.Gray;
             }
         };
 
-        changeResolution.Append(resolutionText);
-        changeResolution.Append(resolutionRightText);
-        changeResolution.Append(resolutionLeftText);
+        ResolutionPanel.Append(ResolutionText);
+        ResolutionPanel.Append(ResolutionRightText);
+        ResolutionPanel.Append(ResolutionLeftText);
 
-        changeFramerate = new UITextSliderInt(30, 201, () => (ClientLoader.WindowManager.CapFPS ? 201 : ClientLoader.WindowManager.FPSCap), x => { if (x > 200) { ClientLoader.WindowManager.CapFPS = false; } else { ClientLoader.WindowManager.CapFPS = true; ClientLoader.WindowManager.FPSCap = x; } }, () => $"FPS Cap: {GetFramerateText()}")
+        FramerateSlider = new UITextSliderInt(30, 201, () => (ClientLoader.WindowManager.CapFPS ? 201 : ClientLoader.WindowManager.FPSCap), x => { if (x > 200) { ClientLoader.WindowManager.CapFPS = false; } else { ClientLoader.WindowManager.CapFPS = true; ClientLoader.WindowManager.FPSCap = x; } }, () => $"FPS Cap: {GetFramerateText()}")
         {
             Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },
@@ -172,7 +183,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f,
         };
 
-        changeLightingPasses = new UITextSliderInt(1, 8, () => Lighting.NewEngine.BlurPassCount, x => { Lighting.NewEngine.BlurPassCount = x; }, () => $"Light Passes: {GetLightingPassesText()}")
+        LightingPassCountSlider = new UITextSliderInt(1, 8, () => Lighting.NewEngine.BlurPassCount, x => { Lighting.NewEngine.BlurPassCount = x; }, () => $"Light Passes: {GetLightingPassesText()}")
         {
             Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },
@@ -183,7 +194,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f,
         };
 
-        vsyncCheckbox = new UITextCheckbox("Vsync", () => ClientLoader.WindowManager.Vsync, x => ClientLoader.WindowManager.Vsync = x, 1f)
+        VsyncCheckbox = new UITextCheckbox("Vsync", () => ClientLoader.WindowManager.Vsync, x => ClientLoader.WindowManager.Vsync = x, 1f)
         {
             Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },
@@ -195,55 +206,62 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         };
 
 
-        
+        RootElement.Append(BackButton);
 
-        element.Append(backButton);
-        element.Append(changeStateButton);
-        element.Append(changeResolution);
-        element.Append(changeFramerate);
-        element.Append(vsyncCheckbox);
-        element.Append(changeLightingPasses);
+        RootElement.Append(ChangeStateButton);
 
-        Append(element);
+        RootElement.Append(ResolutionPanel);
+
+        RootElement.Append(FramerateSlider);
+
+        RootElement.Append(VsyncCheckbox);
+
+        RootElement.Append(LightingPassCountSlider);
+    }
+
+    public override void OnInitialize()
+    {
+        Append(RootElement);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
 
-        resolutionText!.SetText($"{ClientLoader.WindowManager!.Width} x {ClientLoader.WindowManager!.Height}");
+        ResolutionText!.SetText($"{ClientLoader.WindowManager!.Width} x {ClientLoader.WindowManager!.Height}");
 
         if (InputSystem.IsKeyDown(Keys.Escape))
             HandleBackButtonUsage();
     }
 
-    public void SetValidWindowSizes()
+    public void CacheWindowSizes()
     {
         float mxDist = float.MaxValue;
         int i = 0;
         foreach (DisplayMode supportedDisplayMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
         {
-            validWindowSizes.Add(new Vector2i(supportedDisplayMode.Width, supportedDisplayMode.Height));
+            WindowSizeCache.Add(new Vector2i(supportedDisplayMode.Width, supportedDisplayMode.Height));
 
-            float d = ((Vector2)validWindowSizes.Last()).Distance(ClientLoader.WindowManager!.Size);
+            float d = ((Vector2)WindowSizeCache.Last()).Distance(ClientLoader.WindowManager!.Size);
             if (d < mxDist)
             {
                 mxDist = d;
-                currentWindowSizeIndex = i;
+                CurrentWindowSizeIndex = i;
             }
             i++;
         }
     }
 
-    public bool IsLargerResoAvailable()
+    public bool IsLargerResolutionAvailable()
     {
-        if (currentWindowSizeIndex + 1 >= validWindowSizes.Count)
+        if (CurrentWindowSizeIndex + 1 >= WindowSizeCache.Count)
             return false;
         return true;
     }
-    public bool IsSmallerResoAvailable()
+
+    public bool IsSmallerResolutionAvailable()
     {
-        if (currentWindowSizeIndex <= 0)
+        if (CurrentWindowSizeIndex <= 0)
             return false;
         return true;
     }
@@ -253,7 +271,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         return (WindowManager.WindowState)(((int)ClientLoader.WindowManager!.State + 1) % 3);
     }
 
-    public string GetNextStateString()
+    public string GetNextWindowStateString()
     {
         return GetNextState() == WindowManager.WindowState.Windowed ? "Windowed" : (GetNextState() == WindowManager.WindowState.BorderlessFullscreen ? "Borderless Fullscreen" : "Fullscreen");
     }
@@ -262,8 +280,15 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
     {
         return ClientLoader.WindowManager!.CapFPS ? $"{ClientLoader.WindowManager!.FPSCap}" : "None";
     }
+
     public string GetLightingPassesText()
     {
         return Lighting.NewEngine.BlurPassCount.ToString();
+    }
+
+    public void HandleBackButtonUsage()
+    {
+        Main.menuMode = MenuID.VideoSettings;
+        SoundEngine.PlaySound(SoundID.MenuClose);
     }
 }

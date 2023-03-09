@@ -9,26 +9,30 @@ namespace TerraAngel.UI.TerrariaUI;
 
 public class ConfigUI : UIState, IHaveBackButtonCommand
 {
-    private UIElement element;
-    private UIPanel panel;
-    private UIList settingsList;
-    private List<UIElement> settingsTextList = new List<UIElement>();
-    private UIAutoScaleTextTextPanel<string> backButton;
+    public readonly UIElement RootElement;
+
+    public readonly UIPanel BackgroundPanel;
+
+    public readonly UIList SettingsListContainer;
+
+    public readonly UIAutoScaleTextTextPanel<string> BackButton;
+
+    public List<UIElement> SettingsElementList = new List<UIElement>();
 
     public bool NeedsUpdate = false;
 
-    public override void OnInitialize()
+    public ConfigUI()
     {
-        element = new UIElement
+        RootElement = new UIElement
         {
             Width = { Percent = 0.8f },
-            MaxWidth = new StyleDimension(600, 0),
+            MaxWidth = { Pixels = 600, Percent = 0f, },
             Top = { Pixels = 220 },
             Height = { Pixels = -220, Percent = 1f },
             HAlign = 0.5f
         };
 
-        panel = new UIPanel
+        BackgroundPanel = new UIPanel
         {
             Width = { Percent = 1f },
             Height = { Pixels = -110, Percent = 1f },
@@ -36,11 +40,9 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
             PaddingTop = 0f
         };
 
-        element.Append(panel);
+        RootElement.Append(BackgroundPanel);
 
-
-
-        settingsList = new UIList
+        SettingsListContainer = new UIList
         {
             Width = { Pixels = -25, Percent = 1f },
             Height = { Percent = 1f },
@@ -48,9 +50,9 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
             ListPadding = 5f
         };
 
-        settingsList.ManualSortMethod = (x) => { };
+        SettingsListContainer.ManualSortMethod = (x) => { };
 
-        panel.Append(settingsList);
+        BackgroundPanel.Append(SettingsListContainer);
 
         UIScrollbar settingsScrollbar = new UIScrollbar
         {
@@ -60,13 +62,11 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
             BarColor = UIUtil.ScrollbarColor,
         }.WithView(100f, 1000f);
 
-        panel.Append(settingsScrollbar);
+        BackgroundPanel.Append(settingsScrollbar);
 
-        settingsList.SetScrollbar(settingsScrollbar);
+        SettingsListContainer.SetScrollbar(settingsScrollbar);
 
-
-
-        backButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("UI.Back"))
+        BackButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("UI.Back"))
         {
             Width = new StyleDimension(0f, 1f),
             Height = { Pixels = 40 },
@@ -75,20 +75,23 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
             VAlign = 1f,
         }.WithFadedMouseOver();
 
-        backButton.OnLeftClick += BackButton;
+        BackButton.OnLeftClick += (x, y) =>
+        {
+            HandleBackButtonUsage();
+        };
 
-        element.Append(backButton);
+        RootElement.Append(BackButton);
+    }
 
-        Append(element);
+    public override void OnInitialize()
+    {
+        Append(RootElement);
     }
 
     public override void OnActivate()
     {
-        base.OnActivate();
-
-        backButton.BackgroundColor = UIUtil.ButtonColor * 0.98f;
+        BackButton.BackgroundColor = UIUtil.ButtonColor * 0.98f;
         NeedsUpdate = true;
-
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -96,7 +99,7 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
         base.Draw(spriteBatch);
 
         if (InputSystem.IsKeyDown(Keys.Escape))
-            ((IHaveBackButtonCommand)this).HandleBackButtonUsage();
+            HandleBackButtonUsage();
     }
 
     public override void Update(GameTime gameTime)
@@ -104,14 +107,14 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
         if (NeedsUpdate)
         {
             NeedsUpdate = false;
-            settingsList.Clear();
-            settingsTextList.Clear();
-            settingsTextList = ClientConfig.Settings.GetUITexts();
+            SettingsListContainer.Clear();
+            SettingsElementList.Clear();
+            SettingsElementList = ClientConfig.Settings.GetUITexts();
 
-            for (int i = 0; i < settingsTextList.Count; i++)
+            for (int i = 0; i < SettingsElementList.Count; i++)
             {
-                UIElement text = settingsTextList[i];
-                settingsList.Add(text);
+                UIElement text = SettingsElementList[i];
+                SettingsListContainer.Add(text);
             }
         }
 
@@ -119,14 +122,9 @@ public class ConfigUI : UIState, IHaveBackButtonCommand
 
     }
 
-    void BackButton(UIMouseEvent evt, UIElement listeningElement)
+    public void HandleBackButtonUsage()
     {
-        ((IHaveBackButtonCommand)this).HandleBackButtonUsage();
-    }
-
-    void IHaveBackButtonCommand.HandleBackButtonUsage()
-    {
-        Terraria.Main.menuMode = 0;
+        Main.menuMode = 0;
         SoundEngine.PlaySound(SoundID.MenuClose);
     }
 }

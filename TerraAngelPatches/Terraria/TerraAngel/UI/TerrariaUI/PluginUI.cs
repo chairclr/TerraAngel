@@ -11,19 +11,25 @@ namespace TerraAngel.UI.TerrariaUI;
 
 public class PluginUI : UIState, IHaveBackButtonCommand
 {
-    private UIElement element;
-    private UIPanel panel;
-    private UIList pluginList;
-    private List<UIElement> pluginObjectList = new List<UIElement>();
-    private UIAutoScaleTextTextPanel<string> backButton;
-    private UIAutoScaleTextTextPanel<string> reloadPluginsButton;
-    private UIAutoScaleTextTextPanel<string> openPluginsFolderButton;
+    public readonly UIElement RootElement;
+
+    public readonly UIPanel PluginPanel;
+
+    public readonly UIList PluginListContainer;
+
+    public readonly UIAutoScaleTextTextPanel<string> BackButton;
+
+    public readonly UIAutoScaleTextTextPanel<string> ReloadPluginsButton;
+
+    public readonly UIAutoScaleTextTextPanel<string> OpenPluginsFolderButton;
+
+    public List<UIElement> PluginElementList = new List<UIElement>();
 
     public bool NeedsUpdate = false;
 
-    public override void OnInitialize()
+    public PluginUI()
     {
-        element = new UIElement
+        RootElement = new UIElement
         {
             Width = { Percent = 0.8f },
             MaxWidth = new StyleDimension(600, 0),
@@ -32,7 +38,7 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f
         };
 
-        panel = new UIPanel
+        PluginPanel = new UIPanel
         {
             Width = { Percent = 1f },
             Height = { Pixels = -110, Percent = 1f },
@@ -40,11 +46,9 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             PaddingTop = 0f
         };
 
-        element.Append(panel);
+        RootElement.Append(PluginPanel);
 
-
-
-        pluginList = new UIList
+        PluginListContainer = new UIList
         {
             Width = { Pixels = -25, Percent = 1f },
             Height = { Percent = 1f },
@@ -52,7 +56,7 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             ListPadding = 5f
         };
 
-        panel.Append(pluginList);
+        PluginPanel.Append(PluginListContainer);
 
         UIScrollbar settingsScrollbar = new UIScrollbar
         {
@@ -62,13 +66,11 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             BarColor = UIUtil.ScrollbarColor,
         }.WithView(100f, 1000f);
 
-        panel.Append(settingsScrollbar);
+        PluginPanel.Append(settingsScrollbar);
 
-        pluginList.SetScrollbar(settingsScrollbar);
+        PluginListContainer.SetScrollbar(settingsScrollbar);
 
-
-
-        backButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("UI.Back"))
+        BackButton = new UIAutoScaleTextTextPanel<string>(Language.GetTextValue("UI.Back"))
         {
             Width = new StyleDimension(-10f, 1f / 3f),
             Height = { Pixels = 40 },
@@ -77,9 +79,12 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             VAlign = 1f,
         }.WithFadedMouseOver();
 
-        backButton.OnLeftClick += BackButton;
+        BackButton.OnLeftClick += (x, y) =>
+        {
+            HandleBackButtonUsage();
+        };
 
-        reloadPluginsButton = new UIAutoScaleTextTextPanel<string>("Reload Plugins")
+        ReloadPluginsButton = new UIAutoScaleTextTextPanel<string>("Reload Plugins")
         {
             Width = new StyleDimension(-10f, 1f / 3f),
             Height = { Pixels = 40 },
@@ -89,9 +94,9 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f
         }.WithFadedMouseOver();
 
-        reloadPluginsButton.OnLeftClick += ReloadButton;
+        ReloadPluginsButton.OnLeftClick += ReloadButton;
 
-        openPluginsFolderButton = new UIAutoScaleTextTextPanel<string>("Open Plugins Folder")
+        OpenPluginsFolderButton = new UIAutoScaleTextTextPanel<string>("Open Plugins Folder")
         {
             Width = new StyleDimension(-10f, 1f / 3f),
             Height = { Pixels = 40 },
@@ -101,22 +106,34 @@ public class PluginUI : UIState, IHaveBackButtonCommand
             HAlign = 1f
         }.WithFadedMouseOver();
 
-        openPluginsFolderButton.OnLeftClick += OpenButton;
+        OpenPluginsFolderButton.OnLeftClick += (x, y) =>
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = ClientLoader.PluginsPath
+            };
 
+            Process.Start(startInfo);
+        };
 
-        element.Append(backButton);
-        element.Append(reloadPluginsButton);
-        element.Append(openPluginsFolderButton);
+        RootElement.Append(BackButton);
 
+        RootElement.Append(ReloadPluginsButton);
 
-        Append(element);
+        RootElement.Append(OpenPluginsFolderButton);
+    }
+
+    public override void OnInitialize()
+    {
+        Append(RootElement);
     }
 
     public override void OnActivate()
     {
         base.OnActivate();
 
-        backButton.BackgroundColor = UIUtil.ButtonColor * 0.98f;
+        BackButton.BackgroundColor = UIUtil.ButtonColor * 0.98f;
         NeedsUpdate = true;
     }
 
@@ -136,14 +153,14 @@ public class PluginUI : UIState, IHaveBackButtonCommand
         if (NeedsUpdate || updateCount % 60 == 0)
         {
             NeedsUpdate = false;
-            pluginList.Clear();
-            pluginObjectList.Clear();
+            PluginListContainer.Clear();
+            PluginElementList.Clear();
 
-            pluginObjectList = PluginLoader.GetPluginUIObjects();
+            PluginElementList = PluginLoader.GetPluginUIObjects();
 
-            foreach (UIElement text in pluginObjectList)
+            foreach (UIElement text in PluginElementList)
             {
-                pluginList.Add(text);
+                PluginListContainer.Add(text);
             }
         }
 
@@ -151,13 +168,9 @@ public class PluginUI : UIState, IHaveBackButtonCommand
 
     }
 
-    void BackButton(UIMouseEvent evt, UIElement listeningElement)
-    {
-        HandleBackButtonUsage();
-    }
     public void HandleBackButtonUsage()
     {
-        Terraria.Main.menuMode = 0;
+        Main.menuMode = 0;
         SoundEngine.PlaySound(SoundID.MenuClose);
     }
 
@@ -167,16 +180,5 @@ public class PluginUI : UIState, IHaveBackButtonCommand
         PluginLoader.UnloadPlugins();
         PluginLoader.LoadPlugins();
         NeedsUpdate = true;
-    }
-
-    void OpenButton(UIMouseEvent evt, UIElement listeningElement)
-    {
-        ProcessStartInfo startInfo = new ProcessStartInfo
-        {
-            Arguments = ClientLoader.PluginsPath,
-            FileName = "explorer.exe",
-        };
-
-        Process.Start(startInfo);
     }
 }

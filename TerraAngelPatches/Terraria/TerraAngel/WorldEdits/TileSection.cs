@@ -6,6 +6,7 @@ namespace TerraAngel.WorldEdits;
 public class TileSection
 {
     public int Width;
+
     public int Height;
 
     public NativeTileMap? Tiles;
@@ -16,11 +17,13 @@ public class TileSection
         Width = width;
         Height = height;
     }
+
     public TileSection(int x, int y, int width, int height)
         : this(Main.tile, x, y, width, height)
     {
 
     }
+
     public TileSection(NativeTileMap copyFrom, int x, int y, int width, int height)
     {
         // do a gay little switch around so that width and height can be negative
