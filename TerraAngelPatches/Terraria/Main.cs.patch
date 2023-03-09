@@ -465,6 +465,14 @@
              return;
          }
  
+@@ -15061,7 +_,6 @@
+         }
+ 
+         PlayerInput.SetZoom_Unscaled();
+-        MouseOversTryToClear();
+         PlayerInput.ResetInputsOnActiveStateChange();
+         if (!dedServ && Main.OnTickForThirdPartySoftwareOnly != null)
+         {
 @@ -15136,37 +_,10 @@
          }
  
@@ -523,7 +531,13 @@
                      return;
                  }
  
-@@ -15239,6 +_,7 @@
+@@ -15236,9 +_,13 @@
+                 UpdateTimeAccumulator -= 0.01666666753590107;
+                 UpdateTimeAccumulator = Math.Min(UpdateTimeAccumulator, 0.01666666753590107);
+             }
++            // Moved to fix mouse overlays at high fps values
++            
++            MouseOversTryToClear();
  
              uCount++;
              drawSkip = false;
