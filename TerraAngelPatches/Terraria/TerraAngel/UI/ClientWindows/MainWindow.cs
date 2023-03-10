@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TerraAngel.ID;
 using TerraAngel.WorldEdits;
+using Terraria.TerraAngel.Tools.Developer;
 
 namespace TerraAngel.UI.ClientWindows;
 
@@ -59,19 +60,21 @@ public class MainWindow : ClientWindow
                         }
                         ImGui.EndTabItem();
                     }
+
                     if (ImGui.BeginTabItem("Items"))
                     {
                         if (ImGui.BeginTabBar("ItemBar"))
                         {
                             if (ImGui.BeginTabItem("Item Browser"))
                             {
-                                ItemBrowser.DrawBrowser();
+                                ToolManager.GetTool<ItemBrowserTool>().DrawUI(io);
                                 ImGui.EndTabItem();
                             }
                             ImGui.EndTabBar();
                         }
                         ImGui.EndTabItem();
                     }
+
                     if (ImGui.BeginTabItem("Automation"))
                     {
                         foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.AutomationTools))

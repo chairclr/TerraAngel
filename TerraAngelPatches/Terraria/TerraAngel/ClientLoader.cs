@@ -59,7 +59,7 @@ public unsafe class ClientLoader
                 return defaultContentPath;
             }
 
-            if (ClientSteamUtils.TryFindTerrariaDirectory(out string? foundSteamPath))
+            if (SteamLocator.TryFindTerrariaDirectory(out string? foundSteamPath))
             {
                 foundSteamPath = Path.Combine(foundSteamPath!, "Content");
                 if (Directory.Exists(foundSteamPath))

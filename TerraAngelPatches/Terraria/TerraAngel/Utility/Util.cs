@@ -144,11 +144,12 @@ public class Util
         return Vector2.Transform(screenPosition, Main.GameViewMatrix.InverseZoomMatrix) + Main.screenPosition;
     }
 
-    public static void CreateDirectory(string dir)
+    public static void CreateDirectory(string? dir)
     {
         if (!Directory.Exists(dir))
             Directory.CreateDirectory(dir);
     }
+
     public static void CreateParentDirectory(string path) => CreateDirectory(Path.GetDirectoryName(path));
 
     public static object? GetDefault(Type type)
@@ -162,6 +163,6 @@ public class Util
 
     public static float Lerp(float x0, float x1, float t)
     {
-        return x0 * (1 - t) + x1 * t;
+        return MathHelper.Lerp(x0, x1, t);
     }
 }

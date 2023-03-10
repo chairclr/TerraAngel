@@ -105,9 +105,7 @@ public class MapScreenshotTool : Tool
                             int tileY = y + start.Y;
                             Terraria.Map.MapTile mapTile = Main.Map[tileX, tileY];
                             Color col = Terraria.Map.MapHelper.GetMapTileXnaColor(ref mapTile);
-                            byte r = col.R;
-                            col.R = col.B;
-                            col.B = r;
+                            (col.B, col.R) = (col.R, col.B);
 
                             for (int yp = 0; yp < ppt; yp++)
                             {
@@ -151,7 +149,7 @@ public class MapScreenshotTool : Tool
                 return;
             }
 
-            System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(new NRectangle(System.Drawing.Point.Empty, bitmap.Size), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(new NRectangle(System.Drawing.Point.Empty, bitmap.Size), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             nint hbitmap = NativeClipboard.CreateBitmap(bitmap.Width, bitmap.Height, 1, 32, bitmapData.Scan0);
 

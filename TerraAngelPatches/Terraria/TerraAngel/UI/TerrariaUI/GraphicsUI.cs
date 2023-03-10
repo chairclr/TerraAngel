@@ -193,7 +193,7 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             BackgroundColor = UIUtil.ButtonColor * 0.98f,
             Top = { Pixels = -140 },
             VAlign = 0.5f,
-            HAlign = 0.5f,
+            HAlign = 0.5f
         };
 
         VsyncCheckbox = new UITextCheckbox("Vsync", () => ClientLoader.WindowManager.Vsync, x => ClientLoader.WindowManager.Vsync = x, 1f)

@@ -477,7 +477,7 @@
          }
  
          DoUpdate_AutoSave();
-+        BasicTimer updateTimer = TimeMetrics.GetTimer("Main DoUpdate").Start();
++        MetricsTimer updateTimer = TimeMetrics.GetMetricsTimer("Main DoUpdate").Start();
 +
          if (!dedServ)
          {
@@ -1294,7 +1294,7 @@
              return;
          }
  
-+        BasicTimer tileTimer = TimeMetrics.GetTimer("Render Tiles").Start();
++        MetricsTimer tileTimer = TimeMetrics.GetMetricsTimer("Render Tiles").Start();
          RenderBlack();
          base.GraphicsDevice.SetRenderTarget(tileTarget);
          base.GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Transparent);
@@ -1339,7 +1339,7 @@
          {
              _isDrawingOrUpdating = true;
              EnsureRenderTargetContent();
-+            BasicTimer drawTimer = TimeMetrics.GetTimer("Main DoDraw").Start();
++            MetricsTimer drawTimer = TimeMetrics.GetMetricsTimer("Main DoDraw").Start();
              DoDraw(gameTime);
 +            drawTimer.Stop();
 +            float y = Main.screenPosition.Y;

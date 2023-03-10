@@ -8,11 +8,11 @@ using Microsoft.Win32;
 
 namespace TerraAngel.Utility;
 
-public static class ClientSteamUtils
+public static class SteamLocator
 {
-    public const int TerrariaAppId = 105600;
+    private static readonly int TerrariaAppId = 105600;
 
-    public readonly static string TerrariaManifestFile = $"appmanifest_{TerrariaAppId}.acf";
+    private readonly static string TerrariaManifestFile = $"appmanifest_{TerrariaAppId}.acf";
 
     private readonly static Regex SteamLibraryFoldersRegex = new Regex(@"^\s+""(path)""\s+""(.+)""", RegexOptions.Compiled);
 
@@ -106,7 +106,7 @@ public static class ClientSteamUtils
         return path != null && Directory.Exists(path);
     }
 
-    [SupportedOSPlatform("windows")]
+    [SupportedOSPlatform("Windows")]
     private static string? GetSteamDirectoryWindows()
     {
         string keyPath = Environment.Is64BitOperatingSystem ? @"SOFTWARE\Wow6432Node\Valve\Steam" : @"SOFTWARE\Valve\Steam";

@@ -401,7 +401,7 @@ public static class ImGuiUtil
             if (i == 0) color = ItemRarity.GetColor(item.rare);
             if (goodPrefixLine[i]) color = new Color(117, 185, 117);
             if (badPrefixLine[i]) color = new Color(185, 117, 117);
-            TextColored(ChatManager.ParseMessage(array[i], color).StringSum(x => x.Text), color);
+            TextColored(ChatManager.ParseMessage(array[i], color).Aggregate("", (x, y) => x + y.Text), color);
         }
 
         ImGui.EndTooltip();

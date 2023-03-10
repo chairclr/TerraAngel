@@ -151,7 +151,7 @@ public class ClientRenderer : ImGuiRenderer
 
     public void Render()
     {
-        BasicTimer renderTimer = TimeMetrics.GetTimer("Client Draw");
+        MetricsTimer renderTimer = TimeMetrics.GetMetricsTimer("Client Draw");
         renderTimer.Start();
         PreDraw();
         PreRender();

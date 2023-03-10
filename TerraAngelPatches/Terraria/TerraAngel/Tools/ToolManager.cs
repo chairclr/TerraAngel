@@ -65,8 +65,8 @@ public class ToolManager
     {
         for (int i = 0; i < AllTools.Count; i++)
         {
-            Tool cringe = AllTools[i];
-            cringe.Update();
+            Tool tool = AllTools[i];
+            tool.Update();
         }
     }
 

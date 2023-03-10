@@ -32,7 +32,7 @@
      {
          Main.render = true;
          UpdateGlobalBrightness();
-+        BasicTimer timer = TimeMetrics.GetTimer("Light Tiles").Start();
++        MetricsTimer timer = TimeMetrics.GetMetricsTimer("Light Tiles").Start();
          _activeEngine.ProcessArea(new Rectangle(firstX, firstY, lastX - firstX, lastY - firstY));
 +        timer.Stop();
      }

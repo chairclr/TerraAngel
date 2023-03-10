@@ -4,7 +4,7 @@
              int num = -1;
              while (!Disconnect)
              {
-+                BasicTimer netTimer = TimeMetrics.GetTimer("Netplay Client Loop").Start();
++                MetricsTimer netTimer = TimeMetrics.GetMetricsTimer("Netplay Client Loop").Start();
                  if (Connection.Socket.IsConnected())
                  {
                      if (Connection.ServerWantsToRunCheckBytesInClientLoopThread && NetMessage.buffer[256].checkBytes)

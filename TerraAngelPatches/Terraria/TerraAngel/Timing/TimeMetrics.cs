@@ -7,34 +7,58 @@ namespace TerraAngel.Timing;
 
 public class TimeMetrics
 {
-    public abstract class Timer
-    {
-        public readonly string Name;
-        public readonly Stopwatch Watch;
+    public readonly static TimeLog FramerateDeltaTimeSlices = new TimeLog(100);
 
-        public Timer(string name)
+    public readonly static TimeLog UpdateDeltaTimeSlices = new TimeLog(100);
+
+    public readonly static Dictionary<string, TimeLog> TimeLogs = new Dictionary<string, TimeLog>();
+
+    private readonly static Dictionary<string, MetricsTimer> MetricTimers = new Dictionary<string, MetricsTimer>();
+
+    public static MetricsTimer GetMetricsTimer(string name)
+    {
+        if (!MetricTimers.TryGetValue(name, out MetricsTimer? timer))
         {
-            Name = name;
-            Watch = new Stopwatch();
+            timer = new MetricsTimer(name);
+            MetricTimers.Add(name, timer);
         }
+
+        return timer;
+    }
+
+    public static void AddTime(string name, TimeSpan time)
+    {
+        if (!TimeLogs.TryGetValue(name, out TimeLog? log))
+        {
+            log = new TimeLog();
+            TimeLogs.Add(name, log);
+        }
+
+        log.Add(time);
     }
 
     public class TimeLog
     {
         public Queue<TimeSpan> Times = new Queue<TimeSpan>();
+
         public int MaxTimeCount = 100;
 
+        public bool Paused = false;
+
         public TimeSpan Sum = TimeSpan.Zero;
+
         public TimeSpan Average
         {
             get
             {
                 if (Times.Count == 0 || Sum == TimeSpan.Zero)
+                {
                     return TimeSpan.Zero;
+                }
+
                 return Sum / Times.Count;
             }
         }
-        public bool Paused = false;
 
         public void Add(TimeSpan time)
         {
@@ -56,53 +80,29 @@ public class TimeMetrics
             MaxTimeCount = maxTimeCount;
         }
     }
-
-    public static Dictionary<string, TimeLog> TimeLogs = new Dictionary<string, TimeLog>();
-    private static Dictionary<string, BasicTimer> basicTimers = new Dictionary<string, BasicTimer>();
-
-    public static BasicTimer GetTimer(string name)
-    {
-        BasicTimer timer;
-        if (!basicTimers.ContainsKey(name))
-        {
-            timer = new BasicTimer(name);
-            basicTimers.Add(name, timer);
-        }
-        else
-        {
-            timer = basicTimers[name];
-        }
-
-        return timer;
-    }
-    public static void AddTime(string name, TimeSpan time)
-    {
-        TimeLog log;
-        if (!TimeLogs.ContainsKey(name))
-        {
-            log = new TimeLog();
-            TimeLogs.Add(name, log);
-        }
-        else
-        {
-            log = TimeLogs[name];
-        }
-
-        log.Add(time);
-    }
-
-    public static TimeLog FramerateDeltaTimeSlices = new TimeLog(100);
-    public static TimeLog UpdateDeltaTimeSlices = new TimeLog(100);
 }
 
-public class BasicTimer : TimeMetrics.Timer
+public abstract class Timer
 {
-    public BasicTimer(string name) : base(name)
+    public readonly string Name;
+    public readonly Stopwatch Watch;
+
+    public Timer(string name)
+    {
+        Name = name;
+        Watch = new Stopwatch();
+    }
+}
+
+public class MetricsTimer : Timer
+{
+    public MetricsTimer(string name) 
+        : base(name)
     {
 
     }
 
-    public BasicTimer Start()
+    public MetricsTimer Start()
     {
         Watch.Restart();
         return this;
