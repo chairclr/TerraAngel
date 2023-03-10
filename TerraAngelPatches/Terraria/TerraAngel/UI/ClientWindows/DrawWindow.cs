@@ -1,4 +1,5 @@
 ﻿using System;
+using TerraAngel.Tools.Visuals;
 using TerraAngel.WorldEdits;
 
 namespace TerraAngel.UI.ClientWindows;
@@ -19,14 +20,14 @@ public class DrawWindow : ClientWindow
         if (!Main.gameMenu)
         {
             WorldEdit? worldEdit = ClientLoader.MainRenderer?.CurrentWorldEdit;
-            ESPCringe esp = CringeManager.GetCringe<ESPCringe>();
+            ESPTool esp = ToolManager.GetTool<ESPTool>();
 
 
             if (!Main.mapFullscreen)
             {
                 worldEdit?.DrawPreviewInWorld(io, drawList);
 
-                if (CringeManager.GetCringe<HeldItemViewerCringe>().Enabled)
+                if (ToolManager.GetTool<HeldItemViewerTool>().Enabled)
                 {
                     for (int i = 0; i < 255; i++)
                     {
@@ -243,7 +244,7 @@ public class DrawWindow : ClientWindow
                     ClientLoader.MainRenderer?.WorldEdits[i].Update();
                 }
             }
-            CringeManager.Update();
+            ToolManager.Update();
         }
     }
 }

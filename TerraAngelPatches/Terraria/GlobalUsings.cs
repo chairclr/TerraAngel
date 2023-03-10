@@ -2,8 +2,11 @@
 global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
 global using TerraAngel;
-global using TerraAngel.Cheat;
-global using TerraAngel.Cheat.Cringes;
+global using TerraAngel.Tools;
+global using TerraAngel.Tools.Automation;
+global using TerraAngel.Tools.Developer;
+global using TerraAngel.Tools.Map;
+global using TerraAngel.Tools.Visuals;
 global using TerraAngel.UI;
 global using TerraAngel.UI.ClientWindows;
 global using TerraAngel.Config;

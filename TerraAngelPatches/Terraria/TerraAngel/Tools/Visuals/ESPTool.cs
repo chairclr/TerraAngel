@@ -1,9 +1,9 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Visuals;
 
-public class ESPCringe : Cringe
+public class ESPTool : Tool
 {
     public override string Name => "ESP Boxes";
-    public override CringeTabs Tab => CringeTabs.ESP;
+    public override ToolTabs Tab => ToolTabs.ESPTools;
 
     public ref Color LocalPlayerColor => ref ClientConfig.Settings.LocalBoxPlayerColor;
     public ref Color OtherPlayerColor => ref ClientConfig.Settings.OtherBoxPlayerColor;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using ReLogic.Threading;
+using TerraAngel.Tools.Visuals;
 using Terraria.Graphics.Light;
 using Terraria.ID;
 using Terraria.UI;
@@ -120,7 +121,7 @@ public class DrawHooks
     {
         if (!Main.gameMenu)
         {
-            FreecamCringe freecam = CringeManager.GetCringe<FreecamCringe>();
+            FreecamTool freecam = ToolManager.GetTool<FreecamTool>();
             if (freecam.Enabled)
             {
                 ImGuiIOPtr io = ImGui.GetIO();
@@ -162,8 +163,4 @@ public class DrawHooks
             Main.myPlayer = temp;
         }
     }
-
-    public static LightingModifierCringe? LightModificationCache;
-
-    public static OptimizationCringe? OptimizationCache;
 }

@@ -4,7 +4,7 @@
  
      public static int NewGore(Vector2 Position, Vector2 Velocity, int Type, float Scale = 1f)
      {
-+        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false) return 600;
++        if (OptimizationTool.OptimizationToolCache?.DisableDust ?? false) return 600;
          if (Main.netMode == 2)
          {
              return 600;

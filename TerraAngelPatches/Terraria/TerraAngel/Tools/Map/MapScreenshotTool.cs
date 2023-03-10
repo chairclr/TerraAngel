@@ -1,32 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Versioning;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using CommunityToolkit.HighPerformance;
-using ReLogic.OS;
 using SDL2;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Memory;
-using SixLabors.ImageSharp.PixelFormats;
-using Steamworks;
 using Color = Microsoft.Xna.Framework.Color;
 
-namespace TerraAngel.Cheat.Cringes;
-public class MapScreenshotCringe : Cringe
+namespace TerraAngel.Tools.Map;
+
+public class MapScreenshotTool : Tool
 {
     public override string Name => "Map Screenshot";
 
-    public override CringeTabs Tab => CringeTabs.MiscCringes;
+    public override ToolTabs Tab => ToolTabs.MiscTools;
 
     public bool TakingScreenshot = false;
+
     public bool SelectingArea = false;
 
     public Vector2i ScreenshotOrigin = Vector2i.Zero;
@@ -86,15 +75,11 @@ public class MapScreenshotCringe : Cringe
         if (start.X == end.X || start.Y == end.Y) return;
         if (end.X < start.X)
         {
-            int temp = start.X;
-            start.X = end.X;
-            end.X = temp;
+            (end.X, start.X) = (start.X, end.X);
         }
         if (end.Y < start.Y)
         {
-            int temp = start.Y;
-            start.Y = end.Y;
-            end.Y = temp;
+            (end.Y, start.Y) = (start.Y, end.Y);
         }
 
         Vector2i size = end - start;
@@ -108,7 +93,7 @@ public class MapScreenshotCringe : Cringe
                 {
                     using System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(size.X * ppt, size.Y * ppt);
                     System.Drawing.Imaging.BitmapData bitmapData = bitmap.LockBits(new NRectangle(System.Drawing.Point.Empty, bitmap.Size), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-                    
+
                     Span2D<Color> bitmapSpan = new Span2D<Color>((void*)bitmapData.Scan0, bitmapData.Height, bitmapData.Width, 0);
 
                     ClientLoader.Console.WriteLine("Taking map screenshot");

@@ -1,10 +1,12 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Visuals;
 
-public class LightingModifierCringe : Cringe
+public class LightingModifierTool : Tool
 {
+    public static LightingModifierTool? LightingModifierToolCache { get; private set; }
+
     public override string Name => "Lighting Modification";
 
-    public override CringeTabs Tab => CringeTabs.LightingCringes;
+    public override ToolTabs Tab => ToolTabs.LightingTools;
 
     [DefaultConfigValue(nameof(ClientConfig.Config.FullBrightDefaultValue))]
     public bool FullBright;
@@ -33,7 +35,8 @@ public class LightingModifierCringe : Cringe
             FullBright = !FullBright;
             Lighting.Mode = Lighting.Mode;
         }
-        TerraAngel.Hooks.DrawHooks.LightModificationCache = CringeManager.GetCringe<LightingModifierCringe>();
+
+        LightingModifierToolCache = this;
         FullbrightEngine.Brightness = Brightness;
     }
 }

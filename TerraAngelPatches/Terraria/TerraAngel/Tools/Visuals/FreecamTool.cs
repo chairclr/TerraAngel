@@ -1,10 +1,10 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Visuals;
 
-public class FreecamCringe : Cringe
+public class FreecamTool : Tool
 {
     public override string Name => "Freecam";
 
-    public override CringeTabs Tab => CringeTabs.VisualUtility;
+    public override ToolTabs Tab => ToolTabs.VisualTools;
 
     public bool Enabled;
 

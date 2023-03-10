@@ -1,12 +1,14 @@
 ﻿using TerraAngel.Hooks;
 
-namespace TerraAngel.Cheat.Cringes;
+namespace TerraAngel.Tools.Visuals;
 
-public class OptimizationCringe : Cringe
+public class OptimizationTool : Tool
 {
+    public static OptimizationTool? OptimizationToolCache { get; private set; }
+
     public override string Name => "Optimization Cringe";
 
-    public override CringeTabs Tab => CringeTabs.VisualUtility;
+    public override ToolTabs Tab => ToolTabs.VisualTools;
 
     [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDisableDust))]
     public bool DisableDust;
@@ -22,8 +24,7 @@ public class OptimizationCringe : Cringe
 
     public override void Update()
     {
-        DrawHooks.OptimizationCache = this;
-        Dust.OptimizationCache = this;
+        OptimizationToolCache = this;
         Dust.DustIntersectionRectangle = new Rectangle((int)Main.screenPosition.X - 50, (int)Main.screenPosition.Y - 50, Main.screenWidth + 50, Main.screenHeight + 50);
     }
 }

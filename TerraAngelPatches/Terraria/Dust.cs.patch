@@ -1,16 +1,14 @@
 --- src/Terraria/Terraria/Dust.cs
 +++ src/TerraAngel/Terraria/Dust.cs
-@@ -51,18 +_,22 @@
+@@ -51,18 +_,20 @@
          return dust;
      }
  
-+    public static OptimizationCringe OptimizationCache;
-+
 +    public static Rectangle DustIntersectionRectangle = new Rectangle((int)Main.screenPosition.X - 50,  (int)Main.screenPosition.Y - 50, Main.screenWidth + 50, Main.screenHeight + 50);
 +
      public static int NewDust(Vector2 Position, int Width, int Height, int Type, float SpeedX = 0f, float SpeedY = 0f, int Alpha = 0, Color newColor = default(Color), float Scale = 1f)
      {
-+        if (OptimizationCache.DisableDust)
++        if (OptimizationTool.OptimizationToolCache?.DisableDust ?? false)
 +        {
 +            return 6000;
 +        }
@@ -44,7 +42,7 @@
  
      public static void UpdateDust()
      {
-+        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false) return;
++        if (OptimizationTool.OptimizationToolCache?.DisableDust ?? false) return;
          int num = 0;
          lavaBubbles = 0;
          Main.snowDust = 0;

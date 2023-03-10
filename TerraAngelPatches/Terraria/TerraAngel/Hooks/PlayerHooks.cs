@@ -8,18 +8,18 @@ public class PlayerHooks
 {
     public static void PlayerItemCheckHook(Action<Player, int> orig, Player self, int i)
     {
-        if (self.whoAmI == Main.myPlayer && CringeManager.GetCringe<AutoAimCringe>().Enabled)
+        if (self.whoAmI == Main.myPlayer && ToolManager.GetTool<AutoAimTool>().Enabled)
         {
 
             int mx = Main.mouseX;
             int my = Main.mouseY;
 
 
-            if (CringeManager.GetCringe<AutoAimCringe>().LockedOnToTarget)
+            if (ToolManager.GetTool<AutoAimTool>().LockedOnToTarget)
             {
-                Vector2 point = Util.WorldToScreenWorld(CringeManager.GetCringe<AutoAimCringe>().TargetPoint);
+                Vector2 point = Util.WorldToScreenWorld(ToolManager.GetTool<AutoAimTool>().TargetPoint);
 
-                CringeManager.GetCringe<AutoAimCringe>().LockedOnToTarget = false;
+                ToolManager.GetTool<AutoAimTool>().LockedOnToTarget = false;
                 Main.mouseX = (int)point.X;
                 Main.mouseY = (int)point.Y;
             }
@@ -51,32 +51,32 @@ public class PlayerHooks
 
         if (self.whoAmI == Main.myPlayer)
         {
-            if (CringeManager.GetCringe<AntiHurtCringe>().Enabled)
+            if (ToolManager.GetTool<AntiHurtTool>().Enabled)
             {
                 self.statLife = self.statLifeMax2;
             }
 
-            if (CringeManager.GetCringe<InfiniteMinionCringe>().Enabled)
+            if (ToolManager.GetTool<InfiniteMinionTool>().Enabled)
             {
                 self.maxMinions = int.MaxValue - 100000;
             }
 
-            if (CringeManager.GetCringe<InfiniteManaCringe>().Enabled)
+            if (ToolManager.GetTool<InfiniteManaTool>().Enabled)
             {
                 self.statMana = self.statLifeMax2;
                 self.manaCost = 0.0f;
             }
 
-            if (CringeManager.GetCringe<InfiniteReachCringe>().Enabled)
+            if (ToolManager.GetTool<InfiniteReachTool>().Enabled)
             {
                 Player.tileRangeX = Main.screenWidth / 32 + 8;
                 Player.tileRangeY = Main.screenHeight / 32 + 8;
             }
 
-            if (CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket > 0)
-                CringeManager.GetCringe<AntiHurtCringe>().FramesSinceLastLifePacket--;
+            if (ToolManager.GetTool<AntiHurtTool>().FramesSinceLastLifePacket > 0)
+                ToolManager.GetTool<AntiHurtTool>().FramesSinceLastLifePacket--;
 
-            NoClipCringe noClip = CringeManager.GetCringe<NoClipCringe>();
+            NoClipTool noClip = ToolManager.GetTool<NoClipTool>();
             if (noClip.Enabled)
             {
                 if (Main.GameUpdateCount % noClip.NoClipPlayerSyncTime == 0)

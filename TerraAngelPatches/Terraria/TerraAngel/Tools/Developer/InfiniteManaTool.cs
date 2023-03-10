@@ -1,10 +1,10 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Developer;
 
-public class InfiniteManaCringe : Cringe
+public class InfiniteManaTool : Tool
 {
     public override string Name => "Infinite mana";
 
-    public override CringeTabs Tab => CringeTabs.MainCringes;
+    public override ToolTabs Tab => ToolTabs.MainTools;
 
     [DefaultConfigValue(nameof(ClientConfig.Config.DefaultInfiniteMana))]
     public bool Enabled;

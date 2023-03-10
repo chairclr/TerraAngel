@@ -1,10 +1,10 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Visuals;
 
-public class HeldItemViewerCringe : Cringe
+public class HeldItemViewerTool : Tool
 {
-    public override string Name => "Show held item";
+    public override string Name => "Show Held Item";
 
-    public override CringeTabs Tab => CringeTabs.VisualUtility;
+    public override ToolTabs Tab => ToolTabs.VisualTools;
 
     [DefaultConfigValue(nameof(ClientConfig.Config.DefaultShowHeldItem))]
     public bool Enabled;

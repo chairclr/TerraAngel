@@ -1,13 +1,13 @@
 ﻿using System;
 using TerraAngel.Physics;
 
-namespace TerraAngel.Cheat.Cringes;
+namespace TerraAngel.Tools.Visuals;
 
-public class ProjectilePredictionCringe : Cringe
+public class ProjectilePredictionTool : Tool
 {
     public override string Name => "Projectile Prediction";
 
-    public override CringeTabs Tab => CringeTabs.VisualUtility;
+    public override ToolTabs Tab => ToolTabs.VisualTools;
 
     public bool DrawPlayerProjectilePrediction = false;
 

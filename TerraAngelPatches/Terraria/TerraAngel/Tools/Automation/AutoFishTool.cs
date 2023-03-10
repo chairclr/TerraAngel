@@ -2,13 +2,13 @@
 using System.Linq;
 using Terraria.DataStructures;
 
-namespace TerraAngel.Cheat.Cringes;
+namespace TerraAngel.Tools.Automation;
 
-public class AutoFishCringe : Cringe
+public class AutoFishTool : Tool
 {
     public override string Name => "Auto-Fish";
 
-    public override CringeTabs Tab => CringeTabs.AutomationCringes;
+    public override ToolTabs Tab => ToolTabs.AutomationTools;
 
     public ref bool AcceptItems => ref ClientConfig.Settings.AutoFishAcceptItems;
     public ref bool AcceptAllItems => ref ClientConfig.Settings.AutoFishAcceptAllItems;
@@ -24,13 +24,17 @@ public class AutoFishCringe : Cringe
     private ref int frameCountRandomizationMin => ref ClientConfig.Settings.AutoFishFrameCountRandomizationMin;
     private ref int frameCountRandomizationMax => ref ClientConfig.Settings.AutoFishFrameCountRandomizationMax;
 
-    private int frameCountBeforeActualPullFish = 0;
-    private int frameCountBeforeActualCast = 0;
-    private bool wantPullFish = false;
-    private bool wantToReCast = false;
+    private int FrameCountBeforeActualPullFish = 0;
 
-    private bool hasSpecialPosition = false;
-    private Vector2 specialPosition = Vector2.Zero;
+    private int FrameCountBeforeActualCast = 0;
+
+    private bool WantPullFish = false;
+
+    private bool WantToReCast = false;
+
+    private bool HasSpecialPosition = false;
+
+    private Vector2 SpecialPosition = Vector2.Zero;
 
     public bool Enabled;
 
@@ -60,7 +64,7 @@ public class AutoFishCringe : Cringe
 
                 ImGui.SliderInt("Randomization Min", ref frameCountRandomizationMin, 0, 120);
                 ImGui.SliderInt("Randomization Max", ref frameCountRandomizationMax, frameCountRandomizationMin, frameCountRandomizationMin + 120);
-                ImGui.Checkbox("Use specific mouse position", ref hasSpecialPosition); ImGui.SameLine(); ImGui.TextDisabled("*Press Ctrl+Alt to select specific cast position");
+                ImGui.Checkbox("Use specific mouse position", ref HasSpecialPosition); ImGui.SameLine(); ImGui.TextDisabled("*Press Ctrl+Alt to select specific cast position");
                 ImGui.Unindent();
             }
         }
@@ -68,34 +72,33 @@ public class AutoFishCringe : Cringe
 
     public override void Update()
     {
-        base.Update();
         if (frameCountRandomizationMax < frameCountRandomizationMin)
             frameCountRandomizationMax = frameCountRandomizationMin;
         if (Enabled)
         {
-            if (hasSpecialPosition)
+            if (HasSpecialPosition)
             {
                 ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
-                drawList.AddCircleFilled(Util.WorldToScreenWorld(specialPosition), 10f, Color.Red.PackedValue);
+                drawList.AddCircleFilled(Util.WorldToScreenDynamic(SpecialPosition), 10f, Color.Red.PackedValue);
 
                 if (InputSystem.Ctrl && InputSystem.Alt)
                 {
-                    specialPosition = Main.MouseWorld;
+                    SpecialPosition = Main.MouseWorld;
                 }
             }
 
-            if (wantPullFish)
+            if (WantPullFish)
             {
-                frameCountBeforeActualPullFish--;
+                FrameCountBeforeActualPullFish--;
 
-                if (frameCountBeforeActualPullFish <= 0)
+                if (FrameCountBeforeActualPullFish <= 0)
                 {
                     try
                     {
-                        bool canUse = (bool)typeof(Player).GetMethod("ItemCheck_CheckFishingBobbers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(Main.LocalPlayer, new object[] { true });
-                        wantPullFish = false;
-                        wantToReCast = true;
-                        frameCountBeforeActualCast = Main.rand.Next(frameCountRandomizationMin, frameCountRandomizationMax) + 50;
+                        bool canUse = (bool)typeof(Player).GetMethod("ItemCheck_CheckFishingBobbers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(Main.LocalPlayer, new object[] { true })!;
+                        WantPullFish = false;
+                        WantToReCast = true;
+                        FrameCountBeforeActualCast = Main.rand.Next(frameCountRandomizationMin, frameCountRandomizationMax) + 50;
                     }
                     catch (Exception ex)
                     {
@@ -105,14 +108,14 @@ public class AutoFishCringe : Cringe
                     ClientLoader.Console.WriteLine("Pulled fish");
                 }
             }
-            if (wantToReCast)
+            if (WantToReCast)
             {
                 if (Main.projectile.Any(x => (x.bobber && x.owner == Main.myPlayer && x.active)))
                     return;
 
-                frameCountBeforeActualCast--;
+                FrameCountBeforeActualCast--;
 
-                if (frameCountBeforeActualCast <= 0)
+                if (FrameCountBeforeActualCast <= 0)
                 {
                     Item heldItem = Main.LocalPlayer.HeldItem;
 
@@ -125,10 +128,10 @@ public class AutoFishCringe : Cringe
                             Main.LocalPlayer.controlUseItem = true;
                             int mx = Main.mouseX;
                             int my = Main.mouseY;
-                            if (hasSpecialPosition)
+                            if (HasSpecialPosition)
                             {
-                                Main.mouseX = (int)specialPosition.X - (int)Main.screenPosition.X;
-                                Main.mouseY = (int)specialPosition.Y - (int)Main.screenPosition.Y;
+                                Main.mouseX = (int)SpecialPosition.X - (int)Main.screenPosition.X;
+                                Main.mouseY = (int)SpecialPosition.Y - (int)Main.screenPosition.Y;
                             }
                             Main.LocalPlayer.ItemCheck();
                             NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
@@ -138,7 +141,7 @@ public class AutoFishCringe : Cringe
 
                         }
                     }
-                    wantToReCast = false;
+                    WantToReCast = false;
                 }
 
             }
@@ -210,8 +213,8 @@ public class AutoFishCringe : Cringe
 
             if (wantToCatch)
             {
-                wantPullFish = true;
-                frameCountBeforeActualPullFish = Main.rand.Next(frameCountRandomizationMin, frameCountRandomizationMax);
+                WantPullFish = true;
+                FrameCountBeforeActualPullFish = Main.rand.Next(frameCountRandomizationMin, frameCountRandomizationMax);
             }
         }
     }

@@ -1,13 +1,15 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Visuals;
 
-public class DisableFramingCringe : Cringe
+public class DisableFramingTool : Tool
 {
     public override string Name => "Disable tile framing";
 
-    public override CringeTabs Tab => CringeTabs.VisualUtility;
+    public override ToolTabs Tab => ToolTabs.VisualTools;
 
     [DefaultConfigValue(nameof(ClientConfig.Config.DefaultDisableTileFraming))]
     public bool Enabled;
+
+    public static bool FramingDsiabledCache = false;
 
     public override void DrawUI(ImGuiIOPtr io)
     {
@@ -16,6 +18,6 @@ public class DisableFramingCringe : Cringe
 
     public override void Update()
     {
-        MiscHooks.FramingDisabled = CringeManager.GetCringe<DisableFramingCringe>().Enabled;
+        FramingDsiabledCache = Enabled;
     }
 }

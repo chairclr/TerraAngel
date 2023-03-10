@@ -5,7 +5,7 @@
              y = OverrideYReach.Value;
          }
 +
-+        if (CringeManager.GetCringe<InfiniteReachCringe>().Enabled)
++        if (ToolManager.GetTool<InfiniteReachTool>().Enabled)
 +        {
 +            x = Main.screenWidth / 32 + 8;
 +            y = Main.screenHeight / 32 + 8;

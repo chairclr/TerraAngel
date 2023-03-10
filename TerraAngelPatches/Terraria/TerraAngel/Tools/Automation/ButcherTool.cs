@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TerraAngel.Tools.Automation;
 
-namespace TerraAngel.Cheat.Cringes;
-public class ButcherCringe : Cringe
+public class ButcherTool : Tool
 {
     public override string Name => "Butcher";
 
-    public override CringeTabs Tab => CringeTabs.NewTab;
+    public override ToolTabs Tab => ToolTabs.NewTab;
 
     public int ButcherDamage = 1000;
-    public bool AutoButcherHostiles = false;
 
+    public bool AutoButcherHostiles = false;
 
     public override void DrawUI(ImGuiIOPtr io)
     {

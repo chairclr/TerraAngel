@@ -716,7 +716,7 @@
  
      protected void DrawGoreBehind()
      {
-+        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
++        if (OptimizationTool.OptimizationToolCache?.DisableGore ?? false)
 +            return;
 +
          for (int i = 0; i < 600; i++)
@@ -726,7 +726,7 @@
  
      protected void DrawGore()
      {
-+        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableGore ?? false)
++        if (OptimizationTool.OptimizationToolCache?.DisableGore ?? false)
 +            return;
 +
          drawBackGore = false;
@@ -823,7 +823,7 @@
  
      protected void DrawDust()
      {
-+        if (TerraAngel.Hooks.DrawHooks.OptimizationCache?.DisableDust ?? false)
++        if (OptimizationTool.OptimizationToolCache?.DisableDust ?? false)
 +            return;
 +
          Microsoft.Xna.Framework.Rectangle rectangle = new Microsoft.Xna.Framework.Rectangle((int)screenPosition.X - 500, (int)screenPosition.Y - 50, screenWidth + 1000, screenHeight + 100);
@@ -1275,7 +1275,7 @@
          if (mapFullscreen)
          {
 -            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap)
-+            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap && !TerraAngel.Cheat.CringeManager.GetCringe<TerraAngel.Cheat.Cringes.MapScreenshotCringe>().SelectingArea)
++            if (mouseLeft && base.IsActive && !CaptureManager.Instance.UsingMap && !ToolManager.GetTool<MapScreenshotTool>().SelectingArea)
              {
                  if (mouseLeftRelease)
                  {
@@ -1318,7 +1318,7 @@
  
      protected void DrawBlack(bool force = false)
      {
-+        if (TerraAngel.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false) return;
++        if (LightingModifierTool.LightingModifierToolCache?.FullBright ?? false) return;
          if (shimmerAlpha == 1f)
          {
              return;

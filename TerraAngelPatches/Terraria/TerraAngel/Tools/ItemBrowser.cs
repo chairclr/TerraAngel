@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Terraria.DataStructures;
 
-namespace TerraAngel.Cheat;
+namespace TerraAngel.Tools;
 
 public class ItemBrowser
 {

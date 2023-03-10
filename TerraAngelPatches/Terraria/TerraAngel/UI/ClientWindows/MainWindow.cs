@@ -47,13 +47,13 @@ public class MainWindow : ClientWindow
     {
         if (ImGui.BeginTabBar("##MainTabBar"))
         {
-            if (ImGui.BeginTabItem("Cheats"))
+            if (ImGui.BeginTabItem("Tools"))
             {
-                if (ImGui.BeginTabBar("CheatBar"))
+                if (ImGui.BeginTabBar("ToolBar"))
                 {
-                    if (ImGui.BeginTabItem("Main Cheats"))
+                    if (ImGui.BeginTabItem("Main Tools"))
                     {
-                        foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.MainCringes))
+                        foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.MainTools))
                         {
                             cringe.DrawUI(io);
                         }
@@ -74,14 +74,14 @@ public class MainWindow : ClientWindow
                     }
                     if (ImGui.BeginTabItem("Automation"))
                     {
-                        foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.AutomationCringes))
+                        foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.AutomationTools))
                         {
                             cringe.DrawUI(io);
                         }
                         ImGui.EndTabItem();
                     }
 
-                    foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.NewTab))
+                    foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.NewTab))
                     {
                         if (ImGui.BeginTabItem(cringe.Name))
                         {
@@ -100,7 +100,7 @@ public class MainWindow : ClientWindow
                 {
                     if (ImGui.BeginTabItem("Utility"))
                     {
-                        foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.VisualUtility))
+                        foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.VisualTools))
                         {
                             cringe.DrawUI(io);
                         }
@@ -138,7 +138,7 @@ public class MainWindow : ClientWindow
                     }
                     if (ImGui.BeginTabItem("ESP"))
                     {
-                        foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.ESP))
+                        foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.ESPTools))
                         {
                             cringe.DrawUI(io);
                         }
@@ -147,7 +147,7 @@ public class MainWindow : ClientWindow
                     }
                     if (ImGui.BeginTabItem("Lighting"))
                     {
-                        foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.LightingCringes))
+                        foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.LightingTools))
                         {
                             cringe.DrawUI(io);
                         }
@@ -161,7 +161,7 @@ public class MainWindow : ClientWindow
             {
                 if (ImGui.BeginTabBar("WorldEditBar"))
                 {
-                    for (int i = 0; i < ClientLoader.MainRenderer.WorldEdits.Count; i++)
+                    for (int i = 0; i < ClientLoader.MainRenderer!.WorldEdits.Count; i++)
                     {
                         WorldEdit worldEdit = ClientLoader.MainRenderer.WorldEdits[i];
                         if (worldEdit.DrawUITab(io))
@@ -175,12 +175,12 @@ public class MainWindow : ClientWindow
             }
             else
             {
-                ClientLoader.MainRenderer.CurrentWorldEditIndex = -1;
+                ClientLoader.MainRenderer!.CurrentWorldEditIndex = -1;
             }
 
             if (ImGui.BeginTabItem("Misc"))
             {
-                foreach (Cringe cringe in CringeManager.GetCringeOfTab(CringeTabs.MiscCringes))
+                foreach (Tool cringe in ToolManager.GetToolsOfTab(ToolTabs.MiscTools))
                 {
                     cringe.DrawUI(io);
                 }
@@ -196,7 +196,7 @@ public class MainWindow : ClientWindow
     {
         if (ImGui.BeginTabBar("##MainTabBar"))
         {
-            if (ImGui.BeginTabItem("Cheats"))
+            if (ImGui.BeginTabItem("Tools"))
             {
                 ImGui.Button($"{Icon.Refresh} Client UUID"); ImGui.SameLine();
                 if (ImGui.Button("Click to reveal"))
@@ -225,6 +225,5 @@ public class MainWindow : ClientWindow
     public override void Update()
     {
         base.Update();
-
     }
 }

@@ -89,9 +89,9 @@
  
 -                    DrawSingleTile(value, solidLayer, waterStyleOverride, unscaledPosition, vector, j, i);
 -                }
-+                    if (TerraAngel.Hooks.DrawHooks.LightModificationCache?.FullBright ?? false)
++                    if (LightingModifierTool.LightingModifierToolCache?.FullBright ?? false)
 +                    {
-+                    Color tileColor = new Color(new Vector3(TerraAngel.Hooks.DrawHooks.LightModificationCache.Brightness));
++                    Color tileColor = new Color(new Vector3(LightingModifierTool.LightingModifierToolCache.Brightness));
 +                    ushort typeCache = tile.type;
 +                    short tileFrameX = tile.frameX;
 +                    short tileFrameY = tile.frameY;

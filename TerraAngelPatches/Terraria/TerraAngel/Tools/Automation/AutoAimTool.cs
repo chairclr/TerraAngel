@@ -1,11 +1,11 @@
 ﻿using TerraAngel.Physics;
 
-namespace TerraAngel.Cheat.Cringes;
+namespace TerraAngel.Tools.Automation;
 
-public class AutoAimCringe : Cringe
+public class AutoAimTool : Tool
 {
     public override string Name => "Auto-Aim";
-    public override CringeTabs Tab => CringeTabs.AutomationCringes;
+    public override ToolTabs Tab => ToolTabs.AutomationTools;
 
     public ref bool FavorBosses => ref ClientConfig.Settings.AutoAttackFavorBosses;
     public ref bool TargetHostileNPCs => ref ClientConfig.Settings.AutoAttackTargetHostileNPCs;

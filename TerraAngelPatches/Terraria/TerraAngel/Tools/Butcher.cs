@@ -2,7 +2,7 @@
 using TerraAngel.Net;
 using Terraria.DataStructures;
 
-namespace TerraAngel.Cheat;
+namespace TerraAngel.Tools;
 
 public class Butcher
 {

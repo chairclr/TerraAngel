@@ -1,6 +1,6 @@
-﻿namespace TerraAngel.Cheat;
+﻿namespace TerraAngel.Tools;
 
-public abstract class Cringe
+public abstract class Tool
 {
     /// <summary>
     /// Name used for sorting
@@ -8,11 +8,14 @@ public abstract class Cringe
     public virtual string Name => GetType().Name;
 
     /// <summary>
-    /// Tab to display the cringe in
+    /// Tab to display the tool in
     /// </summary>
-    public virtual CringeTabs Tab => CringeTabs.None;
+    public virtual ToolTabs Tab => ToolTabs.None;
 
-    public abstract void DrawUI(ImGuiIOPtr io);
+    public virtual void DrawUI(ImGuiIOPtr io)
+    {
+
+    }
 
     public virtual void Update()
     {

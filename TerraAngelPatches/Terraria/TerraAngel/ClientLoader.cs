@@ -122,18 +122,18 @@ public unsafe class ClientLoader
 
         ClientConfig.ReadFromFile();
 
-        Type[] cringeTypes = typeof(Cringe).Assembly.GetTypes().Where(x =>
+        Type[] cringeTypes = typeof(Tool).Assembly.GetTypes().Where(x =>
                                                                     !x.IsAbstract &&
-                                                                    x.IsSubclassOf(typeof(Cringe)) &&
+                                                                    x.IsSubclassOf(typeof(Tool)) &&
                                                                     x.GetConstructor(Array.Empty<Type>()) != null).ToArray();
         for (int i = 0; i < cringeTypes.Length; i++)
         {
             Type type = cringeTypes[i];
-            CringeManager.AddCringe(type);
-            ClientConfig.SetDefaultCringeValues(CringeManager.GetCringe(type));
+            ToolManager.AddTool(type);
+            ClientConfig.SetDefaultCringeValues(ToolManager.GetTool(type));
         }
 
-        CringeManager.SortTabs();
+        ToolManager.SortTabs();
 
         if (ClientConfig.Settings.UseDiscordRPC)
         {

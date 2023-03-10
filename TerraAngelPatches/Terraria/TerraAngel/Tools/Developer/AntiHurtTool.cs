@@ -1,10 +1,10 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Developer;
 
-public class AntiHurtCringe : Cringe
+public class AntiHurtTool : Tool
 {
     public override string Name => "Anti-hurt/Godmode";
 
-    public override CringeTabs Tab => CringeTabs.MainCringes;
+    public override ToolTabs Tab => ToolTabs.MainTools;
 
     [DefaultConfigValue(nameof(ClientConfig.Config.DefaultAntiHurt))]
     public bool Enabled;

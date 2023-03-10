@@ -430,7 +430,7 @@ public class ClientConfig
     delegate ref Vector3 FuncRefVector3();
     delegate ref Vector4 FuncRefVector4();
     delegate ref bool FuncRefBool();
-    public static void SetDefaultCringeValues(Cringe cringe)
+    public static void SetDefaultCringeValues(Tool cringe)
     {
         Type type = cringe.GetType();
         foreach (FieldInfo field in type.GetFields().Where(x => Attribute.IsDefined(x, typeof(DefaultConfigValueAttribute))))

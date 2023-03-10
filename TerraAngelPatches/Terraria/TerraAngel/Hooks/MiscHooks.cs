@@ -22,9 +22,8 @@ public class MiscHooks
         return visible;
     }
 
-    public static bool FramingDisabled = false;
+    private static int FramesSinceStopped = 0;
 
-    private static int framesSinceStopped = 0;
     public static void MouseInputHook(Action orig)
     {
         if (!Main.instance.IsActive)
@@ -35,12 +34,12 @@ public class MiscHooks
             PlayerInput.ScrollWheelDeltaForUI = 0;
             PlayerInput.ScrollWheelValueOld = PlayerInput.ScrollWheelValue;
             PlayerInput.GamepadScrollValue = 0;
-            framesSinceStopped = 0;
+            FramesSinceStopped = 0;
         }
         else
         {
-            framesSinceStopped++;
-            if (framesSinceStopped < 2)
+            FramesSinceStopped++;
+            if (FramesSinceStopped < 2)
             {
                 PlayerInput.ScrollWheelDelta = 0;
                 PlayerInput.ScrollWheelDeltaForUI = 0;
@@ -48,7 +47,7 @@ public class MiscHooks
                 PlayerInput.GamepadScrollValue = 0;
             }
             orig();
-            if (framesSinceStopped < 2)
+            if (FramesSinceStopped < 2)
             {
                 PlayerInput.ScrollWheelDelta = 0;
                 PlayerInput.ScrollWheelDeltaForUI = 0;

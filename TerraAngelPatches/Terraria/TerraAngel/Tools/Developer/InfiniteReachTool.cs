@@ -1,10 +1,10 @@
-﻿namespace TerraAngel.Cheat.Cringes;
+﻿namespace TerraAngel.Tools.Developer;
 
-public class InfiniteReachCringe : Cringe
+public class InfiniteReachTool : Tool
 {
     public override string Name => "Infinite reach";
 
-    public override CringeTabs Tab => CringeTabs.MainCringes;
+    public override ToolTabs Tab => ToolTabs.MainTools;
 
     [DefaultConfigValue(nameof(ClientConfig.Config.DefaultInfiniteReach))]
     public bool Enabled;
