@@ -178,7 +178,7 @@ public class PluginUI : UIState, IHaveBackButtonCommand
     {
         ClientConfig.WriteToFile();
         PluginLoader.UnloadPlugins();
-        PluginLoader.LoadPlugins();
+        PluginLoader.LoadAndInitializePlugins();
         NeedsUpdate = true;
     }
 }

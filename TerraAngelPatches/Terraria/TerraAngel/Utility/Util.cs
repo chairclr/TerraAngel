@@ -146,14 +146,6 @@ public class Util
         return Vector2.Transform(screenPosition, Main.GameViewMatrix.InverseZoomMatrix) + Main.screenPosition;
     }
 
-    public static void CreateDirectory(string? dir)
-    {
-        if (!Directory.Exists(dir))
-            Directory.CreateDirectory(dir);
-    }
-
-    public static void CreateParentDirectory(string path) => CreateDirectory(Path.GetDirectoryName(path));
-
     public static object? GetDefault(Type type)
     {
         if (type.IsValueType)

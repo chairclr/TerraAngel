@@ -265,7 +265,7 @@ public class ClientConfig
             }
             set
             {
-                Plugin.PluginLoader.VerifyEnabled();
+                Plugin.PluginLoader.FindPluginFiles();
                 foreach (string enabledPlugin in value)
                 {
                     if (Plugin.PluginLoader.AvailablePlugins.ContainsKey(enabledPlugin))
@@ -274,7 +274,7 @@ public class ClientConfig
                     }
                 }
                 Plugin.PluginLoader.UnloadPlugins();
-                Plugin.PluginLoader.LoadPlugins();
+                Plugin.PluginLoader.LoadAndInitializePlugins();
             }
         }
 
@@ -360,7 +360,7 @@ public class ClientConfig
         {
             BeforeWrite();
             string s = JsonConvert.SerializeObject(Settings, SerializerSettings);
-            Util.CreateParentDirectory(ClientLoader.ConfigPath);
+            DirectoryUtility.TryCreateParentDirectory(ClientLoader.ConfigPath);
             using (FileStream fs = new FileStream(ClientLoader.ConfigPath, FileMode.OpenOrCreate))
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(s);

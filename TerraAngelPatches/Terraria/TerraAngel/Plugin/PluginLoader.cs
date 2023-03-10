@@ -13,29 +13,26 @@ namespace TerraAngel.Plugin;
 
 public class PluginLoader
 {
-    private static AssemblyLoadContext pluginLoader = new AssemblyLoadContext("PluginLoader", true);
+    private static AssemblyLoadContext PluginLoadContext = new AssemblyLoadContext("PluginLoader", true);
 
     public static Dictionary<string, bool> AvailablePlugins = new Dictionary<string, bool>();
 
     public static List<Plugin> LoadedPlugins = new List<Plugin>();
 
-    public static void LoadPlugins()
+    public static void LoadAndInitializePlugins()
     {
-        VerifyEnabled();
+        FindPluginFiles();
+
         foreach (string file in AvailablePlugins.Keys)
         {
             try
             {
                 if (AvailablePlugins[file])
                 {
-                    using (FileStream sr = File.Open(file, FileMode.Open))
-                    {
-                        Assembly assembly = pluginLoader.LoadFromStream(sr);
-                        LoadedPlugins.Add(LoadPluginFromDLL(assembly, file));
-                        sr.Close();
+                    using FileStream sr = File.Open(file, FileMode.Open);
 
-                        ClientLoader.Console.WriteLine($"Loading {Path.GetFileName(file)}");
-                    }
+                    Assembly assembly = PluginLoadContext.LoadFromStream(sr);
+                    LoadedPlugins.Add(LoadPluginFromDLL(assembly, file)!);
                 }
             }
             catch (Exception ex)
@@ -46,49 +43,6 @@ public class PluginLoader
 
         InitPlugins();
     }
-    public static void UnloadPlugins()
-    {
-        if (!LoadedPlugins.Any())
-            return;
-        DeinitPlugins();
-        LoadedPlugins.Clear();
-        pluginLoader.Unload();
-        pluginLoader = new AssemblyLoadContext("PluginLoader", true);
-        VerifyEnabled();
-    }
-
-    public static void VerifyEnabled()
-    {
-        Utility.Util.CreateDirectory(ClientLoader.PluginsPath);
-
-        AvailablePlugins = AvailablePlugins.Where(x => File.Exists(x.Key)).ToDictionary(x => x.Key, x => x.Value);
-
-        foreach (string file in Directory.GetFiles(ClientLoader.PluginsPath))
-        {
-            if (file.EndsWith(".TAPlugin.dll"))
-            {
-                if (!AvailablePlugins.ContainsKey(file))
-                {
-                    AvailablePlugins.Add(file, false);
-                }
-            }
-        }
-    }
-
-
-    public static List<UIElement> GetPluginUIObjects()
-    {
-        List<UIElement> uiObjects = new List<UIElement>();
-
-        VerifyEnabled();
-
-        foreach (string file in AvailablePlugins.Keys)
-        {
-            uiObjects.Add(new UIPlugin(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(file)), file, () => AvailablePlugins[file], (x) => AvailablePlugins[file] = x));
-        }
-
-        return uiObjects;
-    }
 
     private static void InitPlugins()
     {
@@ -98,9 +52,13 @@ public class PluginLoader
             {
                 try
                 {
-                    plugin?.Load();
+                    ClientLoader.Console.WriteLine($"Loading {plugin.Name}");
+
+                    plugin.Load();
 
                     plugin.IsInited = true;
+
+                    ClientLoader.Console.WriteLine($"Loaded  {plugin.Name}");
                 }
                 catch (Exception ex)
                 {
@@ -113,6 +71,18 @@ public class PluginLoader
             }
         }
     }
+
+    public static void UnloadPlugins()
+    {
+        if (!LoadedPlugins.Any())
+            return;
+        DeinitPlugins();
+        LoadedPlugins.Clear();
+        PluginLoadContext.Unload();
+        PluginLoadContext = new AssemblyLoadContext("PluginLoader", true);
+        FindPluginFiles();
+    }
+
     private static void DeinitPlugins()
     {
         foreach (Plugin? plugin in LoadedPlugins)
@@ -128,16 +98,48 @@ public class PluginLoader
         }
     }
 
-    private static Plugin LoadPluginFromDLL(Assembly assembly, string path)
+    public static void FindPluginFiles()
+    {
+        DirectoryUtility.TryCreateDirectory(ClientLoader.PluginsPath);
+
+        AvailablePlugins = AvailablePlugins.Where(x => File.Exists(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+
+        foreach (string file in Directory.GetFiles(ClientLoader.PluginsPath))
+        {
+            if (file.EndsWith(".TAPlugin.dll"))
+            {
+                if (!AvailablePlugins.ContainsKey(file))
+                {
+                    AvailablePlugins.Add(file, false);
+                }
+            }
+        }
+    }
+
+    private static Plugin? LoadPluginFromDLL(Assembly assembly, string path)
     {
         foreach (Type type in assembly.GetTypes())
         {
             if (typeof(Plugin).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
             {
-                return (Plugin)Activator.CreateInstance(type, path);
+                return (Plugin?)Activator.CreateInstance(type, path);
             }
         }
 
         return null;
+    }
+
+    public static List<UIElement> GetPluginUIObjects()
+    {
+        List<UIElement> uiObjects = new List<UIElement>();
+
+        FindPluginFiles();
+
+        foreach (string file in AvailablePlugins.Keys)
+        {
+            uiObjects.Add(new UIPlugin(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(file)), file, () => AvailablePlugins[file], (x) => AvailablePlugins[file] = x));
+        }
+
+        return uiObjects;
     }
 }
