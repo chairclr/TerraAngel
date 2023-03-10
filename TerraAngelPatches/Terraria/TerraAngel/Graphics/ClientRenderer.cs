@@ -52,8 +52,6 @@ public class ClientRenderer : ImGuiRenderer
         AddWindow(new StyleEditorWindow());
         AddWindow(new TimingMetricsWindow());
 
-        ItemBrowser.Init();
-
         Main.instance.Exiting += (args, o) =>
         {
             ClientConfig.WriteToFile();

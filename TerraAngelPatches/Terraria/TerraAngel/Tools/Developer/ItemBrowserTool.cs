@@ -4,9 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Terraria.TerraAngel.Utility;
 
-namespace Terraria.TerraAngel.Tools.Developer;
+namespace TerraAngel.Tools.Developer;
 
 public class ItemBrowserTool : Tool
 {
@@ -79,7 +78,7 @@ public class ItemBrowserTool : Tool
         switch (GiveMode)
         {
             case ItemGiveMode.InMouse:
-                ItemSpawner.SpawnItemInMouse(type, SyncWithServer);
+                ItemSpawner.SpawnItemInMouse(type, 9999, SyncWithServer);
                 break;
             case ItemGiveMode.DropInWorld:
                 ItemSpawner.SpawnItemInWorld(Main.LocalPlayer.Center, type, Vector2.Zero, 9999, SyncWithServer);

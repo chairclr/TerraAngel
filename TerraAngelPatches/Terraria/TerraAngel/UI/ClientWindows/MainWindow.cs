@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using TerraAngel.ID;
 using TerraAngel.WorldEdits;
-using Terraria.TerraAngel.Tools.Developer;
 
 namespace TerraAngel.UI.ClientWindows;
 
