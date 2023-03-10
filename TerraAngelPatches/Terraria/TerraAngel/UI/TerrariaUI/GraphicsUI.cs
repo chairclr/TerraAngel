@@ -30,6 +30,8 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
 
     public readonly UITextSliderInt FramerateSlider;
 
+    public readonly UITextSliderInt FramerateUnfocusedSlider;
+
     public readonly UITextCheckbox VsyncCheckbox;
 
     public readonly UITextSliderInt LightingPassCountSlider;
@@ -183,13 +185,13 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
             HAlign = 0.5f,
         };
 
-        LightingPassCountSlider = new UITextSliderInt(1, 8, () => Lighting.NewEngine.BlurPassCount, x => { Lighting.NewEngine.BlurPassCount = x; }, () => $"Light Passes: {GetLightingPassesText()}")
+        FramerateUnfocusedSlider = new UITextSliderInt(10, 201, () => (ClientLoader.WindowManager.CapFPSUnfocused ? 201 : ClientLoader.WindowManager.FPSCapUnfocused), x => { if (x > 200) { ClientLoader.WindowManager.CapFPSUnfocused = false; } else { ClientLoader.WindowManager.CapFPSUnfocused = true; ClientLoader.WindowManager.FPSCapUnfocused = x; } }, () => $"FPS Cap Unfocused: {GetFramerateTextUnfocused()}")
         {
             Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },
             BorderColor = Color.Black,
             BackgroundColor = UIUtil.ButtonColor * 0.98f,
-            Top = { Pixels = -190 },
+            Top = { Pixels = -140 },
             VAlign = 0.5f,
             HAlign = 0.5f,
         };
@@ -198,13 +200,23 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         {
             Width = { Pixels = -10, Percent = 0.8f },
             Height = { Pixels = 40 },
-            Top = { Pixels = -140 },
+            Top = { Pixels = -190 },
             VAlign = 0.5f,
             HAlign = 0.5f,
             Colorize = false,
             BackgroundColor = UIUtil.ButtonColor * 0.98f,
         };
 
+        LightingPassCountSlider = new UITextSliderInt(1, 8, () => Lighting.NewEngine.BlurPassCount, x => { Lighting.NewEngine.BlurPassCount = x; }, () => $"Light Passes: {GetLightingPassesText()}")
+        {
+            Width = { Pixels = -10, Percent = 0.8f },
+            Height = { Pixels = 40 },
+            BorderColor = Color.Black,
+            BackgroundColor = UIUtil.ButtonColor * 0.98f,
+            Top = { Pixels = -240 },
+            VAlign = 0.5f,
+            HAlign = 0.5f,
+        };
 
         RootElement.Append(BackButton);
 
@@ -213,6 +225,8 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
         RootElement.Append(ResolutionPanel);
 
         RootElement.Append(FramerateSlider);
+
+        RootElement.Append(FramerateUnfocusedSlider);
 
         RootElement.Append(VsyncCheckbox);
 
@@ -279,6 +293,11 @@ public class GraphicsUI : UIState, IHaveBackButtonCommand
     public string GetFramerateText()
     {
         return ClientLoader.WindowManager!.CapFPS ? $"{ClientLoader.WindowManager!.FPSCap}" : "None";
+    }
+
+    public string GetFramerateTextUnfocused()
+    {
+        return ClientLoader.WindowManager!.CapFPSUnfocused ? $"{ClientLoader.WindowManager!.FPSCapUnfocused}" : "None";
     }
 
     public string GetLightingPassesText()

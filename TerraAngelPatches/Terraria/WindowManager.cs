@@ -21,18 +21,30 @@ public class WindowManager
 
     [JsonProperty("Width")]
     private int width = 800;
+
     [JsonProperty("Height")]
     private int height = 600;
+
     [JsonProperty("Maximized")]
     private bool maximized = false;
+
     [JsonProperty("WindowState")]
     private WindowState windowState = WindowState.Windowed;
+
     [JsonProperty("Vsync")]
     private bool vsync = true;
+
     [JsonProperty("CapFPS")]
     private bool capFPS = false;
+
     [JsonProperty("FPSCap")]
-    private int fPSCap = 200;
+    private int fPSCap = 60;
+
+    [JsonProperty("CapFPSUnfocused")]
+    private bool capFPSUnfocused = true;
+
+    [JsonProperty("FPSCapUnfocused")]
+    private int fPSCapUnfocused = 15;
 
     private bool wantToResizeGraphics = false;
     private bool wantToMoveGraphics = false;
@@ -207,6 +219,26 @@ public class WindowManager
         }
     }
 
+    [JsonIgnore]
+    public bool CapFPSUnfocused
+    {
+        get => capFPSUnfocused;
+        set
+        {
+            capFPSUnfocused = value;
+        }
+    }
+
+    [JsonIgnore]
+    public int FPSCapUnfocused
+    {
+        get => fPSCapUnfocused;
+        set
+        {
+            fPSCapUnfocused = value;
+        }
+    }
+
     public WindowManager() { }
     public WindowManager(Game game)
     {
@@ -242,6 +274,8 @@ public class WindowManager
             Vsync = windowSettings.Vsync;
             FPSCap = windowSettings.FPSCap;
             CapFPS = windowSettings.CapFPS;
+            FPSCapUnfocused = windowSettings.FPSCapUnfocused;
+            CapFPSUnfocused = windowSettings.CapFPSUnfocused;
         }
 
         if (State == WindowState.Windowed) SDL.SDL_GetWindowPosition(WindowHandle, out x, out y);
@@ -301,6 +335,19 @@ public class WindowManager
         {
             wantToApplyGraphics = false;
             ApplyGraphics();
+        }
+        if (CapFPSUnfocused)
+        {
+            if (!Main.instance.IsActive)
+            {
+                Main.instance.TargetElapsedTime = TimeSpan.FromSeconds(1d / (double)FPSCapUnfocused);
+                Main.instance.IsFixedTimeStep = true;
+            }
+            else
+            {
+                Main.instance.TargetElapsedTime = TimeSpan.FromSeconds(1d / (double)FPSCap);
+                Main.instance.IsFixedTimeStep = CapFPS;
+            }
         }
 
         if (updateCount % 300 == 0) WriteToFile();

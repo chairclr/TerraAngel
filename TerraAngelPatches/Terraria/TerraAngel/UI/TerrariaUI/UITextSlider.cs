@@ -80,6 +80,7 @@ public class UITextSliderInt : UIPanel
             VAlign = -0.9f,
             HAlign = 1f,
         };
+
         text = new UIText(getString())
         {
             VAlign = 0.5f,
