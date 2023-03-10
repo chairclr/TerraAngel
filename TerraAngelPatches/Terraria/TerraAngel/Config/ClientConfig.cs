@@ -186,7 +186,7 @@ public class ClientConfig
         public Keys ShowTimingMetrics = Keys.NumPad9;
 
         [UIConfigElement("Take Map Screenshot")]
-        public Keys TakeMapScreenshot = Keys.F12;
+        public Keys TakeMapScreenshot = Keys.F9;
 
         public int ConsoleHistoryLimit = 5000;
         public int ChatHistoryLimit = 3000;

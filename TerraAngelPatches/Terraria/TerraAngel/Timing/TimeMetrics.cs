@@ -7,9 +7,9 @@ namespace TerraAngel.Timing;
 
 public class TimeMetrics
 {
-    public readonly static TimeLog FramerateDeltaTimeSlices = new TimeLog(100);
+    public readonly static TimeLog FramerateDeltaTimeSlices = new TimeLog(25);
 
-    public readonly static TimeLog UpdateDeltaTimeSlices = new TimeLog(100);
+    public readonly static TimeLog UpdateDeltaTimeSlices = new TimeLog(25);
 
     public readonly static Dictionary<string, TimeLog> TimeLogs = new Dictionary<string, TimeLog>();
 

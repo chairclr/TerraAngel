@@ -3,6 +3,7 @@
 public class ESPTool : Tool
 {
     public override string Name => "ESP Boxes";
+
     public override ToolTabs Tab => ToolTabs.ESPTools;
 
     public ref Color LocalPlayerColor => ref ClientConfig.Settings.LocalBoxPlayerColor;
@@ -69,6 +70,8 @@ public class ESPTool : Tool
     public override void Update()
     {
         if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleDrawAnyESP))
+        {
             DrawAnyESP = !DrawAnyESP;
+        }
     }
 }
