@@ -103,11 +103,13 @@ public class Util
         if (Main.mapFullscreen) return WorldToScreenFullscreenMap(worldPoint);
         else return WorldToScreenWorld(worldPoint);
     }
-    public static Vector2 WorldToScreenDynamicExact(Vector2 worldPoint)
+
+    public static Vector2 WorldToScreenDynamicPixelPerfect(Vector2 worldPoint)
     {
         if (Main.mapFullscreen) return WorldToScreenFullscreenMap(worldPoint);
-        else return WorldToScreenWorldExact(worldPoint);
+        else return WorldToScreenWorldPixelPerfect(worldPoint);
     }
+
     public static Vector2 ScreenToWorldDynamic(Vector2 screenPoint)
     {
         if (Main.mapFullscreen) return ScreenToWorldFullscreenMap(screenPoint);
@@ -135,7 +137,7 @@ public class Util
     {
         return Vector2.Transform(worldPosition - Main.screenPosition, Main.GameViewMatrix.ZoomMatrix);
     }
-    public static Vector2 WorldToScreenWorldExact(Vector2 worldPosition)
+    public static Vector2 WorldToScreenWorldPixelPerfect(Vector2 worldPosition)
     {
         return Vector2.Transform((worldPosition - Main.screenPosition).Floor(), Main.GameViewMatrix.ZoomMatrix).Floor();
     }
