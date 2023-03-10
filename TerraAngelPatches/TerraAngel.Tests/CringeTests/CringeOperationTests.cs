@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImGuiNET;
-using TerraAngel.Cheat;
+using TerraAngel.Tools;
 
 namespace TerraAngel.Tests.CringeTests;
 
@@ -67,51 +67,26 @@ public class CringeOperationTests
 
     private class TestCringe : Tool
     {
-        public override ToolTabs Tab => ToolTabs.None;
 
-        public override void DrawUI(ImGuiIOPtr io)
-        {
-
-        }
     }
 
     private class ATestCringe : Tool
     {
-        public override ToolTabs Tab => ToolTabs.None;
 
-        public override void DrawUI(ImGuiIOPtr io)
-        {
-
-        }
     }
 
     private class BTestCringe : Tool
     {
-        public override ToolTabs Tab => ToolTabs.None;
 
-        public override void DrawUI(ImGuiIOPtr io)
-        {
-
-        }
     }
 
     private class CTestCringe : Tool
     {
-        public override ToolTabs Tab => ToolTabs.None;
 
-        public override void DrawUI(ImGuiIOPtr io)
-        {
-
-        }
     }
 
     private class DTestCringe : Tool
     {
-        public override ToolTabs Tab => ToolTabs.None;
 
-        public override void DrawUI(ImGuiIOPtr io)
-        {
-
-        }
     }
 }
