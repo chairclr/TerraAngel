@@ -121,6 +121,30 @@
                                  float num1570 = num1569;
                                  if (num1570 > 0.5f)
                                  {
+@@ -94374,15 +_,23 @@
+                     }
+                 }
+             }
++            // patch context
+             catch
+             {
+                 flag = true;
+             }
+ 
++            if (life > lifeMax)
++            {
++                lifeMax = life;
++            }
++
+             if (flag)
+             {
++                // patch context
+                 return;
+             }
++            // patch context
+         }
+ 
+         UpdateNPC_BuffFlagsReset();
 @@ -96640,6 +_,7 @@
  
      private void UpdateCollision()
