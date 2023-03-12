@@ -164,15 +164,16 @@
          configuration.Put("LightingMode", Lighting.Mode);
          configuration.Put("BackgroundParallax", bgScroll);
          configuration.Put("ShowItemText", showItemText);
-@@ -2583,8 +_,6 @@
+@@ -2583,9 +_,6 @@
          configuration.Put("UIScale", _uiScaleWanted);
          configuration.Put("MapScale", MapScale);
          configuration.Put("FlashIconForEvents", Enum.GetName(typeof(GameNotificationType), _flashNotificationType));
 -        configuration.Put("Display", _windowMover.ScreenDeviceName);
 -        configuration.Put("DisplayScreen", _windowMover.ScreenDeviceName);
-         configuration.Put("ThrottleWhenInactive", instance.InactiveSleepTime != TimeSpan.Zero);
+-        configuration.Put("ThrottleWhenInactive", instance.InactiveSleepTime != TimeSpan.Zero);
          configuration.Put("DoorAutoOpeningMode", DoorOpeningHelper.PreferenceSettings);
          configuration.Put("HoverControlMode", Player.Settings.HoverControl);
+         configuration.Put("WaterfallDrawLimit", instance.waterfallManager.maxWaterfallCount);
 @@ -2615,7 +_,7 @@
          }
      }
@@ -272,15 +273,21 @@
          int currentValue6 = (int)Lighting.Mode;
          if (!flag)
          {
-@@ -2902,8 +_,6 @@
+@@ -2902,14 +_,6 @@
  
          if (!flag)
          {
 -            string screenDeviceName = configuration.Get("DisplayScreen", "");
 -            _windowMover.TryMovingToScreen(screenDeviceName);
-             bool flag2 = configuration.Get("ThrottleWhenInactive", defaultValue: true);
-             base.InactiveSleepTime = TimeSpan.FromMilliseconds(flag2 ? 20 : 0);
+-            bool flag2 = configuration.Get("ThrottleWhenInactive", defaultValue: true);
+-            base.InactiveSleepTime = TimeSpan.FromMilliseconds(flag2 ? 20 : 0);
+-        }
+-
+-        if (!flag)
+-        {
+             configuration.Get("Support4K", ref Support4K);
          }
+ 
 @@ -3074,14 +_,7 @@
  
                  if (num >= 91 && binaryReader.ReadBoolean() && !dedServ && Platform.IsWindows)
@@ -1335,8 +1342,31 @@
          }
  
          InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
-@@ -61592,7 +_,13 @@
+@@ -61586,13 +_,36 @@
+     {
+     }
+ 
++    private static double ElTimeThrottleDraw = 0.0;
++
+     protected override void Draw(GameTime gameTime)
+     {
+         if (!_isDrawingOrUpdating && IsGraphicsDeviceAvailable)
          {
++            if (!IsActive && InactiveSleepTime.TotalSeconds > 0.0)
++            {
++                Stopwatch sw = new Stopwatch();
++
++                sw.Start();
++                while (ElTimeThrottleDraw < InactiveSleepTime.TotalSeconds)
++                {
++                    Thread.Sleep(1);
++                    ElTimeThrottleDraw += sw.Elapsed.TotalSeconds;
++                    sw.Restart();
++                }
++
++                ElTimeThrottleDraw = 0.0;
++            }
++
              _isDrawingOrUpdating = true;
              EnsureRenderTargetContent();
 +            MetricsTimer drawTimer = TimeMetrics.GetMetricsTimer("Main DoDraw").Start();

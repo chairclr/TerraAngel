@@ -338,16 +338,11 @@ public class WindowManager
         }
         if (CapFPSUnfocused)
         {
-            if (!Main.instance.IsActive)
-            {
-                Main.instance.TargetElapsedTime = TimeSpan.FromSeconds(1d / (double)FPSCapUnfocused);
-                Main.instance.IsFixedTimeStep = true;
-            }
-            else
-            {
-                Main.instance.TargetElapsedTime = TimeSpan.FromSeconds(1d / (double)FPSCap);
-                Main.instance.IsFixedTimeStep = CapFPS;
-            }
+            Main.instance.InactiveSleepTime = TimeSpan.FromSeconds(1d / (double)FPSCapUnfocused);
+        }
+        else
+        {
+            Main.instance.InactiveSleepTime = TimeSpan.Zero;
         }
 
         if (updateCount % 300 == 0) WriteToFile();
