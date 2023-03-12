@@ -1342,29 +1342,22 @@
          }
  
          InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
-@@ -61586,13 +_,36 @@
-     {
-     }
- 
-+    private static double ElTimeThrottleDraw = 0.0;
-+
-     protected override void Draw(GameTime gameTime)
+@@ -61590,9 +_,29 @@
      {
          if (!_isDrawingOrUpdating && IsGraphicsDeviceAvailable)
          {
-+            if (!IsActive && InactiveSleepTime.TotalSeconds > 0.0)
++            if (!IsActive && InactiveSleepTime > TimeSpan.Zero)
 +            {
 +                Stopwatch sw = new Stopwatch();
 +
 +                sw.Start();
-+                while (ElTimeThrottleDraw < InactiveSleepTime.TotalSeconds)
++
++                while (sw.Elapsed < InactiveSleepTime)
 +                {
 +                    Thread.Sleep(1);
-+                    ElTimeThrottleDraw += sw.Elapsed.TotalSeconds;
-+                    sw.Restart();
 +                }
 +
-+                ElTimeThrottleDraw = 0.0;
++                sw.Stop();
 +            }
 +
              _isDrawingOrUpdating = true;
