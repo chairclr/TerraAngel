@@ -188,6 +188,9 @@ public class ClientConfig
         [UIConfigElement("Take Map Screenshot")]
         public Keys TakeMapScreenshot = Keys.F9;
 
+        [UIConfigElement("Open Quick Item Browser (Ctrl +")]
+        public Keys OpenFastItemBrowser = Keys.I;
+
         public int ConsoleHistoryLimit = 5000;
         public int ChatHistoryLimit = 3000;
         public int ChatMessageLimit = 600;

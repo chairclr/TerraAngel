@@ -190,7 +190,7 @@ public class InputSystem
     {
         get
         {
-            return IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
+            return IsKeyDownRaw(Keys.LeftControl) || IsKeyDownRaw(Keys.RightControl);
         }
     }
 
@@ -198,7 +198,7 @@ public class InputSystem
     {
         get
         {
-            return IsKeyDown(Keys.LeftAlt) || IsKeyDown(Keys.RightAlt);
+            return IsKeyDownRaw(Keys.LeftAlt) || IsKeyDownRaw(Keys.RightAlt);
         }
     }
 
@@ -206,7 +206,7 @@ public class InputSystem
     {
         get
         {
-            return IsKeyDown(Keys.LeftShift) || IsKeyDown(Keys.RightShift);
+            return IsKeyDownRaw(Keys.LeftShift) || IsKeyDownRaw(Keys.RightShift);
         }
     }
 

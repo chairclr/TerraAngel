@@ -48,10 +48,10 @@ public class DrawWindow : ClientWindow
                         }
                     }
                 }
-                else
-                {
-                    worldEdit?.DrawPreviewInMap(io, drawList);
-                }
+            }
+            else
+            {
+                worldEdit?.DrawPreviewInMap(io, drawList);
             }
 
             if (esp.DrawAnyESP)

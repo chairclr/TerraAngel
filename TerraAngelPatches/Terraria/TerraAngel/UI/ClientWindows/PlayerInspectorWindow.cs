@@ -94,9 +94,9 @@ public class PlayerInspectorWindow : ClientWindow
         {
             Player player = Main.player[SelectedPlayer];
             ImGui.Text($"Inspecting player \"{player.name.Truncate(30)}\"");
-            ImGui.Text($"HP:       {player.statLife.ToString().PadLeft(5),-7}/{player.statLifeMax2,5}");
+            ImGui.Text($"Health:   {player.statLife.ToString().PadLeft(5),-7}/{player.statLifeMax2,5}");
             ImGui.Text($"Mana:     {player.statMana.ToString().PadLeft(5),-7}/{player.statManaMax2,5}");
-            ImGui.Text($"Def:      {player.statDefense,5}");
+            ImGui.Text($"Defense:  {player.statDefense,5}");
             ImGui.Text($"Velocity: {MathF.Round(CalcSpeedMPH(player), 2),5:F1} mph");
 
             if (ImGui.CollapsingHeader("Player Inventory"))
@@ -186,8 +186,6 @@ public class PlayerInspectorWindow : ClientWindow
                 ImGui.PopStyleVar();
 
                 ImGui.SetCursorPos(lastCursorPos);
-
-
             }
         }
 

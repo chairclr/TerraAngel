@@ -4,6 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Xna.Framework.Input;
+using Steamworks;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace TerraAngel.Tools.Developer;
 
@@ -23,9 +26,11 @@ public class ItemBrowserTool : Tool
 
     public bool SyncWithServer = true;
 
+    private QuickItemBrowserWindow QuickBrowserWindow;
+
     public ItemBrowserTool()
     {
-
+        QuickBrowserWindow = new QuickItemBrowserWindow();
     }
 
     public override void DrawUI(ImGuiIOPtr io)
@@ -48,6 +53,7 @@ public class ItemBrowserTool : Tool
 
         ImGui.Checkbox("Sync With Server", ref SyncWithServer);
         bool searchEmpty = ItemSearch.Length == 0;
+
         if (ImGui.BeginChild("ItemBrowserScrolling"))
         {
             float windowMaxX = ImGui.GetWindowPos().X + ImGui.GetWindowContentRegionMax().X;
@@ -71,6 +77,11 @@ public class ItemBrowserTool : Tool
             ImGui.PopStyleVar();
             ImGui.EndChild();
         }
+    }
+
+    public override void Update()
+    {
+        QuickBrowserWindow.Draw(ImGui.GetIO());
     }
 
     public void GiveItem(int type)

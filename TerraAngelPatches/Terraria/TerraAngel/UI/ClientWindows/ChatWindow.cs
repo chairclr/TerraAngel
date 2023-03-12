@@ -267,7 +267,7 @@ public class ChatWindow : ClientWindow
             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
             unsafe
             {
-                ImGui.InputText("##consoleInput", ref ChatText, 512, ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackHistory,
+                ImGui.InputText("##chatInput", ref ChatText, 512, ImGuiInputTextFlags.CallbackAlways | ImGuiInputTextFlags.CallbackHistory,
                     (x) =>
                     {
                         ImGuiInputTextCallbackDataPtr data = x;

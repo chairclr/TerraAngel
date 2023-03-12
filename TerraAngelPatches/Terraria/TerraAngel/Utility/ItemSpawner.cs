@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraria;
 
 namespace TerraAngel.Utility;
 
@@ -15,6 +16,7 @@ public static class ItemSpawner
         {
             Main.mouseItem.SetDefaults(type);
             Main.mouseItem.stack = Main.mouseItem.maxStack;
+            Main.mouseItem.stack = Utils.Clamp(stack, 1, Main.mouseItem.maxStack);
 
             if (syncWithServer)
             {
@@ -34,7 +36,7 @@ public static class ItemSpawner
 
         item.velocity = velocity;
         item.newAndShiny = false;
-        item.stack = Utils.Clamp(stack, 1, Main.item[itemIndex].maxStack);
+        item.stack = Utils.Clamp(stack, 1, item.maxStack);
 
         if (syncWithServer)
         {
@@ -42,5 +44,19 @@ public static class ItemSpawner
         }
 
         return item;
+    }
+
+    public static Item? SpawnItemInSelected(int type, int stack = 1, bool syncWithServer = true)
+    {
+        if (Main.LocalPlayer.selectedItem > 0 && Main.LocalPlayer.selectedItem < 10)
+        {
+            Item item = Main.LocalPlayer.inventory[Main.LocalPlayer.selectedItem];
+            item.SetDefaults(type);
+            item.stack = Utils.Clamp(stack, 1, item.maxStack);
+
+            return item;
+        }
+
+        return null;
     }
 }
