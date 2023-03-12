@@ -1,19 +1,24 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Hooks;
+using Terraria.Graphics;
+using Terraria.ID;
 
 namespace TerraAngel.UI.ClientWindows;
 
 public class PlayerInspectorWindow : ClientWindow
 {
     public override string Title => "Player Inspector";
+
     public override bool DefaultEnabled => false;
+
     public override bool IsToggleable => true;
+
     public override bool IsGlobalToggle => false;
+
     public override Keys ToggleKey => ClientConfig.Settings.ShowPlayerInspector;
 
-
-    private int selectedPlayer = -1;
+    private int SelectedPlayer = -1;
 
     public override void Draw(ImGuiIOPtr io)
     {
@@ -21,48 +26,14 @@ public class PlayerInspectorWindow : ClientWindow
         bool notClickedClose = true;
         ImGui.Begin(Title, ref notClickedClose, ImGuiWindowFlags.MenuBar);
 
-        bool showToolTip = true;
+        bool showTooltip = true;
         if (ImGui.BeginMenuBar())
         {
-            if (ImGui.BeginMenu("Other Players"))
-            {
-                for (int i = 0; i < 255; i++)
-                {
-                    bool anyActivePlayers = false;
-                    for (int j = i; j < Math.Min(i + 20, 255); j++)
-                    {
-                        if (Main.player[j].active)
-                            anyActivePlayers = true;
-                    }
+            DrawPlayerSelectMenu(out showTooltip);
 
-                    bool endedDisableEarly = false;
-                    ImGui.BeginDisabled(!anyActivePlayers);
-                    if (ImGui.BeginMenu($"Players {i}-{Math.Min(i + 20, 255)}"))
-                    {
-                        endedDisableEarly = true;
-                        showToolTip = false;
-                        ImGui.EndDisabled();
-                        for (int j = i; j < Math.Min(i + 20, 255); j++)
-                        {
-                            if (!Main.player[j].active) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Text] * new Vector4(1f, 1f, 1f, 0.4f));
-                            if (ImGui.MenuItem($"Player \"{Main.player[j].name.Truncate(30)}\""))
-                            {
-                                selectedPlayer = j;
-                            }
-                            if (!Main.player[j].active) ImGui.PopStyleColor();
-                        }
-                        ImGui.EndMenu();
-                    }
-                    if (!endedDisableEarly)
-                        ImGui.EndDisabled();
-                    i += 20;
-                }
-                ImGui.EndMenu();
-            }
-
-            if (selectedPlayer > -1)
+            if (SelectedPlayer > -1)
             {
-                Player player = Main.player[selectedPlayer];
+                Player player = Main.player[SelectedPlayer];
                 if (ImGui.Button($"{Icon.Move}"))
                 {
                     Main.LocalPlayer.velocity = Vector2.Zero;
@@ -119,14 +90,12 @@ public class PlayerInspectorWindow : ClientWindow
             return;
         }
 
-
-
-        if (selectedPlayer > -1)
+        if (SelectedPlayer > -1)
         {
-            Player player = Main.player[selectedPlayer];
+            Player player = Main.player[SelectedPlayer];
             ImGui.Text($"Inspecting player \"{player.name.Truncate(30)}\"");
-            ImGui.Text($"HP:       {player.statLife.ToString().PadLeft(5),-7}/{player.statLifeMax2.ToString(),5}");
-            ImGui.Text($"Mana:     {player.statMana.ToString().PadLeft(5),-7}/{player.statManaMax2.ToString(),5}");
+            ImGui.Text($"HP:       {player.statLife.ToString().PadLeft(5),-7}/{player.statLifeMax2,5}");
+            ImGui.Text($"Mana:     {player.statMana.ToString().PadLeft(5),-7}/{player.statManaMax2,5}");
             ImGui.Text($"Def:      {player.statDefense,5}");
             ImGui.Text($"Velocity: {MathF.Round(CalcSpeedMPH(player), 2),5:F1} mph");
 
@@ -136,12 +105,11 @@ public class PlayerInspectorWindow : ClientWindow
                 float sy = ImGui.GetCursorPos().Y;
                 int c = 0;
 
-
                 ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(4f));
 
                 for (int i = 0; i < 50; i++)
                 {
-                    ImGuiUtil.ItemButton(player.inventory[i], $"pii{i}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == i);
+                    ImGuiUtil.ItemButton(player.inventory[i], $"pii{i}", new Vector2(26f), showTooltip, isSelected: player.selectedItem == i);
 
                     if ((i + 1) % 10 != 0)
                     {
@@ -155,10 +123,12 @@ public class PlayerInspectorWindow : ClientWindow
                             if (c < 4)
                             {
                                 ImGui.SameLine();
-                                ImGuiUtil.ItemButton(player.inventory[50 + c], $"piic50{i}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == 50 + c);
+                                ImGuiUtil.ItemButton(player.inventory[50 + c], $"piic50{i}", new Vector2(26f), showTooltip, isSelected: player.selectedItem == 50 + c);
                                 ImGui.SameLine();
-                                ImGuiUtil.ItemButton(player.inventory[54 + c], $"piic54{i}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == 54 + c);
+                                ImGuiUtil.ItemButton(player.inventory[54 + c], $"piic54{i}", new Vector2(26f), showTooltip, isSelected: player.selectedItem == 54 + c);
+                                
                             }
+
                             c++;
                         }
                     }
@@ -166,10 +136,12 @@ public class PlayerInspectorWindow : ClientWindow
                     if (i == 9)
                     {
                         ImGui.SameLine();
-                        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 26f + style.ItemSpacing.X * 2);
-                        ImGuiUtil.ItemButton(player.inventory[58], $"piim{58}", new Vector2(26f), showToolTip, isSelected: player.selectedItem == 50 + c);
+                        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 26f - style.ItemSpacing.X * 2);
+                        ImGuiUtil.ItemButton(player.inventory[58], $"piim{58}", new Vector2(26f), showTooltip, isSelected: player.selectedItem == 58);
                     }
                 }
+
+                Vector2 cPosNL = ImGui.GetCursorPos();
 
                 ImGui.SameLine();
 
@@ -179,7 +151,7 @@ public class PlayerInspectorWindow : ClientWindow
 
                 Vector2 lastCursorPos = ImGui.GetCursorPos();
 
-                float minx = MathF.Max(cPos.X, (ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X) - ((26f + style.ItemSpacing.X) * 3f + style.ItemSpacing.X));
+                float minx = MathF.Max(cPos.X, (ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X) - ((26f + style.ItemSpacing.X) * 5f + style.ItemSpacing.X * 3f));
                 int ti = 0;
                 for (int i = 0; i < 10; i++)
                 {
@@ -188,18 +160,34 @@ public class PlayerInspectorWindow : ClientWindow
 
                     ImGui.SetCursorPos(new Vector2(minx, sy + (26f + style.ItemSpacing.X * 2.5f) * ti));
 
-                    ImGuiUtil.ItemButton(player.dye[i], $"piid{i}", new Vector2(26f), showToolTip);
-                    ImGui.SameLine();
-                    ImGuiUtil.ItemButton(player.armor[i + 10], $"piia{i + 10}", new Vector2(26f), showToolTip);
-                    ImGui.SameLine();
-                    ImGuiUtil.ItemButton(player.armor[i], $"piia{i}", new Vector2(26f), showToolTip);
+                    if (i < 10)
+                    {
+                        ImGuiUtil.ItemButton(player.dye[i], $"piid{i}", new Vector2(26f), showTooltip);
+                        ImGui.SameLine();
+                        ImGuiUtil.ItemButton(player.armor[i + 10], $"piia{i + 10}", new Vector2(26f), showTooltip);
+                        ImGui.SameLine();
+                        ImGuiUtil.ItemButton(player.armor[i], $"piia{i}", new Vector2(26f), showTooltip);
+                        if (i < 5)
+                        {
+                            ImGui.SameLine();
+                            ImGuiUtil.ItemButton(player.miscDyes[i], $"piiemd1{i}", new Vector2(26f), showTooltip);
+                            ImGui.SameLine();
+                            ImGuiUtil.ItemButton(player.miscEquips[i], $"piiem1{i}", new Vector2(26f), showTooltip);
+                        }
+                    }
 
                     ti++;
                 }
 
+                ImGui.SetCursorPos(cPosNL + new Vector2(11f * 26f + style.ItemSpacing.X * 9f + 2f, 0f));
+
+                ImGuiUtil.ItemButton(player.trashItem, $"piit0", new Vector2(26f), showTooltip);
+
                 ImGui.PopStyleVar();
 
                 ImGui.SetCursorPos(lastCursorPos);
+
+
             }
         }
 
@@ -220,13 +208,54 @@ public class PlayerInspectorWindow : ClientWindow
                     {
                         if (InputSystem.RightMousePressed && player.getRect().Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))
                         {
-                            selectedPlayer = player.whoAmI;
+                            SelectedPlayer = player.whoAmI;
                             IsEnabled = true;
                             break;
                         }
                     }
                 }
             }
+        }
+    }
+
+    private void DrawPlayerSelectMenu(out bool showTooltip)
+    {
+        showTooltip = true;
+
+        if (ImGui.BeginMenu("Other Players"))
+        {
+            for (int i = 0; i < 255; i++)
+            {
+                bool anyActivePlayers = false;
+                for (int j = i; j < Math.Min(i + 20, 255); j++)
+                {
+                    if (Main.player[j].active)
+                        anyActivePlayers = true;
+                }
+
+                bool endedDisableEarly = false;
+                ImGui.BeginDisabled(!anyActivePlayers);
+                if (ImGui.BeginMenu($"Players {i}-{Math.Min(i + 20, 255)}"))
+                {
+                    endedDisableEarly = true;
+                    showTooltip = false;
+                    ImGui.EndDisabled();
+                    for (int j = i; j < Math.Min(i + 20, 255); j++)
+                    {
+                        if (!Main.player[j].active) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Text] * new Vector4(1f, 1f, 1f, 0.4f));
+                        if (ImGui.MenuItem($"Player \"{Main.player[j].name.Truncate(30)}\""))
+                        {
+                            SelectedPlayer = j;
+                        }
+                        if (!Main.player[j].active) ImGui.PopStyleColor();
+                    }
+                    ImGui.EndMenu();
+                }
+                if (!endedDisableEarly)
+                    ImGui.EndDisabled();
+                i += 20;
+            }
+            ImGui.EndMenu();
         }
     }
 

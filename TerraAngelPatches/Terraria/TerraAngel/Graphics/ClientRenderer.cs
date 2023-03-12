@@ -42,15 +42,7 @@ public class ClientRenderer : ImGuiRenderer
     {
         TileUtil.Init();
         RebuildFontAtlas();
-        AddWindow(new MainWindow());
-        AddWindow(new DrawWindow());
         ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow());
-        AddWindow(new StatsWindow());
-        AddWindow(new NetMessageWindow());
-        AddWindow(new PlayerInspectorWindow());
-        AddWindow(ClientLoader.ChatWindow = new ChatWindow());
-        AddWindow(new StyleEditorWindow());
-        AddWindow(new TimingMetricsWindow());
 
         Main.instance.Exiting += (args, o) =>
         {
@@ -136,6 +128,18 @@ public class ClientRenderer : ImGuiRenderer
         colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.35f);
 
         ClientConfig.AfterReadLater();
+    }
+
+    public void SetupWindows()
+    {
+        AddWindow(new MainWindow());
+        AddWindow(new DrawWindow());
+        AddWindow(new StatsWindow());
+        AddWindow(new NetMessageWindow());
+        AddWindow(ClientLoader.PlayerInspectorWindow = new PlayerInspectorWindow());
+        AddWindow(ClientLoader.ChatWindow = new ChatWindow());
+        AddWindow(new StyleEditorWindow());
+        AddWindow(new TimingMetricsWindow());
     }
 
     public void Update()

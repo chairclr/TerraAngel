@@ -18,6 +18,7 @@ public unsafe class ClientLoader
     public static ClientRenderer? MainRenderer;
     internal static ConsoleWindow? ConsoleWindow;
     internal static ChatWindow? ChatWindow;
+    internal static PlayerInspectorWindow? PlayerInspectorWindow;
     public static ConfigUI? ConfigUI;
     public static PluginUI? PluginUI;
     public static GraphicsUI? GraphicsUI;
@@ -171,6 +172,7 @@ public unsafe class ClientLoader
     public static void Initialize(Game main)
     {
         MainRenderer = new ClientRenderer(main);
+        MainRenderer.SetupWindows();
         ClientConfig.Settings.PluginsToEnable = ClientConfig.Settings.pluginsToEnable;
 
         ConfigUI = new ConfigUI();
