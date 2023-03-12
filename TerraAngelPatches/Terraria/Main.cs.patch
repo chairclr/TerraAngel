@@ -1346,7 +1346,7 @@
      {
          if (!_isDrawingOrUpdating && IsGraphicsDeviceAvailable)
          {
-+            if (!IsActive && InactiveSleepTime > TimeSpan.Zero)
++            if (!gameMenu && !IsActive && InactiveSleepTime > TimeSpan.Zero)
 +            {
 +                Stopwatch sw = new Stopwatch();
 +
