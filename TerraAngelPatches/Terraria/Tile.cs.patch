@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Tile.cs
 +++ src/TerraAngel/Terraria/Tile.cs
-@@ -1,18 +_,47 @@
+@@ -1,18 +_,45 @@
 +using System;
 +using System.Collections.Generic;
 +using System.Runtime.CompilerServices;
@@ -48,9 +48,7 @@
 +    {
 +        return new Tile();
 +    }
-+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
 +    public static bool operator ==(Tile rhs, object lhs) => lhs == null && rhs.Data == null;
-+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
 +    public static bool operator !=(Tile rhs, object lhs) => !(lhs == null && rhs.Data == null);
 +    public override bool Equals(object? obj) => obj is Tile tile && tile.Data == this.Data;
 +    public override int GetHashCode() => HashCode.Combine(*Data);
