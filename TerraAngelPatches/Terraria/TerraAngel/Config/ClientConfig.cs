@@ -180,7 +180,7 @@ public class ClientConfig
         public Keys WorldEditSelectKey = Keys.F;
 
         [UIConfigElement("Show Player Inspector")]
-        public Keys ShowPlayerInspector = Keys.NumPad7;
+        public Keys ShowInspectorWindow = Keys.NumPad7;
 
         [UIConfigElement("Show Timing Metrics")]
         public Keys ShowTimingMetrics = Keys.NumPad9;

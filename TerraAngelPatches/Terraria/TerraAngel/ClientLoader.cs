@@ -18,7 +18,6 @@ public unsafe class ClientLoader
     public static ClientRenderer? MainRenderer;
     internal static ConsoleWindow? ConsoleWindow;
     internal static ChatWindow? ChatWindow;
-    internal static PlayerInspectorWindow? PlayerInspectorWindow;
     public static ConfigUI? ConfigUI;
     public static PluginUI? PluginUI;
     public static GraphicsUI? GraphicsUI;

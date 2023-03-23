@@ -9,5 +9,6 @@ public enum ToolTabs
     VisualTools,
     ESPTools,
     AutomationTools,
+    Inspector,
     MiscTools,
 }

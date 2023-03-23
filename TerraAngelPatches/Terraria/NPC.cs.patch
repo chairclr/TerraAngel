@@ -17,6 +17,27 @@
      public string FullName
      {
          get
+@@ -435,6 +_,20 @@
+         }
+     }
+ 
++    public string TypeNameDefault => Lang.GetNPCNameValue(netID);
++    public string FullNameDefault
++    {
++        get
++        {
++            if (!HasGivenName)
++            {
++                return TypeNameDefault;
++            }
++
++            return Language.GetTextValue("Game.NPCTitle", _givenName, TypeNameDefault);
++        }
++    }
++
+     public bool HasGivenName => _givenName.Length != 0;
+     public string GivenOrTypeName
+     {
 @@ -1133,7 +_,6 @@
              highestTierBossOrEvent = 398;
          }

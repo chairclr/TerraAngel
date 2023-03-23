@@ -136,7 +136,7 @@ public class ClientRenderer : ImGuiRenderer
         AddWindow(new DrawWindow());
         AddWindow(new StatsWindow());
         AddWindow(new NetMessageWindow());
-        AddWindow(ClientLoader.PlayerInspectorWindow = new PlayerInspectorWindow());
+        AddWindow(new InspectorWindow());
         AddWindow(ClientLoader.ChatWindow = new ChatWindow());
         AddWindow(new StyleEditorWindow());
         AddWindow(new TimingMetricsWindow());
