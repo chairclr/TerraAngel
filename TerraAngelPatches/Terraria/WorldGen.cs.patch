@@ -57,7 +57,7 @@
 -            {
 -                return true;
 -            }
-+    public static bool SolidTile(Tile testTile) => SolidTile(ref testTile.RefData);
++    public static unsafe bool SolidTile(Tile testTile) => testTile.Data == null || SolidTile(ref testTile.RefData);
  
 +    public static bool SolidTile(ref TileData testTile)
 +    {

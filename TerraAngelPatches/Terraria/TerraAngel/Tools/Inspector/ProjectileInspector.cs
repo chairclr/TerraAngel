@@ -122,12 +122,12 @@ public class ProjectileInspector : InspectorTool
 
         if (Main.netMode == 1 && SelectedProjectile.active)
         {
-            ImGui.Text($"Owned By:  {SelectedProjectile.owner switch
+            ImGui.Text($"Owned By:  {(SelectedProjectile.npcProj ? "None/Server" : SelectedProjectile.owner switch
             {
                 >= 255 => "None/Server",
                 >= 0 => $"{Main.player[SelectedProjectile.owner].name}",
                 _ => "None/Server",
-            }}/{SelectedProjectile.owner}");
+            })}/{SelectedProjectile.owner}");
         }
 
         if (SelectedProjectile.type > 0 && SelectedProjectile.type < TextureAssets.Projectile.Length)
