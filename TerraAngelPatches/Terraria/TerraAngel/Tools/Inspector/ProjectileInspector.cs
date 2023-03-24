@@ -64,6 +64,7 @@ public class ProjectileInspector : InspectorTool
         {
             ImGui.BeginTooltip();
             ImGui.Text($"Kill \"{SelectedProjectile.Name.Truncate(30)}\"");
+            ImGui.Text($"*Not implemented yet");
             ImGui.EndTooltip();
         }
     }
@@ -88,6 +89,7 @@ public class ProjectileInspector : InspectorTool
         ImGui.Text($"Damage:      {SelectedProjectile.damage}");
         ImGui.Text($"Hostile:     {SelectedProjectile.hostile}");
         ImGui.Text($"Time Left:   {SelectedProjectile.timeLeft}/{DefaultProjectiledCache.timeLeft}");
+        ImGui.Text($"Position:    {SelectedProjectile.position}");
         ImGui.Text($"Speed:       {SelectedProjectile.velocity.Length()}");
         ImGui.Text($"Velocity:    {SelectedProjectile.velocity}");
         ImGui.Text($"Velocity Dir: ");

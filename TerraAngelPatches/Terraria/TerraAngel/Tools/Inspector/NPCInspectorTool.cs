@@ -94,6 +94,7 @@ public class NPCInspectorTool : InspectorTool
         ImGui.Text($"Inspecting NPC[{SelectedNPCIndex}] \"{SelectedNPC.FullNameDefault.Truncate(60)}\"/{coolNPCName}/{SelectedNPC.type}");
         ImGui.Text($"Health:      {SelectedNPC.life}/{SelectedNPC.lifeMax}");
         ImGui.Text($"Defense:     {SelectedNPC.defense}");
+        ImGui.Text($"Position:    {SelectedNPC.position}");
         ImGui.Text($"Speed:       {SelectedNPC.velocity.Length()}");
         ImGui.Text($"Velocity:    {SelectedNPC.velocity}");
         ImGui.Text($"Velocity Dir: ");
