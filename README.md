@@ -58,6 +58,11 @@ Client features
 Features for Terraria developers
 </h3>
 
+- Inspector
+    - Inspect player information
+    - Inspect NPC information
+    - Inspect projectile information
+    - Inspect item information
 - Freecam: allows you to move the camera freely around the game world
 - Visual utilities: a range of tools to help visualize various aspects of the game
    - View player hitboxes
@@ -78,7 +83,6 @@ Features for Terraria developers
   - Stack traces of packets that are sent
   - Send messages with custom values and generate NetMessage.SendData calls
 - Disable tile framing
-- Directly screenshots of the map
 - Supports any CPU (x64 and x86)
 - See [PLUGINS.md](/PLUGINS.md) for information about plugins
 
@@ -105,6 +109,7 @@ Other useful features
   - Copy-pasting parts of the world
 - Re-write of how the game stores tiles (game uses 500mb less memory)
 - Viewing other players inventories
+- Direct screenshots of the map
 - Many bugfixes
 - Some minor optimizations and performance improvements
 - Ability to change FPS cap
