@@ -60,9 +60,18 @@ Features for Terraria developers
 
 - Inspector
     - Inspect player information
+    
+    ![image](https://user-images.githubusercontent.com/87276335/227608993-092563ba-64f2-4102-9cbe-1c3723bf8e68.png)
     - Inspect NPC information
+    
+    ![image](https://user-images.githubusercontent.com/87276335/227608567-45571da7-b75a-4057-8fa8-a7501bcad51f.png)
     - Inspect projectile information
+    
+    ![image](https://user-images.githubusercontent.com/87276335/227608900-8a275a82-ee30-4352-b692-8d929bc270bf.png)
     - Inspect item information
+    
+    ![image](https://user-images.githubusercontent.com/87276335/227608459-e5c5bd79-1684-419b-84dd-a5d898b5e3c6.png)
+    
 - Freecam: allows you to move the camera freely around the game world
 - Visual utilities: a range of tools to help visualize various aspects of the game
    - View player hitboxes
