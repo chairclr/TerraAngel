@@ -79,7 +79,7 @@ public class PlayerInspectorTool : InspectorTool
         }
 
         Player player = Main.player[SelectedPlayer];
-        ImGui.Text($"Inspecting player \"{player.name.Truncate(60)}\"");
+        ImGui.Text($"Inspecting Player[{SelectedPlayer}] \"{player.name.Truncate(60)}\"");
         ImGui.Text($"Health:   {player.statLife.ToString().PadLeft(5),-7}/{player.statLifeMax2,5}");
         ImGui.Text($"Mana:     {player.statMana.ToString().PadLeft(5),-7}/{player.statManaMax2,5}");
         ImGui.Text($"Defense:  {player.statDefense,5}");

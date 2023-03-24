@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TerraAngel.Inspector.Tools;
 using Terraria.GameContent;
+using Terraria.Graphics.Light;
 
 namespace TerraAngel.Tools.Inspector;
 
@@ -17,58 +18,63 @@ public class NPCInspectorTool : InspectorTool
 
     private NPC? SelectedNPC => SelectedNPCIndex > -1 ? Main.npc[SelectedNPCIndex] : null;
 
+    private nint BoundNPCDrawTexture = 0;
+    private RenderTarget2D? NPCDrawRenderTarget;
+
     public override void DrawMenuBar(ImGuiIOPtr io)
     {
         DrawNPCSelectMenu(out _);
 
-        if (SelectedNPC is not null)
+        if (SelectedNPC is null)
         {
-            if (ImGui.Button($"{Icon.Move}"))
-            {
-                Main.LocalPlayer.velocity = Vector2.Zero;
-                Main.LocalPlayer.Teleport(SelectedNPC.position, TeleportationStyleID.RodOfDiscord);
-
-                NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
-
-                if (ClientConfig.Settings.TeleportSendRODPacket)
-                {
-                    NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
-                        0,
-                        Main.LocalPlayer.whoAmI,
-                        Main.LocalPlayer.position.X,
-                        Main.LocalPlayer.position.Y,
-                        TeleportationStyleID.RodOfDiscord);
-                }
-            }
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.Text($"Teleport to \"{SelectedNPC.FullName.Truncate(30)}\"");
-                ImGui.EndTooltip();
-            }
-
-            if (ImGui.Button($"{Icon.CircleSlash}"))
-            {
-                Butcher.ButcherNPC(SelectedNPC, ToolManager.GetTool<ButcherTool>().ButcherDamage);
-            }
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.Text($"Kill \"{SelectedNPC.FullName.Truncate(30)}\"");
-                ImGui.EndTooltip();
-            }
-
-            //if (ImGui.Button($"{Icon.ScreenFull}"))
-            //{
-            //    DrawHooks.SpectateOverride = player.whoAmI;
-            //}
-            //if (ImGui.IsItemHovered())
-            //{
-            //    ImGui.BeginTooltip();
-            //    ImGui.Text($"Spectate \"{player.name.Truncate(30)}\"");
-            //    ImGui.EndTooltip();
-            //}
+            return;
         }
+
+        if (ImGui.Button($"{Icon.Move}"))
+        {
+            Main.LocalPlayer.velocity = Vector2.Zero;
+            Main.LocalPlayer.Teleport(SelectedNPC.position, TeleportationStyleID.RodOfDiscord);
+
+            NetMessage.SendData(MessageID.PlayerControls, number: Main.myPlayer);
+
+            if (ClientConfig.Settings.TeleportSendRODPacket)
+            {
+                NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null,
+                    0,
+                    Main.LocalPlayer.whoAmI,
+                    Main.LocalPlayer.position.X,
+                    Main.LocalPlayer.position.Y,
+                    TeleportationStyleID.RodOfDiscord);
+            }
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.BeginTooltip();
+            ImGui.Text($"Teleport to \"{SelectedNPC.FullName.Truncate(30)}\"");
+            ImGui.EndTooltip();
+        }
+
+        if (ImGui.Button($"{Icon.CircleSlash}"))
+        {
+            Butcher.ButcherNPC(SelectedNPC, ToolManager.GetTool<ButcherTool>().ButcherDamage);
+        }
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.BeginTooltip();
+            ImGui.Text($"Kill \"{SelectedNPC.FullName.Truncate(30)}\"");
+            ImGui.EndTooltip();
+        }
+
+        //if (ImGui.Button($"{Icon.ScreenFull}"))
+        //{
+        //    DrawHooks.SpectateOverride = player.whoAmI;
+        //}
+        //if (ImGui.IsItemHovered())
+        //{
+        //    ImGui.BeginTooltip();
+        //    ImGui.Text($"Spectate \"{player.name.Truncate(30)}\"");
+        //    ImGui.EndTooltip();
+        //}
     }
 
     public override void DrawInspector(ImGuiIOPtr io)
@@ -85,13 +91,18 @@ public class NPCInspectorTool : InspectorTool
             coolNPCName = npcField!.Name;
         }
 
-        ImGui.Text($"Inspecting NPC \"{SelectedNPC.FullNameDefault.Truncate(60)}\"/{coolNPCName}/{SelectedNPC.type}");
+        ImGui.Text($"Inspecting NPC[{SelectedNPCIndex}] \"{SelectedNPC.FullNameDefault.Truncate(60)}\"/{coolNPCName}/{SelectedNPC.type}");
         ImGui.Text($"Health:   {SelectedNPC.life.ToString().PadLeft(5),-7}/{SelectedNPC.lifeMax,5}");
         ImGui.Text($"Defense:  {SelectedNPC.defense,5}");
         ImGui.Text($"Velocity: {SelectedNPC.velocity.Length(),5}");
         for (int i = 0; i < NPC.maxAI; i++)
         {
             ImGui.Text($"AI[{i}]:  {SelectedNPC.ai[i],5:F4}");
+        }
+
+        if (NPCDrawRenderTarget is not null && BoundNPCDrawTexture > 0)
+        {
+            ImGui.Image(BoundNPCDrawTexture, NPCDrawRenderTarget.Size());
         }
     }
 
@@ -123,7 +134,7 @@ public class NPCInspectorTool : InspectorTool
 
                         string coolNPCName = "None";
 
-                        if (!Util.NPCFields.TryGetValue(Main.npc[j].type, out FieldInfo? npcField))
+                        if (Util.NPCFields.TryGetValue(Main.npc[j].type, out FieldInfo? npcField))
                         {
                             coolNPCName = npcField!.Name;
                         }
@@ -142,6 +153,46 @@ public class NPCInspectorTool : InspectorTool
                 i += 20;
             }
             ImGui.EndMenu();
+        }
+    }
+
+    public void PreDraw()
+    {
+        if (SelectedNPC is null)
+        {
+            return;
+        }
+
+        if (NPCDrawRenderTarget is null ||
+            NPCDrawRenderTarget.Width < SelectedNPC.width * 4 ||
+            NPCDrawRenderTarget.Height < SelectedNPC.height * 4)
+        {
+            InvalidateDrawTexture();
+        }
+
+        ILightingEngine engine = Lighting._activeEngine;
+        Lighting._activeEngine = Lighting.FullbrightEngine;
+        Main.graphics.GraphicsDevice.SetRenderTarget(NPCDrawRenderTarget);
+        Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+        Main.instance.DrawNPCDirect(Main.spriteBatch, SelectedNPC, SelectedNPC.behindTiles, SelectedNPC.position - SelectedNPC.Size);
+        Main.spriteBatch.End();
+        Lighting._activeEngine = engine;
+    }
+
+    private void InvalidateDrawTexture()
+    {
+        if (SelectedNPC is not null)
+        {
+            if (NPCDrawRenderTarget is not null)
+            {
+                ClientLoader.MainRenderer!.UnbindTexture(BoundNPCDrawTexture);
+                NPCDrawRenderTarget.Dispose();
+                NPCDrawRenderTarget = null;
+            }
+
+            NPCDrawRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, SelectedNPC.width * 4, SelectedNPC.height * 4);
+            BoundNPCDrawTexture = ClientLoader.MainRenderer!.BindTexture(NPCDrawRenderTarget);
         }
     }
 }

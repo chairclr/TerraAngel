@@ -1342,7 +1342,7 @@
          }
  
          InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
-@@ -61590,9 +_,34 @@
+@@ -61590,9 +_,35 @@
      {
          if (!_isDrawingOrUpdating && IsGraphicsDeviceAvailable)
          {
@@ -1365,6 +1365,7 @@
 +                sw.Stop();
 +            }
 +
++            ClientLoader.MainRenderer?.PreUpdate();
              _isDrawingOrUpdating = true;
              EnsureRenderTargetContent();
 +            MetricsTimer drawTimer = TimeMetrics.GetMetricsTimer("Main DoDraw").Start();
