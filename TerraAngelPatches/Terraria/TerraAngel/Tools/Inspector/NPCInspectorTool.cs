@@ -92,12 +92,34 @@ public class NPCInspectorTool : InspectorTool
         }
 
         ImGui.Text($"Inspecting NPC[{SelectedNPCIndex}] \"{SelectedNPC.FullNameDefault.Truncate(60)}\"/{coolNPCName}/{SelectedNPC.type}");
-        ImGui.Text($"Health:   {SelectedNPC.life.ToString().PadLeft(5),-7}/{SelectedNPC.lifeMax,5}");
-        ImGui.Text($"Defense:  {SelectedNPC.defense,5}");
-        ImGui.Text($"Velocity: {SelectedNPC.velocity.Length(),5}");
+        ImGui.Text($"Health:      {SelectedNPC.life}/{SelectedNPC.lifeMax}");
+        ImGui.Text($"Defense:     {SelectedNPC.defense}");
+        ImGui.Text($"Speed:       {SelectedNPC.velocity.Length()}");
+        ImGui.Text($"Velocity:    {SelectedNPC.velocity}");
+        ImGui.Text($"Velocity Dir: ");
+
+        if (SelectedNPC.velocity.Length() > 0f)
+        {
+            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+            Vector2 center = new Vector2(ImGui.GetItemRectMax().X, ImGui.GetItemRectMin().Y) + new Vector2(ImGui.GetItemRectSize().Y / 2f);
+            Matrix3x2 rotationMatrix = Matrix3x2.CreateRotation(SelectedNPC.velocity.SafeNormalize(Vector2.Zero).AngleTo(Vector2.Zero) + MathF.PI / 2f);
+
+            Vector2 head = center + Vector2.Transform(new Vector2(0f, ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tail = center + Vector2.Transform(new Vector2(0f, -ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tri1 = center + Vector2.Transform(new Vector2(0f, ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tri2 = center + Vector2.Transform(new Vector2(ImGui.GetTextLineHeight() / 7f, ImGui.GetTextLineHeight() / 4f), rotationMatrix);
+            Vector2 tri3 = center + Vector2.Transform(new Vector2(-ImGui.GetTextLineHeight() / 7f, ImGui.GetTextLineHeight() / 4f), rotationMatrix);
+
+            drawList.AddLine(head, tail, Color.Red.PackedValue);
+            drawList.AddTriangle(tri1, tri2, tri3, Color.Red.PackedValue);
+            drawList.AddTriangle(tri1, tri2, tri3, Color.Red.PackedValue);
+            drawList.AddTriangleFilled(tri1, tri2, tri3, Color.Red.PackedValue);
+        }
+
         for (int i = 0; i < NPC.maxAI; i++)
         {
-            ImGui.Text($"AI[{i}]:  {SelectedNPC.ai[i],5:F4}");
+            ImGui.Text($"AI[{i}]:    {SelectedNPC.ai[i]}");
         }
 
         if (NPCDrawRenderTarget is not null && BoundNPCDrawTexture > 0)
@@ -170,14 +192,21 @@ public class NPCInspectorTool : InspectorTool
             InvalidateDrawTexture();
         }
 
-        ILightingEngine engine = Lighting._activeEngine;
-        Lighting._activeEngine = Lighting.FullbrightEngine;
-        Main.graphics.GraphicsDevice.SetRenderTarget(NPCDrawRenderTarget);
-        Main.graphics.GraphicsDevice.Clear(Color.Transparent);
-        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
-        Main.instance.DrawNPCDirect(Main.spriteBatch, SelectedNPC, SelectedNPC.behindTiles, SelectedNPC.position - SelectedNPC.Size);
-        Main.spriteBatch.End();
-        Lighting._activeEngine = engine;
+        try
+        {
+            ILightingEngine engine = Lighting._activeEngine;
+            Lighting._activeEngine = Lighting.FullbrightEngine;
+            Main.graphics.GraphicsDevice.SetRenderTarget(NPCDrawRenderTarget);
+            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+            Main.instance.DrawNPCDirect(Main.spriteBatch, SelectedNPC, SelectedNPC.behindTiles, SelectedNPC.position - SelectedNPC.Size);
+            Main.spriteBatch.End();
+            Lighting._activeEngine = engine;
+        }
+        catch (Exception ex)
+        {
+            ClientLoader.Console.WriteError(ex.ToString());
+        }
     }
 
     private void InvalidateDrawTexture()

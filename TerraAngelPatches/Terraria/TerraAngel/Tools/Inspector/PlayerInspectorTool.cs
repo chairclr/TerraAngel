@@ -80,10 +80,31 @@ public class PlayerInspectorTool : InspectorTool
 
         Player player = Main.player[SelectedPlayer];
         ImGui.Text($"Inspecting Player[{SelectedPlayer}] \"{player.name.Truncate(60)}\"");
-        ImGui.Text($"Health:   {player.statLife.ToString().PadLeft(5),-7}/{player.statLifeMax2,5}");
-        ImGui.Text($"Mana:     {player.statMana.ToString().PadLeft(5),-7}/{player.statManaMax2,5}");
-        ImGui.Text($"Defense:  {player.statDefense,5}");
-        ImGui.Text($"Velocity: {MathF.Round(CalcSpeedMPH(player), 2),5:F1} mph");
+        ImGui.Text($"Health:      {player.statLife}/{player.statLifeMax2}");
+        ImGui.Text($"Mana:        {player.statMana}/{player.statManaMax2}");
+        ImGui.Text($"Defense:     {player.statDefense}");
+        ImGui.Text($"Speed:       {player.velocity.Length()}");
+        ImGui.Text($"Velocity:    {player.velocity}");
+        ImGui.Text($"Velocity Dir: ");
+
+        if (player.velocity.Length() > 0f)
+        {
+            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+            Vector2 center = new Vector2(ImGui.GetItemRectMax().X, ImGui.GetItemRectMin().Y) + new Vector2(ImGui.GetItemRectSize().Y / 2f);
+            Matrix3x2 rotationMatrix = Matrix3x2.CreateRotation(player.velocity.SafeNormalize(Vector2.Zero).AngleTo(Vector2.Zero) + MathF.PI / 2f);
+
+            Vector2 head = center + Vector2.Transform(new Vector2(0f, ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tail = center + Vector2.Transform(new Vector2(0f, -ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tri1 = center + Vector2.Transform(new Vector2(0f, ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tri2 = center + Vector2.Transform(new Vector2(ImGui.GetTextLineHeight() / 7f, ImGui.GetTextLineHeight() / 4f), rotationMatrix);
+            Vector2 tri3 = center + Vector2.Transform(new Vector2(-ImGui.GetTextLineHeight() / 7f, ImGui.GetTextLineHeight() / 4f), rotationMatrix);
+
+            drawList.AddLine(head, tail, Color.Red.PackedValue);
+            drawList.AddTriangle(tri1, tri2, tri3, Color.Red.PackedValue);
+            drawList.AddTriangle(tri1, tri2, tri3, Color.Red.PackedValue);
+            drawList.AddTriangleFilled(tri1, tri2, tri3, Color.Red.PackedValue);
+        }
 
         if (ImGui.CollapsingHeader("Player Inventory"))
         {

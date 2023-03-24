@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TerraAngel.Inspector.Tools;
+using Terraria;
 using Terraria.GameContent;
 
 namespace TerraAngel.Tools.Inspector;
@@ -19,6 +20,8 @@ public class ProjectileInspector : InspectorTool
     private int SelectedProjectileIndex = -1;
 
     private Projectile? SelectedProjectile => SelectedProjectileIndex > -1 ? Main.projectile[SelectedProjectileIndex] : null;
+
+    private Projectile DefaultProjectiledCache = new Projectile();
 
     public override void DrawMenuBar(ImGuiIOPtr io)
     {
@@ -72,6 +75,8 @@ public class ProjectileInspector : InspectorTool
             return;
         }
 
+        DefaultProjectiledCache.SetDefaults(SelectedProjectile.type);
+
         string coolProjectileName = "None";
 
         if (Util.ProjectileFields.TryGetValue(SelectedProjectile.type, out FieldInfo? projectileField))
@@ -80,14 +85,37 @@ public class ProjectileInspector : InspectorTool
         }
 
         ImGui.Text($"Inspecting Projectile[{SelectedProjectileIndex}] \"{SelectedProjectile.Name.Truncate(60)}\"/{coolProjectileName}/{SelectedProjectile.type}");
-        ImGui.Text($"Damage:    {SelectedProjectile.damage}");
-        ImGui.Text($"Hostile:   {SelectedProjectile.hostile}");
-        ImGui.Text($"Velocity:  {SelectedProjectile.velocity.Length():F4}");
-        ImGui.Text($"Time Left: {SelectedProjectile.timeLeft}");
-        ImGui.Text($"AI Style:  {SelectedProjectile.aiStyle}");
+        ImGui.Text($"Damage:      {SelectedProjectile.damage}");
+        ImGui.Text($"Hostile:     {SelectedProjectile.hostile}");
+        ImGui.Text($"Time Left:   {SelectedProjectile.timeLeft}/{DefaultProjectiledCache.timeLeft}");
+        ImGui.Text($"Speed:       {SelectedProjectile.velocity.Length()}");
+        ImGui.Text($"Velocity:    {SelectedProjectile.velocity}");
+        ImGui.Text($"Velocity Dir: ");
+
+        if (SelectedProjectile.velocity.Length() > 0f)
+        {
+            ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+            Vector2 center = new Vector2(ImGui.GetItemRectMax().X, ImGui.GetItemRectMin().Y) + new Vector2(ImGui.GetItemRectSize().Y / 2f);
+            Matrix3x2 rotationMatrix = Matrix3x2.CreateRotation(SelectedProjectile.velocity.SafeNormalize(Vector2.Zero).AngleTo(Vector2.Zero) + MathF.PI / 2f);
+
+            Vector2 head = center + Vector2.Transform(new Vector2(0f, ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tail = center + Vector2.Transform(new Vector2(0f, -ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tri1 = center + Vector2.Transform(new Vector2(0f, ImGui.GetTextLineHeight() / 2f), rotationMatrix);
+            Vector2 tri2 = center + Vector2.Transform(new Vector2(ImGui.GetTextLineHeight() / 7f, ImGui.GetTextLineHeight() / 4f), rotationMatrix);
+            Vector2 tri3 = center + Vector2.Transform(new Vector2(-ImGui.GetTextLineHeight() / 7f, ImGui.GetTextLineHeight() / 4f), rotationMatrix);
+
+            drawList.AddLine(head, tail, Color.Red.PackedValue);
+            drawList.AddTriangle(tri1, tri2, tri3, Color.Red.PackedValue);
+            drawList.AddTriangle(tri1, tri2, tri3, Color.Red.PackedValue);
+            drawList.AddTriangleFilled(tri1, tri2, tri3, Color.Red.PackedValue);
+        }
+
+        ImGui.Text($"AI Style:    {SelectedProjectile.aiStyle}");
+
         for (int i = 0; i < Projectile.maxAI; i++)
         {
-            ImGui.Text($"AI[{i}]:     {SelectedProjectile.ai[i]:F4}");
+            ImGui.Text($"AI[{i}]:     {SelectedProjectile.ai[i]}");
         }
 
         if (Main.netMode == 1 && SelectedProjectile.active)
