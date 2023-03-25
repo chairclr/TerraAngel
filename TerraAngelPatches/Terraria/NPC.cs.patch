@@ -8,12 +8,32 @@
  using Terraria.GameContent.Tile_Entities;
  using Terraria.GameContent.UI;
  using Terraria.Graphics.CameraModifiers;
-@@ -421,7 +_,7 @@
+@@ -421,7 +_,27 @@
          }
      }
  
 -    public string TypeName => Lang.GetNPCNameValue(netID);
-+    public string TypeName => Lang.GetNPCNameValue(netID) + (ClientConfig.Settings.ShowDetailedTooltips ? $" [{type}{(Util.NPCFields.ContainsKey(type) ? ("/" + Util.NPCFields[type].Name) : "")}{(netID != type ? ("/" + netID) : "")}]" : ""); // kind of aids but shhhhhh
++    public string TypeName
++    {
++        get
++        {
++            string value = Lang.GetNPCNameValue(netID);
++
++            if (ClientConfig.Settings.ShowDetailedTooltips)
++            {
++                value += $" [{type}/{InternalRepresentation.GetNPCIDName(type)}";
++
++                if (netID != type)
++                {
++                    value += $"{netID}/{InternalRepresentation.GetNPCIDName(netID)}";
++                }
++
++                value += "]";
++            }
++
++            return value;
++        }
++    }
      public string FullName
      {
          get

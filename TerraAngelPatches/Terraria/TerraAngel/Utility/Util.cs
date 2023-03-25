@@ -12,64 +12,7 @@ public class Util
 {
     private static readonly string[] ByteSizeNames = { "b", "k", "m", "g", "t", "p" };
 
-    public static readonly Dictionary<int, FieldInfo> ItemFields =
-        GetPublicValueTypeFields<ItemID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> TileFields =
-        GetPublicValueTypeFields<TileID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> WallFields =
-        GetPublicValueTypeFields<WallID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> PrefixFields =
-        GetPublicValueTypeFields<PrefixID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> NPCFields =
-        GetPublicValueTypeFields<NPCID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> ProjectileFields =
-        GetPublicValueTypeFields<ProjectileID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> AmmoFields =
-        typeof(AmmoID).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType)
-        .ToDictionary(x => UnboxStaticFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> BuffFields =
-        GetPublicValueTypeFields<BuffID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
-    public static readonly Dictionary<int, FieldInfo> MessageFields =
-        GetPublicValueTypeFields<MessageID>()
-        .ToDictionary(x => UnboxRawFieldToInt(x), x => x);
-
     public static Vector2 ScreenSize => ClientLoader.WindowManager?.Size ?? Vector2.One;
-
-    public static IEnumerable<FieldInfo> GetPublicValueTypeFields<T>()
-    {
-        return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType && x.IsLiteral && !x.IsInitOnly);
-    }
-    public static int UnboxRawFieldToInt(FieldInfo field)
-    {
-        dynamic? dyn = field.GetRawConstantValue();
-
-        if (dyn is null)
-            return 0;
-        return (int)dyn;
-    }
-    public static int UnboxStaticFieldToInt(FieldInfo field)
-    {
-        dynamic? dyn = field.GetValue(null);
-
-        if (dyn is null)
-            return 0;
-        return (int)dyn;
-    }
 
     public static bool IsRectOnScreen(Vector2 min, Vector2 max, Vector2 displaySize)
     {

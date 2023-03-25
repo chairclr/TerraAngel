@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TerraAngel.Inspector.Tools;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.Graphics.Renderers;
 
 namespace TerraAngel.Tools.Inspector;
 
@@ -78,14 +79,7 @@ public class ProjectileInspector : InspectorTool
 
         DefaultProjectiledCache.SetDefaults(SelectedProjectile.type);
 
-        string coolProjectileName = "None";
-
-        if (Util.ProjectileFields.TryGetValue(SelectedProjectile.type, out FieldInfo? projectileField))
-        {
-            coolProjectileName = projectileField!.Name;
-        }
-
-        ImGui.Text($"Inspecting Projectile[{SelectedProjectileIndex}] \"{SelectedProjectile.Name.Truncate(60)}\"/{coolProjectileName}/{SelectedProjectile.type}");
+        ImGui.Text($"Inspecting Projectile[{SelectedProjectileIndex}] \"{SelectedProjectile.Name.Truncate(60)}\"/{InternalRepresentation.GetProjectileIDName(SelectedProjectile.type)}/{SelectedProjectile.type}");
         ImGui.Text($"Damage:      {SelectedProjectile.damage}");
         ImGui.Text($"Hostile:     {SelectedProjectile.hostile}");
         ImGui.Text($"Time Left:   {SelectedProjectile.timeLeft}/{DefaultProjectiledCache.timeLeft}");
@@ -184,7 +178,7 @@ public class ProjectileInspector : InspectorTool
             for (int i = 0; i < 1000; i++)
             {
                 bool anyActiveProjectiles = false;
-                for (int j = i; j < Math.Min(i + 40, 1000); j++)
+                for (int j = i; j < Math.Min(i + 32, 1000); j++)
                 {
                     if (Main.projectile[j].active)
                         anyActiveProjectiles = true;
@@ -192,23 +186,16 @@ public class ProjectileInspector : InspectorTool
 
                 bool endedDisableEarly = false;
                 ImGui.BeginDisabled(!anyActiveProjectiles);
-                if (ImGui.BeginMenu($"Projectiles {i}-{Math.Min(i + 40, 1000)}"))
+                if (ImGui.BeginMenu($"Projectiles {i}-{Math.Min(i + 32, 1000)}"))
                 {
                     endedDisableEarly = true;
                     showTooltip = false;
                     ImGui.EndDisabled();
-                    for (int j = i; j < Math.Min(i + 40, 1000); j++)
+                    for (int j = i; j < Math.Min(i + 32, 1000); j++)
                     {
                         if (!Main.projectile[j].active) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Text] * new Vector4(1f, 1f, 1f, 0.4f));
 
-                        string coolProjcetileName = "None";
-
-                        if (Util.ProjectileFields.TryGetValue(Main.projectile[j].type, out FieldInfo? npcField))
-                        {
-                            coolProjcetileName = npcField!.Name;
-                        }
-
-                        if (ImGui.MenuItem($"Projectile \"{Main.projectile[j].Name.Truncate(30)}\"/{coolProjcetileName}/{Main.projectile[j].type}"))
+                        if (ImGui.MenuItem($"Projectile \"{Main.projectile[j].Name.Truncate(30)}\"/{InternalRepresentation.GetProjectileIDName(Main.projectile[j].type)}/{Main.projectile[j].type}"))
                         {
                             SelectedProjectileIndex = j;
                         }
@@ -219,9 +206,28 @@ public class ProjectileInspector : InspectorTool
                 }
                 if (!endedDisableEarly)
                     ImGui.EndDisabled();
-                i += 20;
+                i += 32;
             }
             ImGui.EndMenu();
+        }
+    }
+
+    public override void UpdateInGameSelect()
+    {
+        for (int i = 0; i < 1000; i++)
+        {
+            Projectile projectile = Main.projectile[i];
+            if (projectile.active)
+            {
+                Rectangle selectRect = new Rectangle((int)(projectile.position.X + projectile.width * 0.5 - 16.0), (int)(projectile.position.Y + projectile.height - 48f), 32, 48);
+
+                if (InputSystem.RightMousePressed && selectRect.Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))
+                {
+                    SelectedProjectileIndex = i;
+                    InspectorWindow.OpenTab(this);
+                    break;
+                }
+            }
         }
     }
 }

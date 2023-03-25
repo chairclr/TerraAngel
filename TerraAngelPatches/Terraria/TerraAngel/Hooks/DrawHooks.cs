@@ -16,21 +16,21 @@ public class DrawHooks
         {
             if (self.prefix < 0 || self.prefix >= Lang.prefix.Length)
             {
-                return self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+                return self.Name + $" [{InternalRepresentation.GetItemIDName(self.type)}/{self.type}]";
             }
 
             string text = Lang.prefix[self.prefix].Value;
             if (text == "")
             {
-                return self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+                return self.Name + $" [{InternalRepresentation.GetItemIDName(self.type)}/{self.type}]";
             }
 
             if (text.StartsWith("("))
             {
-                return text + $" [{Util.PrefixFields[self.prefix].Name}/{self.prefix}] " + self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+                return text + $" [{InternalRepresentation.GetPrefixIDName(self.prefix)}/{self.prefix}] " + self.Name + $" [{InternalRepresentation.GetItemIDName(self.type)}/{self.type}]";
             }
 
-            return text + $" [{Util.PrefixFields[self.prefix].Name}/{self.prefix}] " + self.Name + $" [{Util.ItemFields[self.type].Name}/{self.type}]";
+            return text + $" [{InternalRepresentation.GetPrefixIDName(self.prefix)}/{self.prefix}] " + self.Name + $" [{InternalRepresentation.GetItemIDName(self.type)}/{self.type}]";
         }
 
         return orig(self);
@@ -53,44 +53,44 @@ public class DrawHooks
                 float kb = 0.0f;
                 Main.LocalPlayer.PickAmmo(item, ref projectileType, ref shootSpeed, ref cs, ref dm, ref kb, out _, true);
 
-                if (Util.ProjectileFields.ContainsKey(projectileType))
+                if (InternalRepresentation.ProjectileIDFields.ContainsKey(projectileType))
                 {
-                    toolTipLine[numLines] = $"[a:[Projectile: {Util.ProjectileFields[projectileType].Name}/{projectileType}]]";
+                    toolTipLine[numLines] = $"[a:[Projectile: {InternalRepresentation.GetProjectileIDName(projectileType)}/{projectileType}]]";
                     numLines++;
                 }
                 else
                 {
-                    if (item.shoot > 0 && item.shoot < ProjectileID.Count && Util.ProjectileFields.ContainsKey(item.shoot))
+                    if (item.shoot > 0 && item.shoot < ProjectileID.Count && InternalRepresentation.ProjectileIDFields.ContainsKey(item.shoot))
                     {
-                        toolTipLine[numLines] = $"[a:[Projectile: {Util.ProjectileFields[item.shoot].Name}/{item.shoot}]]";
+                        toolTipLine[numLines] = $"[a:[Projectile: {InternalRepresentation.GetProjectileIDName(item.shoot)}/{item.shoot}]]";
                         numLines++;
                     }
                 }
             }
             else
             {
-                if (item.shoot > 0 && item.shoot < ProjectileID.Count && Util.ProjectileFields.ContainsKey(item.shoot) && (item.ammo == AmmoID.None || !Util.AmmoFields.ContainsKey(item.ammo)))
+                if (item.shoot > 0 && item.shoot < ProjectileID.Count && InternalRepresentation.ProjectileIDFields.ContainsKey(item.shoot) && (item.ammo == AmmoID.None || !InternalRepresentation.AmmoIDFields.ContainsKey(item.ammo)))
                 {
-                    toolTipLine[numLines] = $"[a:[Projectile: {Util.ProjectileFields[item.shoot].Name}/{item.shoot}]]";
+                    toolTipLine[numLines] = $"[a:[Projectile: {InternalRepresentation.GetProjectileIDName(item.shoot)}/{item.shoot}]]";
                     numLines++;
                 }
             }
 
-            if (item.createTile > -1 && item.createTile < TileID.Count && Util.TileFields.ContainsKey(item.createTile))
+            if (item.createTile > -1 && item.createTile < TileID.Count && InternalRepresentation.TileIDFields.ContainsKey(item.createTile))
             {
-                toolTipLine[numLines] = $"[a:[Tile: {Util.TileFields[item.createTile].Name}/{item.createTile}{(item.placeStyle > 0 ? $" {item.placeStyle}" : "")}]]";
+                toolTipLine[numLines] = $"[a:[Tile: {InternalRepresentation.GetTileIDName(item.createTile)}/{item.createTile}{(item.placeStyle > 0 ? $" {item.placeStyle}" : "")}]]";
                 numLines++;
             }
 
-            if (item.createWall > 0 && item.createWall < WallID.Count && Util.WallFields.ContainsKey(item.createWall))
+            if (item.createWall > 0 && item.createWall < WallID.Count && InternalRepresentation.WallIDFields.ContainsKey(item.createWall))
             {
-                toolTipLine[numLines] = $"[a:[Wall: {Util.WallFields[item.createWall].Name}/{item.createWall}]]";
+                toolTipLine[numLines] = $"[a:[Wall: {InternalRepresentation.GetWallIDName(item.createWall)}/{item.createWall}]]";
                 numLines++;
             }
 
-            if (item.ammo > 0 && item.ammo < AmmoID.NailFriendly + 1 && Util.AmmoFields.ContainsKey(item.ammo))
+            if (item.ammo > 0 && item.ammo < AmmoID.NailFriendly + 1 && InternalRepresentation.AmmoIDFields.ContainsKey(item.ammo))
             {
-                toolTipLine[numLines] = $"[a:[Ammo: {Util.AmmoFields[item.ammo].Name}/{item.ammo}]]";
+                toolTipLine[numLines] = $"[a:[Ammo: {InternalRepresentation.GetAmmoIDName(item.ammo)}/{item.ammo}]]";
                 numLines++;
             }
 
@@ -104,11 +104,11 @@ public class DrawHooks
             {
                 if (item.buffTime > 0)
                 {
-                    toolTipLine[numLines] = $"[a:[Buff: {Util.BuffFields[item.buffType].Name}/{item.buffType} for {TimeSpan.FromSeconds(item.buffTime / 60f):mm\\:ss}]]";
+                    toolTipLine[numLines] = $"[a:[Buff: {InternalRepresentation.GetBuffIDName(item.buffType)}/{item.buffType} for {TimeSpan.FromSeconds(item.buffTime / 60f):mm\\:ss}]]";
                 }
                 else
                 {
-                    toolTipLine[numLines] = $"[a:[Buff: {Util.BuffFields[item.buffType].Name}/{item.buffType}]]";
+                    toolTipLine[numLines] = $"[a:[Buff: {InternalRepresentation.GetBuffIDName(item.buffType)}/{item.buffType}]]";
                 }
                 numLines++;
             }

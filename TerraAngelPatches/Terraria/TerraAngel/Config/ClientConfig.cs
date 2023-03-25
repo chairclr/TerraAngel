@@ -80,8 +80,8 @@ public class ClientConfig
         [UIConfigElement("Right click on the map to teleport")]
         public bool RightClickOnMapToTeleport = true;
 
-        [UIConfigElement("Right click on player to view inventory")]
-        public bool RightClickOnPlayerToInspect = true;
+        [UIConfigElement("Right click on object to inspect")]
+        public bool RightClickOnObjectToInspect = true;
 
         [UIConfigElement("Disable Nebula Packet")]
         public bool DisableNebulaLagPacket = true;

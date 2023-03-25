@@ -84,14 +84,8 @@ public class NPCInspectorTool : InspectorTool
             return;
         }
 
-        string coolNPCName = "None";
 
-        if (Util.NPCFields.TryGetValue(SelectedNPC.type, out FieldInfo? npcField))
-        {
-            coolNPCName = npcField!.Name;
-        }
-
-        ImGui.Text($"Inspecting NPC[{SelectedNPCIndex}] \"{SelectedNPC.FullNameDefault.Truncate(60)}\"/{coolNPCName}/{SelectedNPC.type}");
+        ImGui.Text($"Inspecting NPC[{SelectedNPCIndex}] \"{SelectedNPC.FullNameDefault.Truncate(60)}\"/{InternalRepresentation.GetNPCIDName(SelectedNPC.type)}/{SelectedNPC.type}");
         ImGui.Text($"Health:      {SelectedNPC.life}/{SelectedNPC.lifeMax}");
         ImGui.Text($"Defense:     {SelectedNPC.defense}");
         ImGui.Text($"Position:    {SelectedNPC.position}");
@@ -155,14 +149,7 @@ public class NPCInspectorTool : InspectorTool
                     {
                         if (!Main.npc[j].active) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.Text] * new Vector4(1f, 1f, 1f, 0.4f));
 
-                        string coolNPCName = "None";
-
-                        if (Util.NPCFields.TryGetValue(Main.npc[j].type, out FieldInfo? npcField))
-                        {
-                            coolNPCName = npcField!.Name;
-                        }
-
-                        if (ImGui.MenuItem($"NPC \"{Main.npc[j].FullNameDefault.Truncate(30)}\"/{coolNPCName}/{Main.npc[j].type}"))
+                        if (ImGui.MenuItem($"NPC \"{Main.npc[j].FullNameDefault.Truncate(30)}\"/{InternalRepresentation.GetNPCIDName(Main.npc[j].type)}/{Main.npc[j].type}"))
                         {
                             SelectedNPCIndex = j;
                         }
@@ -223,6 +210,29 @@ public class NPCInspectorTool : InspectorTool
 
             NPCDrawRenderTarget = new RenderTarget2D(Main.graphics.GraphicsDevice, SelectedNPC.width * 4, SelectedNPC.height * 4);
             BoundNPCDrawTexture = ClientLoader.MainRenderer!.BindTexture(NPCDrawRenderTarget);
+        }
+    }
+
+    public override void UpdateInGameSelect()
+    {
+        for (int i = 0; i < 200; i++)
+        {
+            NPC npc = Main.npc[i];
+            if (npc.active)
+            {
+                Microsoft.Xna.Framework.Rectangle selectRect = new Microsoft.Xna.Framework.Rectangle((int)npc.Bottom.X - npc.frame.Width / 2, (int)npc.Bottom.Y - npc.frame.Height, npc.frame.Width, npc.frame.Height);
+                if (npc.type >= 87 && npc.type <= 92)
+                {
+                    selectRect = new Microsoft.Xna.Framework.Rectangle((int)((double)npc.position.X + (double)npc.width * 0.5 - 32.0), (int)((double)npc.position.Y + (double)npc.height * 0.5 - 32.0), 64, 64);
+                }
+
+                if (InputSystem.RightMousePressed && selectRect.Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))
+                {
+                    SelectedNPCIndex = i;
+                    InspectorWindow.OpenTab(this);
+                    break;
+                }
+            }
         }
     }
 }

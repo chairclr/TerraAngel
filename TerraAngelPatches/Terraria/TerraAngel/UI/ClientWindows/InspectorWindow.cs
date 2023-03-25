@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System;
+using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework.Input;
 using TerraAngel.Inspector.Tools;
 
 namespace TerraAngel.UI.ClientWindows;
@@ -14,6 +16,8 @@ public class InspectorWindow : ClientWindow
     public override bool IsGlobalToggle => false;
 
     public override Keys ToggleKey => ClientConfig.Settings.ShowInspectorWindow;
+
+    private Type? TypeOfTabToOpen;
 
     public override void Draw(ImGuiIOPtr io)
     {
@@ -33,9 +37,18 @@ public class InspectorWindow : ClientWindow
         {
             foreach (Tool tool in ToolManager.GetToolsOfTab(ToolTabs.Inspector))
             {
-                if (tool.GetType().IsSubclassOf(typeof(InspectorTool)))
+                Type toolType = tool.GetType();
+                if (toolType.IsSubclassOf(typeof(InspectorTool)))
                 {
-                    if (ImGui.BeginTabItem(tool.Name))
+                    ImGuiTabItemFlags flags = ImGuiTabItemFlags.None;
+
+                    if (TypeOfTabToOpen is not null && TypeOfTabToOpen == toolType)
+                    {
+                        flags |= ImGuiTabItemFlags.SetSelected;
+                        TypeOfTabToOpen = null;
+                    }
+
+                    if (ImGui.BeginTabItem(tool.Name, flags))
                     {
                         tool.DrawUI(io);
                         ImGui.EndTabItem();
@@ -46,5 +59,10 @@ public class InspectorWindow : ClientWindow
 
         ImGui.End();
         ImGui.PopFont();
+    }
+
+    public void OpenTab(InspectorTool tool)
+    {
+        TypeOfTabToOpen = tool.GetType();
     }
 }

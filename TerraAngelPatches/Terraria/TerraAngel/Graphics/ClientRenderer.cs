@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using TerraAngel.Inspector.Tools;
 using TerraAngel.Tools.Inspector;
 using TerraAngel.WorldEdits;
 using Terraria.GameContent;
@@ -137,7 +138,7 @@ public class ClientRenderer : ImGuiRenderer
         AddWindow(new DrawWindow());
         AddWindow(new StatsWindow());
         AddWindow(new NetMessageWindow());
-        AddWindow(new InspectorWindow());
+        AddWindow(InspectorTool.InspectorWindow);
         AddWindow(ClientLoader.ChatWindow = new ChatWindow());
         AddWindow(new StyleEditorWindow());
         AddWindow(new TimingMetricsWindow());

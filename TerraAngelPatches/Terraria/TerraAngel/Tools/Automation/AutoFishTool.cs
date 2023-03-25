@@ -156,7 +156,7 @@ public class AutoFishTool : Tool
             bool wantToCatch = false;
             if (fish.rolledItemDrop > 0)
             {
-                ClientLoader.Console.WriteLine($"Fish: {Utility.Util.ItemFields[fish.rolledItemDrop].Name}");
+                ClientLoader.Console.WriteLine($"Fish: {InternalRepresentation.GetItemIDName(fish.rolledItemDrop)}");
                 if (AcceptItems)
                 {
                     if (!fish.crate && fish.questFish == -1 && !fish.common && !fish.uncommon && !fish.rare && !fish.veryrare && !fish.legendary && AcceptNormal)
@@ -204,7 +204,7 @@ public class AutoFishTool : Tool
 
             if (fish.rolledEnemySpawn > 0)
             {
-                ClientLoader.Console.WriteLine($"NPC: {Utility.Util.NPCFields[fish.rolledEnemySpawn].Name}");
+                ClientLoader.Console.WriteLine($"NPC: {InternalRepresentation.GetNPCIDName(fish.rolledEnemySpawn)}");
                 if (AcceptNPCs)
                 {
                     wantToCatch = true;

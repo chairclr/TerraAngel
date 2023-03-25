@@ -151,4 +151,25 @@ public class ItemInspectorTool : InspectorTool
             ImGui.EndMenu();
         }
     }
+
+    public override void UpdateInGameSelect()
+    {
+        for (int i = 0; i < 400; i++)
+        {
+            Item item = Main.item[i];
+            if (item.active)
+            {
+                Microsoft.Xna.Framework.Rectangle drawHitbox = Item.GetDrawHitbox(item.type, null);
+                Vector2 bottom = item.Bottom;
+                Microsoft.Xna.Framework.Rectangle selectRect = new Microsoft.Xna.Framework.Rectangle((int)(bottom.X - (float)drawHitbox.Width * 0.5f), (int)(bottom.Y - (float)drawHitbox.Height), drawHitbox.Width, drawHitbox.Height);
+
+                if (InputSystem.RightMousePressed && selectRect.Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))
+                {
+                    SelectedItemIndex = i;
+                    InspectorWindow.OpenTab(this);
+                    break;
+                }
+            }
+        }
+    }
 }

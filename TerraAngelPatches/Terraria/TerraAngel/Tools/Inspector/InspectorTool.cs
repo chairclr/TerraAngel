@@ -8,6 +8,8 @@ namespace TerraAngel.Inspector.Tools;
 
 public abstract class InspectorTool : Tool
 {
+    public static InspectorWindow InspectorWindow = new InspectorWindow();
+
     public override ToolTabs Tab => ToolTabs.Inspector;
 
     public override void DrawUI(ImGuiIOPtr io)
@@ -31,6 +33,19 @@ public abstract class InspectorTool : Tool
     }
 
     public virtual void DrawInspector(ImGuiIOPtr io)
+    {
+
+    }
+
+    public override void Update()
+    {
+        if (ClientConfig.Settings.RightClickOnObjectToInspect && !Main.mapFullscreen && !Main.gameMenu)
+        {
+            UpdateInGameSelect();
+        }
+    }
+
+    public virtual void UpdateInGameSelect()
     {
 
     }

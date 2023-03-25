@@ -196,29 +196,6 @@ public class PlayerInspectorTool : InspectorTool
         }
     }
 
-    //public override void Update()
-    //{
-    //    if (!Main.mapFullscreen)
-    //    {
-    //        if (ClientConfig.Settings.RightClickOnPlayerToInspect)
-    //        {
-    //            for (int i = 0; i < 255; i++)
-    //            {
-    //                Player player = Main.player[i];
-    //                if (player.active && player.whoAmI != Main.myPlayer)
-    //                {
-    //                    if (InputSystem.RightMousePressed && player.getRect().Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))
-    //                    {
-    //                        SelectedPlayer = player.whoAmI;
-    //                        IsEnabled = true;
-    //                        break;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-
     private void DrawPlayerSelectMenu(out bool showTooltip)
     {
         showTooltip = true;
@@ -260,54 +237,22 @@ public class PlayerInspectorTool : InspectorTool
         }
     }
 
-    private float CalcSpeedMPH(Player player)
+    public override void UpdateInGameSelect()
     {
-        Vector2 correctedVelocity = player.velocity + player.instantMovementAccumulatedThisFrame;
-        if (player.mount.Active && player.mount.IsConsideredASlimeMount && player.velocity.Y != 0f && !player.SlimeDontHyperJump)
+        for (int i = 0; i < 255; i++)
         {
-            correctedVelocity.Y += player.velocity.Y;
-        }
-        int speedSliceLen = (int)(1f + correctedVelocity.Length() * 6f);
-        if (speedSliceLen > player.speedSlice.Length)
-        {
-            speedSliceLen = player.speedSlice.Length;
-        }
-
-        float num16 = 0f;
-        for (int num17 = speedSliceLen - 1; num17 > 0; num17--)
-        {
-            player.speedSlice[num17] = player.speedSlice[num17 - 1];
-        }
-
-        player.speedSlice[0] = correctedVelocity.Length();
-        for (int m = 0; m < player.speedSlice.Length; m++)
-        {
-            if (m < speedSliceLen)
+            Player player = Main.player[i];
+            if (player.active)
             {
-                num16 += player.speedSlice[m];
-            }
-            else
-            {
-                player.speedSlice[m] = num16 / (float)speedSliceLen;
+                Rectangle selectRect = new Rectangle((int)(player.position.X + player.width * 0.5 - 16.0), (int)(player.position.Y + player.height - 48f), 32, 48);
+
+                if (InputSystem.RightMousePressed && selectRect.Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))
+                {
+                    SelectedPlayer = player.whoAmI;
+                    InspectorWindow.OpenTab(this);
+                    break;
+                }
             }
         }
-
-        num16 /= (float)speedSliceLen;
-        int num18 = 42240;
-        int num19 = 216000;
-        float playerSpeed = num16 * (float)num19 / (float)num18;
-        if (!player.merman && !player.ignoreWater)
-        {
-            if (player.honeyWet)
-            {
-                playerSpeed /= 4f;
-            }
-            else if (player.wet)
-            {
-                playerSpeed /= 2f;
-            }
-        }
-
-        return playerSpeed;
     }
 }
