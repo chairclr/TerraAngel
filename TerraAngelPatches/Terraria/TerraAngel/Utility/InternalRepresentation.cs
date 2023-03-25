@@ -30,6 +30,8 @@ public class InternalRepresentation
 
     public static readonly Dictionary<int, FieldInfo> WallIDFields = GetIDEnumMapping<WallID>();
 
+    public static readonly Dictionary<int, FieldInfo> PaintIDFields = GetIDEnumMapping(typeof(PaintID));
+
     public static string GetItemIDName(int type)
     {
         if (ItemIDFields.TryGetValue(type, out FieldInfo? field))
@@ -120,14 +122,34 @@ public class InternalRepresentation
         return "Invalid";
     }
 
+    public static string GetPaintIDName(int type)
+    {
+        if (PaintIDFields.TryGetValue(type, out FieldInfo? field))
+        {
+            return field.Name;
+        }
+
+        return "Invalid";
+    }
+
     private static IEnumerable<FieldInfo> GetPublicValueTypeFields<T>()
     {
         return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType && x.IsLiteral && !x.IsInitOnly);
     }
 
+    private static IEnumerable<FieldInfo> GetPublicValueTypeFields(Type t)
+    {
+        return t.GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType && x.IsLiteral && !x.IsInitOnly);
+    }
+
     private static Dictionary<int, FieldInfo> GetIDEnumMapping<T>()
     {
         return GetPublicValueTypeFields<T>().ToDictionary(x => UnboxRawFieldToInt(x), x => x);
+    }
+
+    private static Dictionary<int, FieldInfo> GetIDEnumMapping(Type t)
+    {
+        return GetPublicValueTypeFields(t).ToDictionary(x => UnboxRawFieldToInt(x), x => x);
     }
 
     private static int UnboxRawFieldToInt(FieldInfo field)

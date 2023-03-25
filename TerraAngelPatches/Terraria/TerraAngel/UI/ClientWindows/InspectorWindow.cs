@@ -17,12 +17,16 @@ public class InspectorWindow : ClientWindow
 
     public override Keys ToggleKey => ClientConfig.Settings.ShowInspectorWindow;
 
-    private Type? TypeOfTabToOpen;
+    public Type? TypeOfTabToOpen;
 
     public override void Draw(ImGuiIOPtr io)
     {
         ImGui.PushFont(ClientAssets.GetMonospaceFont(16));
         bool closeWindow = true;
+        if (TypeOfTabToOpen is not null)
+        {
+            ImGui.SetNextWindowFocus();
+        }
         ImGui.Begin(Title, ref closeWindow, ImGuiWindowFlags.MenuBar);
 
         if (!closeWindow)
@@ -55,10 +59,21 @@ public class InspectorWindow : ClientWindow
                     }
                 }
             }
+
         }
 
         ImGui.End();
         ImGui.PopFont();
+    }
+
+    public override void Update()
+    {
+        if (TypeOfTabToOpen is not null)
+        {
+            IsEnabled = true;
+        }
+
+        TypeOfTabToOpen = null;
     }
 
     public void OpenTab(InspectorTool tool)

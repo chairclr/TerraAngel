@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.Inspector.Tools;
 
@@ -39,9 +40,12 @@ public abstract class InspectorTool : Tool
 
     public override void Update()
     {
-        if (ClientConfig.Settings.RightClickOnObjectToInspect && !Main.mapFullscreen && !Main.gameMenu)
+        if (InputSystem.Ctrl && ClientConfig.Settings.CtrlRightClickOnObjectToInspect && !Main.mapFullscreen && !Main.gameMenu)
         {
-            UpdateInGameSelect();
+            if (InspectorWindow.TypeOfTabToOpen is null)
+            {
+                UpdateInGameSelect();
+            }
         }
     }
 

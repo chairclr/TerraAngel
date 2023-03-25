@@ -1,0 +1,8 @@
+--- src/Terraria/Terraria/ID/PaintID.cs
++++ src/TerraAngel/Terraria/ID/PaintID.cs
+@@ -33,5 +_,4 @@
+     public const byte ShadowPaint = 29;
+     public const byte NegativePaint = 30;
+     public const byte IlluminantPaint = 31;
+-    public const byte Old_IlluminantPaint = 31;
+ }
