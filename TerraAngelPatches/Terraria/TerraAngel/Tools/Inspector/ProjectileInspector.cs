@@ -124,7 +124,7 @@ public class ProjectileInspector : InspectorTool
             })}/{SelectedProjectile.owner}");
         }
 
-        if (SelectedProjectile.type > 0 && SelectedProjectile.type < TextureAssets.Projectile.Length)
+        if (SelectedProjectile.type > 0 && SelectedProjectile.type < TextureAssets.Projectile.Length && !Main.gameMenu)
         {
             Main.instance.LoadProjectile(SelectedProjectile.type);
 

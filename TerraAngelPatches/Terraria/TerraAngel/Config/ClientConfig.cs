@@ -200,7 +200,6 @@ public class ClientConfig
         [JsonIgnore]
         public List<string> ConsoleHistory = new List<string>();
 
-
         public int ConsoleUndoStackSize = 3000;
 
         public float FullBrightBrightness = 0.7f;
@@ -248,6 +247,7 @@ public class ClientConfig
 
         public int MapScreenshotPixelsPerTile = 4;
 
+        public List<MultiplayerServerInfo> MultiplayerServers = new List<MultiplayerServerInfo>();
 
         public ClientUIConfig UIConfig = new ClientUIConfig();
 

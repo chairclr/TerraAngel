@@ -21,6 +21,7 @@ public unsafe class ClientLoader
     public static ConfigUI? ConfigUI;
     public static PluginUI? PluginUI;
     public static GraphicsUI? GraphicsUI;
+    public static MultiplayerJoinUIList? MultiplayerJoinUI;
     public static DiscordRpcClient? DiscordClient;
     public static WindowManager? WindowManager;
     public static bool ClientLoaded = false;
@@ -177,6 +178,7 @@ public unsafe class ClientLoader
         ConfigUI = new ConfigUI();
         PluginUI = new PluginUI();
         GraphicsUI = new GraphicsUI();
+        MultiplayerJoinUI = new MultiplayerJoinUIList();
     }
 
     public static void InitDiscord()

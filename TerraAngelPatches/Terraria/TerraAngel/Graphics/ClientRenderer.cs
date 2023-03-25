@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Inspector.Tools;
 using TerraAngel.Tools.Inspector;
+using TerraAngel.UI.TerrariaUI;
 using TerraAngel.WorldEdits;
 using Terraria.GameContent;
 
@@ -156,10 +157,13 @@ public class ClientRenderer : ImGuiRenderer
         Time.UpdateUpdate();
 
         ClientConfig.Update();
+
     }
 
     public void Render()
     {
+        UIInputText.UUpdate();
+
         MetricsTimer renderTimer = TimeMetrics.GetMetricsTimer("Client Draw");
         renderTimer.Start();
         PreDraw();

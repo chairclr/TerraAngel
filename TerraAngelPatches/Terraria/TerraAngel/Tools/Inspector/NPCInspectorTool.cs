@@ -117,7 +117,7 @@ public class NPCInspectorTool : InspectorTool
             ImGui.Text($"AI[{i}]:    {SelectedNPC.ai[i]}");
         }
 
-        if (NPCDrawRenderTarget is not null && BoundNPCDrawTexture > 0)
+        if (NPCDrawRenderTarget is not null && BoundNPCDrawTexture > 0 && !Main.gameMenu)
         {
             ImGui.Image(BoundNPCDrawTexture, NPCDrawRenderTarget.Size());
         }
@@ -173,6 +173,11 @@ public class NPCInspectorTool : InspectorTool
             return;
         }
 
+        if (Main.gameMenu)
+        {
+            return;
+        }
+
         if (NPCDrawRenderTarget is null ||
             NPCDrawRenderTarget.Width < SelectedNPC.width * 4 ||
             NPCDrawRenderTarget.Height < SelectedNPC.height * 4)
@@ -220,10 +225,10 @@ public class NPCInspectorTool : InspectorTool
             NPC npc = Main.npc[i];
             if (npc.active)
             {
-                Microsoft.Xna.Framework.Rectangle selectRect = new Microsoft.Xna.Framework.Rectangle((int)npc.Bottom.X - npc.frame.Width / 2, (int)npc.Bottom.Y - npc.frame.Height, npc.frame.Width, npc.frame.Height);
+                Rectangle selectRect = new Rectangle((int)npc.Bottom.X - npc.frame.Width / 2, (int)npc.Bottom.Y - npc.frame.Height, npc.frame.Width, npc.frame.Height);
                 if (npc.type >= 87 && npc.type <= 92)
                 {
-                    selectRect = new Microsoft.Xna.Framework.Rectangle((int)((double)npc.position.X + (double)npc.width * 0.5 - 32.0), (int)((double)npc.position.Y + (double)npc.height * 0.5 - 32.0), 64, 64);
+                    selectRect = new Rectangle((int)(npc.position.X + npc.width * 0.5 - 32.0), (int)(npc.position.Y + npc.height * 0.5 - 32.0), 64, 64);
                 }
 
                 if (InputSystem.RightMousePressed && selectRect.Contains(Util.ScreenToWorldWorld(InputSystem.MousePosition).ToPoint()))

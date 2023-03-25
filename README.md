@@ -101,6 +101,7 @@ Other useful features
 
 - Complete re-write of the chat UI
 ![Terraria_1660961693](https://user-images.githubusercontent.com/87276335/185725363-591a1d7b-a264-4a46-bfb2-96578c8ad6a3.gif)
+- Complete re-write of the multiplayer server UI
 - Anti-Hurt/Godmode
 - Fullbright
 - Noclip
@@ -127,8 +128,8 @@ Other useful features
 Planned features
 </h2>
 
-- Re-write of the multiplayer UI
 - Some epic optimizations
+- UHHHHHHHH
 
 <h2>
 System Requirements

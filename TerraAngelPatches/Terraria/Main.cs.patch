@@ -1130,6 +1130,176 @@
              }
              else if (menuMode == 1125)
              {
+@@ -49974,166 +_,9 @@
+             }
+             else if (menuMode == 13)
+             {
+-                if (PlayerInput.SettingsForUI.ShowGamepadHints)
+-                {
+-                    num2 = 180;
+-                    num4 = 30;
+-                    int num40 = 0;
+-                    array9[num40] = Lang.menu[89].Value.Replace(":", "");
+-                    if (selectedMenu == num40)
+-                    {
+-                        UIVirtualKeyboard state = new UIVirtualKeyboard(Lang.menu[89].Value, getIP, OnSubmitServerIP, CreateGoToMenuEvent(13), 0, allowEmpty: true);
+-                        UserInterface.ActiveInstance.SetState(state);
+-                        menuMode = 888;
+-                    }
+-
+-                    array7[num40] = 0.6f;
+-                    array4[num40] = 40;
+-                    num40++;
+-                    for (int num41 = 0; num41 <= 6; num41++)
+-                    {
+-                        if (recentWorld[num41] != null && recentWorld[num41] != "")
+-                        {
+-                            array9[num40] = recentWorld[num41] + " (" + recentIP[num41] + ":" + recentPort[num41] + ")";
+-                        }
+-                        else
+-                        {
+-                            array9[num40] = "";
+-                            array[num40] = true;
+-                        }
+-
+-                        array7[num40] = 0.6f;
+-                        array4[num40] = 40;
+-                        if (selectedMenu == num40)
+-                        {
+-                            autoPass = false;
+-                            Netplay.ListenPort = recentPort[num41];
+-                            getIP = recentIP[num41];
+-                            Netplay.SetRemoteIPAsync(getIP, StartClientGameplay);
+-                            menuMode = 14;
+-                            statusText = Language.GetTextValue("Net.ConnectingTo", getIP);
+-                        }
+-
+-                        num40++;
+-                    }
+-
+-                    array4[num40] = 64;
+-                    array9[num40] = Lang.menu[5].Value;
+-                    if (selectedMenu == num40 || flag5)
+-                    {
+-                        flag5 = false;
+-                        SoundEngine.PlaySound(11);
+-                        menuMode = 1;
+-                    }
+-
+-                    num40++;
+-                    num5 = num40;
+-                }
+-                else
+-                {
+-                    string text3 = getIP;
+-                    PlayerInput.WritingText = true;
+-                    instance.HandleIME();
+-                    getIP = GetInputText(getIP);
+-                    if (text3 != getIP)
+-                    {
+-                        SoundEngine.PlaySound(12);
+-                    }
+-
+-                    num5 = 11;
+-                    num2 = 180;
+-                    num4 = 30;
+-                    array9[0] = Lang.menu[89].Value;
+-                    array[0] = true;
+-                    array9[1] = getIP;
+-                    array4[1] = 19;
+-                    if (textBlinkerState == 1)
+-                    {
+-                        array9[1] += "|";
+-                        array5[1] = 1;
+-                    }
+-                    else
+-                    {
+-                        array9[1] += " ";
+-                    }
+-
+-                    array[1] = true;
+-                    array4[9] = 44;
+-                    array9[9] = Lang.menu[4].Value;
+-                    array2[9] = true;
+-                    if (getIP != "")
+-                    {
+-                        if (getIP.Substring(0, 1) == " ")
+-                        {
+-                            getIP = "";
+-                        }
+-
+-                        for (int num42 = 0; num42 < getIP.Length; num42++)
+-                        {
+-                            if (getIP != " ")
+-                            {
+-                                array2[9] = false;
+-                            }
+-                        }
+-                    }
+-
+-                    array4[10] = 64;
+-                    array9[10] = Lang.menu[5].Value;
+-                    for (int num43 = 2; num43 <= 8; num43++)
+-                    {
+-                        int num44 = num43 - 2;
+-                        if (recentWorld[num44] != null && recentWorld[num44] != "")
+-                        {
+-                            array9[num43] = recentWorld[num44] + " (" + recentIP[num44] + ":" + recentPort[num44] + ")";
+-                        }
+-                        else
+-                        {
+-                            array9[num43] = "";
+-                            array[num43] = true;
+-                        }
+-
+-                        array7[num43] = 0.6f;
+-                        array4[num43] = 40;
+-                    }
+-
+-                    if (selectedMenu >= 2 && selectedMenu < 9)
+-                    {
+-                        autoPass = false;
+-                        int num45 = selectedMenu - 2;
+-                        Netplay.ListenPort = recentPort[num45];
+-                        getIP = recentIP[num45];
+-                        Netplay.SetRemoteIPAsync(getIP, StartClientGameplay);
+-                        menuMode = 14;
+-                        statusText = Language.GetTextValue("Net.ConnectingTo", getIP);
+-                    }
+-
+-                    if (selectedMenu == 10 || flag5)
+-                    {
+-                        flag5 = false;
+-                        SoundEngine.PlaySound(11);
+-                        menuMode = 1;
+-                    }
+-
+-                    if (selectedMenu == 9 || (!array2[2] && inputTextEnter))
+-                    {
+-                        OnSubmitServerIP(getIP);
+-                    }
+-
+-                    textBlinkerCount++;
+-                    if (textBlinkerCount >= 20)
+-                    {
+-                        if (textBlinkerState == 0)
+-                        {
+-                            textBlinkerState = 1;
+-                        }
+-                        else
+-                        {
+-                            textBlinkerState = 0;
+-                        }
+-
+-                        textBlinkerCount = 0;
+-                    }
+-                }
++                SoundEngine.PlaySound(10);
++                menuMode = 888;
++                MenuUI.SetState(ClientLoader.MultiplayerJoinUI!);
+             }
+             else if (menuMode == 131)
+             {
 @@ -51315,18 +_,6 @@
          }
      }
@@ -1198,6 +1368,18 @@
      public static void OpenCharacterSelectUI()
      {
          menuMode = 888;
+@@ -52203,9 +_,11 @@
+             return;
+         }
+ 
++        MetricsTimer backgroundTimer = TimeMetrics.GetMetricsTimer("Draw Background");
+         Microsoft.Xna.Framework.Color[] slices = new Microsoft.Xna.Framework.Color[9];
+         Stopwatch stopwatch = new Stopwatch();
+         stopwatch.Start();
++        backgroundTimer.Start();
+         double num2 = maxTilesY - 330;
+         double num3 = (int)((num2 - worldSurface) / 6.0) * 6;
+         num2 = worldSurface + num3 - 5.0;
 @@ -52660,11 +_,6 @@
                                  continue;
                              }
@@ -1223,6 +1405,14 @@
                                      if (color12.R > 0 || color12.G > 0 || color12.B > 0)
                                      {
                                          Lighting.GetCornerColors(num37, num38, out var vertices2, ugBackTransition);
+@@ -53495,6 +_,7 @@
+         }
+ 
+         Lighting.GlobalBrightness = globalBrightness;
++        backgroundTimer.Stop();
+         TimeLogger.DrawTime(3, stopwatch.Elapsed.TotalMilliseconds);
+     }
+ 
 @@ -53872,10 +_,6 @@
                              int num23 = (int)(((float)(bgStartX + num3 * n + num20 * 16 + 8) + screenPosition.X) / 16f);
                              int num24 = (int)((num22 + screenPosition.Y) / 16f);
