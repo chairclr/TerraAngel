@@ -52,12 +52,10 @@
      public static Dust[] dust = new Dust[6001];
      public static Star[] star = new Star[400];
      public static Item[] item = new Item[401];
-@@ -882,9 +_,6 @@
-     public static Vector2 screenLastPosition;
-     public static int screenWidth = 1152;
+@@ -884,7 +_,6 @@
      public static int screenHeight = 864;
--    public static bool screenMaximized = true;
--    public static bool screenBorderless = true;
+     public static bool screenMaximized = true;
+     public static bool screenBorderless = true;
 -    public static int screenBorderlessPendingResizes;
      public static int teamNamePlateDistance = 2000;
      public static int multiplayerNPCSmoothingRange = 300;
@@ -84,14 +82,6 @@
      public static bool gameMenu = true;
      public static bool menuBGChangedDay = false;
      public static bool menuBGChangedNight = false;
-@@ -1093,7 +_,6 @@
-     public static int signY = 0;
-     public static bool hideUI;
-     public static bool releaseUI;
--    public static FrameSkipMode FrameSkipMode = FrameSkipMode.Subtle;
-     public static bool terrariasFixedTiming = true;
-     private int splashCounter;
-     public List<int> DrawCacheNPCsMoonMoon = new List<int>(200);
 @@ -1108,7 +_,6 @@
      public List<int> DrawCacheFirstFractals = new List<int>(1000);
      public static ParticleRenderer ParticleSystem_World_OverPlayers = new ParticleRenderer();
@@ -100,14 +90,6 @@
      public static AnchoredEntitiesCollection sittingManager;
      public static AnchoredEntitiesCollection sleepingManager;
      public static MinimapFrameManager MinimapFrameManagerInstance;
-@@ -1117,7 +_,6 @@
-     private static float newDefaultUIScale = 0f;
-     public static bool IsInTheMiddleOfLoadingSettings;
-     public static Microsoft.Xna.Framework.Point LastLoadedResolution;
--    public static bool startFullscreen = false;
-     public static string oldStatusText = "";
-     public static string autoGenFileLocation = null;
-     public static bool autoShutdown;
 @@ -1246,7 +_,7 @@
      private static bool _blockFancyUIWhileLoading;
      private bool[] menuWide = new bool[100];
@@ -134,36 +116,23 @@
          configuration.Put("InvasionBarMode", invasionProgressMode);
          configuration.Put("AutoSave", autoSave);
          configuration.Put("AutoPause", autoPause);
-@@ -2524,29 +_,9 @@
-         configuration.Put("UnlockMusicSwap", TOWMusicUnlocked);
-         configuration.Put("UseExperimentalFeatures", UseExperimentalFeatures);
-         configuration.Put("KeyFavoriteModifier", cFavoriteKey);
--        configuration.Put("Fullscreen", graphics.IsFullScreen);
--        configuration.Put("WindowMaximized", screenMaximized);
--        configuration.Put("WindowBorderless", screenBorderless);
--        int num = graphics.PreferredBackBufferWidth;
--        int num2 = graphics.PreferredBackBufferHeight;
--        if (IsInTheMiddleOfLoadingSettings)
--        {
--            if (LastLoadedResolution.X != 0)
--            {
--                num = LastLoadedResolution.X;
--            }
- 
--            if (LastLoadedResolution.Y != 0)
--            {
--                num2 = LastLoadedResolution.Y;
--            }
--        }
+@@ -2535,15 +_,14 @@
+             {
+                 num = LastLoadedResolution.X;
+             }
 -
--        configuration.Put("DisplayWidth", num);
--        configuration.Put("DisplayHeight", num2);
+             if (LastLoadedResolution.Y != 0)
+             {
+                 num2 = LastLoadedResolution.Y;
+             }
+         }
+-
+         configuration.Put("DisplayWidth", num);
+         configuration.Put("DisplayHeight", num2);
++
          configuration.Put("GraphicsQuality", qaStyle);
          configuration.Put("BackgroundEnabled", BackgroundEnabled);
--        configuration.Put("FrameSkipMode", FrameSkipMode);
-         configuration.Put("LightingMode", Lighting.Mode);
-         configuration.Put("BackgroundParallax", bgScroll);
-         configuration.Put("ShowItemText", showItemText);
+         configuration.Put("FrameSkipMode", FrameSkipMode);
 @@ -2583,9 +_,6 @@
          configuration.Put("UIScale", _uiScaleWanted);
          configuration.Put("MapScale", MapScale);
@@ -183,18 +152,10 @@
      {
          if (shouldSetDefaultUIScale)
          {
-@@ -2650,54 +_,7 @@
-             flag = true;
+@@ -2658,46 +_,13 @@
+             configuration.Get("WindowBorderless", ref screenBorderless);
          }
  
--        if (!flag)
--        {
--            configuration.Get("ResetDefaultUIScale", ref shouldSetDefaultUIScale);
--            configuration.Get("Fullscreen", ref startFullscreen);
--            configuration.Get("WindowMaximized", ref screenMaximized);
--            configuration.Get("WindowBorderless", ref screenBorderless);
--        }
--
 -        PendingBorderlessState = screenBorderless;
 -        screenBorderlessPendingResizes = (screenBorderless ? 6 : 0);
 -        if (Platform.IsWindows && !dedServ)
@@ -217,11 +178,11 @@
 -            form.BringToFront();
 -        }
 -
--        int currentValue2 = graphics.PreferredBackBufferWidth;
--        int currentValue3 = graphics.PreferredBackBufferHeight;
--        configuration.Get("DisplayWidth", ref currentValue2);
--        configuration.Get("DisplayHeight", ref currentValue3);
--        LastLoadedResolution = new Microsoft.Xna.Framework.Point(currentValue2, currentValue3);
+         int currentValue2 = graphics.PreferredBackBufferWidth;
+         int currentValue3 = graphics.PreferredBackBufferHeight;
+         configuration.Get("DisplayWidth", ref currentValue2);
+         configuration.Get("DisplayHeight", ref currentValue3);
+         LastLoadedResolution = new Microsoft.Xna.Framework.Point(currentValue2, currentValue3);
 -        if (!startFullscreen)
 -        {
 -            if (PendingBorderlessState)
@@ -232,7 +193,7 @@
 -            SetDisplayMode(currentValue2, currentValue3, fullscreen: false);
 -            TryPickingDefaultUIScale(currentValue3);
 -        }
--
+ 
          configuration.Get("SmartCursorToggle", ref cSmartCursorModeIsToggleAndNotHold);
 -        configuration.Get("MapEnabled", ref mapEnabled);
          configuration.Get("InvasionBarMode", ref invasionProgressMode);
