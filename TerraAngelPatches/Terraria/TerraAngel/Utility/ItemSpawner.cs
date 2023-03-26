@@ -54,6 +54,11 @@ public static class ItemSpawner
             item.SetDefaults(type);
             item.stack = Utils.Clamp(stack, 1, item.maxStack);
 
+            if (syncWithServer)
+            {
+                NetMessage.SendData(MessageID.SyncEquipment, number: Main.myPlayer, number2: Main.LocalPlayer.selectedItem);
+            }
+
             return item;
         }
 

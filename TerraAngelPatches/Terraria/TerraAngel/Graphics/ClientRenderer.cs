@@ -157,7 +157,6 @@ public class ClientRenderer : ImGuiRenderer
         Time.UpdateUpdate();
 
         ClientConfig.Update();
-
     }
 
     public void Render()
