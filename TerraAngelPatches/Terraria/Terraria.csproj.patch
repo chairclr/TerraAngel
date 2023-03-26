@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,233 @@
+@@ -3,40 +_,193 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -71,23 +71,23 @@
 +  </Target>
 +
 +  <ItemGroup>
-+    <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.0.0" />
++    <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.1.0" />
 +    <PackageReference Include="CsvHelper" Version="30.0.1" />
 +    <PackageReference Include="DiscordRichPresence" Version="1.1.3.18" />
 +    <PackageReference Include="LargeAddressAware" Version="1.0.6" />
-+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.4.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.4.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.5.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.5.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.5.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.5.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.5.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="4.5.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.5.0" />
++    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.5.0" />
 +    <PackageReference Include="MP3Sharp" Version="1.0.5" />
 +    <PackageReference Include="NVorbis" Version="0.10.5" />
-+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
++    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
 +    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
++    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 +  </ItemGroup>
 +
 +
@@ -107,7 +107,9 @@
 +    <None Update="Assets\Symbola.ttf">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
-+    <None Update="Libraries\lin\x64\FNA\libFAudio.so.0">
++    <!-- Currently disabled because nobody uses linux (or osx) -->
++    
++    <!-- <None Update="Libraries\lin\x64\FNA\libFAudio.so.0">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="Libraries\lin\x64\FNA\libFNA3D.so.0">
@@ -166,7 +168,7 @@
 +    </None>
 +    <None Update="Libraries\osx\x86\FNA\libvulkan.1.dylib">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
++    </None> -->
 +    <None Update="Libraries\win\x64\FNA\FAudio.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
@@ -207,48 +209,6 @@
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="Libraries\win\x86\Steamworks\steam_api.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x64\FNA\FAudio.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x64\FNA\FNA3D.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x64\FNA\libtheorafile.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x64\FNA\SDL2.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x64\ImGui\cimgui.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x64\Steamworks\Steamworks.NET.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x64\Steamworks\steam_api64.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x86\FNA\FAudio.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x86\FNA\FNA3D.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x86\FNA\libtheorafile.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x86\FNA\SDL2.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x86\ImGui\cimgui.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x86\Steamworks\Steamworks.NET.dll">
-+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-+    </None>
-+    <None Update="Libraries\x86\Steamworks\steam_api.dll">
 +      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 +    </None>
 +    <None Update="steam_appid.txt">
