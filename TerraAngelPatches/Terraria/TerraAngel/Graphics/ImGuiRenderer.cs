@@ -33,9 +33,9 @@ public class ImGuiRenderer
 
     // Input
     private int ScrollWheelValue;
-    private List<int> keyRemappings = new List<int>();
+    private List<int> KeyRemappings = new List<int>();
 
-    private Queue<Action> preDrawActionQueue = new Queue<Action>(5);
+    private Queue<Action> PreDrawActionQueue = new Queue<Action>(5);
 
     public ImGuiRenderer(Game game)
     {
@@ -78,24 +78,24 @@ public class ImGuiRenderer
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Back);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape);
-        keyRemappings.Add(io.KeyMap[(int)ImGuiKey.Space] = (int)Keys.Space);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Back);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape);
+        KeyRemappings.Add(io.KeyMap[(int)ImGuiKey.Space] = (int)Keys.Space);
 
         for (ImGuiKey i = ImGuiKey.A; i <= ImGuiKey.Z; i++)
         {
-            keyRemappings.Add(io.KeyMap[(int)i] = (i - ImGuiKey.A) + (int)Keys.A);
+            KeyRemappings.Add(io.KeyMap[(int)i] = (i - ImGuiKey.A) + (int)Keys.A);
         }
     }
 
@@ -125,8 +125,8 @@ public class ImGuiRenderer
         io.DeltaTime = Time.DrawDeltaTime;
         UpdateInput();
 
-        while (preDrawActionQueue.Count > 0)
-            preDrawActionQueue.Dequeue()?.Invoke();
+        while (PreDrawActionQueue.Count > 0)
+            PreDrawActionQueue.Dequeue()?.Invoke();
 
         ImGuiEffectStack.Peek().Projection = Matrix.CreateOrthographicOffCenter(0f, io.DisplaySize.X, io.DisplaySize.Y, 0f, -1f, 1f);
         ImGui.NewFrame();
@@ -188,9 +188,9 @@ public class ImGuiRenderer
             io.KeysDown[i] = keyboard.IsKeyDown((Keys)i) && TargetGame.IsActive;
         }
 
-        for (int i = 0; i < keyRemappings.Count; i++)
+        for (int i = 0; i < KeyRemappings.Count; i++)
         {
-            io.KeysDown[keyRemappings[i]] = keyboard.IsKeyDown((Keys)keyRemappings[i]) && TargetGame.IsActive;
+            io.KeysDown[KeyRemappings[i]] = keyboard.IsKeyDown((Keys)KeyRemappings[i]) && TargetGame.IsActive;
         }
 
         io.KeyShift = (keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift)) && TargetGame.IsActive;
@@ -359,7 +359,7 @@ public class ImGuiRenderer
 
     public void EnqueuePreDrawAction(Action action)
     {
-        preDrawActionQueue.Enqueue(action);
+        PreDrawActionQueue.Enqueue(action);
     }
 
     public static class DrawVertDeclaration

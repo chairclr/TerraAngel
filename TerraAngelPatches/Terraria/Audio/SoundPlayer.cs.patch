@@ -1,11 +1,5 @@
 --- src/Terraria/Terraria/Audio/SoundPlayer.cs
 +++ src/TerraAngel/Terraria/Audio/SoundPlayer.cs
-@@ -1,4 +_,5 @@
- using System.Collections.Generic;
-+using System.Threading;
- using Microsoft.Xna.Framework;
- using ReLogic.Utilities;
- 
 @@ -92,19 +_,22 @@
  
      public void Update()

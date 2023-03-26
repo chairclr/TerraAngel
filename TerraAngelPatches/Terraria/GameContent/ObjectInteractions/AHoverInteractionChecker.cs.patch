@@ -5,7 +5,8 @@
          }
  
 -        Matrix matrix = Matrix.Invert(Main.GameViewMatrix.ZoomMatrix);
-         Vector2 vector = Main.ReverseGravitySupport(Main.MouseScreen);
+-        Vector2 vector = Main.ReverseGravitySupport(Main.MouseScreen);
++        Vector2 vector = Main.ReverseGravitySupport(Main.MouseScreen);  
 -        Vector2.Transform(Main.screenPosition, matrix);
 +        Vector2.Transform(Main.screenPosition, Main.GameViewMatrix.InverseZoomMatrix);
          Vector2 v = vector + Main.screenPosition;

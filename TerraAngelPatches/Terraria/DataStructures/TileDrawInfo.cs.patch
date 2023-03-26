@@ -13,7 +13,7 @@
 +    public TileDrawInfo()
 +    {
 +        tileDataCache = new TileData();
-+        tileCache = new Tile((TileData*)Unsafe.AsPointer(ref tileDataCache));
++        tileCache = new Tile(ref tileDataCache);
 +        colorSlices = new Vector3[9];
 +        typeCache = 0;
 +        tileFrameX = 0;

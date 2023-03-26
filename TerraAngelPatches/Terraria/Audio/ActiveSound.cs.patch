@@ -12,9 +12,8 @@
 +        lock (SoundEngine.AudioLock)
 +        {
          Position = position;
--        Volume = 1f;
+         Volume = 1f;
          Pitch = style.PitchVariance;
-+        Volume = 1f;
          IsGlobal = false;
          Style = style;
          Play();
@@ -53,7 +52,7 @@
      public void Update()
      {
 -        if (Sound == null)
-+        if (Sound == null || Sound != null && Sound.IsDisposed)
++        if (Sound == null || (Sound != null && Sound.IsDisposed))
          {
              return;
          }

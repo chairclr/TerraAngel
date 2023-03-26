@@ -20,11 +20,10 @@
              return null;
          }
 -
--        return LegacySoundPlayer.PlaySound(type, x, y, Style, volumeScale, pitchOffset);
-+        Monitor.Enter(AudioLock);
-+        SoundEffectInstance instance = LegacySoundPlayer.PlaySound(type, x, y, Style, volumeScale, pitchOffset);
-+        Monitor.Exit(AudioLock);
-+        return instance;
++        lock (AudioLock)
++        {
+         return LegacySoundPlayer.PlaySound(type, x, y, Style, volumeScale, pitchOffset);
++        }
      }
  
      public static ActiveSound GetActiveSound(SlotId id)

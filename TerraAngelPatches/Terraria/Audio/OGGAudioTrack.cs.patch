@@ -20,8 +20,14 @@
      {
          if (tags.TryGetValue(entryName, out var value) && value.Count > 0 && int.TryParse(value[0], out var result2))
          {
-@@ -73,5 +_,6 @@
+@@ -69,9 +_,12 @@
+         }
+     }
+ 
++    // patch context
+     public override void Dispose()
      {
++        // patch context
          _soundEffectInstance.Dispose();
          _vorbisReader.Dispose();
 +        GC.SuppressFinalize(this);
