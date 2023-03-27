@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Tags;
+using TerraAngel.Plugin;
 using TerraAngel.Scripting;
 
 namespace TerraAngel.UI.ClientWindows;
@@ -79,6 +80,16 @@ public class ConsoleWindow : ClientWindow
                     WriteLine($"{command.CommandName}: {command.CommandDescription}");
                 }
             }, "Prints help");
+
+        AddCommand(
+            "reload_plugins",
+            (x) =>
+            {
+                ClientConfig.WriteToFile();
+                PluginLoader.UnloadPlugins();
+                PluginLoader.LoadAndInitializePlugins();
+                ClientLoader.PluginUI!.NeedsUpdate = true;
+            }, "Reloads plugins");
 
         WriteLine("Type #help for a list of commands");
     }
