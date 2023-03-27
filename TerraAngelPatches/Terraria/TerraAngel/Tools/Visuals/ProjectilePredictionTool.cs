@@ -45,99 +45,107 @@ public class ProjectilePredictionTool : Tool
 
     public override void Update()
     {
-        ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
-        if (DrawActiveProjectilePrediction)
+        if (Main.mapFullscreen)
         {
-            for (int i = 0; i < 1000; i++)
+            return;
+        }
+
+        if (!DrawActiveProjectilePrediction)
+        {
+            return;
+        }
+
+        ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
+
+        for (int i = 0; i < 1000; i++)
+        {
+            Projectile projectile = Main.projectile[i];
+
+            if (projectile.active)
             {
-                Projectile projectile = Main.projectile[i];
+                if (projectile.hostile && !DrawHostileProjectiles)
+                    continue;
+                if (projectile.friendly && !DrawFriendlyProjectiles)
+                    continue;
 
-                if (projectile.active)
+                switch (projectile.type)
                 {
-                    if (projectile.hostile && !DrawHostileProjectiles)
-                        continue;
-                    if (projectile.friendly && !DrawFriendlyProjectiles)
-                        continue;
-
-                    switch (projectile.type)
-                    {
-                        case ProjectileID.Bullet:
-                        case ProjectileID.BulletHighVelocity:
-                        case ProjectileID.BulletDeadeye:
-                        case ProjectileID.CrystalBullet:
-                        case ProjectileID.CursedBullet:
-                        case ProjectileID.ExplosiveBullet:
-                        case ProjectileID.IchorBullet:
-                        case ProjectileID.NanoBullet:
-                        case ProjectileID.PartyBullet:
-                        case ProjectileID.SniperBullet:
-                        case ProjectileID.VenomBullet:
-                        case ProjectileID.MoonlordBullet:
-                        case ProjectileID.JestersArrow:
-                        case ProjectileID.RocketI:
-                        case ProjectileID.RocketII:
-                        case ProjectileID.RocketIII:
-                        case ProjectileID.RocketIV:
-                        case ProjectileID.RocketSkeleton:
-                        case ProjectileID.SaucerLaser:
-                        case ProjectileID.LaserMachinegunLaser:
-                        case ProjectileID.StarCannonStar:
-                        case ProjectileID.StarCloakStar:
-                        case ProjectileID.Starfury:
-                        case ProjectileID.StarWrath:
-                        case ProjectileID.TerraBeam:
-                        case ProjectileID.NightBeam:
-                        case ProjectileID.LightBeam:
-                        case ProjectileID.EyeBeam:
-                        case ProjectileID.EyeLaser:
-                        case ProjectileID.AmethystBolt:
-                        case ProjectileID.AmberBolt:
-                        case ProjectileID.EmeraldBolt:
-                        case ProjectileID.FrostBoltStaff:
-                        case ProjectileID.IceBolt:
-                        case ProjectileID.SapphireBolt:
-                        case ProjectileID.DiamondBolt:
-                        case ProjectileID.EnchantedBeam:
-                        case ProjectileID.InfernoFriendlyBolt:
-                        case ProjectileID.EatersBite:
-                        case ProjectileID.VampireKnife:
-                        case ProjectileID.Stake:
-                        case ProjectileID.ImpFireball:
-                        case ProjectileID.BeeArrow:
-                        case ProjectileID.InfluxWaver:
-                        case ProjectileID.SeedlerThorn:
-                        case ProjectileID.SkyFracture:
-                        case ProjectileID.DeathLaser:
-                        case ProjectileID.CursedFlameFriendly:
-                        case ProjectileID.CursedFlameHostile:
-                        case ProjectileID.GreenLaser:
-                        case ProjectileID.MartianWalkerLaser:
-                        case ProjectileID.MinecartMechLaser:
-                        case ProjectileID.ScutlixLaser:
-                        case ProjectileID.ScutlixLaserFriendly:
-                        case ProjectileID.MiniRetinaLaser:
-                        case ProjectileID.PinkLaser:
-                        case ProjectileID.PurpleLaser:
-                        case ProjectileID.RayGunnerLaser:
-                        case ProjectileID.ZapinatorLaser:
-                        case ProjectileID.UnholyTridentFriendly:
-                        case ProjectileID.UnholyTridentHostile:
-                        case ProjectileID.TorchGod:
-                            StraightPrediction(projectile, drawList);
-                            break;
-                        case ProjectileID.PulseBolt:
-                        case ProjectileID.MeteorShot:
-                            StraightBouncingPrediction(projectile, drawList);
-                            break;
-                        default:
+                    case ProjectileID.Bullet:
+                    case ProjectileID.BulletHighVelocity:
+                    case ProjectileID.BulletDeadeye:
+                    case ProjectileID.CrystalBullet:
+                    case ProjectileID.CursedBullet:
+                    case ProjectileID.ExplosiveBullet:
+                    case ProjectileID.IchorBullet:
+                    case ProjectileID.NanoBullet:
+                    case ProjectileID.PartyBullet:
+                    case ProjectileID.SniperBullet:
+                    case ProjectileID.VenomBullet:
+                    case ProjectileID.MoonlordBullet:
+                    case ProjectileID.JestersArrow:
+                    case ProjectileID.RocketI:
+                    case ProjectileID.RocketII:
+                    case ProjectileID.RocketIII:
+                    case ProjectileID.RocketIV:
+                    case ProjectileID.RocketSkeleton:
+                    case ProjectileID.SaucerLaser:
+                    case ProjectileID.LaserMachinegunLaser:
+                    case ProjectileID.StarCannonStar:
+                    case ProjectileID.StarCloakStar:
+                    case ProjectileID.Starfury:
+                    case ProjectileID.StarWrath:
+                    case ProjectileID.TerraBeam:
+                    case ProjectileID.NightBeam:
+                    case ProjectileID.LightBeam:
+                    case ProjectileID.EyeBeam:
+                    case ProjectileID.EyeLaser:
+                    case ProjectileID.AmethystBolt:
+                    case ProjectileID.AmberBolt:
+                    case ProjectileID.EmeraldBolt:
+                    case ProjectileID.FrostBoltStaff:
+                    case ProjectileID.IceBolt:
+                    case ProjectileID.SapphireBolt:
+                    case ProjectileID.DiamondBolt:
+                    case ProjectileID.EnchantedBeam:
+                    case ProjectileID.InfernoFriendlyBolt:
+                    case ProjectileID.EatersBite:
+                    case ProjectileID.VampireKnife:
+                    case ProjectileID.Stake:
+                    case ProjectileID.ImpFireball:
+                    case ProjectileID.BeeArrow:
+                    case ProjectileID.InfluxWaver:
+                    case ProjectileID.SeedlerThorn:
+                    case ProjectileID.SkyFracture:
+                    case ProjectileID.DeathLaser:
+                    case ProjectileID.CursedFlameFriendly:
+                    case ProjectileID.CursedFlameHostile:
+                    case ProjectileID.GreenLaser:
+                    case ProjectileID.MartianWalkerLaser:
+                    case ProjectileID.MinecartMechLaser:
+                    case ProjectileID.ScutlixLaser:
+                    case ProjectileID.ScutlixLaserFriendly:
+                    case ProjectileID.MiniRetinaLaser:
+                    case ProjectileID.PinkLaser:
+                    case ProjectileID.PurpleLaser:
+                    case ProjectileID.RayGunnerLaser:
+                    case ProjectileID.ZapinatorLaser:
+                    case ProjectileID.UnholyTridentFriendly:
+                    case ProjectileID.UnholyTridentHostile:
+                    case ProjectileID.TorchGod:
+                        StraightPrediction(projectile, drawList);
+                        break;
+                    case ProjectileID.PulseBolt:
+                    case ProjectileID.MeteorShot:
+                        StraightBouncingPrediction(projectile, drawList);
+                        break;
+                    default:
+                        {
+                            if (projectile.arrow)
                             {
-                                if (projectile.arrow)
-                                {
-                                    ArrowPrediction(projectile, drawList);
-                                }
+                                ArrowPrediction(projectile, drawList);
                             }
-                            break;
-                    }
+                        }
+                        break;
                 }
             }
         }
