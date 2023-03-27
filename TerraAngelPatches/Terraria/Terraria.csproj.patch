@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,193 @@
+@@ -3,40 +_,194 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -64,6 +64,7 @@
 -    <EmbeddedResource Include="Libraries/**" />
      <EmbeddedResource Include="Localization/Content/**" />
 -    <EmbeddedResource Include="Microsoft/**" />
++    <EmbeddedResource Include="../VERSION" />
 +  </ItemGroup>
 +
 +  <Target Name="FixOutputs" AfterTargets="Build">

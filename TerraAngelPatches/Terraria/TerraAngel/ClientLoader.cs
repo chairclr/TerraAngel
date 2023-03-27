@@ -16,24 +16,41 @@ namespace TerraAngel;
 public unsafe class ClientLoader
 {
     public static ClientRenderer? MainRenderer;
+
     internal static ConsoleWindow? ConsoleWindow;
+
     internal static ChatWindow? ChatWindow;
+
     public static ConfigUI? ConfigUI;
+
     public static PluginUI? PluginUI;
+
     public static GraphicsUI? GraphicsUI;
+
     public static MultiplayerJoinUIList? MultiplayerJoinUI;
+
     public static DiscordRpcClient? DiscordClient;
+
     public static WindowManager? WindowManager;
+
     public static bool ClientLoaded = false;
 
     public static string SavePath => Path.Combine(Main.SavePath, "TerraAngel");
+
     public static string ConfigPath => Path.Combine(SavePath, "clientConfig.json");
+
     public static string WindowConfigPath => Path.Combine(SavePath, "clientWindowConfig.json");
+
     public static string PluginsPath => Path.Combine(SavePath, "Plugins");
+
     public static string TerrariaPath => Path.GetDirectoryName(typeof(Main).Assembly.Location)!;
+
     public static string AssetPath => "Assets";
+
     public static string NewLibraryPath => "Libraries";
+
     public static string ArchitectureString => Environment.Is64BitProcess ? "x64" : "x86";
+
     public static string PlatformString
     {
         get
@@ -44,6 +61,7 @@ public unsafe class ClientLoader
             return "win";
         }
     }
+
     public static string ContentFolder
     {
         get
@@ -73,6 +91,24 @@ public unsafe class ClientLoader
         }
     }
 
+    public static readonly Version? TerraAngelVersion;
+
+    static ClientLoader()
+    {
+#if DEBUG
+        TerraAngelVersion = Version.Parse(Utils.ReadEmbeddedResource("Terraria.VERSION"));
+#else
+        try
+        {
+            TerraAngelVersion = Version.Parse(Utils.ReadEmbeddedResource("Terraria.VERSION"));
+        }
+        catch
+        {
+
+        }
+#endif
+
+    }
 
     private static void LoadClientInteral()
     {

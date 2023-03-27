@@ -68,7 +68,14 @@ public class StatsWindow : ClientWindow
         ImGui.Begin("##StatWindow", flags);
         ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
-        ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v2.3");
+        if (ClientLoader.TerraAngelVersion is not null)
+        {
+            ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v{ClientLoader.TerraAngelVersion}");
+        }
+        else
+        {
+            ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel");
+        }
 
         ImGui.TextUnformatted($"FPS {Math.Round(1f / TimeMetrics.FramerateDeltaTimeSlices.Average.TotalSeconds):F0}");
         ImGui.TextUnformatted($"UPS {Math.Round(1f / TimeMetrics.UpdateDeltaTimeSlices.Average.TotalSeconds):F0}");

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using TerraAngel.Inspector.Tools;
 using TerraAngel.Tools.Inspector;
@@ -35,6 +36,8 @@ public class ClientRenderer : ImGuiRenderer
         }
     }
 
+    private bool ShowUpdateAvailablePopup = false;
+
     public ClientRenderer(Game game) 
         : base(game)
     {
@@ -65,6 +68,14 @@ public class ClientRenderer : ImGuiRenderer
             };
         }
 
+        //Task.Run(async () =>
+        //{
+        //    bool updateAvailable = await UpdateChecker.IsUpdateAvailableAsync();
+        //    if (updateAvailable)
+        //    {
+        //        ShowUpdateAvailablePopup = true;
+        //    }
+        //});
     }
 
     protected override void SetupInput()
@@ -261,6 +272,16 @@ public class ClientRenderer : ImGuiRenderer
         if (ShowMetricsWindow)
         {
             ImGui.ShowMetricsWindow(ref ShowMetricsWindow);
+        }
+
+        if (ShowUpdateAvailablePopup)
+        {
+            ImGui.BeginPopup("UpdateAvailable");
+
+            ImGui.Text("There is an update for TerraAngel available on GitHub");
+            ImGui.Text($"v{ClientLoader.TerraAngelVersion} {Icon.ArrowRight} v{UpdateChecker.NextUpdateVersion}");
+
+            ImGui.EndPopup();
         }
     }
 
