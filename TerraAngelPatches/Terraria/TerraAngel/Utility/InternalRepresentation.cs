@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TerraAngel.Utility;
 
@@ -16,7 +14,7 @@ public class InternalRepresentation
     public static readonly Dictionary<int, FieldInfo> ProjectileIDFields = GetIDEnumMapping<ProjectileID>();
 
     // AmmoID is a special case because all of its fields are static int
-    public static readonly Dictionary<int, FieldInfo> AmmoIDFields = 
+    public static readonly Dictionary<int, FieldInfo> AmmoIDFields =
         typeof(AmmoID).GetFields(BindingFlags.Public | BindingFlags.Static).Where(x => x.FieldType.IsValueType)
         .ToDictionary(x => UnboxStaticFieldToInt(x), x => x);
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using TerraAngel.Plugin;
-using TerraAngel.UI;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;

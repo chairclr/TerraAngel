@@ -3,7 +3,7 @@
 public static class CollisionUtil
 {
     public static bool TileSolid(this Tile tile)
-    { 
+    {
         if (!tile.active() || tile.inActive())
         {
             return false;
@@ -105,3 +105,4 @@ public static class CollisionUtil
         return hitAtAll;
     }
 }
+=

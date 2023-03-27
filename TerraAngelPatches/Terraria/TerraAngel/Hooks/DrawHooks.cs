@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using ReLogic.Threading;
-using TerraAngel.Tools.Visuals;
-using Terraria.Graphics.Light;
-using Terraria.ID;
-using Terraria.UI;
 
 namespace TerraAngel.Hooks;
 
@@ -114,7 +108,7 @@ public class DrawHooks
             }
         }
     }
-    
+
     private static Vector2 freecamOriginPoint;
     public static int SpectateOverride = -1;
     public static void UpdateCameraHook(Action orig)

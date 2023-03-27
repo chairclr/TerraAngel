@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using DiscordRPC.Logging;
 using Newtonsoft.Json;
-
 
 namespace TerraAngel.Config;
 

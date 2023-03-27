@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TerraAngel.Inspector.Tools;
-using Terraria;
 using Terraria.GameContent;
-using Terraria.Graphics.Renderers;
 
 namespace TerraAngel.Tools.Inspector;
 

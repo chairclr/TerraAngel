@@ -38,7 +38,7 @@ public class ClientRenderer : ImGuiRenderer
 
     private bool OpenUpdatePopup = false;
 
-    public ClientRenderer(Game game) 
+    public ClientRenderer(Game game)
         : base(game)
     {
         Init();

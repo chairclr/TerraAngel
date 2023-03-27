@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace TerraAngel.Timing;
 
@@ -96,7 +95,7 @@ public abstract class Timer
 
 public class MetricsTimer : Timer
 {
-    public MetricsTimer(string name) 
+    public MetricsTimer(string name)
         : base(name)
     {
 

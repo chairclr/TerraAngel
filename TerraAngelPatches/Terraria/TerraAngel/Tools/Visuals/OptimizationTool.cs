@@ -1,6 +1,4 @@
-﻿using TerraAngel.Hooks;
-
-namespace TerraAngel.Tools.Visuals;
+﻿namespace TerraAngel.Tools.Visuals;
 
 public class OptimizationTool : Tool
 {

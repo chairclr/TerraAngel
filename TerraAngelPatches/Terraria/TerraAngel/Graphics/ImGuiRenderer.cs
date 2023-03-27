@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework.Input;
-using TerraAngel.Graphics;
 
 namespace TerraAngel.Graphics;
 
@@ -49,7 +48,7 @@ public class ImGuiRenderer
             { IntPtr.Zero, null } // bind null texture to id 0
         };
         TextureId = 1;
-        
+
         RasterizerState = new RasterizerState()
         {
             CullMode = CullMode.None,
@@ -166,7 +165,7 @@ public class ImGuiRenderer
         ImGuiEffectStack.Push(newEffect);
     }
 
-    public void PopEffect() 
+    public void PopEffect()
     {
         ImGuiEffectStack.Pop();
     }
@@ -324,7 +323,7 @@ public class ImGuiRenderer
                     (int)(drawCmd.ClipRect.W - drawCmd.ClipRect.Y)
                 );
 
-                UserCallback? userCallback = null; 
+                UserCallback? userCallback = null;
 
                 if (drawCmd.UserCallback != -1 && drawCmd.UserCallback != 0)
                 {

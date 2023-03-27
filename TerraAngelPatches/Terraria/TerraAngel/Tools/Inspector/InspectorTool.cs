@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Input;
-
-namespace TerraAngel.Inspector.Tools;
+﻿namespace TerraAngel.Inspector.Tools;
 
 public abstract class InspectorTool : Tool
 {

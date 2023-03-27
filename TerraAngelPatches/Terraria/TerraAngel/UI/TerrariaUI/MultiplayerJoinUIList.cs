@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
 using Terraria.UI;
@@ -113,7 +111,7 @@ public class MultiplayerJoinUIList : UIState, IHaveBackButtonCommand
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        
+
         base.Draw(spriteBatch);
 
         if (InputSystem.IsKeyDown(Keys.Escape))

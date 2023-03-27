@@ -5,11 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using DiscordRPC;
 using ReLogic.OS;
-using TerraAngel.UI.ClientWindows;
-using TerraAngel.Plugin;
-using TerraAngel.UI;
 using TerraAngel.UI.TerrariaUI;
-using System.Runtime.CompilerServices;
 
 namespace TerraAngel;
 

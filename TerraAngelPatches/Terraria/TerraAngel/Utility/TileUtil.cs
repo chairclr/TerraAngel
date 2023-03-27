@@ -14,7 +14,7 @@ public class TileUtil
     public static ushort[] wallLookup = new ushort[0];
     public static ushort[] tileLookup = new ushort[0];
 
-    
+
     public static Color[] TileColor = new Color[0];
     public static Color[] WallColor = new Color[0];
 

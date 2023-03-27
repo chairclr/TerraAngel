@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using ImGuiNET;
+using TerraAngel.Physics;
 using Terraria.GameContent;
 using Terraria.GameContent.UI;
 using Terraria.GameContent.UI.Chat;
-using TerraAngel.Physics;
 using Terraria.UI.Chat;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TerraAngel.Graphics;
 

@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Serialization;
 using Terraria.GameContent.UI.Elements;
-using Terraria.UI;
 
 namespace TerraAngel.UI.TerrariaUI;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using TerraAngel.Tools.Visuals;
-using TerraAngel.WorldEdits;
+﻿using TerraAngel.WorldEdits;
 
 namespace TerraAngel.UI.ClientWindows;
 

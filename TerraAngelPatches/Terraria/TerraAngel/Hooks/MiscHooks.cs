@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using Microsoft.Xna.Framework.Input;
 using Terraria.GameInput;
-using Terraria.Localization;
 
 namespace TerraAngel.Hooks;
 

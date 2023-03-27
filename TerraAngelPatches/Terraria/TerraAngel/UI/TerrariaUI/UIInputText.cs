@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
@@ -23,7 +20,7 @@ public class UIInputText : UITextPanel<string>
     private bool AllLowercase;
 
     public UIInputText(string defaultText, char[]? filterChars = null, bool allLowercase = false)
-        : base (defaultText, 0.5f, true)
+        : base(defaultText, 0.5f, true)
     {
         FilterChars = filterChars;
 

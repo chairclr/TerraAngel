@@ -1,6 +1,5 @@
 ﻿using System;
 using TerraAngel.Inspector.Tools;
-using Terraria;
 
 namespace TerraAngel.Tools.Inspector;
 
@@ -66,15 +65,15 @@ public class TileInspectorTool : InspectorTool
         ImGui.Text($"Tile Paint:       {InternalRepresentation.GetPaintIDName(SelectedTile.Value.color())}/{SelectedTile.Value.color()}");
         if (SelectedTile.Value.fullbrightBlock() && SelectedTile.Value.invisibleBlock())
         {
-        ImGui.Text($"Tile Coating:     Fullbright/Invisible");
+            ImGui.Text($"Tile Coating:     Fullbright/Invisible");
         }
         else if (SelectedTile.Value.fullbrightBlock())
         {
-        ImGui.Text($"Tile Coating:     Fullbright");
+            ImGui.Text($"Tile Coating:     Fullbright");
         }
         else if (SelectedTile.Value.invisibleBlock())
         {
-        ImGui.Text($"Tile Coating:     Invisible");
+            ImGui.Text($"Tile Coating:     Invisible");
         }
         ImGui.Text($"Tile Coating:     None");
         ImGui.NewLine();
@@ -82,15 +81,15 @@ public class TileInspectorTool : InspectorTool
         ImGui.Text($"Wall Paint:       {InternalRepresentation.GetPaintIDName(SelectedTile.Value.wallColor())}/{SelectedTile.Value.wallColor()}");
         if (SelectedTile.Value.fullbrightWall() && SelectedTile.Value.invisibleWall())
         {
-        ImGui.Text($"Wall Coating:     Fullbright/Invisible");
+            ImGui.Text($"Wall Coating:     Fullbright/Invisible");
         }
         else if (SelectedTile.Value.fullbrightWall())
         {
-        ImGui.Text($"Wall Coating:     Fullbright");
+            ImGui.Text($"Wall Coating:     Fullbright");
         }
         else if (SelectedTile.Value.invisibleWall())
         {
-        ImGui.Text($"Wall Coating:     Invisible");
+            ImGui.Text($"Wall Coating:     Invisible");
         }
         ImGui.Text($"Wall Coating:     None");
         ImGui.Text($"Wall FrameX:      {SelectedTile.Value.wallFrameX()}");
@@ -99,9 +98,9 @@ public class TileInspectorTool : InspectorTool
         ImGui.NewLine();
         ImGui.Text($"Liquid Type:      {SelectedTile.Value.liquidType() switch
         {
-            Tile.Liquid_Water =>   "Water",
-            Tile.Liquid_Honey =>   "Honey",
-            Tile.Liquid_Lava =>    "Lava",
+            Tile.Liquid_Water => "Water",
+            Tile.Liquid_Honey => "Honey",
+            Tile.Liquid_Lava => "Lava",
             Tile.Liquid_Shimmer => "Shimmer",
             _ => "Invalid"
         }}/{SelectedTile.Value.liquid}");

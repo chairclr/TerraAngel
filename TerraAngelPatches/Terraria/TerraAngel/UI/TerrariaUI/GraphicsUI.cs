@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.Xna.Framework.Input;
-using ReLogic.OS;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
-using Terraria.GameInput;
-using Terraria.Graphics.Light;
 using Terraria.UI;
 
 namespace TerraAngel.UI.TerrariaUI;

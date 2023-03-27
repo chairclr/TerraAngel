@@ -4,12 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.RulesetToEditorconfig;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
-using TerraAngel.UI;
 using TerraAngel.UI.TerrariaUI;
 using Terraria.UI;
 
@@ -342,7 +339,7 @@ public class ClientConfig
     {
         Converters = new List<JsonConverter>()
         {
-        //    new VectorConverter(),
+            //    new VectorConverter(),
         },
         Formatting = Formatting.Indented,
     };
@@ -418,7 +415,7 @@ public class ClientConfig
         if (SaveTimer <= 0.0f)
         {
             SaveTimer = 5.0f;
-            
+
             Task.Run(WriteToFile);
 
             if (ClientLoader.WindowManager is not null)
