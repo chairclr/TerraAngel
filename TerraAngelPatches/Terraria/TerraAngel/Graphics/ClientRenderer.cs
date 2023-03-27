@@ -36,7 +36,7 @@ public class ClientRenderer : ImGuiRenderer
         }
     }
 
-    private bool ShowUpdateAvailablePopup = false;
+    private bool OpenUpdatePopup = false;
 
     public ClientRenderer(Game game) 
         : base(game)
@@ -68,14 +68,14 @@ public class ClientRenderer : ImGuiRenderer
             };
         }
 
-        //Task.Run(async () =>
-        //{
-        //    bool updateAvailable = await UpdateChecker.IsUpdateAvailableAsync();
-        //    if (updateAvailable)
-        //    {
-        //        ShowUpdateAvailablePopup = true;
-        //    }
-        //});
+        Task.Run(async () =>
+        {
+            bool updateAvailable = await UpdateChecker.IsUpdateAvailableAsync();
+            if (updateAvailable)
+            {
+                OpenUpdatePopup = true;
+            }
+        });
     }
 
     protected override void SetupInput()
@@ -139,9 +139,11 @@ public class ClientRenderer : ImGuiRenderer
         colors[(int)ImGuiCol.NavHighlight] = new Vector4(1.00f, 0.00f, 0.00f, 1.00f);
         colors[(int)ImGuiCol.NavWindowingHighlight] = new Vector4(1.00f, 0.00f, 0.00f, 0.70f);
         colors[(int)ImGuiCol.NavWindowingDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.20f);
-        colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.35f);
+        colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(0f, 0.00f, 0.00f, 0f);
 
         ClientConfig.AfterReadLater();
+
+        colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(0f, 0.00f, 0.00f, 0f);
     }
 
     public void SetupWindows()
@@ -274,15 +276,26 @@ public class ClientRenderer : ImGuiRenderer
             ImGui.ShowMetricsWindow(ref ShowMetricsWindow);
         }
 
-        if (ShowUpdateAvailablePopup)
+        if (OpenUpdatePopup)
         {
-            ImGui.BeginPopup("UpdateAvailable");
+            ImGui.OpenPopup("Update Available");
+            OpenUpdatePopup = false;
+        }
 
+        bool dontClosePopup = true;
+
+        ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
+        if (ImGui.BeginPopupModal("Update Available", ref dontClosePopup))
+        {
             ImGui.Text("There is an update for TerraAngel available on GitHub");
             ImGui.Text($"v{ClientLoader.TerraAngelVersion} {Icon.ArrowRight} v{UpdateChecker.NextUpdateVersion}");
 
+            if (!dontClosePopup)
+                ImGui.CloseCurrentPopup();
+
             ImGui.EndPopup();
         }
+        ImGui.PopFont();
     }
 
     public ClientWindow AddWindow(ClientWindow window)

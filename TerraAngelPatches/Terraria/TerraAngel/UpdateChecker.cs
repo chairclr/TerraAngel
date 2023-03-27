@@ -21,16 +21,26 @@ internal class UpdateChecker
             return false;
         }
 
-        using HttpClient httpClient = new HttpClient();
+        ClientLoader.Console.WriteLine("Checking for updates");
 
         try
         {
+            using HttpClient httpClient = new HttpClient();
+
             NextUpdateVersion = Version.Parse(await httpClient.GetStringAsync(GitHubVersionFile));
 
-            return true;
+            bool updateAvailable = NextUpdateVersion > ClientLoader.TerraAngelVersion;
+
+            if (updateAvailable)
+            {
+                ClientLoader.Console.WriteLine("Updates available");
+            }
+
+            return updateAvailable;
         }
         catch
         {
+            ClientLoader.Console.WriteLine("Error occured while checking for updates");
             return false;
         }
     }
