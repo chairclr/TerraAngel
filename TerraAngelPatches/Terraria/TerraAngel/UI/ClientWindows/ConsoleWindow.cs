@@ -49,7 +49,7 @@ public class ConsoleWindow : ClientWindow
 
     private bool FlipCompletion = false;
 
-    private List<string> ScriptCompletionArguments = new List<string>();
+    private ImmutableArray<string> ScriptCompletionArguments = ImmutableArray<string>.Empty;
 
     private int SelectedCompletionOverload = 0;
 
@@ -556,9 +556,9 @@ public class ConsoleWindow : ClientWindow
 
         if (ScriptCompletionArguments.Any())
         {
-            SelectedCompletionOverload = Math.Clamp(SelectedCompletionOverload, 0, ScriptCompletionArguments.Count - 1);
+            SelectedCompletionOverload = Math.Clamp(SelectedCompletionOverload, 0, ScriptCompletionArguments.Length - 1);
             ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
-            string currentText = (ScriptCompletionArguments.Count > 1 ? $"({SelectedCompletionOverload + 1}/{ScriptCompletionArguments.Count}) " : "") + ScriptCompletionArguments[SelectedCompletionOverload];
+            string currentText = (ScriptCompletionArguments.Length > 1 ? $"({SelectedCompletionOverload + 1}/{ScriptCompletionArguments.Length}) " : "") + ScriptCompletionArguments[SelectedCompletionOverload];
             Vector2 origin = new Vector2(textboxMin.X, textboxMax.Y + completionSize.Y + style.ItemSpacing.Y * 2f);
             Vector2 size = new Vector2(ImGui.CalcTextSize(currentText).X + style.ItemSpacing.X * 2f, ImGui.CalcTextSize(currentText).Y + style.ItemSpacing.Y * 2f);
 
@@ -589,7 +589,7 @@ public class ConsoleWindow : ClientWindow
                 lock (CandidateLock)
                 {
                     ScriptCompletionItems = Script.GetCompletionsAsync(text, cursorPosition, CompletionTrigger.CreateInsertionTrigger('a')).Result;
-                    //ScriptCompletionArguments = Script.GetArgumentListCompletionSymbolsAsync(text, cursorPosition).Result;
+                    ScriptCompletionArguments = Script.GetSymbolArgumentsAsync(text, cursorPosition).Result;
                 }
             });
     }
@@ -640,7 +640,7 @@ public class ConsoleWindow : ClientWindow
         {
             case ImGuiInputTextFlags.CallbackHistory:
                 {
-                    if ((!ScriptCompletionItems.Any() && ScriptCompletionArguments.Count <= 1) || InputSystem.Ctrl)
+                    if ((!ScriptCompletionItems.Any() && ScriptCompletionArguments.Length <= 1) || InputSystem.Ctrl)
                     {
                         int previousHistoryPosition = HistoryPosition;
                         if (data.EventKey == ImGuiKey.UpArrow)
@@ -678,7 +678,7 @@ public class ConsoleWindow : ClientWindow
                         if (InputSystem.Shift)
                             completionItemScollAmount = 5;
 
-                        if (ScriptCompletionArguments.Count > 1)
+                        if (ScriptCompletionArguments.Length > 1)
                         {
                             if (data.EventKey == ImGuiKey.UpArrow)
                             {
@@ -689,11 +689,11 @@ public class ConsoleWindow : ClientWindow
                                 SelectedCompletionOverload -= completionItemScollAmount;
                             }
 
-                            SelectedCompletionOverload %= ScriptCompletionArguments.Count;
+                            SelectedCompletionOverload %= ScriptCompletionArguments.Length;
 
                             if (SelectedCompletionOverload < 0)
                             {
-                                SelectedCompletionOverload = ScriptCompletionArguments.Count + SelectedCompletionOverload;
+                                SelectedCompletionOverload = ScriptCompletionArguments.Length + SelectedCompletionOverload;
                             }
                         }
                         else
