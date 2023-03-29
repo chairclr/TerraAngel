@@ -1,24 +1,16 @@
 --- src/Terraria/Terraria/NetMessage.cs
 +++ src/TerraAngel/Terraria/NetMessage.cs
-@@ -1,11 +_,16 @@
+@@ -1,6 +_,8 @@
  using System;
 +using System.Diagnostics;
  using System.IO;
 -using Ionic.Zlib;
 +using System.IO.Compression;
 +using System.Runtime.CompilerServices;
-+using System.Runtime.InteropServices.JavaScript;
  using Microsoft.Xna.Framework;
  using Microsoft.Xna.Framework.Graphics.PackedVector;
-+using TerraAngel;
  using Terraria.Chat;
- using Terraria.DataStructures;
- using Terraria.GameContent;
-+using Terraria.GameContent.Bestiary;
- using Terraria.GameContent.Events;
- using Terraria.GameContent.Tile_Entities;
- using Terraria.ID;
-@@ -75,13 +_,24 @@
+@@ -75,13 +_,36 @@
          return true;
      }
  
@@ -30,15 +22,27 @@
              return;
          }
  
-+        if (NetMessageWindow.LoggingMessages)
++        if (NetMessageWindow.Instance.FancyLoggingEnabled)
 +        {
-+            string stackTrace = "";
-+            if (NetMessageWindow.MessagesToLogTraces.Contains(msgType))
++            SentNetPacketLog log = new SentNetPacketLog()
 +            {
-+                stackTrace = new StackTrace(2, true).ToString();
++                Type = msgType,
++                Number1 = number,
++                Number2 = number2,
++                Number3 = number3,
++                Number4 = number4,
++                Number5 = number5,
++                Number6 = number6,
++                Number7 = number7,
++            };
 +
++            if (NetMessageWindow.Instance.MessagesTypesToLogTraces.Contains(msgType))
++            {
++                log.StackTrace = new StackTrace(2, true).ToString();
 +            }
-+            NetMessageWindow.AddPacket(new NetPacketInfo(msgType, true, number, number2, number3, number4, number5, number6, number7, stackTrace));
++
++            NetMessageWindow.Instance.SentNetPacketLogs[msgType].Add(log);
++            NetMessageWindow.Instance.AllNetPacketLogs[msgType].Add(log);
 +        }
 +
          if (msgType == 21 && (Main.item[number].shimmerTime > 0f || Main.item[number].shimmered))
@@ -49,19 +53,19 @@
                          Main.ActiveNetDiagnosticsUI.CountSentMessage(msgType, num21);
                          Netplay.Connection.Socket.AsyncSend(buffer[num].writeBuffer, 0, num21, Netplay.Connection.ClientWriteCallBack);
 +
-+                        if (NetMessageWindow.LogRawMessages)
++                        if (NetMessageWindow.Instance.RawLoggingEnabled)
 +                        {
-+                            RawNetPacket rnp = new RawNetPacket()
++                            RawNetPacketLog log = new RawNetPacketLog()
 +                            {
-+                                Length = (ushort)num21,
-+                                Type = (byte)msgType,
 +                                Sent = true,
-+                                Data = new byte[num21]
++                                Type = msgType
 +                            };
 +
-+                            Array.Copy(buffer[num].writeBuffer, rnp.Data, num21);
++                            log.Data = new byte[num21];
 +
-+                            NetMessageWindow.RawPacketLogs.Add(rnp);
++                            Array.Copy(buffer[num].writeBuffer, log.Data, num21);
++
++                            NetMessageWindow.Instance.RawNetPacketLogs.Add(log);
 +                        }
                      }
                      catch
@@ -458,7 +462,7 @@
                  }
              }
          }
-@@ -2697,10 +_,29 @@
+@@ -2697,10 +_,41 @@
                  while (num2 >= 2)
                  {
                      int num3 = BitConverter.ToUInt16(buffer[bufferIndex].readBuffer, num);
@@ -466,20 +470,32 @@
 +                        break; // prevent zero length packets lmao
                      if (num2 >= num3)
                      {
-+                        if (NetMessageWindow.LogRawMessages)
++                        int packetType = (int)buffer[bufferIndex].readBuffer[num + 2];
++
++                        if (NetMessageWindow.Instance.RawLoggingEnabled)
 +                        {
-+                            RawNetPacket rnp = new RawNetPacket()
++                            RawNetPacketLog log = new RawNetPacketLog()
 +                            {
-+                                Length = (ushort)num3,
 +                                Sent = false,
-+                                Data = new byte[num3]
++                                Type = packetType
 +                            };
 +
-+                            Array.Copy(buffer[bufferIndex].writeBuffer, num, rnp.Data, 0, num3);
++                            log.Data = new byte[num3];
 +
-+                            rnp.Type = rnp.Data[2];
++                            Array.Copy(buffer[bufferIndex].readBuffer, num, log.Data, 0, num3);
 +
-+                            NetMessageWindow.RawPacketLogs.Add(rnp);
++                            NetMessageWindow.Instance.RawNetPacketLogs.Add(log);
++                        }
++
++                        if (NetMessageWindow.Instance.FancyLoggingEnabled)
++                        {
++                            NetPacketLog log = new ReceivedNetPacketLog()
++                            {
++                                Type = packetType
++                            };
++
++                            NetMessageWindow.Instance.ReceivedNetPacketLogs[packetType].Add(log);
++                            NetMessageWindow.Instance.AllNetPacketLogs[packetType].Add(log);
 +                        }
 +
                          long position = buffer[bufferIndex].reader.BaseStream.Position;

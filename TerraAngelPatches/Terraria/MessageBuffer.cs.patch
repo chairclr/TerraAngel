@@ -76,27 +76,15 @@
                          }
  
                          player5.NebulaLevelup(num59);
-@@ -4246,6 +_,11 @@
+@@ -4245,6 +_,11 @@
+                         if (Main.netMode == 2)
                          {
                              NetMessage.SendPlayerHurt(num236, playerDeathReason2, damage3, num237, flag15, pvp2, num238, -1, whoAmI);
-                         }
++                        }
 +
 +                        if (damage3 == 1 && playerDeathReason2._sourceNPCIndex == 203)
 +                        {
 +                            Main.player[num236].TerraAngelUser = true;
-+                        }
+                         }
                      }
- 
-                     break;
-@@ -4805,6 +_,11 @@
-             case 67:
-             case 93:
-                 break;
-+        }
-+
-+        if (NetMessageWindow.LoggingMessages)
-+        {
-+            NetMessageWindow.AddPacket(new NetPacketInfo(messageType, false, 0, 0, 0, 0, 0, 0, 0));
-         }
-     }
  

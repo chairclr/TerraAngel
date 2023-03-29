@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
-using Steamworks;
-using Terraria.Localization;
 
 namespace TerraAngel.UI.ClientWindows;
 
 public class NetMessageWindow : ClientWindow
 {
+    public static NetMessageWindow Instance { get; private set; } = new NetMessageWindow();
+
     public override bool IsToggleable => true;
 
     public override bool DefaultEnabled => false;
@@ -21,90 +17,44 @@ public class NetMessageWindow : ClientWindow
     public override string Title => "Net Debugger";
 
     public override Keys ToggleKey => ClientConfig.Settings.ToggleNetDebugger;
+
     public override bool IsGlobalToggle => false;
 
+    public List<NetPacketLog>[] SentNetPacketLogs = new List<NetPacketLog>[MessageID.Count];
 
-    private readonly Dictionary<int, FieldInfo> messageIDFields = typeof(MessageID).GetFields().Where(x =>
-    {
-        if (!x.IsStatic) return false;
-        object? ovalue = x.GetValue(null);
-        if (ovalue is null) return false;
-        if (ovalue.GetType() != typeof(byte)) return false;
-        byte value = (byte)ovalue;
-        if (value < 0 || value > MessageID.Count - 1) return false;
-        return true;
-    }).ToDictionary(x => (int)((byte)x.GetRawConstantValue()!), y => y);
+    public List<NetPacketLog>[] ReceivedNetPacketLogs = new List<NetPacketLog>[MessageID.Count];
 
-    private readonly Dictionary<string, FieldInfo> messageIDFieldsByName = typeof(MessageID).GetFields().Where(x =>
-    {
-        if (!x.IsStatic) return false;
-        object? ovalue = x.GetValue(null);
-        if (ovalue is null) return false;
-        if (ovalue.GetType() != typeof(byte)) return false;
-        byte value = (byte)ovalue;
-        if (value < 0 || value > MessageID.Count - 1) return false;
-        return true;
-    }).ToDictionary(x => x.Name, y => y);
+    public List<NetPacketLog>[] AllNetPacketLogs = new List<NetPacketLog>[MessageID.Count];
 
-    private int maxMessageName;
-    private bool sendMessageEveryFrame = false;
-    private string messageName = nameof(MessageID.NeverCalled);
-    private int messageIdToSend = 0;
-    private string networkText = "";
-    private int number1 = 0;
-    private float number2 = 0;
-    private float number3 = 0;
-    private float number4 = 0;
-    private int number5 = 0;
-    private int number6 = 0;
-    private int number7 = 0;
+    public bool FancyLoggingEnabled = false;
 
-    public static bool LoggingMessages = false;
-    private string logsFilter = "";
-    private string traceFilter = "";
-    private bool upMessages = true;
-    private bool downMessages = true;
+    public string FancyLogsFilter = "";
 
-    public static bool LogRawMessages = false;
+    public string FancyLogsTracesFilter = "";
 
-    private readonly List<NetMessageAction> Actions = new List<NetMessageAction>();
-    private int selectedAction = 0;
-    private readonly string[] actionNames = StringExtensions.EnumFancyNames<MessageActions>();
+    public HashSet<int> MessagesTypesToLogTraces = new HashSet<int>();
 
-    private static readonly List<NetPacketInfo>[] allPackets = new List<NetPacketInfo>[MessageID.Count];
-    private static readonly List<NetPacketInfo>[] sentPackets = new List<NetPacketInfo>[MessageID.Count];
-    private static readonly List<NetPacketInfo>[] receivePackets = new List<NetPacketInfo>[MessageID.Count];
-    private static readonly bool[] messagesShownInTree = new bool[MessageID.Count];
-    public static HashSet<int> MessagesToLogTraces = new HashSet<int>();
+    public bool FancyLogsShowSent = true;
 
-    public static readonly List<RawNetPacket> RawPacketLogs = new List<RawNetPacket>();
+    public bool FancyLogsShowReceived = true;
 
-    public static void AddPacket(NetPacketInfo packet)
-    {
-        allPackets[packet.Type].Add(packet);
-        if (packet.Sent)
-        {
-            sentPackets[packet.Type].Add(packet);
-        }
-        else
-        {
-            receivePackets[packet.Type].Add(packet);
-        }
-    }
+    private bool[] TreeMessageTypesOpen = new bool[MessageID.Count];
+
+    public List<RawNetPacketLog> RawNetPacketLogs = new List<RawNetPacketLog>();
+
+    public bool RawLoggingEnabled = false;
+
+    public bool RawLogsShowSent = true;
+
+    public bool RawLogsShowReceived = true;
 
     public NetMessageWindow()
     {
-        maxMessageName = messageIDFields.Max((x) => x.Value.Name.Length);
-    }
-
-
-    static NetMessageWindow()
-    {
         for (int i = 0; i < MessageID.Count; i++)
         {
-            allPackets[i] = new List<NetPacketInfo>();
-            sentPackets[i] = new List<NetPacketInfo>();
-            receivePackets[i] = new List<NetPacketInfo>();
+            SentNetPacketLogs[i] = new List<NetPacketLog>();
+            ReceivedNetPacketLogs[i] = new List<NetPacketLog>();
+            AllNetPacketLogs[i] = new List<NetPacketLog>();
         }
     }
 
@@ -115,17 +65,299 @@ public class NetMessageWindow : ClientWindow
         ImGui.Begin("Net Debugger", ref open, ImGuiWindowFlags.MenuBar);
         IsEnabled = open;
 
+        bool rawMessagesOepn = false;
+
+        if (ImGui.BeginTabBar("NetDebuggerTabBar"))
+        {
+            if (ImGui.BeginTabItem("Net Message Logs"))
+            {
+                ImGui.Text("Search:");
+                ImGui.SameLine();
+
+                ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f);
+                ImGui.InputText("##FancyLogsFilter", ref FancyLogsFilter, 512);
+                ImGui.PopItemWidth();
+
+                ImGui.Checkbox("Log Traffic", ref FancyLoggingEnabled);
+                ImGui.SameLine();
+                ImGui.Checkbox($"{Icon.ArrowUp}", ref FancyLogsShowSent);
+                ImGui.SameLine();
+                ImGui.Checkbox($"{Icon.ArrowDown}", ref FancyLogsShowReceived);
+
+                ImGui.Text("Packets with traces:"); ImGui.SameLine();
+                unsafe
+                {
+                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##TraceFilter", ref FancyLogsTracesFilter, 512, ImGuiInputTextFlags.CallbackCharFilter, (x) =>
+                    {
+                        switch (x->EventFlag)
+                        {
+                            case ImGuiInputTextFlags.CallbackCharFilter:
+                                if (char.IsNumber((char)x->EventChar) || x->EventChar == ',' || x->EventChar == ' ') return 0;
+                                return 1;
+                        }
+                        return 0;
+                    }); ImGui.PopItemWidth();
+                }
+
+                MessagesTypesToLogTraces = new HashSet<int>(FancyLogsTracesFilter.Split(',').Select(x => { if (int.TryParse(x.Trim(), out int a)) { return a; } return -1; }).Where(x => x != -1));
+
+                if (ImGui.BeginChild("##MessageLogScrolling"))
+                {
+
+                    string fancyLogsFilterLower = FancyLogsFilter.ToLower();
+
+                    bool PassesFilter(int i, string displayName)
+                    {
+                        if (FancyLogsFilter.Length > 0)
+                        {
+                            if (int.TryParse(FancyLogsFilter, out int p))
+                            {
+                                if (i != p)
+                                {
+                                    return false;
+                                }
+                            }
+                            else if (!displayName.ToLower().Contains(fancyLogsFilterLower))
+                            {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
+
+                    StringBuilder builder = new StringBuilder();
+
+                    for (int i = 0; i < MessageID.Count; i++)
+                    {
+                        string displayName = $"{InternalRepresentation.GetMessageIDName(i)}/{i}";
+
+                        if (!PassesFilter(i, displayName))
+                            continue;
+
+                        List<NetPacketLog> packetLogProvider = AllNetPacketLogs[i];
+
+                        if (FancyLogsShowSent && !FancyLogsShowReceived)
+                        {
+                            packetLogProvider = SentNetPacketLogs[i];
+                        }
+                        else if (FancyLogsShowReceived && !FancyLogsShowSent)
+                        {
+                            packetLogProvider = ReceivedNetPacketLogs[i];
+                        }
+
+                        string packetLogCountString = packetLogProvider.Count == 0 ? "" : packetLogProvider.Count.ToString();
+
+                        if (ImGui.Selectable($"{(TreeMessageTypesOpen[i] ? Icon.TriangleDown : Icon.TriangleRight)} {displayName,-35} {packetLogCountString}###{displayName}"))
+                        {
+                            TreeMessageTypesOpen[i] = !TreeMessageTypesOpen[i];
+                        }
+
+                        if (TreeMessageTypesOpen[i])
+                        {
+                            ImGui.Indent(20f);
+
+                            for (int j = 0; j < packetLogProvider.Count; j++)
+                            {
+                                if (packetLogProvider[j] is SentNetPacketLog sent)
+                                {
+                                    builder.Clear();
+
+                                    builder.AppendLine();
+
+                                    builder.Append("  ");
+                                    builder.Append("number1: ");
+                                    builder.Append(sent.Number1);
+                                    builder.AppendLine();
+
+                                    builder.Append("  ");
+                                    builder.Append("number2: ");
+                                    builder.Append(sent.Number2);
+                                    builder.AppendLine();
+
+                                    builder.Append("  ");
+                                    builder.Append("number3: ");
+                                    builder.Append(sent.Number3);
+                                    builder.AppendLine();
+
+                                    builder.Append("  ");
+                                    builder.Append("number4: ");
+                                    builder.Append(sent.Number4);
+                                    builder.AppendLine();
+
+                                    builder.Append("  ");
+                                    builder.Append("number5: ");
+                                    builder.Append(sent.Number5);
+                                    builder.AppendLine();
+
+                                    builder.Append("  ");
+                                    builder.Append("number6: ");
+                                    builder.Append(sent.Number6);
+                                    builder.AppendLine();
+
+                                    builder.Append("  ");
+                                    builder.Append("number7: ");
+                                    builder.Append(sent.Number7);
+
+                                    if (sent.StackTrace is not null)
+                                    {
+                                        builder.AppendLine();
+                                        builder.Append(sent.StackTrace);
+                                    }
+
+                                    string builtString = builder.ToString();
+
+                                    if (ImGui.Selectable($"{Icon.ArrowUp} {builtString}"))
+                                    {
+                                        ImGui.SetClipboardText(builtString);
+                                    }
+                                }
+                                else if (packetLogProvider[j] is ReceivedNetPacketLog received)
+                                {
+                                    builder.Clear();
+
+                                    builder.Append("Received packet");
+
+                                    string builtString = builder.ToString();
+
+                                    if (ImGui.Selectable($"{Icon.ArrowDown} {builtString}"))
+                                    {
+                                        ImGui.SetClipboardText(builtString);
+                                    }
+                                }
+                            }
+
+                            ImGui.Unindent(20f);
+                        }
+                    }
+
+                    ImGui.EndChild();
+                }
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Raw Message Logs"))
+            {
+                rawMessagesOepn = true;
+
+                StringBuilder builder = new StringBuilder();
+
+                ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+                ImGui.Checkbox("Log Traffic", ref RawLoggingEnabled);
+                ImGui.SameLine();
+                ImGui.Checkbox($"{Icon.ArrowUp}", ref RawLogsShowSent);
+                ImGui.SameLine();
+                ImGui.Checkbox($"{Icon.ArrowDown}", ref RawLogsShowReceived);
+
+                for (int i = 0; i < RawNetPacketLogs.Count; i++)
+                {
+                    RawNetPacketLog log = RawNetPacketLogs[i];
+
+                    if (RawLogsShowSent && !RawLogsShowReceived && !log.Sent)
+                        continue;
+
+                    if (RawLogsShowReceived && !RawLogsShowSent && log.Sent)
+                        continue;
+
+                    builder.Clear();
+
+                    builder.Append($"T: {log.Type,3} L: {log.Data.Length,5} B: {{ ");
+
+                    for (int j = 0; j < Math.Min(log.Data.Length, 250); j++)
+                    {
+                        builder.Append(log.Data[j]);
+
+                        if (j + 1 < Math.Min(log.Data.Length, 250))
+                        {
+                            builder.Append(", ");
+                        }
+                    }
+
+                    builder.Append(" }");
+
+                    if (ImGui.Selectable($"{(log.Sent ? Icon.ArrowUp : Icon.ArrowDown)} {builder.ToString()}"))
+                    {
+                        builder.Clear();
+
+                        builder.Append($"T: {log.Type,3} L: {log.Data.Length,5} B: {{ ");
+
+                        for (int j = 0; j < log.Data.Length; j++)
+                        {
+                            builder.Append(log.Data[j]);
+
+                            if (j + 1 < log.Data.Length)
+                            {
+                                builder.Append(", ");
+                            }
+                        }
+
+                        builder.Append(" }");
+
+                        ImGui.SetClipboardText(builder.ToString());
+                    }
+                }
+
+                ImGui.EndTabItem();
+            }
+
+            ImGui.EndTabBar();
+        }
+
         if (ImGui.BeginMenuBar())
         {
-            if (ImGui.BeginMenu("Message Logs"))
+            if (ImGui.BeginMenu($"{(rawMessagesOepn ? "Raw " : "")}Message Logs"))
             {
                 if (ImGui.MenuItem("Clear"))
                 {
-                    for (int i = 0; i < MessageID.Count; i++)
+                    if (rawMessagesOepn)
                     {
-                        allPackets[i].Clear();
-                        sentPackets[i].Clear();
-                        receivePackets[i].Clear();
+                        RawNetPacketLogs.Clear();
+                    }
+                    else
+                    {
+                        for (int i = 0; i < MessageID.Count; i++)
+                        {
+                            SentNetPacketLogs[i].Clear();
+                            ReceivedNetPacketLogs[i].Clear();
+                            AllNetPacketLogs[i].Clear();
+                        }
+                    }
+                }
+
+                if (rawMessagesOepn)
+                {
+                    if (ImGui.MenuItem("Copy All"))
+                    {
+                        StringBuilder builder = new StringBuilder();
+
+                        for (int i = 0; i < RawNetPacketLogs.Count; i++)
+                        {
+                            RawNetPacketLog log = RawNetPacketLogs[i];
+
+                            if (RawLogsShowSent && !RawLogsShowReceived && !log.Sent)
+                                continue;
+
+                            if (RawLogsShowReceived && !RawLogsShowSent && log.Sent)
+                                continue;
+
+                            builder.Append($"{(log.Sent ? "↑" : "↓")} T: {log.Type,3} L: {log.Data.Length,5} B: {{ ");
+
+                            for (int j = 0; j < log.Data.Length; j++)
+                            {
+                                builder.Append(log.Data[j]);
+
+                                if (j + 1 < log.Data.Length)
+                                {
+                                    builder.Append(", ");
+                                }
+                            }
+
+                            builder.Append(" }");
+                            builder.AppendLine();
+                        }
+
+                        ImGui.SetClipboardText(builder.ToString());
                     }
                 }
                 ImGui.EndMenu();
@@ -133,465 +365,43 @@ public class NetMessageWindow : ClientWindow
             ImGui.EndMenuBar();
         }
 
-        if (ImGui.BeginTabBar("NetDebuggerTabBar"))
-        {
-            if (ImGui.BeginTabItem("Net Message Logs"))
-            {
-                ImGui.Text("Search:"); ImGui.SameLine();
-                ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##MessageFilter", ref logsFilter, 512); ImGui.PopItemWidth(); ImGui.SameLine();
-                ImGui.Checkbox("Log Messages", ref LoggingMessages); ImGui.SameLine();
-                ImGui.Checkbox($"{Icon.ArrowUp}", ref upMessages); ImGui.SameLine();
-                ImGui.Checkbox($"{Icon.ArrowDown}", ref downMessages);
-
-                ImGui.Text("Packets with traces:"); ImGui.SameLine();
-                unsafe
-                {
-                    ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2.8f); ImGui.InputText("##TraceFilter", ref traceFilter, 512, ImGuiInputTextFlags.CallbackCharFilter, (x) =>
-                    {
-                        switch (x->EventFlag)
-                        {
-                            case ImGuiInputTextFlags.CallbackCharFilter:
-                                if (char.IsNumber((char)x->EventChar) || x->EventChar == ',' || x->EventChar == ' ') return 0;
-                                return 1;
-                                break;
-                        }
-                        return 0;
-                    }); ImGui.PopItemWidth();
-                }
-                MessagesToLogTraces = new HashSet<int>(traceFilter.Split(',').Select(x => { if (int.TryParse(x.Trim(), out int a)) { return a; } return -1; }).Where(x => x != -1));
-
-
-                if (ImGui.BeginChild("##MessageLogScrolling"))
-                {
-                    bool CheckFilter(int i, string packetName)
-                    {
-                        if (logsFilter.Length > 0)
-                        {
-                            if (int.TryParse(logsFilter, out int p))
-                            {
-                                if (i != p)
-                                {
-                                    return true;
-                                }
-                            }
-                            else if (!packetName.ToLower().Contains(logsFilter.ToLower()))
-                            {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-
-                    for (int i = 0; i < MessageID.Count; i++)
-                    {
-                        string packetName = $"{messageIDFields[i].Name}/{i}";
-
-                        if (CheckFilter(i, packetName))
-                            continue;
-
-                        List<NetPacketInfo> packetInfo = allPackets[i];
-                        if (upMessages && !downMessages)
-                        {
-                            packetInfo = sentPackets[i];
-                        }
-                        else if (downMessages && !upMessages)
-                        {
-                            packetInfo = receivePackets[i];
-                        }
-
-                        if (ImGui.Selectable($"{(messagesShownInTree[i] ? Icon.TriangleDown : Icon.TriangleRight)} {packetName,-35}{(packetInfo.Count == 0 ? "" : packetInfo.Count.ToString())}"))
-                        {
-                            messagesShownInTree[i] = !messagesShownInTree[i];
-                        }
-
-                        if (messagesShownInTree[i])
-                        {
-                            ImGui.Indent();
-                            for (int j = 0; j < packetInfo.Count; j++)
-                            {
-                                if (packetInfo[j].Sent)
-                                {
-                                    ImGui.TextUnformatted(GetSendCallAsString(packetInfo[j].Type, "", packetInfo[j].Number1, packetInfo[j].Number2, packetInfo[j].Number3, packetInfo[j].Number4, packetInfo[j].Number5, packetInfo[j].Number6, packetInfo[j].Number7, true) + (packetInfo[j].StackTrace.Length == 0 ? "" : $"\nStack Trace:\n{packetInfo[j].StackTrace}"));
-                                }
-                                else
-                                {
-                                    ImGui.TextUnformatted($"NetMessage.GetData Type: {messageIDFields[packetInfo[j].Type].Name}/{packetInfo[j].Type}");
-                                }
-                            }
-                            ImGui.Unindent();
-                        }
-                    }
-
-                    ImGui.EndChild();
-                }
-                ImGui.EndTabItem();
-            }
-            if (ImGui.BeginTabItem("Raw Message Logs"))
-            {
-                ImGui.Checkbox("Log Raw Messages", ref LogRawMessages);
-                ImGui.SameLine();
-                if (ImGui.Button("Clear"))
-                {
-                    RawPacketLogs.Clear();
-                }
-
-                ImDrawListPtr drawList = ImGui.GetWindowDrawList();
-
-                for (int i = 0; i < RawPacketLogs.Count; i++)
-                {
-                    RawNetPacket rnp = RawPacketLogs[i];
-
-                    StringBuilder text = new StringBuilder();
-
-                    text.Append($"{(rnp.Sent ? Icon.ArrowUp : Icon.ArrowDown)} L: {rnp.Length} - T: {rnp.Type} B: {{");
-
-                    for (int j = 0; j < Math.Min((int)rnp.Length, 500); j++)
-                    {
-                        text.Append(rnp.Data[j]);
-
-                        if (j + 1 < Math.Min((int)rnp.Length, 500))
-                        {
-                            text.Append(", ");
-                        }
-                    }
-
-                    if (rnp.Length > 500)
-                    {
-                        text.Append("...");
-                    }
-
-                    text.Append(" }");
-
-                    ImGui.Text(text.ToString());
-
-                    if (rnp.Sent)
-                    {
-                        drawList.AddRectFilled(ImGui.GetItemRectMin(), ImGui.GetItemRectMax(), Color.Red.WithAlpha(0.4f).PackedValue);
-                    }
-                }   
-                
-                ImGui.EndTabItem();
-            }
-            if (ImGui.BeginTabItem("Net Message Sender"))
-            {
-                bool isInMultiplayerGame = Main.netMode == 1 && Netplay.Connection.State != 0;
-
-                if (isInMultiplayerGame)
-                {
-                    ImGui.Text("Message ID: ");
-                    ImGui.SameLine();
-                    ImGui.PushItemWidth(200f);
-                    if (ImGui.InputInt("##IDint", ref messageIdToSend))
-                    {
-                        messageIdToSend = Utils.Clamp(messageIdToSend, 0, MessageID.Count - 1);
-                        messageName = messageIDFields[messageIdToSend].Name;
-                    }
-                    ImGui.PopItemWidth();
-                    ImGui.SameLine();
-                    ImGui.Text("/");
-                    ImGui.SameLine();
-                    ImGui.PushItemWidth(200f);
-                    if (ImGui.InputText("##IDstr", ref messageName, (uint)maxMessageName))
-                    {
-                        if (messageIDFieldsByName.ContainsKey(messageName))
-                        {
-                            messageIdToSend = (int)((byte)messageIDFieldsByName[messageName].GetRawConstantValue()!);
-                        }
-                    }
-
-                    if (ImGui.CollapsingHeader("Raw Values"))
-                    {
-                        if (ImGui.CollapsingHeader("Network Text"))
-                        {
-                            ImGui.InputTextMultiline("##NETstr", ref networkText, short.MaxValue - 100, ImGui.GetContentRegionAvail() / new Vector2(2.5f, 3.5f));
-                        }
-                        ImGui.Text("Number 1"); ImGui.SameLine(); ImGui.InputInt("##NUM1", ref number1);
-                        ImGui.Text("Number 2"); ImGui.SameLine(); ImGui.InputFloat("##NUM2", ref number2);
-                        ImGui.Text("Number 3"); ImGui.SameLine(); ImGui.InputFloat("##NUM3", ref number3);
-                        ImGui.Text("Number 4"); ImGui.SameLine(); ImGui.InputFloat("##NUM4", ref number4);
-                        ImGui.Text("Number 5"); ImGui.SameLine(); ImGui.InputInt("##NUM5", ref number5);
-                        ImGui.Text("Number 6"); ImGui.SameLine(); ImGui.InputInt("##NUM6", ref number6);
-                        ImGui.Text("Number 7"); ImGui.SameLine(); ImGui.InputInt("##NUM7", ref number7);
-                    }
-
-
-                    if (ImGui.Button("Send net message"))
-                    {
-                        NetMessage.SendData(messageIdToSend, -1, -1, NetworkText.FromLiteral(networkText), number1, number2, number3, number4, number5, number6, number7);
-                    }
-                    ImGui.SameLine();
-                    ImGui.Checkbox("Send every frame", ref sendMessageEveryFrame);
-
-                    string s = GetSendCallAsString(messageIdToSend, networkText, number1, number2, number3, number4, number5, number6, number7);
-                    if (ImGui.Selectable(s))
-                    {
-                        ImGui.SetClipboardText(s);
-                    }
-                }
-                else
-                {
-                    ImGui.Text("What are you trying to do sending net packets outside of mulitplayer, silly?");
-                }
-
-                ImGui.EndTabItem();
-            }
-            if (ImGui.BeginTabItem("Raw Message Sender"))
-            {
-                if (ImGui.Button($"{Icon.Add}"))
-                {
-                    Actions.Add(new NetMessageAction((MessageActions)selectedAction));
-                }
-                ImGui.SameLine(); ImGui.Combo("##ItemActionsAdd", ref selectedAction, actionNames, actionNames.Length);
-                if (ImGui.BeginChild("RawMessageScrolling", Vector2.Zero, false, ImGuiWindowFlags.HorizontalScrollbar))
-                {
-                    int size = 0;
-                    ImGui.NewLine();
-                    ImGui.Spacing();
-                    for (int i = 0; i < Actions.Count; i++)
-                    {
-                        if (ImGui.Button($"{Icon.Remove}##{i}"))
-                        {
-                            Actions.RemoveAt(i);
-                            continue;
-                        }
-                        ImGui.SameLine();
-                        ImGui.TextUnformatted($"writer.Write(");
-                        ImGui.SameLine();
-                        ImGui.PushItemWidth(100f);
-                        unsafe
-                        {
-                            fixed (ulong* v = &Actions[i].Data)
-                            {
-                                ImGui.InputScalar($"##ValueLmao{i}", Actions[i].GetActionAsImGuiType(), (IntPtr)v);
-                            }
-                        }
-                        ImGui.PopItemWidth();
-                        ImGui.SameLine();
-                        ImGui.TextUnformatted(")");
-                        ImGui.SameLine();
-                        ImGui.PushItemWidth(180f);
-                        if (ImGui.Combo($"##ItemActionsChange{i}", ref Actions[i].ActionInt, actionNames, actionNames.Length)) Actions[i].Data = 0;
-                        ImGui.PopItemWidth();
-
-                        size += Actions[i].GetActionSize();
-                    }
-
-
-                    ImGui.SetCursorPosY(0f);
-
-                    ImGui.BeginDisabled();
-                    ImGui.Button($"{Icon.Remove}##-1");
-                    ImGui.SameLine();
-                    ImGui.TextUnformatted($"writer.Write(");
-                    ImGui.SameLine();
-                    ImGui.PushItemWidth(100f);
-                    unsafe
-                    {
-                        ImGui.InputScalar($"##ValueLmao-1", ImGuiDataType.S32, (IntPtr)(&size));
-                    }
-                    ImGui.PopItemWidth();
-                    ImGui.SameLine();
-                    ImGui.TextUnformatted(")");
-                    ImGui.SameLine();
-                    ImGui.PushItemWidth(180f);
-                    int mst = (int)MessageActions.WriteUnsignedShort;
-                    ImGui.Combo($"##ItemActionsChange-1", ref mst, actionNames, actionNames.Length);
-                    ImGui.PopItemWidth();
-                    ImGui.EndDisabled();
-
-                    ImGui.EndChild();
-                }
-
-
-                ImGui.EndTabItem();
-            }
-            ImGui.EndTabBar();
-        }
-
         ImGui.End();
         ImGui.PopFont();
     }
-
-    public override void Update()
-    {
-        if (sendMessageEveryFrame)
-        {
-            NetMessage.SendData(messageIdToSend, -1, -1, NetworkText.FromLiteral(networkText), number1, number2, number3, number4, number5, number6, number7);
-        }
-    }
-
-    private string GetSendCallAsString(int type, string networkText, int number1, float number2, float number3, float number4, int number5, int number6, int number7, bool showNumbersInId = false)
-    {
-        string s = $"NetMessage.SendData(MessageID.{messageIDFields[type].Name}";
-
-        if (showNumbersInId)
-        {
-            s += $"/{type}";
-        }
-
-        if (networkText.Length != 0)
-        {
-            s += $", text: NetworkText.FromLiteral(\"{networkText}\")";
-        }
-
-        if (number1 != 0) s += $", number1: {number1}";
-        if (number2 != 0) s += $", number2: {number2}";
-        if (number3 != 0) s += $", number3: {number3}";
-        if (number4 != 0) s += $", number4: {number4}";
-        if (number5 != 0) s += $", number5: {number5}";
-        if (number6 != 0) s += $", number6: {number6}";
-        if (number7 != 0) s += $", number7: {number7}";
-
-        s += ")";
-
-        return s;
-    }
 }
 
-public struct NetPacketInfo
+public abstract class NetPacketLog
 {
     public int Type;
+}
+
+public class ReceivedNetPacketLog : NetPacketLog
+{
+
+}
+
+public class SentNetPacketLog : NetPacketLog
+{
     public int Number1;
+
     public float Number2;
+
     public float Number3;
+
     public float Number4;
+
     public int Number5;
+
     public int Number6;
+
     public int Number7;
-    public bool Sent;
-    public string StackTrace;
 
-    public NetPacketInfo(int type, bool sent, int number1, float number2, float number3, float number4, int number5, int number6, int number7, string stackTrace = "")
-    {
-        Type = type;
-        Sent = sent;
-        Number1 = number1;
-        Number2 = number2;
-        Number3 = number3;
-        Number4 = number4;
-        Number5 = number5;
-        Number6 = number6;
-        Number7 = number7;
-        StackTrace = stackTrace;
-    }
+    public string? StackTrace;
 }
 
-public class RawNetPacket
+public class RawNetPacketLog : NetPacketLog
 {
-    public ushort Length;
-
-    public byte[] Data = new byte[0];
-
-    public byte Type;
+    public byte[] Data = Array.Empty<byte>();
 
     public bool Sent;
-}
-
-public class NetMessageAction
-{
-    public MessageActions Action;
-    public ref int ActionInt
-    {
-        get
-        {
-            return ref Unsafe.As<MessageActions, int>(ref Action);
-        }
-    }
-    public ulong Data;
-
-    public NetMessageAction(MessageActions action)
-    {
-        Action = action;
-        Data = 0;
-    }
-    public NetMessageAction(MessageActions action, ValueType data)
-    {
-        Action = action;
-        Data = (ulong)data;
-    }
-
-    public void WriteToStream(BinaryWriter writer)
-    {
-        switch (Action)
-        {
-            case MessageActions.WriteByte:
-                writer.Write((byte)Data);
-                break;
-            case MessageActions.WriteSignedByte:
-                writer.Write((sbyte)Data);
-                break;
-            case MessageActions.WriteShort:
-                writer.Write((short)Data);
-                break;
-            case MessageActions.WriteUnsignedShort:
-                writer.Write((ushort)Data);
-                break;
-            case MessageActions.WriteInt:
-                writer.Write((int)Data);
-                break;
-            case MessageActions.WriteUnsignedInt:
-                writer.Write((uint)Data);
-                break;
-            case MessageActions.WriteFloat:
-                writer.Write((float)Data);
-                break;
-            case MessageActions.WriteDouble:
-                writer.Write((double)Data);
-                break;
-            case MessageActions.WriteLong:
-                writer.Write((long)Data);
-                break;
-            case MessageActions.WriteUnsignedLong:
-                writer.Write((ulong)Data);
-                break;
-        }
-    }
-
-    public ImGuiDataType GetActionAsImGuiType()
-    {
-        return Action switch
-        {
-            MessageActions.WriteByte => ImGuiDataType.U8,
-            MessageActions.WriteSignedByte => ImGuiDataType.S8,
-            MessageActions.WriteShort => ImGuiDataType.S16,
-            MessageActions.WriteUnsignedShort => ImGuiDataType.U16,
-            MessageActions.WriteInt => ImGuiDataType.S32,
-            MessageActions.WriteUnsignedInt => ImGuiDataType.U32,
-            MessageActions.WriteFloat => ImGuiDataType.Float,
-            MessageActions.WriteDouble => ImGuiDataType.Double,
-            MessageActions.WriteLong => ImGuiDataType.S64,
-            MessageActions.WriteUnsignedLong => ImGuiDataType.U64,
-            _ => ImGuiDataType.U8,
-        };
-    }
-
-    public int GetActionSize()
-    {
-        return Action switch
-        {
-            MessageActions.WriteByte or MessageActions.WriteSignedByte => 1,
-            MessageActions.WriteShort or MessageActions.WriteUnsignedShort => 2,
-            MessageActions.WriteInt or
-            MessageActions.WriteUnsignedInt or
-            MessageActions.WriteFloat => 4,
-            MessageActions.WriteDouble or
-            MessageActions.WriteLong or
-            MessageActions.WriteUnsignedLong => 8,
-            _ => 8,
-        };
-    }
-}
-
-public enum MessageActions
-{
-    WriteByte,
-    WriteSignedByte,
-    WriteShort,
-    WriteUnsignedShort,
-    WriteInt,
-    WriteUnsignedInt,
-    WriteFloat,
-    WriteDouble,
-    WriteLong,
-    WriteUnsignedLong,
 }
