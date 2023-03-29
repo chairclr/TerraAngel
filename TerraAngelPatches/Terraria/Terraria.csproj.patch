@@ -1,6 +1,6 @@
 --- src/Terraria/Terraria/Terraria.csproj
 +++ src/TerraAngel/Terraria/Terraria.csproj
-@@ -3,40 +_,194 @@
+@@ -3,40 +_,187 @@
    <PropertyGroup>
      <OutputType>WinExe</OutputType>
      <Nullable>enable</Nullable>
@@ -51,6 +51,7 @@
 +
 +  <!-- New libraries added -->
 +  <ItemGroup>
++    <ProjectReference Include="..\..\..\CSharpEval\CSharpEval\CSharpEval.csproj" />
 +    <ProjectReference Include="..\..\..\TNA\FNA.Core.csproj" />
 +    <ProjectReference Include="..\..\..\ImGui.NET\src\ImGui.NET\ImGui.NET.csproj" />
 +    <ProjectReference Include="..\TerraAngel.PluginAPI\TerraAngel.PluginAPI.csproj" />
@@ -76,14 +77,6 @@
 +    <PackageReference Include="CsvHelper" Version="30.0.1" />
 +    <PackageReference Include="DiscordRichPresence" Version="1.1.3.18" />
 +    <PackageReference Include="LargeAddressAware" Version="1.0.6" />
-+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.5.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.5.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.5.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.5.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.5.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="4.5.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.5.0" />
-+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.5.0" />
 +    <PackageReference Include="MP3Sharp" Version="1.0.5" />
 +    <PackageReference Include="NVorbis" Version="0.10.5" />
 +    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />

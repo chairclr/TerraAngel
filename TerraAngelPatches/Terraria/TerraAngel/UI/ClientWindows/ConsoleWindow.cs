@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using CSharpEval;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Tags;
 using TerraAngel.Plugin;
-using TerraAngel.Scripting;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TerraAngel.UI.ClientWindows;
 
@@ -36,9 +39,9 @@ public class ConsoleWindow : ClientWindow
 
     private int UndoPosition = 1;
 
-    public CSharpScriptEnvironment Script = new CSharpScriptEnvironment();
+    public FullCSharpEvaluator Script;
 
-    private List<CompletionItem> ScriptCompletionItems = new List<CompletionItem>();
+    private ImmutableArray<CompletionItem> ScriptCompletionItems = ImmutableArray<CompletionItem>.Empty;
 
     private int SelectedCompletionItem = 0;
 
@@ -62,7 +65,61 @@ public class ConsoleWindow : ClientWindow
 
     public ConsoleWindow()
     {
-        Script.Init();
+        string[] usings = new string[] 
+        { 
+            "ImGuiNET",
+            "Microsoft.Xna.Framework",
+            "Microsoft.Xna.Framework.Graphics",
+            "Microsoft.Xna.Framework.Input",
+            "System",
+            "System.IO",
+            "System.Collections.Generic",
+            "System.Diagnostics",
+            "System.Linq",
+            "System.Linq.Expressions",
+            "System.Text",
+            "System.Threading",
+            "System.Threading.Tasks",
+            "System.Runtime.CompilerServices",
+            "System.Runtime.InteropServices",
+            "Terraria",
+            "Terraria.DataStructures",
+            "Terraria.ID",
+            "TerraAngel",
+            "TerraAngel.UI.ClientWindows",
+            "TerraAngel.Config",
+            "TerraAngel.Tools",
+            "TerraAngel.Tools.Automation",
+            "TerraAngel.Tools.Developer",
+            "TerraAngel.Tools.Map",
+            "TerraAngel.Tools.Visuals",
+            "TerraAngel.Graphics",
+            "TerraAngel.Hooks",
+            "TerraAngel.Hooks",
+            "TerraAngel.ID",
+            "TerraAngel.Input",
+            "TerraAngel.Net",
+            "TerraAngel.Plugin",
+            "TerraAngel.UI",
+            "TerraAngel.Utility",
+            "TerraAngel.WorldEdits" 
+        };
+
+        Task.Run(() =>
+        {
+            WriteLine("Initializing Scripting Evaluator");
+            try
+
+            {
+                Script = new FullCSharpEvaluator(AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic).Where(x => x != typeof(Steamworks.AppId_t).Assembly), usings);
+                WriteLine("Finished Initializing Scripting Evaluator");
+            }
+            catch (Exception ex) 
+            {
+                WriteError("Failed to Initialzie Scripting Evaluator");
+                WriteError(ex.ToString());
+            }
+        });
 
         AddCommand(
             "clear",
@@ -286,10 +343,23 @@ public class ConsoleWindow : ClientWindow
             }
         }
 
-        object? expressionValue = Script.Eval(ConsoleInput);
-        if (expressionValue is not null)
+        UpdateCompletion("", 0);
+
+        ScriptEvaluationResult result = Script.Eval(ConsoleInput);
+        if (result.Result is not null)
         {
-            WriteLine(Script.FormatObject(expressionValue));
+            WriteLine(CSharpObjectFormatter.Instance.FormatObject(result.Result));
+        }
+        if (result.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error).Any())
+        {
+            foreach (Diagnostic diagnostic in result.Diagnostics)
+            {
+                WriteError(diagnostic.ToString());
+            }
+        }
+        if (result.Exception is not null)
+        {
+            WriteError(result.Exception.ToString());
         }
     }
 
@@ -297,8 +367,8 @@ public class ConsoleWindow : ClientWindow
     {
         ImGuiStylePtr style = ImGui.GetStyle();
 
-        SelectedCompletionItem = Utils.Clamp(SelectedCompletionItem, 0, ScriptCompletionItems.Count - 1);
-        CompletionViewIndex = Utils.Clamp(CompletionViewIndex, 0, ScriptCompletionItems.Count - 1);
+        SelectedCompletionItem = Utils.Clamp(SelectedCompletionItem, 0, ScriptCompletionItems.Length - 1);
+        CompletionViewIndex = Utils.Clamp(CompletionViewIndex, 0, ScriptCompletionItems.Length - 1);
         Vector2 completionOrigin = Vector2.Zero;
         Vector2 completionSize = Vector2.Zero;
 
@@ -390,11 +460,11 @@ public class ConsoleWindow : ClientWindow
             float maxSize = 0f;
             float drawHeight = style.ItemSpacing.Y * 2f;
 
-            int startCandidate = Utils.Clamp(CompletionViewIndex - 5, 0, ScriptCompletionItems.Count);
-            int endCandidate = Utils.Clamp(startCandidate + 10, 0, ScriptCompletionItems.Count);
+            int startCandidate = Utils.Clamp(CompletionViewIndex - 5, 0, ScriptCompletionItems.Length);
+            int endCandidate = Utils.Clamp(startCandidate + 10, 0, ScriptCompletionItems.Length);
             if ((endCandidate - startCandidate) < 10)
             {
-                startCandidate = Utils.Clamp(endCandidate - 10, 0, ScriptCompletionItems.Count);
+                startCandidate = Utils.Clamp(endCandidate - 10, 0, ScriptCompletionItems.Length);
             }
 
             for (int i = startCandidate; i < endCandidate; i++)
@@ -470,12 +540,12 @@ public class ConsoleWindow : ClientWindow
 
                 io.WantCaptureMouse = true;
 
-                if (CompletionViewIndex > 4 && CompletionViewIndex < ScriptCompletionItems.Count - 4)
+                if (CompletionViewIndex > 4 && CompletionViewIndex < ScriptCompletionItems.Length - 4)
                     CompletionViewIndex -= (int)io.MouseWheel;
                 else
                 {
                     if (CompletionViewIndex <= 5) CompletionViewIndex = 5;
-                    else if (CompletionViewIndex >= ScriptCompletionItems.Count - 4) CompletionViewIndex = ScriptCompletionItems.Count - 5;
+                    else if (CompletionViewIndex >= ScriptCompletionItems.Length - 4) CompletionViewIndex = ScriptCompletionItems.Length - 5;
                 }
 
 
@@ -518,9 +588,8 @@ public class ConsoleWindow : ClientWindow
             {
                 lock (CandidateLock)
                 {
-                    Script.SetText(text);
-                    ScriptCompletionItems = Script.GetCompletionAsync(text, cursorPosition).Result;
-                    ScriptCompletionArguments = Script.GetArgumentListCompletionSymbolsAsync(text, cursorPosition).Result;
+                    ScriptCompletionItems = Script.GetCompletionsAsync(text, cursorPosition, CompletionTrigger.CreateInsertionTrigger('a')).Result;
+                    //ScriptCompletionArguments = Script.GetArgumentListCompletionSymbolsAsync(text, cursorPosition).Result;
                 }
             });
     }
@@ -650,15 +719,17 @@ public class ConsoleWindow : ClientWindow
                 {
                     if (ScriptCompletionItems.Any())
                     {
-                        SelectedCompletionItem = Math.Clamp(SelectedCompletionItem, 0, ScriptCompletionItems.Count - 1);
+                        SelectedCompletionItem = Math.Clamp(SelectedCompletionItem, 0, ScriptCompletionItems.Length - 1);
 
                         string s = data.GetText();
 
                         int cursorPosition = data.CursorPos;
 
-                        data.SetText(Script.GetChangedText(s, ScriptCompletionItems[SelectedCompletionItem], cursorPosition, out int newCursorPosition));
+                        (string newText, int newCursorPos) = Script.ApplyCompletionAsync(s, ScriptCompletionItems[SelectedCompletionItem], cursorPosition, null).Result;
 
-                        data.CursorPos = newCursorPosition;
+                        data.SetText(newText);
+
+                        data.CursorPos = newCursorPos;
                     }
 
                     UpdateCompletion(data.GetText(), data.CursorPos);

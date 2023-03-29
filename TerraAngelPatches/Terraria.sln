@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNA.Core", "..\..\TNA\FNA.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui.NET", "..\..\ImGui.NET\src\ImGui.NET\ImGui.NET.csproj", "{8AC974D9-FB3D-4D4F-9966-4556C824EDAA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpEval", "..\..\CSharpEval\CSharpEval\CSharpEval.csproj", "{3820AE87-754C-4CC2-9EA8-6E9ED7DC1BB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{8AC974D9-FB3D-4D4F-9966-4556C824EDAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AC974D9-FB3D-4D4F-9966-4556C824EDAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AC974D9-FB3D-4D4F-9966-4556C824EDAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3820AE87-754C-4CC2-9EA8-6E9ED7DC1BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3820AE87-754C-4CC2-9EA8-6E9ED7DC1BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3820AE87-754C-4CC2-9EA8-6E9ED7DC1BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3820AE87-754C-4CC2-9EA8-6E9ED7DC1BB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
