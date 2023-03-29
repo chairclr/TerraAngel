@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Policy;
+using System.Text;
 using Microsoft.Xna.Framework.Input;
+using Steamworks;
 using Terraria.Localization;
 
 namespace TerraAngel.UI.ClientWindows;
@@ -31,6 +34,7 @@ public class NetMessageWindow : ClientWindow
         if (value < 0 || value > MessageID.Count - 1) return false;
         return true;
     }).ToDictionary(x => (int)((byte)x.GetRawConstantValue()!), y => y);
+
     private readonly Dictionary<string, FieldInfo> messageIDFieldsByName = typeof(MessageID).GetFields().Where(x =>
     {
         if (!x.IsStatic) return false;
@@ -41,6 +45,7 @@ public class NetMessageWindow : ClientWindow
         if (value < 0 || value > MessageID.Count - 1) return false;
         return true;
     }).ToDictionary(x => x.Name, y => y);
+
     private int maxMessageName;
     private bool sendMessageEveryFrame = false;
     private string messageName = nameof(MessageID.NeverCalled);
@@ -60,6 +65,8 @@ public class NetMessageWindow : ClientWindow
     private bool upMessages = true;
     private bool downMessages = true;
 
+    public static bool LogRawMessages = false;
+
     private readonly List<NetMessageAction> Actions = new List<NetMessageAction>();
     private int selectedAction = 0;
     private readonly string[] actionNames = StringExtensions.EnumFancyNames<MessageActions>();
@@ -69,6 +76,8 @@ public class NetMessageWindow : ClientWindow
     private static readonly List<NetPacketInfo>[] receivePackets = new List<NetPacketInfo>[MessageID.Count];
     private static readonly bool[] messagesShownInTree = new bool[MessageID.Count];
     public static HashSet<int> MessagesToLogTraces = new HashSet<int>();
+
+    public static readonly List<RawNetPacket> RawPacketLogs = new List<RawNetPacket>();
 
     public static void AddPacket(NetPacketInfo packet)
     {
@@ -124,7 +133,7 @@ public class NetMessageWindow : ClientWindow
             ImGui.EndMenuBar();
         }
 
-        if (ImGui.BeginTabBar("Net Debugger Tab Bar"))
+        if (ImGui.BeginTabBar("NetDebuggerTabBar"))
         {
             if (ImGui.BeginTabItem("Net Message Logs"))
             {
@@ -215,6 +224,52 @@ public class NetMessageWindow : ClientWindow
 
                     ImGui.EndChild();
                 }
+                ImGui.EndTabItem();
+            }
+            if (ImGui.BeginTabItem("Raw Message Logs"))
+            {
+                ImGui.Checkbox("Log Raw Messages", ref LogRawMessages);
+                ImGui.SameLine();
+                if (ImGui.Button("Clear"))
+                {
+                    RawPacketLogs.Clear();
+                }
+
+                ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+                for (int i = 0; i < RawPacketLogs.Count; i++)
+                {
+                    RawNetPacket rnp = RawPacketLogs[i];
+
+                    StringBuilder text = new StringBuilder();
+
+                    text.Append($"{(rnp.Sent ? Icon.ArrowUp : Icon.ArrowDown)} L: {rnp.Length} - T: {rnp.Type} B: {{");
+
+                    for (int j = 0; j < Math.Min((int)rnp.Length, 500); j++)
+                    {
+                        text.Append(rnp.Data[j]);
+
+                        if (j + 1 < Math.Min((int)rnp.Length, 500))
+                        {
+                            text.Append(", ");
+                        }
+                    }
+
+                    if (rnp.Length > 500)
+                    {
+                        text.Append("...");
+                    }
+
+                    text.Append(" }");
+
+                    ImGui.Text(text.ToString());
+
+                    if (rnp.Sent)
+                    {
+                        drawList.AddRectFilled(ImGui.GetItemRectMin(), ImGui.GetItemRectMax(), Color.Red.WithAlpha(0.4f).PackedValue);
+                    }
+                }   
+                
                 ImGui.EndTabItem();
             }
             if (ImGui.BeginTabItem("Net Message Sender"))
@@ -420,6 +475,18 @@ public struct NetPacketInfo
         StackTrace = stackTrace;
     }
 }
+
+public class RawNetPacket
+{
+    public ushort Length;
+
+    public byte[] Data = new byte[0];
+
+    public byte Type;
+
+    public bool Sent;
+}
+
 public class NetMessageAction
 {
     public MessageActions Action;
@@ -514,6 +581,7 @@ public class NetMessageAction
         };
     }
 }
+
 public enum MessageActions
 {
     WriteByte,
@@ -526,5 +594,4 @@ public enum MessageActions
     WriteDouble,
     WriteLong,
     WriteUnsignedLong,
-
 }
