@@ -71,7 +71,12 @@ public class MiscHooks
             }
 
             if (io.WantCaptureKeyboard)
+            {
+                PlayerInput.ScrollWheelValueOld = PlayerInput.ScrollWheelValue;
+                PlayerInput.ScrollWheelDelta = 0;
+                PlayerInput.ScrollWheelDeltaForUI = 0;
                 return;
+            }
         }
         orig();
     }
