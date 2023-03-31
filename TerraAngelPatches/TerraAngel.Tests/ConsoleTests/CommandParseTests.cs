@@ -1,4 +1,5 @@
 ﻿using TerraAngel.UI.ClientWindows;
+using TerraAngel.UI.ClientWindows.Console;
 
 namespace TerraAngel.Tests.ConsoleTests;
 
