@@ -6,6 +6,7 @@ using TerraAngel.Tools.Inspector;
 using TerraAngel.UI.TerrariaUI;
 using TerraAngel.WorldEdits;
 using Terraria.GameContent;
+using TerraAngel.UI.ClientWindows.Console;
 
 namespace TerraAngel.Graphics;
 
