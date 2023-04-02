@@ -13,8 +13,9 @@ Installation
 
 Please note that this client is currently only available for Windows
 
-In order to use it, you will need to have [git](https://git-scm.com/download/win) and the [dotnet 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) installed  installed on your machine
+In order to use it, you will need to have [git](https://git-scm.com/download/win) and the [dotnet 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) installed on your machine
 
+Be sure to restart your computer after you install these,
 
 To install the client, follow these steps:
 
