@@ -8,7 +8,7 @@
      public int MessagesInQueue => _messagesInQueue;
      public TcpSocket()
      {
-@@ -52,20 +_,27 @@
+@@ -52,20 +_,25 @@
          TcpAddress tcpAddress = (TcpAddress)address;
          _connection.Connect(tcpAddress.Address, tcpAddress.Port);
          _remoteAddress = address;
@@ -20,7 +20,6 @@
          Tuple<SocketReceiveCallback, object> tuple = (Tuple<SocketReceiveCallback, object>)result.AsyncState;
 -        tuple.Item1(tuple.Item2, _connection.GetStream().EndRead(result));
 +        int messageLength = networkStream.EndRead(result);
-+        StatsWindow.CountReadMessage(messageLength);
 +        tuple.Item1(tuple.Item2, messageLength);
      }
  
@@ -34,7 +33,6 @@
 -            tuple = (Tuple<SocketSendCallback, object>)result.AsyncState;
 +            tuple = (Tuple<SocketSendCallback, object>)data[0];
 +            messageLength = (int)data[1];
-+            StatsWindow.CountSentMessage(messageLength);
          }
          else
          {

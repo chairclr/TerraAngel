@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Microsoft.Xna.Framework.Input;
 
 namespace TerraAngel.UI.ClientWindows;
@@ -12,117 +13,25 @@ public class StatsWindow : ClientWindow
     public override bool IsEnabled { get => ClientConfig.Settings.ShowStatsWindow; }
 
     public override string Title => "Stat Window";
+
     public override bool IsGlobalToggle => false;
 
-    private float PacketCountElapsedTime = 0f;
-
-    private static int PacketsUpLastSecond = 0;
-    private static int BytesUpLastSecond = 0;
-
-    private static int PacketsDownLastSecond = 0;
-    private static int BytesDownLastSecond = 0;
-
-    private static int PacketsUpLastSecondCounting = 0;
-    private static int BytesUpLastSecondCounting = 0;
-
-    private static int PacketsDownLastSecondCounting = 0;
-    private static int BytesDownLastSecondCounting = 0;
-
-    public static void CountSentMessage(int len)
-    {
-        PacketsUpLastSecondCounting++;
-        BytesUpLastSecondCounting += len;
-    }
-    public static void CountReadMessage(int len)
-    {
-        PacketsDownLastSecondCounting++;
-        BytesDownLastSecondCounting += len;
-    }
-
-    private bool moveStatWindow = false;
-
-    private bool decreaseTransperency = false;
     public override void Draw(ImGuiIOPtr io)
     {
-        if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleStatsWindowMovability))
-            moveStatWindow = !moveStatWindow;
+        ImGuiStylePtr style = ImGui.GetStyle();
+        ImDrawListPtr drawList = ImGui.GetForegroundDrawList();
 
-        ImGuiWindowFlags flags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.AlwaysAutoResize;
-
-        if (!moveStatWindow)
-            flags |= ImGuiWindowFlags.NoInputs;
-        else
-        {
-            ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0.3f, 0.5f, 0.3f, 0.8f));
-            ImGui.PushStyleColor(ImGuiCol.WindowBg, new Vector4(0.3f, 0.5f, 0.3f, 0.8f));
-        }
-        if (decreaseTransperency)
-        {
-            ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ClientConfig.Settings.StatsWindowHoveredTransperency);
-        }
-
-
-        bool isInMultiplayerGame = Main.netMode == 1 && Netplay.Connection.State != 0;
-
-        ImGui.SetNextWindowPos(new Vector2(0, io.DisplaySize.Y / 2.2f - 32f), ImGuiCond.FirstUseEver);
-        ImGui.Begin("##StatWindow", flags);
         ImGui.PushFont(ClientAssets.GetMonospaceFont(16f));
 
-        if (ClientLoader.TerraAngelVersion is not null)
-        {
-            ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel v{ClientLoader.TerraAngelVersion}");
-        }
-        else
-        {
-            ImGui.TextUnformatted($"{Icon.CircleFilled} TerraAngel");
-        }
+        drawList.AddRectFilled(Vector2.Zero, new Vector2(io.DisplaySize.X, 16f + style.ItemSpacing.Y * 2f), ImGui.GetColorU32(ImGuiCol.WindowBg, 0.5f));
+        drawList.AddRect(Vector2.Zero, new Vector2(io.DisplaySize.X, 16f + style.ItemSpacing.Y * 2f), ImGui.GetColorU32(ImGuiCol.WindowBg, 0.9f));
 
-        ImGui.TextUnformatted($"FPS {Math.Round(1f / TimeMetrics.FramerateDeltaTimeSlices.Average.TotalSeconds):F0}");
-        ImGui.TextUnformatted($"UPS {Math.Round(1f / TimeMetrics.UpdateDeltaTimeSlices.Average.TotalSeconds):F0}");
+        string versionText = ClientLoader.TerraAngelVersion is null ? "" : $"v{ClientLoader.TerraAngelVersion} ";
+        string fpsText = $"{Math.Round(1f / TimeMetrics.FramerateDeltaTimeSlices.Average.TotalSeconds),2:F0}";
+        string upsText = $"{Math.Round(1f / TimeMetrics.UpdateDeltaTimeSlices.Average.TotalSeconds),2:F0}";
 
-        string packetsUpString = $"{PacketsUpLastSecond}";
-        string packetsDownString = $"{PacketsDownLastSecond}";
-
-        string kilobytesUpString = $"{Util.PrettyPrintBytes(BytesUpLastSecond)}";
-        string kilobytesDownString = $"{Util.PrettyPrintBytes(BytesDownLastSecond)}";
-
-        if (!isInMultiplayerGame) kilobytesDownString = kilobytesUpString = packetsDownString = packetsUpString = "N/A";
-
-
-        ImGuiUtil.TextColored($"Packets    {Icon.ArrowUp}{packetsUpString,7} / {Icon.ArrowDown}{packetsDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
-
-        ImGuiUtil.TextColored($"Bytes      {Icon.ArrowUp}{kilobytesUpString,7} / {Icon.ArrowDown}{kilobytesDownString,7}", !isInMultiplayerGame ? ImGui.GetColorU32(ImGuiCol.TextDisabled) : ImGui.GetColorU32(ImGuiCol.Text));
+        drawList.AddText(Vector2.Zero + style.ItemSpacing, ImGui.GetColorU32(ImGuiCol.Text), $"{versionText}{fpsText} FPS {upsText} UPS");
 
         ImGui.PopFont();
-        if (decreaseTransperency)
-        {
-            ImGui.PopStyleVar();
-            decreaseTransperency = false;
-        }
-        if (ImGui.IsMouseHoveringRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize()))
-            decreaseTransperency = true;
-        ImGui.End();
-
-        if (moveStatWindow)
-        {
-            ImGui.PopStyleColor(2);
-        }
-
-        PacketCountElapsedTime += ImGui.GetIO().DeltaTime;
-
-        if (PacketCountElapsedTime >= 1f)
-        {
-            PacketCountElapsedTime = 0f;
-
-            PacketsUpLastSecond = PacketsUpLastSecondCounting;
-            PacketsDownLastSecond = PacketsDownLastSecondCounting;
-
-            PacketsDownLastSecondCounting = (PacketsUpLastSecondCounting = 0);
-
-            BytesUpLastSecond = BytesUpLastSecondCounting;
-            BytesDownLastSecond = BytesDownLastSecondCounting;
-
-            BytesDownLastSecondCounting = (BytesUpLastSecondCounting = 0);
-        }
     }
 }
