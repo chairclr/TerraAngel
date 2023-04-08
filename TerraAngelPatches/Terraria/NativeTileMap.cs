@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Threading;
-using Microsoft.CodeAnalysis.Elfie.Diagnostics;
-using Microsoft.Xna.Framework;
-using TerraAngel;
-using TerraAngel.Utility;
-using Terraria.Net;
 
 namespace Terraria;
 
@@ -20,7 +14,7 @@ public unsafe class NativeTileMap
     /// </summary>
     public readonly long HeapSize;
 
-    public readonly TileData[][] TileHeap;
+    public readonly TileData[,] TileHeap;
 
     public bool[,] LoadedTileSections = new bool[0, 0];
 
@@ -30,8 +24,7 @@ public unsafe class NativeTileMap
         Height = (uint)height;
         HeapSize = Width * Height * sizeof(TileData);
 
-        TileHeap = new TileData[Width][];
-        NewHeap();
+        TileHeap = new TileData[Width, Height];
 
         LoadedTileSections = new bool[Width / Main.sectionWidth, Height / Main.sectionHeight];
     }
@@ -40,11 +33,11 @@ public unsafe class NativeTileMap
     {
         get
         {
-            return new Tile(ref TileHeap[x][y]);
+            return new Tile(ref TileHeap[x, y]);
         }
         set
         {
-            TileHeap[x][y] = value.RefData;
+            TileHeap[x, y] = value.RefData;
         }
     }
 
@@ -52,28 +45,17 @@ public unsafe class NativeTileMap
     {
         get
         {
-            return new Tile(ref TileHeap[position.X][position.Y]);
+            return new Tile(ref TileHeap[position.X, position.Y]);
         }
         set
         {
-            TileHeap[position.X][position.Y] = value.RefData;
+            TileHeap[position.X, position.Y] = value.RefData;
         }
     }
 
     public ref TileData GetTileRef(int x, int y)
     {
-        return ref TileHeap[x][y];
-    }
-
-    /// <summary>
-    /// Initializes the heap
-    /// </summary>
-    public void NewHeap()
-    {
-        for (int i = 0; i < Width; i++)
-        {
-            TileHeap[i] = new TileData[Height];
-        }
+        return ref TileHeap[x, y];
     }
 
     /// <summary>
@@ -81,10 +63,7 @@ public unsafe class NativeTileMap
     /// </summary>
     public void ResetHeap()
     {
-        for (int i = 0; i < Width; i++)
-        {
-            Array.Clear(TileHeap[i]);
-        }
+        Array.Clear(TileHeap);
     }
 
     public bool InWorld(Vector2 position) => InWorld((int)(position.X / 16f), (int)(position.Y / 16f));
