@@ -1582,27 +1582,46 @@
          }
  
          InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
-@@ -61590,9 +_,35 @@
+@@ -61586,13 +_,54 @@
+     {
+     }
+ 
++    private Microsoft.Xna.Framework.Timing.WaitableTimer? InactiveSleepTimer;
++
+     protected override void Draw(GameTime gameTime)
      {
          if (!_isDrawingOrUpdating && IsGraphicsDeviceAvailable)
          {
 +            if (!gameMenu && !IsActive && InactiveSleepTime > TimeSpan.Zero)
 +            {
-+                Stopwatch sw = new Stopwatch();
-+
-+                sw.Start();
-+
-+                while (sw.Elapsed + TimeSpan.FromMilliseconds(1) < InactiveSleepTime)
++                if (Platform.IsWindows)
 +                {
-+                    Thread.Sleep(1);
-+                }
++                    if (InactiveSleepTimer is null)
++                    {
++                        InactiveSleepTimer = new Microsoft.Xna.Framework.Timing.WaitableTimer();
++                    }
 +
-+                while (sw.Elapsed < InactiveSleepTime)
++                    InactiveSleepTimer.Set(DateTime.UtcNow.Add(InactiveSleepTime).ToFileTimeUtc());
++                    InactiveSleepTimer.WaitOne();
++                }
++                else
 +                {
-+                    Thread.SpinWait(1);
-+                }
++                    Stopwatch sw = new Stopwatch();
 +
-+                sw.Stop();
++                    sw.Start();
++
++                    while (sw.Elapsed < InactiveSleepTime)
++                    {
++                        Thread.Sleep(1);
++                    }
++
++                    while (sw.Elapsed < InactiveSleepTime)
++                    {
++                        Thread.SpinWait(1);
++                    }
++
++                    sw.Stop();
++                }
 +            }
 +
 +            ClientLoader.MainRenderer?.PreUpdate();

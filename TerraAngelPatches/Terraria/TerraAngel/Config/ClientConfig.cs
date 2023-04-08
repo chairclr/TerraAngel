@@ -188,6 +188,9 @@ public class ClientConfig
         [UIConfigElement("Open Quick Item Browser (Ctrl +")]
         public Keys OpenFastItemBrowser = Keys.I;
 
+        [UIConfigElement("Builder Mode Quick Slope")]
+        public Keys BuilderModeQuickSlope = Keys.Q;
+
         public int ConsoleHistoryLimit = 5000;
         public int ChatHistoryLimit = 3000;
         public int ChatMessageLimit = 600;

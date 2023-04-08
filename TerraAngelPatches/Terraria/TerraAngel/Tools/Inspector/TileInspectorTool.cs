@@ -57,8 +57,20 @@ public class TileInspectorTool : InspectorTool
         ImGui.Text($"Tile inActive:    {SelectedTile.Value.inActive()}");
         ImGui.Text($"Tile nactive:     {SelectedTile.Value.nactive()}");
         ImGui.Text($"Tile Type:        {InternalRepresentation.GetTileIDName(SelectedTile.Value.type)}/{SelectedTile.Value.type}");
-        ImGui.Text($"Tile FrameX:      {SelectedTile.Value.frameX}");
-        ImGui.Text($"Tile FrameY:      {SelectedTile.Value.frameY}");
+
+        ImGui.Text($"Tile FrameX:     ");
+        ImGui.SameLine();
+        int x = SelectedTile.Value.frameX;
+        ImGui.SetNextItemWidth(8f * 16f);
+        ImGui.InputInt("###tfx", ref x);
+        SelectedTile.Value.frameX = (short)Math.Clamp(x, short.MinValue, short.MaxValue);
+        ImGui.Text($"Tile FrameY:     ");
+        ImGui.SameLine();
+        int y = SelectedTile.Value.frameY;
+        ImGui.SetNextItemWidth(8f * 16f);
+        ImGui.InputInt("###tfy", ref y);
+        SelectedTile.Value.frameY = (short)Math.Clamp(y, short.MinValue, short.MaxValue);
+
         ImGui.Text($"Tile Fame Number: {SelectedTile.Value.frameNumber()}");
         ImGui.Text($"Tile Slope:       {SelectedTile.Value.slope()}");
         ImGui.Text($"Tile Halfbrick:   {SelectedTile.Value.halfBrick()}");
@@ -105,7 +117,27 @@ public class TileInspectorTool : InspectorTool
             _ => "Invalid"
         }}/{SelectedTile.Value.liquid}");
         ImGui.Text($"Liquid Amount:    {SelectedTile.Value.liquid}");
+
+        ImGui.SetNextItemWidth(8f * 16f);
+        ImGui.InputInt("###stsx1", ref STSSizeX);
+        ImGui.SameLine();
+        ImGui.Text("x");
+        ImGui.SameLine();
+        ImGui.SetNextItemWidth(8f * 16f);
+        ImGui.InputInt("###stsy2", ref STSSizeY);
+
+        if (ImGui.Button("STS"))
+        {
+            NetMessage.SendTileSquare(Main.myPlayer, SelectedTilePosition.X, SelectedTilePosition.Y, STSSizeX, STSSizeY);
+        }
+
+        ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
+
+        drawList.AddRect(Util.WorldToScreenDynamic(SelectedTilePosition * 16f), Util.WorldToScreenDynamic((SelectedTilePosition + new Vector2(STSSizeX, STSSizeY)) * 16f), Color.Yellow.PackedValue, 0f, ImDrawFlags.None, 2f);
     }
+
+    private int STSSizeX = 1;
+    private int STSSizeY = 1;
 
     public override void UpdateInGameSelect()
     {

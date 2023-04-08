@@ -30,7 +30,14 @@ public class StatsWindow : ClientWindow
         string fpsText = $"{Math.Round(1f / TimeMetrics.FramerateDeltaTimeSlices.Average.TotalSeconds),2:F0}";
         string upsText = $"{Math.Round(1f / TimeMetrics.UpdateDeltaTimeSlices.Average.TotalSeconds),2:F0}";
 
-        drawList.AddText(Vector2.Zero + style.ItemSpacing, ImGui.GetColorU32(ImGuiCol.Text), $"{versionText}{fpsText} FPS {upsText} UPS");
+
+        drawList.AddText(Vector2.Zero + style.ItemSpacing, ImGui.GetColorU32(ImGuiCol.Text), $"{versionText}");
+
+        string rightText = $"{(BuilderModeTool.Enabled ? "Builder Mode Active " : "")}{fpsText} FPS {upsText} UPS";
+
+        Vector2 rightTextSize = ImGui.CalcTextSize(rightText);
+
+        drawList.AddText(new Vector2(io.DisplaySize.X - rightTextSize.X - style.ItemSpacing.X, style.ItemSpacing.Y), ImGui.GetColorU32(ImGuiCol.Text), rightText);
 
         ImGui.PopFont();
     }

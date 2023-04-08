@@ -213,6 +213,144 @@
          if (creativeGodMode || dead)
          {
              return;
+@@ -39824,13 +_,23 @@
+ 
+     private void PlaceThing_Walls()
+     {
+-        if (inventory[selectedItem].createWall < 0 || !(position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY))
++        bool blockedByRangeCheck = !(position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY);
++
++        if (ToolManager.GetTool<InfiniteReachTool>().Enabled || BuilderModeTool.Enabled)
++            blockedByRangeCheck = false;
++
++        if (inventory[selectedItem].createWall < 0 || blockedByRangeCheck)
+         {
+             return;
+         }
+ 
++        bool wallPlaceBlockedByNoFreeSpace = (!Main.tile[tileTargetX + 1, tileTargetY].active() && Main.tile[tileTargetX + 1, tileTargetY].wall <= 0 && !Main.tile[tileTargetX - 1, tileTargetY].active() && Main.tile[tileTargetX - 1, tileTargetY].wall <= 0 && !Main.tile[tileTargetX, tileTargetY + 1].active() && Main.tile[tileTargetX, tileTargetY + 1].wall <= 0 && !Main.tile[tileTargetX, tileTargetY - 1].active() && Main.tile[tileTargetX, tileTargetY - 1].wall <= 0);
++
++        if (BuilderModeTool.Enabled)
++            wallPlaceBlockedByNoFreeSpace = false;
++
+         cursorItemIconEnabled = true;
+-        if (!ItemTimeIsZero || itemAnimation <= 0 || !controlUseItem || (!Main.tile[tileTargetX + 1, tileTargetY].active() && Main.tile[tileTargetX + 1, tileTargetY].wall <= 0 && !Main.tile[tileTargetX - 1, tileTargetY].active() && Main.tile[tileTargetX - 1, tileTargetY].wall <= 0 && !Main.tile[tileTargetX, tileTargetY + 1].active() && Main.tile[tileTargetX, tileTargetY + 1].wall <= 0 && !Main.tile[tileTargetX, tileTargetY - 1].active() && Main.tile[tileTargetX, tileTargetY - 1].wall <= 0) || Main.tile[tileTargetX, tileTargetY].wall == inventory[selectedItem].createWall)
++        if (((!ItemTimeIsZero || itemAnimation <= 0) && !BuilderModeTool.Enabled) || !controlUseItem || wallPlaceBlockedByNoFreeSpace || Main.tile[tileTargetX, tileTargetY].wall == inventory[selectedItem].createWall)
+         {
+             return;
+         }
+@@ -39962,7 +_,13 @@
+     {
+         Item item = inventory[selectedItem];
+         int tileToCreate = item.createTile;
++
+-        if (tileToCreate < 0 || !(position.X / 16f - (float)tileRangeX - (float)item.tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)item.tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)item.tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)item.tileBoost - 2f + (float)blockRange >= (float)tileTargetY))
++        bool blockedByRangeCheck = !(position.X / 16f - (float)tileRangeX - (float)item.tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)item.tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)item.tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)item.tileBoost - 2f + (float)blockRange >= (float)tileTargetY);
++
++        if (ToolManager.GetTool<InfiniteReachTool>().Enabled || BuilderModeTool.Enabled)
++            blockedByRangeCheck = false;
++
++        if (tileToCreate < 0 || blockedByRangeCheck)
+         {
+             return;
+         }
+@@ -39993,7 +_,7 @@
+             }
+         }
+ 
+-        if (canUse && ((!tile.active() && !flag) || (Main.tileCut[tile.type] && tile.type != 484) || (tile.type >= 373 && tile.type <= 375) || tile.type == 461 || tileToCreate == 199 || tileToCreate == 23 || tileToCreate == 662 || tileToCreate == 661 || tileToCreate == 2 || tileToCreate == 109 || tileToCreate == 60 || tileToCreate == 70 || tileToCreate == 633 || Main.tileMoss[tileToCreate] || TileID.Sets.BreakableWhenPlacing[tile.type]) && ItemTimeIsZero && itemAnimation > 0 && controlUseItem)
++        if (canUse && ((!tile.active() && !flag) || (Main.tileCut[tile.type] && tile.type != 484) || (tile.type >= 373 && tile.type <= 375) || tile.type == 461 || tileToCreate == 199 || tileToCreate == 23 || tileToCreate == 662 || tileToCreate == 661 || tileToCreate == 2 || tileToCreate == 109 || tileToCreate == 60 || tileToCreate == 70 || tileToCreate == 633 || Main.tileMoss[tileToCreate] || TileID.Sets.BreakableWhenPlacing[tile.type]) && (ItemTimeIsZero && itemAnimation > 0 || BuilderModeTool.Enabled) && controlUseItem)
+         {
+             bool canPlace = false;
+             bool newObjectType = false;
+@@ -41535,6 +_,9 @@
+             {
+                 canPlace = true;
+             }
++
++            if (BuilderModeTool.Enabled)
++                canPlace = true;
+         }
+ 
+         if (flag && Main.tile[tileTargetX, tileTargetY].active())
+@@ -42060,7 +_,12 @@
+ 
+     private void PlaceThing_PaintScrapper()
+     {
+-        if (ItemID.Sets.IsPaintScraper[inventory[selectedItem].type] && position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX && (position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX && position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY && (position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY)
++        bool allowedByRangeCheck = position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX && (position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX && position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY && (position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY;
++
++        if (ToolManager.GetTool<InfiniteReachTool>().Enabled || BuilderModeTool.Enabled)
++            allowedByRangeCheck = true;
++
++        if (ItemID.Sets.IsPaintScraper[inventory[selectedItem].type] && allowedByRangeCheck)
+         {
+             int num = tileTargetX;
+             int num2 = tileTargetY;
+@@ -42080,7 +_,7 @@
+         }
+ 
+         cursorItemIconEnabled = true;
+-        if (!ItemTimeIsZero || itemAnimation <= 0 || !controlUseItem)
++        if (((!ItemTimeIsZero || itemAnimation <= 0) && !BuilderModeTool.Enabled) || !controlUseItem)
+         {
+             return;
+         }
+@@ -42135,7 +_,7 @@
+         }
+ 
+         cursorItemIconEnabled = true;
+-        if (ItemTimeIsZero && itemAnimation > 0 && controlUseItem)
++        if ((BuilderModeTool.Enabled || ItemTimeIsZero && itemAnimation > 0) && controlUseItem)
+         {
+             if (WorldGen.paintTile(x, y, 0, broadCast: true) || WorldGen.paintCoatTile(x, y, 0, broadcast: true))
+             {
+@@ -42150,7 +_,12 @@
+ 
+     private void PlaceThing_PaintRoller()
+     {
+-        if ((inventory[selectedItem].type != 1072 && inventory[selectedItem].type != 1544) || !(position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY))
++        bool blockedByRangeCheck = !(position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY);
++
++        if (ToolManager.GetTool<InfiniteReachTool>().Enabled || BuilderModeTool.Enabled)
++            blockedByRangeCheck = false;
++
++        if ((inventory[selectedItem].type != 1072 && inventory[selectedItem].type != 1544) || blockedByRangeCheck)
+         {
+             return;
+         }
+@@ -42160,7 +_,7 @@
+         if (Main.tile[num, num2] != null && Main.tile[num, num2].wall > 0)
+         {
+             cursorItemIconEnabled = true;
+-            if (ItemTimeIsZero && itemAnimation > 0 && controlUseItem)
++            if ((BuilderModeTool.Enabled || ItemTimeIsZero && itemAnimation > 0) && controlUseItem)
+             {
+                 TryPainting(num, num2, paintingAWall: true);
+             }
+@@ -42169,7 +_,12 @@
+ 
+     private void PlaceThing_Paintbrush()
+     {
+-        if ((inventory[selectedItem].type != 1071 && inventory[selectedItem].type != 1543) || !(position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY))
++        bool blockedByRangeCheck = !(position.X / 16f - (float)tileRangeX - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetX) || !((position.X + (float)width) / 16f + (float)tileRangeX + (float)inventory[selectedItem].tileBoost - 1f + (float)blockRange >= (float)tileTargetX) || !(position.Y / 16f - (float)tileRangeY - (float)inventory[selectedItem].tileBoost - (float)blockRange <= (float)tileTargetY) || !((position.Y + (float)height) / 16f + (float)tileRangeY + (float)inventory[selectedItem].tileBoost - 2f + (float)blockRange >= (float)tileTargetY);
++
++        if (ToolManager.GetTool<InfiniteReachTool>().Enabled || BuilderModeTool.Enabled)
++            blockedByRangeCheck = false;
++
++        if ((inventory[selectedItem].type != 1071 && inventory[selectedItem].type != 1543) || blockedByRangeCheck)
+         {
+             return;
+         }
+@@ -42179,7 +_,7 @@
+         if (Main.tile[num, num2] != null && Main.tile[num, num2].active())
+         {
+             cursorItemIconEnabled = true;
+-            if (ItemTimeIsZero && itemAnimation > 0 && controlUseItem)
++            if ((BuilderModeTool.Enabled || ItemTimeIsZero && itemAnimation > 0) && controlUseItem)
+             {
+                 TryPainting(num, num2);
+             }
 @@ -43006,7 +_,7 @@
          return num;
      }
@@ -222,6 +360,32 @@
      {
          baitPower = 0;
          baitType = 0;
+@@ -44001,6 +_,7 @@
+                 lastVisualizedSelectedItem = item.Clone();
+             }
+ 
++            bool noConsumeInBuilderMode = BuilderModeTool.Enabled && (item.createTile >= 0 || item.createWall >= 0);
+             if (whoAmI == Main.myPlayer)
+             {
+                 if (!dontConsumeWand && itemTime == (int)((float)item.useTime * tileSpeed) && item.tileWand > 0)
+@@ -44060,7 +_,7 @@
+ 
+                     if (flag6)
+                     {
+-                        if (item.stack > 0)
++                        if (item.stack > 0 && !noConsumeInBuilderMode)
+                         {
+                             item.stack--;
+                         }
+@@ -44073,7 +_,7 @@
+                     }
+                 }
+ 
+-                if (item.stack <= 0 && itemAnimation == 0)
++                if (item.stack <= 0 && itemAnimation == 0 && !noConsumeInBuilderMode)
+                 {
+                     inventory[selectedItem] = new Item();
+                 }
 @@ -56367,8 +_,6 @@
              oldAdjTile[n] = false;
          }
