@@ -1582,7 +1582,7 @@
          }
  
          InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
-@@ -61586,13 +_,54 @@
+@@ -61586,13 +_,60 @@
      {
      }
  
@@ -1596,13 +1596,19 @@
 +            {
 +                if (Platform.IsWindows)
 +                {
-+                    if (InactiveSleepTimer is null)
++                    InactiveSleepTimer ??= new Microsoft.Xna.Framework.Timing.WaitableTimer();
++
++                    Stopwatch sw = new Stopwatch();
++
++                    sw.Start();
++
++                    while (sw.Elapsed < InactiveSleepTime)
 +                    {
-+                        InactiveSleepTimer = new Microsoft.Xna.Framework.Timing.WaitableTimer();
++                        InactiveSleepTimer.SetRelativeTimeSpan(InactiveSleepTime - sw.Elapsed);
++                        InactiveSleepTimer.WaitOne();
 +                    }
 +
-+                    InactiveSleepTimer.Set(DateTime.UtcNow.Add(InactiveSleepTime).ToFileTimeUtc());
-+                    InactiveSleepTimer.WaitOne();
++                    sw.Stop();
 +                }
 +                else
 +                {
