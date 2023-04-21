@@ -9,14 +9,23 @@
      }
  
      public void SetLanguage(GameCulture culture)
-@@ -218,14 +_,13 @@
+@@ -218,14 +_,21 @@
      public void LoadLanguageFromFileTextCsv(string fileText)
      {
          using TextReader reader = new StringReader(fileText);
 -        using CsvReader csvReader = new CsvReader(reader);
 -        csvReader.Configuration.HasHeaderRecord = true;
+-        if (!csvReader.ReadHeader())
 +        using CsvReader csvReader = new CsvReader(reader, new CsvHelper.Configuration.CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture) { HasHeaderRecord = true, });
-         if (!csvReader.ReadHeader())
++
++        try
++        {
++            if (!csvReader.ReadHeader())
++            {
++                return;
++            }
++        }
++        catch (Exception)
          {
              return;
          }
