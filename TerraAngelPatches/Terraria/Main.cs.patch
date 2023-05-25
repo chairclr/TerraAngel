@@ -1582,7 +1582,7 @@
          }
  
          InitTargets(base.GraphicsDevice.PresentationParameters.BackBufferWidth, base.GraphicsDevice.PresentationParameters.BackBufferHeight);
-@@ -61586,13 +_,60 @@
+@@ -61586,13 +_,36 @@
      {
      }
  
@@ -1594,40 +1594,16 @@
          {
 +            if (!gameMenu && !IsActive && InactiveSleepTime > TimeSpan.Zero)
 +            {
-+                if (Platform.IsWindows)
++                Stopwatch sw = new Stopwatch();
++
++                sw.Start();
++
++                while (sw.Elapsed < InactiveSleepTime)
 +                {
-+                    InactiveSleepTimer ??= new Microsoft.Xna.Framework.Timing.WaitableTimer();
-+
-+                    Stopwatch sw = new Stopwatch();
-+
-+                    sw.Start();
-+
-+                    while (sw.Elapsed < InactiveSleepTime)
-+                    {
-+                        InactiveSleepTimer.SetRelativeTimeSpan(InactiveSleepTime - sw.Elapsed);
-+                        InactiveSleepTimer.WaitOne();
-+                    }
-+
-+                    sw.Stop();
++                    Thread.Sleep(1);
 +                }
-+                else
-+                {
-+                    Stopwatch sw = new Stopwatch();
 +
-+                    sw.Start();
-+
-+                    while (sw.Elapsed < InactiveSleepTime)
-+                    {
-+                        Thread.Sleep(1);
-+                    }
-+
-+                    while (sw.Elapsed < InactiveSleepTime)
-+                    {
-+                        Thread.SpinWait(1);
-+                    }
-+
-+                    sw.Stop();
-+                }
++                sw.Stop();
 +            }
 +
 +            ClientLoader.MainRenderer?.PreUpdate();
