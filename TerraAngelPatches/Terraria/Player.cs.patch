@@ -25,7 +25,7 @@
  
      public void Yoraiz0rEye()
      {
-+        if (OptimizationTool.OptimizationToolCache?.DisableDust ?? false || ClientConfig.Settings.IgnoreReLogicBullshit) return;
++        if ((OptimizationTool.OptimizationToolCache?.DisableDust ?? false) || ClientConfig.Settings.IgnoreReLogicBullshit) return;
          int num = 0;
          num += bodyFrame.Y / 56;
          if (num >= Main.OffsetsPlayerHeadgear.Length)

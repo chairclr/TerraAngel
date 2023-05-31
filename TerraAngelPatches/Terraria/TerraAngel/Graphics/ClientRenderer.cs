@@ -239,6 +239,9 @@ public class ClientRenderer : ImGuiRenderer
 
     public void Draw()
     {
+        if (Main.hideUI && !Main.gameMenu)
+            return;
+
         ImGuiIOPtr io = ImGui.GetIO();
 
         if (InputSystem.IsKeyPressed(ClientConfig.Settings.ToggleUIVisibility) && !InputSystem.Ctrl)
