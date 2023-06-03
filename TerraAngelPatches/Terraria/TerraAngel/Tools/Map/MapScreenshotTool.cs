@@ -24,7 +24,7 @@ public class MapScreenshotTool : Tool
 
     public override void DrawUI(ImGuiIOPtr io)
     {
-        ImGui.SliderInt("Pixels Per Tile", ref PixelsPerTile, 1, 32);
+        ImGui.SliderInt("Map Screenshot Pixels per Tile", ref PixelsPerTile, 1, 32);
     }
 
     public override void Update()
@@ -48,9 +48,13 @@ public class MapScreenshotTool : Tool
 
                 if (SelectingArea)
                 {
+                    ScreenshotOrigin = Vector2.Clamp(ScreenshotOrigin, Vector2.Zero, new Vector2(Main.maxTilesX, Main.maxTilesY));
+
                     ImDrawListPtr drawList = ImGui.GetBackgroundDrawList();
                     Vector2 mousePos = (Util.ScreenToWorldFullscreenMap(InputSystem.MousePosition) / 16f);
                     Vector2i screenshotOrigin = ScreenshotOrigin;
+
+                    mousePos = Vector2.Clamp(mousePos, Vector2.Zero, new Vector2(Main.maxTilesX, Main.maxTilesY));
 
                     drawList.DrawTileRect((Vector2i)screenshotOrigin, (Vector2i)mousePos, new Color(1f, 0f, 0f, 0.7f).PackedValue);
 
