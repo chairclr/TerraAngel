@@ -356,6 +356,7 @@ public class ChatWindow : ClientWindow
     {
         OpenedThisFrame = false;
         ClosedThisFrame = false;
+
         if (!ImGui.GetIO().WantCaptureKeyboard
          && InputSystem.IsKeyPressedRaw(ToggleKey)
          && !InputSystem.IsKeyDownRaw(Keys.LeftAlt)

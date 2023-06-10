@@ -1,4 +1,5 @@
-﻿using TerraAngel.WorldEdits;
+﻿using System;
+using TerraAngel.WorldEdits;
 
 namespace TerraAngel.UI.ClientWindows;
 
@@ -97,7 +98,7 @@ public class DrawWindow : ClientWindow
                                 if (esp.NPCBoxes)
                                 {
                                     // as per request of an anonymous user, NPC net offset drawing
-                                    if (!currentNPC.position.HasNaNs())
+                                    if (!currentNPC.position.ContainsInvalidValues())
                                     {
                                         Vector2 minNetScreenPos = Util.WorldToScreenDynamicPixelPerfect(currentNPC.TopLeft);
                                         Vector2 maxNetScreenPos = Util.WorldToScreenDynamicPixelPerfect(currentNPC.BottomRight);
@@ -117,12 +118,15 @@ public class DrawWindow : ClientWindow
                                 Item currentItem = Main.item[i];
                                 if (esp.ItemBoxes)
                                 {
-                                    Vector2 minScreenPos = Util.WorldToScreenDynamicPixelPerfect(currentItem.TopLeft);
-                                    Vector2 maxScreenPos = Util.WorldToScreenDynamicPixelPerfect(currentItem.BottomRight);
-                                    // dont draw if its off screen lol
-                                    if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                    if (!currentItem.position.ContainsInvalidValues())
                                     {
-                                        drawList.AddRect(minScreenPos, maxScreenPos, esp.ItemColor.PackedValue);
+                                        Vector2 minScreenPos = Util.WorldToScreenDynamicPixelPerfect(currentItem.TopLeft);
+                                        Vector2 maxScreenPos = Util.WorldToScreenDynamicPixelPerfect(currentItem.BottomRight);
+
+                                        if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                        {
+                                            drawList.AddRect(minScreenPos, maxScreenPos, esp.ItemColor.PackedValue);
+                                        }
                                     }
                                 }
                             }
@@ -132,7 +136,6 @@ public class DrawWindow : ClientWindow
                             Projectile currentProjectile = Main.projectile[i];
                             if (esp.ProjectileBoxes)
                             {
-
                                 Rectangle myRect = new Rectangle((int)currentProjectile.position.X, (int)currentProjectile.position.Y, currentProjectile.width, currentProjectile.height);
 
                                 if (currentProjectile.type == 101)
@@ -188,12 +191,15 @@ public class DrawWindow : ClientWindow
                                     myRect.Height += num3 * 2;
                                 }
 
-                                Vector2 minScreenPos = Util.WorldToScreenDynamicPixelPerfect(myRect.TopLeft());
-                                Vector2 maxScreenPos = Util.WorldToScreenDynamicPixelPerfect(myRect.BottomRight());
-
-                                if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                if (!myRect.Location.ToVector2().ContainsInvalidValues() && !myRect.Size().ContainsInvalidValues())
                                 {
-                                    drawList.AddRect(minScreenPos, maxScreenPos, esp.ProjectileColor.PackedValue);
+                                    Vector2 minScreenPos = Util.WorldToScreenDynamicPixelPerfect(myRect.TopLeft());
+                                    Vector2 maxScreenPos = Util.WorldToScreenDynamicPixelPerfect(myRect.BottomRight());
+
+                                    if (Util.IsRectOnScreen(minScreenPos, maxScreenPos, io.DisplaySize))
+                                    {
+                                        drawList.AddRect(minScreenPos, maxScreenPos, esp.ProjectileColor.PackedValue);
+                                    }
                                 }
                             }
                         }
@@ -225,16 +231,23 @@ public class DrawWindow : ClientWindow
             {
                 Vector2 mousePos = Util.ScreenToWorldDynamic(InputSystem.MousePosition) / 16f;
 
-                if (worldEdit.RunEveryFrame)
+                try
                 {
-                    if (InputSystem.MiddleMouseDown)
+                    if (worldEdit.RunEveryFrame)
+                    {
+                        if (InputSystem.MiddleMouseDown)
+                        {
+                            worldEdit.Edit(mousePos);
+                        }
+                    }
+                    else if (InputSystem.MiddleMousePressed)
                     {
                         worldEdit.Edit(mousePos);
                     }
                 }
-                else if (InputSystem.MiddleMousePressed)
+                catch (Exception ex)
                 {
-                    worldEdit.Edit(mousePos);
+                    ClientLoader.Console.WriteError($"An error occuring WorldEdit::Edit\n{ex}");
                 }
             }
 

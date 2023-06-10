@@ -36,4 +36,14 @@ public static class TAVectorExtensions
         vec.Y = MathF.Ceiling(vec.Y);
         return vec;
     }
+    
+    public static bool ContainsInvalidValues(this Vector2 vec)
+    {
+        if (float.IsNaN(vec.X) || float.IsInfinity(vec.X) || float.IsNaN(vec.Y) || float.IsInfinity(vec.Y))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

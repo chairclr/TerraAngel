@@ -805,11 +805,13 @@
          TextSnippet[] array = null;
          if (drawingPlayerChat)
          {
-@@ -39199,7 +_,6 @@
+@@ -39198,8 +_,7 @@
+         new Vector2(num5, num6);
          DrawBestiaryIcon(num, num2);
          DrawEmoteBubblesButton(num, num2);
-         DrawTrashItemSlot(num, num2);
+-        DrawTrashItemSlot(num, num2);
 -        spriteBatch.DrawString(FontAssets.MouseText.Value, Lang.inter[4].Value, new Vector2(40f, 0f) + vector, new Microsoft.Xna.Framework.Color(mouseTextColor, mouseTextColor, mouseTextColor, mouseTextColor), 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
++        DrawTrashItemSlot(num, num2 + 9);
          inventoryScale = 0.85f;
          if (mouseX > 20 && mouseX < (int)(20f + 560f * inventoryScale) && mouseY > 20 && mouseY < (int)(20f + 280f * inventoryScale) && !PlayerInput.IgnoreMouseInterface)
          {

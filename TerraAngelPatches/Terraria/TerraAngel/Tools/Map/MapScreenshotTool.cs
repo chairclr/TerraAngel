@@ -24,7 +24,11 @@ public class MapScreenshotTool : Tool
 
     public override void DrawUI(ImGuiIOPtr io)
     {
-        ImGui.SliderInt("Map Screenshot Pixels per Tile", ref PixelsPerTile, 1, 32);
+        if (ImGui.CollapsingHeader("Map Screenshot Settings"))
+        {
+            ImGui.SliderInt("Map Pixel per Tile", ref PixelsPerTile, 1, 32);
+            PixelsPerTile = Math.Max(0, PixelsPerTile);
+        }
     }
 
     public override void Update()
@@ -101,6 +105,7 @@ public class MapScreenshotTool : Tool
                     Span2D<Color> bitmapSpan = new Span2D<Color>((void*)bitmapData.Scan0, bitmapData.Height, bitmapData.Width, 0);
 
                     ClientLoader.Console.WriteLine("Taking map screenshot");
+
                     for (int y = 0; y < size.Y; y++)
                     {
                         for (int x = 0; x < size.X; x++)

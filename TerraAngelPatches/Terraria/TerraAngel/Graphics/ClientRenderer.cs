@@ -49,6 +49,7 @@ public class ClientRenderer : ImGuiRenderer
     {
         TileUtil.Init();
         RebuildFontAtlas();
+        AddWindow(ClientLoader.ChatWindow = new ChatWindow());
         ClientLoader.ConsoleWindow = (ConsoleWindow)AddWindow(new ConsoleWindow());
 
         Main.instance.Exiting += (args, o) =>
@@ -154,7 +155,6 @@ public class ClientRenderer : ImGuiRenderer
         AddWindow(new StatsWindow());
         AddWindow(NetMessageWindow.Instance);
         AddWindow(InspectorTool.InspectorWindow);
-        AddWindow(ClientLoader.ChatWindow = new ChatWindow());
         AddWindow(new StyleEditorWindow());
         AddWindow(new TimingMetricsWindow());
     }
