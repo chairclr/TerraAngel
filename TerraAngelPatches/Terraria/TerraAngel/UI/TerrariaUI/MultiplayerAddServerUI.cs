@@ -63,7 +63,7 @@ public class MultiplayerAddServerUI : UIState, IHaveBackButtonCommand
 
         RootElement.Append(ServerIPText);
 
-        ServerIPInput = new UIInputText("", new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' }, true)
+        ServerIPInput = new UIInputText("", new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '-' }, true)
         {
             Top = { Pixels = 240f + ServerIPText.GetDimensions().Height + 10f },
             Width = { Percent = 0.7f, Pixels = -5f },
