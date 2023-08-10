@@ -361,22 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-
-# stuff
-src/
-src_*/
-
-Build/
-
-!TerraAngelPatches/Terraria/Terraria.sln
-!TerraAngelSetup/TerraAngelSetup/TerraAngelSetup.sln
-
-build_log.txt
-build_log_*.txt
-
-!TerraAngelPatches/Terraria/Libraries/x64
-!TerraAngelPatches/Terraria/Libraries/x86
-!TerraAngelPatches/Terraria/Libraries/*/x64
-!TerraAngelPatches/Terraria/Libraries/*/x86
-TerraAngelPatches/Terraria/Properties/launchSettings.json
-TerraAngelSetup/TerraAngelSetup/Properties/launchSettings.json
