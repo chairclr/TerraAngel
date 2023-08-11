@@ -28,8 +28,8 @@ internal class Decompiler
         }
 
         Directory.CreateDirectory(OutputDirectory);
-        Directory.CreateDirectory(Path.Combine(OutputDirectory, "Terraria", "Terraria"));
-        Directory.CreateDirectory(Path.Combine(OutputDirectory, "Terraria", "ReLogic"));
+        Directory.CreateDirectory(Path.Combine(OutputDirectory, "Terraria"));
+        Directory.CreateDirectory(Path.Combine(OutputDirectory, "ReLogic"));
     }
 
     public void Decompile()
@@ -57,11 +57,11 @@ internal class Decompiler
 
         projectDecompiler.ProgressIndicator = new ConsoleProgressReporter();
 
-        projectDecompiler.DecompileProject(mainModule, Path.Combine(OutputDirectory, "Terraria", "Terraria"));
+        projectDecompiler.DecompileProject(mainModule, Path.Combine(OutputDirectory, "Terraria"));
 
         projectDecompiler.ProgressIndicator = new ConsoleProgressReporter();
 
-        projectDecompiler.DecompileProject(relogicModule, Path.Combine(OutputDirectory, "Terraria", "ReLogic"));
+        projectDecompiler.DecompileProject(relogicModule, Path.Combine(OutputDirectory, "ReLogic"));
     }
 
     public static void Decompile(string targetAssembly, string outputDirectory)
