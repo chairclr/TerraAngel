@@ -5,3 +5,5 @@ obj/
 Properties/
 
 .vs/
+
+temp/

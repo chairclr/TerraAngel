@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Diagnostics;
+using CommandLine;
 
 namespace TerraAngel.Installer;
 
@@ -9,7 +10,8 @@ internal class Program
         [Option('d', "decomp-target", Required = false, HelpText = "Target Terraria executable for decompilation.")]
         public string? DecompilationTarget { get; set; }
 
-
+        [Option('o', "decomp-output", Required = false, HelpText = "Output directory for decompilation.")]
+        public string DecompilationOutputDirectory { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "decomp");
     }
 
     private static void Main(string[] args)
@@ -37,5 +39,13 @@ internal class Program
         }
 
         Console.WriteLine($"Target Terraria executable: {settings.DecompilationTarget}");
+
+        Console.WriteLine($"Decompiling {settings.DecompilationTarget} into {settings.DecompilationOutputDirectory}");
+
+        Stopwatch sw = Stopwatch.StartNew();
+        Decompiler.Decompile(settings.DecompilationTarget, settings.DecompilationOutputDirectory);
+        sw.Stop();
+
+        Console.WriteLine($"Decompiled Terraria. Elapsed: {sw.Elapsed.TotalSeconds}s");
     }
 }
