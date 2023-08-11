@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using DiffMatchPatch;
-using ICSharpCode.Decompiler.Metadata;
+﻿using DiffMatchPatch;
 
 namespace TerraAngel.Installer;
 
@@ -30,6 +28,9 @@ internal class Differ
     {
         diff_match_patch dmp = new diff_match_patch();
 
+        // 42 solves all problems
+        dmp.Patch_Margin = 42;
+
         List<Action> workActions = new List<Action>();
 
         foreach (LocalPath path in DirectoryUtility.EnumerateFiles(TargetDirectory).Where(x => !x.RelativePath.Split('/', '\\').Any(x => x == "bin" || x == "obj" || x == ".vs")))
@@ -40,25 +41,21 @@ internal class Differ
             {
                 workActions.Add(() =>
                 {
-                    List<Diff> diffs = dmp.diff_main(File.ReadAllText(assumedSourcePath), File.ReadAllText(path.FullPath));
+                    List<Patch> diffs = dmp.patch_make(File.ReadAllText(assumedSourcePath), File.ReadAllText(path.FullPath));
 
-                    bool noDifference = diffs.Count == 1 && diffs.Single().operation == Operation.EQUAL;
-
-                    if (!noDifference)
-                    { 
-                        string text = dmp.diff_toDelta(diffs);
-
+                    if (diffs.Count != 0)
+                    {
                         string outputPath = Path.Combine(OutputDirectory, $"{path.RelativePath}.patch");
 
                         Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                        File.WriteAllText(outputPath, text);
+                        File.WriteAllText(outputPath, dmp.patch_toText(diffs));
                     }
                 });
             }
             else
             {
-                workActions.Add(() => 
+                workActions.Add(() =>
                 {
                     DirectoryUtility.CopyFile(path.FullPath, Path.Combine(OutputDirectory, path.RelativePath));
                 });
