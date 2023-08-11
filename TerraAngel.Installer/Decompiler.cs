@@ -99,6 +99,7 @@ internal class Decompiler
 
             float percent = value.UnitsCompleted / (float)value.TotalUnits;
 
+            // Only print percentage once it has changed by > 1%
             if (MathF.Abs(LastPercent - percent) > 0.01f)
             {
                 Console.WriteLine($"{$"{percent * 100f:F0}%",-3} Completed");

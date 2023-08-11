@@ -7,7 +7,7 @@ internal class Program
 {
     public class InstallSettings
     {
-        [Option('d', "decomp-target", Required = false, HelpText = "Target Terraria executable for decompilation.")]
+        [Option('t', "decomp-target", Required = false, HelpText = "Target Terraria executable for decompilation.")]
         public string? DecompilationTarget { get; set; }
 
         [Option('o', "decomp-output", Required = false, HelpText = "Output directory for decompilation.")]
@@ -47,5 +47,7 @@ internal class Program
         sw.Stop();
 
         Console.WriteLine($"Decompiled Terraria. Elapsed: {sw.Elapsed.TotalSeconds}s");
+
+
     }
 }
