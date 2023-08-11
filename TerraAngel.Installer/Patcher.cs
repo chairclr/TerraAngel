@@ -50,8 +50,26 @@ internal class Patcher
 
                         (string patchedText, bool[] success) = ((string)rawPatchOutput[0], (bool[])rawPatchOutput[1]);
 
-                        successCount += success.Count(x => x);
-                        failureCount += success.Count(x => !x);
+                        int patchFailures = success.Count(x => !x);
+
+                        successCount += success.Length - patchFailures;
+                        failureCount += patchFailures;
+
+                        if (patchFailures > 0)
+                        {
+                            for (int i = 0; i < success.Length; i++)
+                            {
+                                if (success[i])
+                                {
+                                    continue;
+                                }
+
+                                Patch failedPatch = patches[i];
+
+                                Console.WriteLine($"Error during patching ({path.RelativePath}):");
+                                failedPatch.ToString();
+                            }
+                        }
 
                         Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                         File.WriteAllText(outputPath, patchedText);
