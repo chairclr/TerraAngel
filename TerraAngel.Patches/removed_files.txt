@@ -1,0 +1,9 @@
+Terraria\Terraria.Libraries.CsvHelper.CsvHelper.dll
+Terraria\Terraria.Libraries.DotNetZip.Ionic.Zip.CF.dll
+Terraria\Terraria.Libraries.JSON.NET.Newtonsoft.Json.dll
+Terraria\Terraria.Libraries.MP3Sharp.MP3Sharp.dll
+Terraria\Terraria.Libraries.NVorbis.NVorbis.dll
+Terraria\Terraria.Libraries.NVorbis.System.ValueTuple.dll
+Terraria\Terraria.Libraries.RailSDK.Windows.RailSDK.Net.dll
+Terraria\Terraria.Libraries.ReLogic.ReLogic.dll
+Terraria\Terraria.Libraries.Steamworks.NET.Windows.Steamworks.NET.dll

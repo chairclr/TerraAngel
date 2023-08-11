@@ -1,0 +1,15 @@
+@@ -71,370 +71,200 @@
+    %3cAssemblyName%3eTerraria%3c/AssemblyName%3e%0d%0a
+-    %3cGenerateAssemblyInfo%3eFalse%3c/GenerateAssemblyInfo%3e%0d%0a    %3cOutputType%3eWinExe%3c/OutputType%3e%0d%0a    %3cUseWindowsForms%3eTrue%3c/UseWindowsForms%3e%0d%0a
+     %3cTargetFramework%3enet
+-4
++8.
+ 0%3c/TargetFramework%3e%0d%0a    %3cPlatformTarget%3e
+-x86
++AnyCPU
+ %3c/PlatformTarget%3e%0d%0a
+-  %3c/PropertyGroup%3e%0d%0a  %3cPropertyGroup%3e%0d%0a
+     %3cLangVersion%3e
+-11.0
++preview
+ %3c/LangVersion%3e%0d%0a    %3cAllowUnsafeBlocks%3eTru

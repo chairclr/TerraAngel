@@ -39,13 +39,58 @@ internal class Program
 
         [Option("patch-output", Required = false, HelpText = "Path to output for patched source")]
         public string PatchOutputPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "src");
+
+        public bool CompleteInstallation { get; set; } = false;
     }
 
     private static void Main(string[] args)
     {
-        ParserResult<InstallSettings> result = Parser.Default.ParseArguments<InstallSettings>(args);
+        if (args.Length == 0)
+        {
+            InstallSettings settings = new InstallSettings();
+            Console.Write("No arguments supplied");
 
-        result.WithParsed(Run);
+            while (true)
+            {
+                Console.Write("Do you want to run a complete installation? (y/n): ");
+                string? str = Console.ReadLine();
+
+                bool validAnswer = false;
+
+                switch (str)
+                {
+                    case "y":
+                    case "yes":
+                    case "sure":
+                    case "of course":
+                    case "yeah":
+                    case "yuh":
+                        validAnswer = true;
+                        break;
+                    case "n":
+                    case "no":
+                    case "nah":
+                    case "definetly not":
+                    case "noo":
+                    case "nooo":
+                    case "noooo":
+                    case "fuck no":
+                        validAnswer = true;
+                        break;
+                }
+
+                if (validAnswer)
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            ParserResult<InstallSettings> result = Parser.Default.ParseArguments<InstallSettings>(args);
+
+            result.WithParsed(Run);
+        }
     }
 
     private static void Run(InstallSettings settings)
