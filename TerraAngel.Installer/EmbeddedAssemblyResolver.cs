@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.Xml.Linq;
-using ICSharpCode.Decompiler.Metadata;
+﻿using ICSharpCode.Decompiler.Metadata;
 
 namespace TerraAngel.Installer;
 
@@ -42,7 +40,7 @@ internal class EmbeddedAssemblyResolver : IAssemblyResolver
         }
 
         module = FallbackResolver.Resolve(reference);
-        
+
         if (module is null)
         {
             throw new Exception($"Cound not resolve reference to {reference.FullName}");

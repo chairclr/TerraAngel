@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.IO;
 using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
+using Microsoft.Win32;
 
 namespace TerraAngel.Installer;
 

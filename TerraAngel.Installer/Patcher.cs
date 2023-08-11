@@ -1,5 +1,4 @@
-﻿using System.IO;
-using DiffMatchPatch;
+﻿using DiffMatchPatch;
 
 namespace TerraAngel.Installer;
 

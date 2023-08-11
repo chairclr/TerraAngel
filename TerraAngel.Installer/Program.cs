@@ -76,6 +76,7 @@ internal class Program
             sw.Stop();
 
             Console.WriteLine($"Finished Decompiling. Elapsed: {sw.Elapsed.TotalSeconds}s");
+            Console.WriteLine();
         }
 
         if (settings.Diff)
@@ -87,6 +88,7 @@ internal class Program
             sw.Stop();
 
             Console.WriteLine($"Finished Diffing. Elapsed: {sw.Elapsed.TotalSeconds}s");
+            Console.WriteLine();
         }
 
         if (settings.Patch)
@@ -98,6 +100,7 @@ internal class Program
             sw.Stop();
 
             Console.WriteLine($"Finished Patching. Elapsed: {sw.Elapsed.TotalSeconds}s");
+            Console.WriteLine();
         }
     }
 }
