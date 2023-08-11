@@ -73,11 +73,11 @@ internal class Decompiler
 
     sealed class ConsoleProgressReporter : IProgress<DecompilationProgress>
     {
-        private string? Title = null;
+        private string? Title;
 
-        private bool Updating = false;
+        private bool Updating;
 
-        private float LastPercent = 0f;
+        private float LastPercent;
 
         public void Report(DecompilationProgress value)
         {
