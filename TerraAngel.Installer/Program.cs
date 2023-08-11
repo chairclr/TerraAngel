@@ -26,7 +26,7 @@ internal class Program
         public string DiffTargetPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "src");
 
         [Option("diff-output", Required = false, HelpText = "Path to output directory for diffs")]
-        public string DiffOutputPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "src");
+        public string DiffOutputPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "TerraAngel.Patches");
 
         [Option('p', "patch", Required = false, HelpText = "Whether or not to apply patches")]
         public bool Patch { get; set; }
@@ -35,7 +35,7 @@ internal class Program
         public string PatchSourcePath { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "decomp");
 
         [Option("patch-diffs", Required = false, HelpText = "Path to patches to apply")]
-        public string PatchDiffPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "decomp");
+        public string PatchDiffPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "TerraAngel.Patches");
 
         [Option("patch-output", Required = false, HelpText = "Path to output for patched source")]
         public string PatchOutputPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "src");
