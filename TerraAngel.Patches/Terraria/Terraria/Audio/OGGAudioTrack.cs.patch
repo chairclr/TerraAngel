@@ -1,8 +1,12 @@
-@@ -1649,84 +1649,92 @@
- d FindLoops()%0d%0a%09%7b%0d%0a%09%09IDictionary%3cstring, I
+@@ -1629,104 +1629,120 @@
+ %0d%0a%09%7d%0d%0a%0d%0a%09private void FindLoops()%0d%0a%09%7b%0d%0a%09%09I
++ReadOnly
+ Dictionary%3cstring, I
 +ReadOnly
  List%3cstring%3e%3e all = _vorbisReader.Tags.All
-@@ -1857,84 +1857,92 @@
- e void TryReadingTag(IDictionary%3cstring, I
+@@ -1845,104 +1845,120 @@
+ End);%0d%0a%09%7d%0d%0a%0d%0a%09private void TryReadingTag(I
++ReadOnly
+ Dictionary%3cstring, I
 +ReadOnly
  List%3cstring%3e%3e tags, string entryName, ref 

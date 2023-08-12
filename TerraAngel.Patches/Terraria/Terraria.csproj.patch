@@ -1,4 +1,4 @@
-@@ -1,525 +1,433 @@
+@@ -1,525 +1,467 @@
  %3cProject Sdk=%22Microsoft.NET.Sdk
 -.WindowsDesktop
  %22%3e%0d%0a  %3cPropertyGroup%3e%0d%0a    %3cAssemblyName%3eTerraria%3c/AssemblyName%3e%0d%0a
@@ -15,23 +15,23 @@
 -11.0
 +preview
  %3c/LangVersion%3e%0d%0a    %3cAllowUnsafeBlocks%3eTrue%3c/AllowUnsafeBlocks%3e%0d%0a
-+    %3cNullable%3eenable%3c/Nullable%3e%0d%0a    %3cGenerateAssemblyInfo%3eFalse%3c/GenerateAssemblyInfo%3e%0d%0a
++    %3cNullable%3eenable%3c/Nullable%3e%0d%0a    %3cGenerateAssemblyInfo%3eFalse%3c/GenerateAssemblyInfo%3e%0d%0a    %3cOutputType%3eExe%3c/OutputType%3e%0d%0a
    %3c/PropertyGroup%3e%0d%0a
 +  %0d%0a
    %3cPropertyGroup%3e%0d%0a    %3cApplicationIcon%3eap
-@@ -521,84 +521,88 @@
+@@ -555,84 +555,88 @@
     %3cRootNamespace /%3e%0d%0a  %3c/PropertyGroup%3e%0d%0a
 +  %0d%0a
    %3cItemGroup%3e%0d%0a    %3cNone Remove=%22EmbeddedR
-@@ -721,870 +721,84 @@
+@@ -755,870 +755,84 @@
  IO.Data.ResourcePacksDefaultInfo.tsv%22 /%3e%0d%0a
 -    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.ReLogic.ReLogic.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.DotNetZip.Ionic.Zip.CF.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.JSON.NET.Newtonsoft.Json.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.CsvHelper.CsvHelper.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.NVorbis.NVorbis.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.NVorbis.System.ValueTuple.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.MP3Sharp.MP3Sharp.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.Steamworks.NET.Windows.Steamworks.NET.dll%22 /%3e%0d%0a    %3cNone Remove=%22EmbeddedResources%5cTerraria.Libraries.RailSDK.Windows.RailSDK.Net.dll%22 /%3e%0d%0a
      %3cNone Remove=%22EmbeddedResources%5cTerrar
-@@ -6964,1530 +6964,84 @@
+@@ -6998,1530 +6998,84 @@
  IO.Data.ResourcePacksDefaultInfo.tsv%22 /%3e%0d%0a
 -    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.ReLogic.ReLogic.dll%22 LogicalName=%22Terraria.Libraries.ReLogic.ReLogic.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.DotNetZip.Ionic.Zip.CF.dll%22 LogicalName=%22Terraria.Libraries.DotNetZip.Ionic.Zip.CF.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.JSON.NET.Newtonsoft.Json.dll%22 LogicalName=%22Terraria.Libraries.JSON.NET.Newtonsoft.Json.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.CsvHelper.CsvHelper.dll%22 LogicalName=%22Terraria.Libraries.CsvHelper.CsvHelper.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.NVorbis.NVorbis.dll%22 LogicalName=%22Terraria.Libraries.NVorbis.NVorbis.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.NVorbis.System.ValueTuple.dll%22 LogicalName=%22Terraria.Libraries.NVorbis.System.ValueTuple.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.MP3Sharp.MP3Sharp.dll%22 LogicalName=%22Terraria.Libraries.MP3Sharp.MP3Sharp.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.Steamworks.NET.Windows.Steamworks.NET.dll%22 LogicalName=%22Terraria.Libraries.Steamworks.NET.Windows.Steamworks.NET.dll%22 /%3e%0d%0a    %3cEmbeddedResource Include=%22EmbeddedResources%5cTerraria.Libraries.RailSDK.Windows.RailSDK.Net.dll%22 LogicalName=%22Terraria.Libraries.RailSDK.Windows.RailSDK.Net.dll%22 /%3e%0d%0a
      %3cEmbeddedResource Include=%22EmbeddedRes
-@@ -17698,1862 +17698,468 @@
+@@ -17732,1862 +17732,468 @@
  ent.Metadata.MaterialData.Tiles.json%22 /%3e%0d%0a
 -    %3cEmbeddedResource Include=%22EmbeddedResources%5cMicrosoft.Xna.Framework.RuntimeProfile%22 LogicalName=%22Microsoft.Xna.Framework.RuntimeProfile%22 /%3e%0d%0a
    %3c/ItemGroup%3e%0d%0a

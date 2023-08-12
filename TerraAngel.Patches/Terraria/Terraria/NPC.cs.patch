@@ -42,3 +42,13 @@
 -2
 +Extensions
  .SmoothStep(vector197, vector197 + vector1
+@@ -907181,85 +907181,94 @@
+ %09%09%09%09%09%09%09%7b%0d%0a%09%09%09%09%09%09%09%09Vector2 value13 = Vector
+-2
++Extensions
+ .CatmullRom(vector304 + vector307, vector3
+@@ -907306,85 +907306,94 @@
+ um1569);%0d%0a%09%09%09%09%09%09%09%09Vector2 value14 = Vector
+-2
++Extensions
+ .CatmullRom(vector304 + vector307, vector3
