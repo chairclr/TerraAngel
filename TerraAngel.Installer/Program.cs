@@ -192,6 +192,8 @@ internal class Program
 
                         string patchOutputDir = Path.Combine(tempDir, "src");
 
+                        Console.WriteLine("Setting up TerraAngel source");
+
                         RunCLI(new InstallSettings()
                         {
                             Decompile = true,
@@ -201,6 +203,10 @@ internal class Program
                             PatchSourcePath = decompDir,
                             PatchOutputPath = patchOutputDir
                         });
+
+                        Console.WriteLine("Building TerraAngel");
+
+                        SDKUtility.PublishProject(Path.Combine(patchOutputDir, "Terraria", "Terraria.csproj"), Path.Combine(tempDir, "build"));
                     }
                     validResult = true;
                     break;
