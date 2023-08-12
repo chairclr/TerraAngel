@@ -1,0 +1,5 @@
+@@ -3702,85 +3702,94 @@
+ um7)%0d%0a%09%09%09%09%7b%0d%0a%09%09%09%09%09Vector2 vector3 = Vector
+-2
++Extensions
+ .CatmullRom(value, vector, vector2, value2

@@ -1,0 +1,34 @@
+@@ -104,115 +104,84 @@
+ erraria.Net;%0d%0ausing Terraria.Net.Sockets;%0d
+-%0ausing Terraria.Social.WeGame;%0d
+ %0a%0d%0anamespace Terraria.Social.Steam;%0d%0a%0d%0apub
+@@ -1599,152 +1599,84 @@
+ uage.GetTextValue(%22Social.Joining%22);%0d%0a%09%09%09%09
+-WeGameHelper.WriteDebugString(%22 CheckParameters%ef%bc%8c lobby.join%22);%0d%0a%09%09%09%09
+ _lobby.Join(lobbySteamId, OnLobbyEntered);
+@@ -1743,139 +1743,84 @@
+ (Process process, ServerMode mode)%0d%0a%09%7b%0d%0a%09%09
+-WeGameHelper.WriteDebugString(%22LaunchLocalServer%22);%0d%0a%09%09
+ if (_lobby.State != 0)%0d%0a%09%09%7b%0d%0a%09%09%09_lobby.Lea
+@@ -3698,141 +3698,84 @@
+ t(GameLobbyJoinRequested_t result)%0d%0a%09%7b%0d%0a%09%09
+-WeGameHelper.WriteDebugString(%22 OnLobbyJoinRequest%22);%0d%0a%09%09
+ if (_lobby.State != 0)%0d%0a%09%09%7b%0d%0a%09%09%09_lobby.Lea
+@@ -4273,137 +4273,84 @@
+ LobbyEnter_t result, bool failure)%0d%0a%09%7b%0d%0a%09%09
+-WeGameHelper.WriteDebugString(%22 OnLobbyEntered%22);%0d%0a%09%09
+ SteamNetworking.AllowP2PPacketRelay(bAllow
+@@ -5493,137 +5493,84 @@
+ d SendAuthTicket(CSteamID address)%0d%0a%09%7b%0d%0a%09%09
+-WeGameHelper.WriteDebugString(%22 SendAuthTicket%22);%0d%0a%09%09
+ if (_authTicket == HAuthTicket.Invalid)%0d%0a%09
+@@ -6512,143 +6512,84 @@
+ il(P2PSessionConnectFail_t result)%0d%0a%09%7b%0d%0a%09%09
+-WeGameHelper.WriteDebugString(%22 OnSessionConnectFail%22);%0d%0a%09%09
+ Close(result.m_steamIDRemote);%0d%0a%09%7d%0d%0a%0d%0a%09pri
+@@ -6613,148 +6613,90 @@
+ ssionRequest(P2PSessionRequest_t result)%0d%0a
++
+ %09%7b%0d%0a%09%09
+-WeGameHelper.WriteDebugString(%22 OnP2PSessionRequest%22);%0d%0a%09%09
+ CSteamID steamIDRemote = result.m_steamIDR

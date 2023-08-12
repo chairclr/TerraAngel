@@ -1,0 +1,27 @@
+@@ -5768,241 +5768,460 @@
+ CsvReader csvReader = new CsvReader(reader
+-);%0d%0a%09%09csvRead
++, new CsvHelp
+ er.Configuration.
++CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)%0d%0a        %7b%0d%0a            
+ HasHeaderRecord = true
++,%0d%0a        %7d)
+ ;%0d%0a
++%0d%0a
+ %09%09if (
++csvReader.Read() && 
+ !csvReader.ReadHeader())%0d%0a%09%09%7b%0d%0a%09%09%09return;%0d%0a%09%09%7d%0d%0a
++%0d%0a        if (csvReader.HeaderRecord is null)%0d%0a        %7b%0d%0a            return;%0d%0a        %7d%0d%0a%0d%0a
+ %09%09string%5b%5d fieldHeaders = csvReader.
+-Field
+ Header
+-s
++Record
+ ;%0d%0a%09%09int num = -1;%0d%0a%09%09int num2 = -1;%0d%0a%09%09fo
+@@ -6530,125 +6530,227 @@
+ while (csvReader.Read())%0d%0a%09%09%7b%0d%0a%09%09%09string%5b%5d
++?
+  currentRecord = csvReader.
+-CurrentRecord;
++Parser.Record;%0d%0a%0d%0a            if (currentRecord is null)%0d%0a            %7b%0d%0a                continue;%0d%0a            %7d%0d%0a
+ %0d%0a%09%09%09if (currentRecord.Length %3e= num3)%0d%0a%09%09

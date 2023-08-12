@@ -1,0 +1,6 @@
+@@ -552,144 +552,147 @@
+ return HoverStatus.NotSelectable;%0d%0a%09%09%7d%0d%0a%09%09
+-Matrix matrix = 
+ Matrix.Invert(Main.GameViewMatrix.ZoomMatrix
++, out Matrix matrix
+ );%0d%0a%09%09Vector2 vector = Main.ReverseGravity

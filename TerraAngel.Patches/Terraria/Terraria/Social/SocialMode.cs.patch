@@ -1,0 +1,4 @@
+@@ -30,57 +30,47 @@
+ %0apublic enum SocialMode%0d%0a%7b%0d%0a%09None,%0d%0a%09Steam
+-,%0d%0a%09WeGame
+ %0d%0a%7d%0d%0a

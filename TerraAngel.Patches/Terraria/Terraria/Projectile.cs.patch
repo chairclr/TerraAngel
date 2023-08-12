@@ -1,0 +1,30 @@
+@@ -942257,85 +942257,94 @@
+ ft, clamped: true));%0d%0a%09%09%09velocity = Vector
+-2
++Extensions
+ .SmoothStep(velocity, value3, amount);%0d%0a%09%09
+@@ -967674,85 +967674,94 @@
+  (1f - num2 * 3f);%0d%0a%09%09base.Center = Vector
+-2
++Extensions
+ .CatmullRom(value, center, vector, value2,
+@@ -971322,85 +971322,94 @@
+ += 1f / ai%5b1%5d;%0d%0a%09%09Vector2 vector3 = Vector
+-2
++Extensions
+ .CatmullRom(amount: Utils.Clamp(ai%5b0%5d, 0f,
+@@ -1059863,85 +1059863,94 @@
+  = Vector2.Zero;%0d%0a%09%09%09%09base.Center = Vector
+-2
++Extensions
+ .SmoothStep(base.Center, idleSpot2, 0.45f)
+@@ -1060463,85 +1060463,94 @@
+ y = Vector2.Zero;%0d%0a%09%09%09base.Center = Vector
+-2
++Extensions
+ .SmoothStep(base.Center, idleSpot3, 0.45f)
+@@ -1707638,85 +1707638,94 @@
+ %09%09%09%09%09%7b%0d%0a%09%09%09%09%09%09%09%09%09Vector2 vector70 = Vector
+-2
++Extensions
+ .SmoothStep(vector69, value12, num832 / nu

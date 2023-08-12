@@ -1,0 +1,10 @@
+@@ -4001,87 +4001,177 @@
+ );%0d%0a%09%09%09graphicsDevice.Clear(clearColor);%0d%0a
+-%09%09%09
++            Matrix.Invert(Main.GameViewMatrix.EffectMatrix, out Matrix result);%0d%0a            
+ Main.spriteBatch.Begin(SpriteSortMode.Imme
+@@ -4251,131 +4251,90 @@
+ .Default, RasterizerState.CullNone, null, 
+-Matrix.Invert(Main.GameViewMatrix.EffectMatrix)
++result
+ );%0d%0a%09%09%09Main.spriteBatch.Draw(renderTarget2
