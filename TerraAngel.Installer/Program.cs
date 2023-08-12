@@ -6,7 +6,7 @@ namespace TerraAngel.Installer;
 
 internal class Program
 {
-    public class InstallSettings
+    public class SetupSettings
     {
         [Option('d', "decompile", Required = false, HelpText = "Whether or not to decompile Terraria source")]
         public bool Decompile { get; set; }
@@ -62,13 +62,13 @@ internal class Program
         }
         else
         {
-            ParserResult<InstallSettings> result = Parser.Default.ParseArguments<InstallSettings>(args);
+            ParserResult<SetupSettings> result = Parser.Default.ParseArguments<SetupSettings>(args);
 
-            result.WithParsed(RunCLI);
+            result.WithParsed(RunSetup);
         }
     }
 
-    private static void RunCLI(InstallSettings settings)
+    private static void RunSetup(SetupSettings settings)
     {
         if (settings.DecompilationTarget is null)
         {
@@ -194,7 +194,7 @@ internal class Program
 
                         Console.WriteLine("Setting up TerraAngel source");
 
-                        RunCLI(new InstallSettings()
+                        RunSetup(new SetupSettings()
                         {
                             Decompile = true,
                             DecompilationOutputDirectory = decompDir,
