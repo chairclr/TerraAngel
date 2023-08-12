@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using System.Formats.Tar;
+using System.IO.Compression;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,6 +20,20 @@ public class ReleaseDownloader
         client.DefaultRequestHeaders.Add("User-Agent", "TerraAngel-Installer");
 
         return (await client.GetFromJsonAsync<ReleaseRoot>(APILatest))!;
+    }
+
+    public static async Task<string> DownloadRelease(ReleaseRoot release, string targetDirectory)
+    {
+        using HttpClient client = new HttpClient();
+
+        client.DefaultRequestHeaders.Add("User-Agent", "TerraAngel-Installer");
+
+        using Stream stream = await client.GetStreamAsync(release.TarballUrl);
+        using GZipStream gz = new GZipStream(stream, CompressionMode.Decompress);
+
+        TarFile.ExtractToDirectory(gz, targetDirectory, true);
+
+        return Directory.EnumerateDirectories(targetDirectory, "chairclr-TerraAngel-*", SearchOption.TopDirectoryOnly).Single();
     }
 
     public class ReleaseRoot

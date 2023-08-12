@@ -40,25 +40,35 @@ internal class Program
 
         [Option("patch-output", Required = false, HelpText = "Path to output for patched source")]
         public string PatchOutputPath { get; set; } = Path.Combine(Environment.CurrentDirectory, "temp", "src");
-
-        public bool CompleteInstallation { get; set; } = false;
     }
 
     private static void Main(string[] args)
     {
+
         if (args.Length == 0)
         {
+            List<string> sdks = SDKUtility.GetDotnetSDKList();
+
+            if (!sdks.Any(x => x.StartsWith("8.")))
+            {
+                Console.WriteLine("TerraAngel requires the .NET 8 SDK");
+                Console.WriteLine("Install the .NET 8 SDK here -> https://dotnet.microsoft.com/en-us/download/dotnet/8.0");
+                Console.WriteLine("Restart your computer after you do this, and re-run the installer");
+
+                return;
+            }
+
             HandleSelfContainedInstallation();
         }
         else
         {
             ParserResult<InstallSettings> result = Parser.Default.ParseArguments<InstallSettings>(args);
 
-            result.WithParsed(Run);
+            result.WithParsed(RunCLI);
         }
     }
 
-    private static void Run(InstallSettings settings)
+    private static void RunCLI(InstallSettings settings)
     {
         if (settings.DecompilationTarget is null)
         {
@@ -139,7 +149,7 @@ internal class Program
             }
             else
             {
-                HandleNewInstallation(latestReleaseVersion);
+                HandleNewInstallation(release, latestReleaseVersion);
             }
         }
         else
@@ -148,7 +158,7 @@ internal class Program
         }
     }
 
-    private static void HandleNewInstallation(Version latestReleaseVersion)
+    private static void HandleNewInstallation(ReleaseDownloader.ReleaseRoot release, Version latestReleaseVersion)
     {
         Console.WriteLine("No previous installation found");
 
@@ -165,7 +175,32 @@ internal class Program
                 case "sure":
                 case "yeah":
                     {
-                        throw new NotImplementedException();
+                        Console.WriteLine($"Setting up temporary files");
+
+                        string tempDir = Path.Combine(Path.GetTempPath(), "TerraAngel");
+
+                        if (Directory.Exists(tempDir))
+                        {
+                            Directory.Delete(tempDir, true);
+                        }
+
+                        Directory.CreateDirectory(tempDir);
+
+                        string releaseDir = DownloadRelease(release, latestReleaseVersion);
+
+                        string decompDir = Path.Combine(tempDir, "decomp");
+
+                        string patchOutputDir = Path.Combine(tempDir, "src");
+
+                        RunCLI(new InstallSettings()
+                        {
+                            Decompile = true,
+                            DecompilationOutputDirectory = decompDir,
+                            Patch = true,
+                            PatchDiffPath = Path.Combine(releaseDir, "TerraAngel.Patches"),
+                            PatchSourcePath = decompDir,
+                            PatchOutputPath = patchOutputDir
+                        });
                     }
                     validResult = true;
                     break;
@@ -219,6 +254,21 @@ internal class Program
                 break;
             }
         }
+    }
+
+    private static string DownloadRelease(ReleaseDownloader.ReleaseRoot release, Version latestReleaseVersion)
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "TerraAngel");
+
+        Directory.CreateDirectory(tempDir);
+
+        Console.WriteLine($"Downloading release {latestReleaseVersion}");
+
+        string downloadedPath = ReleaseDownloader.DownloadRelease(release, tempDir).Result;
+
+        Console.WriteLine($"Finished downloading release");
+
+        return downloadedPath;
     }
 
     private static bool TryGetPreviousInstallation([NotNullWhen(true)] out Installation installation)
