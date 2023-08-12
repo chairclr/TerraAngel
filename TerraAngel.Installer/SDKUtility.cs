@@ -41,7 +41,7 @@ internal class SDKUtility
         }
     }
 
-    public static void PublishProject(string projectPath, string outputDir)
+    public static bool PublishProject(string projectPath, string outputDir)
     {
         StringBuilder builder = new StringBuilder();
 
@@ -61,7 +61,7 @@ internal class SDKUtility
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "dotnet",
-                    Arguments = $"publish {projectPath} --ucr --nologo -v d -o {outputDir} -p:PublishSingleFile=true",
+                    Arguments = $"publish {projectPath} --ucr --nologo -v d -p:PublishSingleFile=true -o {outputDir}",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
@@ -85,15 +85,19 @@ internal class SDKUtility
 
                 Console.WriteLine($"Open an issue on GitHub with the build-log.txt file (located at: {logFile})");
             }
+            else
+            {
+                return true;
+            }
         }
         catch (Exception ex)
         {
-
             Console.WriteLine("An error occured during build process:");
             Console.WriteLine(ex.ToString());
         }
 
         File.WriteAllText(logFile, builder.ToString());
 
+        return false;
     }
 }

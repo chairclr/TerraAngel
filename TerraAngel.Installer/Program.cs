@@ -206,7 +206,12 @@ internal class Program
 
                         Console.WriteLine("Building TerraAngel");
 
-                        SDKUtility.PublishProject(Path.Combine(patchOutputDir, "Terraria", "Terraria.csproj"), Path.Combine(tempDir, "build"));
+                        bool buildSucceeded = SDKUtility.PublishProject(Path.Combine(patchOutputDir, "Terraria", "Terraria.csproj"), Path.Combine(tempDir, "build"));
+
+                        if (buildSucceeded)
+                        {
+                            throw new NotImplementedException();
+                        }
                     }
                     validResult = true;
                     break;
