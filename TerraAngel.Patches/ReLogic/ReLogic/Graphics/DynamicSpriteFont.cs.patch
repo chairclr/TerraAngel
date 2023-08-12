@@ -1,0 +1,11 @@
+@@ -4191,143 +4191,141 @@
+ osition.Y += (float)padding.Y * scale.Y;%0d%0a
+-%09%09%09
++            position = 
+ Vector2.Transform(
+-ref 
+ position,
+- ref
+  matrix
+-, out position
+ );%0d%0a%09%09%09position += startPosition;%0d%0a%09%09%09spri

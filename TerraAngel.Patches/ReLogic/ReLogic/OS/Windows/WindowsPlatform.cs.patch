@@ -1,0 +1,21 @@
+@@ -6,244 +6,189 @@
+  System;%0d%0ausing ReLogic.Localization.IME;%0d
++%0ausing ReLogic.OS.FNA;%0d
+ %0a%0d%0anamespace ReLogic.OS.Windows;%0d%0a%0d%0ainternal class WindowsPlatform : Platform%0d%0a%7b%0d%0a
+-%09private WindowsMessageHook _wndProcHook;%0d%0a%0d%0a%09private bool _disposedValue;%0d%0a%0d%0a
+ %09public WindowsPlatform()%0d%0a%09%09: base(Platfo
+@@ -208,84 +208,87 @@
+ s)%0d%0a%09%7b%0d%0a%09%09RegisterService((IClipboard)new 
++FNA
+ Clipboard());%0d%0a%09%09RegisterService((IPathSer
+@@ -317,97 +317,93 @@
+ );%0d%0a%09%09RegisterService((IWindowService)new 
++FNA
+ Window
+-Service
+ ());%0d%0a%09%09RegisterService((IImeService)new U
+@@ -476,480 +476,94 @@
+ lientServices(IntPtr windowHandle)%0d%0a%09%7b%0d%0a%09%09
+-if (_wndProcHook == null)%0d%0a%09%09%7b%0d%0a%09%09%09_wndProcHook = new WindowsMessageHook(windowHandle);%0d%0a%09%09%7d%0d%0a%09%09RegisterService((IImeService)new WindowsIme(_wndProcHook, windowHandle));%0d%0a%09%7d%0d%0a%0d%0a%09protected override void Dispose(bool disposing)%0d%0a%09%7b%0d%0a%09%09if (!_disposedValue)%0d%0a%09%09%7b%0d%0a%09%09%09if (disposing && _wndProcHook != null)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09_wndProcHook.Dispose();%0d%0a%09%09%09%09_wndProcHook = null;%0d%0a%09%09%09%7d%0d%0a%09%09%09_disposedValue = true;%0d%0a%09%09%09base.Dispose(disposing);%0d%0a%09%09%7d
++RegisterService((IImeService)new FNAIme());
+ %0d%0a%09%7d%0d%0a%7d%0d%0a
