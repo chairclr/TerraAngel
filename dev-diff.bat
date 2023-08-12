@@ -1,1 +1,1 @@
-dotnet run --project TerraAngel.Installer/TerraAngel.Installer.csproj "-f"
+dotnet run --project TerraAngel.Installer/TerraAngel.Installer.csproj "-f "

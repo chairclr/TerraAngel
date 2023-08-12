@@ -4,6 +4,11 @@ namespace TerraAngel.Installer;
 
 internal class Differ
 {
+    private static readonly string[] PatchableExtensions = new string[] 
+    {
+        ".cs", ".csproj", ".json", ".txt", ".tsv", ".csv", ".resx", ".config", ".targets", ".bat", ".sh"
+    };
+
     public readonly string SourceDirectory;
 
     public readonly string TargetDirectory;
@@ -39,19 +44,29 @@ internal class Differ
 
             if (File.Exists(assumedSourcePath))
             {
-                workActions.Add(() =>
+                if (PatchableExtensions.Any(x => x == Path.GetExtension(path.RelativePath)))
                 {
-                    List<Patch> diffs = dmp.patch_make(File.ReadAllText(assumedSourcePath), File.ReadAllText(path.FullPath));
-
-                    if (diffs.Count != 0)
+                    workActions.Add(() =>
                     {
-                        string outputPath = Path.Combine(OutputDirectory, $"{path.RelativePath}.patch");
+                        List<Patch> diffs = dmp.patch_make(File.ReadAllText(assumedSourcePath), File.ReadAllText(path.FullPath));
 
-                        Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+                        if (diffs.Count != 0)
+                        {
+                            string outputPath = Path.Combine(OutputDirectory, $"{path.RelativePath}.patch");
 
-                        File.WriteAllText(outputPath, dmp.patch_toText(diffs));
-                    }
-                });
+                            Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+
+                            File.WriteAllText(outputPath, dmp.patch_toText(diffs));
+                        }
+                    });
+                }
+                else if (!File.ReadAllBytes(assumedSourcePath).SequenceEqual(File.ReadAllBytes(path.FullPath)))
+                {
+                    workActions.Add(() =>
+                    {
+                        DirectoryUtility.CopyFile(path.FullPath, Path.Combine(OutputDirectory, path.RelativePath));
+                    });
+                }
             }
             else
             {
