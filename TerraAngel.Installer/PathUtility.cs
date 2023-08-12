@@ -13,6 +13,15 @@ internal static class PathUtility
 
     public static string TerrariaAppManifest = $"appmanifest_{TerrariaAppId}.acf";
 
+    public static readonly string TerraAngelDataPath;
+
+    static PathUtility()
+    {
+        TerraAngelDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TerraAngel");
+
+        Directory.CreateDirectory(TerraAngelDataPath);
+    }
+
     public static bool TryGetTerrariaInstall([NotNullWhen(true)] out string? terrariaInstall)
     {
         if (TryGetSteamDirectory(out string? steamDirectory))

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using CommandLine;
 
 namespace TerraAngel.Installer;
@@ -47,43 +48,7 @@ internal class Program
     {
         if (args.Length == 0)
         {
-            InstallSettings settings = new InstallSettings();
-            Console.Write("No arguments supplied");
-
-            while (true)
-            {
-                Console.Write("Do you want to run a complete installation? (y/n): ");
-                string? str = Console.ReadLine();
-
-                bool validAnswer = false;
-
-                switch (str)
-                {
-                    case "y":
-                    case "yes":
-                    case "sure":
-                    case "of course":
-                    case "yeah":
-                    case "yuh":
-                        validAnswer = true;
-                        break;
-                    case "n":
-                    case "no":
-                    case "nah":
-                    case "definetly not":
-                    case "noo":
-                    case "nooo":
-                    case "noooo":
-                    case "fuck no":
-                        validAnswer = true;
-                        break;
-                }
-
-                if (validAnswer)
-                {
-                    break;
-                }
-            }
+            HandleSelfContainedInstallation();
         }
         else
         {
@@ -148,4 +113,136 @@ internal class Program
             Console.WriteLine();
         }
     }
+
+    private static void HandleSelfContainedInstallation()
+    {
+        Console.WriteLine("Checking for updates");
+
+        Console.WriteLine("Retrieving latest release from github.com/chairclr/TerraAngel...");
+
+        ReleaseDownloader.ReleaseRoot release = ReleaseDownloader.GetLatestRelease().Result;
+
+        if (Version.TryParse(release.TagName, out Version? latestReleaseVersion))
+        {
+            Console.WriteLine($"Got latest release: v{latestReleaseVersion}");
+
+            Console.WriteLine("Looking for previous install...");
+
+            if (TryGetPreviousInstallation(out Installation previousInstall))
+            {
+                Console.WriteLine($"Found previous installation: v{previousInstall}");
+
+                if (latestReleaseVersion > previousInstall.Version)
+                {
+                    HandleUpdate(release, latestReleaseVersion, previousInstall);
+                }
+            }
+            else
+            {
+                HandleNewInstallation(latestReleaseVersion);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Unable to retrieve latest release version");
+        }
+    }
+
+    private static void HandleNewInstallation(Version latestReleaseVersion)
+    {
+        Console.WriteLine("No previous installation found");
+
+        Console.Write($"Would you like to install TerraAngel v{latestReleaseVersion}? (y/n): ");
+
+        while (true)
+        {
+            bool validResult = false;
+
+            switch (Console.ReadLine()?.ToLowerInvariant())
+            {
+                case "y":
+                case "yes":
+                case "sure":
+                case "yeah":
+                    {
+                        throw new NotImplementedException();
+                    }
+                    validResult = true;
+                    break;
+                case "n":
+                case "no":
+                case "nope":
+                case "nah":
+                    validResult = true;
+                    break;
+            }
+
+            if (validResult)
+            {
+                break;
+            }
+        }
+    }
+
+    private static void HandleUpdate(ReleaseDownloader.ReleaseRoot release, Version latestReleaseVersion, Installation previousInstall)
+    {
+        Console.WriteLine($"A new release is available (published {release.PublishedAt.ToLocalTime():D})!");
+        Console.WriteLine($"v{previousInstall.Version} -> v{latestReleaseVersion}");
+
+        Console.Write($"Would you like to update to v{latestReleaseVersion}? (y/n): ");
+
+        while (true)
+        {
+            bool validResult = false;
+
+            switch (Console.ReadLine()?.ToLowerInvariant())
+            {
+                case "y":
+                case "yes":
+                case "sure":
+                case "yeah":
+                    {
+                        throw new NotImplementedException();
+                    }
+                    validResult = true;
+                    break;
+                case "n":
+                case "no":
+                case "nope":
+                case "nah":
+                    validResult = true;
+                    break;
+            }
+
+            if (validResult)
+            {
+                break;
+            }
+        }
+    }
+
+    private static bool TryGetPreviousInstallation([NotNullWhen(true)] out Installation installation)
+    {
+        installation = new Installation();
+
+        if (File.Exists(Path.Combine(PathUtility.TerraAngelDataPath, "INSTALL.txt")))
+        {
+            string[] text = File.ReadAllLines(Path.Combine(PathUtility.TerraAngelDataPath, "VERSION.txt"));
+
+            if (text.Length < 2)
+            {
+                return false;
+            }
+
+            if (Version.TryParse(text[0], out Version? lastInstalledVersion) && Directory.Exists(text[1]))
+            {
+                installation = new Installation(lastInstalledVersion, text[1]);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private readonly record struct Installation(Version Version, string InstallationRoot);
 }
