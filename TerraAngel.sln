@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraAngel.Installer", "TerraAngel.Installer\TerraAngel.Installer.csproj", "{55848192-0BA2-473A-BA01-881DFA4DE5DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerraAngel.Installer", "TerraAngel.Installer\TerraAngel.Installer.csproj", "{55848192-0BA2-473A-BA01-881DFA4DE5DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Terraria", "temp\src\Terraria\Terraria.csproj", "{B335138D-F6B1-4A8A-A028-D9040CA9BD6E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReLogic", "temp\src\ReLogic\ReLogic.csproj", "{CDAB090C-0733-44E1-8121-139E1C19B576}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraria Project", "Terraria Project", "{9C8BBD8F-CF2B-443B-B2DF-4FD43566F9E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,21 @@ Global
 		{55848192-0BA2-473A-BA01-881DFA4DE5DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55848192-0BA2-473A-BA01-881DFA4DE5DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55848192-0BA2-473A-BA01-881DFA4DE5DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B335138D-F6B1-4A8A-A028-D9040CA9BD6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B335138D-F6B1-4A8A-A028-D9040CA9BD6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B335138D-F6B1-4A8A-A028-D9040CA9BD6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B335138D-F6B1-4A8A-A028-D9040CA9BD6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDAB090C-0733-44E1-8121-139E1C19B576}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDAB090C-0733-44E1-8121-139E1C19B576}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDAB090C-0733-44E1-8121-139E1C19B576}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDAB090C-0733-44E1-8121-139E1C19B576}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B335138D-F6B1-4A8A-A028-D9040CA9BD6E} = {9C8BBD8F-CF2B-443B-B2DF-4FD43566F9E0}
+		{CDAB090C-0733-44E1-8121-139E1C19B576} = {9C8BBD8F-CF2B-443B-B2DF-4FD43566F9E0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5EBDE8BA-4CF6-4908-BA6D-BAEBB11546EB}

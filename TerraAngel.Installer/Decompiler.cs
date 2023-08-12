@@ -46,7 +46,7 @@ internal class Decompiler
 
         EmbeddedAssemblyResolver assemblyResolver = new EmbeddedAssemblyResolver(mainModule);
 
-        WholeProjectDecompiler projectDecompiler = new WholeProjectDecompiler(assemblyResolver)
+        ProjectDecompiler projectDecompiler = new ProjectDecompiler(assemblyResolver)
         {
             MaxDegreeOfParallelism = Math.Max(Environment.ProcessorCount - 1, 1)
         };
