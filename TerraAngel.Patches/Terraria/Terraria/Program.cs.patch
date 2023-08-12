@@ -2,7 +2,11 @@
  ng System.Text;%0d%0ausing System.Threading;%0d%0a
 -using System.Windows.Forms;%0d%0a
  using ReLogic.IO;%0d%0ausing ReLogic.OS;%0d%0ausin
-@@ -6584,119 +6584,202 @@
+@@ -4540,141 +4540,84 @@
+ ls.ConvertMonoArgsToDotNet(args);%0d%0a%09%09%7d%0d%0a%09%09
+-if (IsFna)%0d%0a%09%09%7b%0d%0a%09%09%09TrySettingFNAToOpenGL(args);%0d%0a%09%09%7d%0d%0a%09%09
+ LaunchParameters = Utils.ParseArguements(a
+@@ -6527,119 +6527,202 @@
  erverCrash%22), DateTime.Now, text);%0d%0a%09%09%09%7d%0d%0a
 -%09%09%09MessageBox.Show(text
 +%0d%0a            SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR
