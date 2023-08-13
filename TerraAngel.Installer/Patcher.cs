@@ -73,15 +73,22 @@ internal class Patcher
 
                         Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                         File.WriteAllText(outputPath, patchedText);
-
-                        alreadyPatched.Add(regularPathName);
                     });
+
+                    alreadyPatched.Add(regularPathName);
                 }
                 else
                 {
                     Console.WriteLine("Error during patching:");
                     Console.WriteLine($"File {path.RelativePath} doesn't exist in source (probably removed)");
                 }
+            }
+            else if (path.RelativePath != "removed_files.txt")
+            {
+                workActions.Add(() =>
+                {
+                    DirectoryUtility.CopyFile(path.FullPath, Path.Combine(OutputDirectory, path.RelativePath));
+                });
             }
         }
 
