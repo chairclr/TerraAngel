@@ -89,6 +89,8 @@ internal class Patcher
                 {
                     DirectoryUtility.CopyFile(path.FullPath, Path.Combine(OutputDirectory, path.RelativePath));
                 });
+
+                alreadyPatched.Add(path.RelativePath);
             }
         }
 
