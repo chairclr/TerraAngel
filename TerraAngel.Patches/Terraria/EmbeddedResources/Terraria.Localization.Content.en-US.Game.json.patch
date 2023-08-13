@@ -1,0 +1,97 @@
+@@ -6723,89 +6723,85 @@
+ ealth.%22,%0d%0a%09%09%2272%22: %22Change your clothes in 
+-game 
++f
+ at a Dresser or talk to the Stylist for a 
+@@ -68197,1977 +68197,2016 @@
+ %22,%0d%0a%09%7d,%0d%0a%09%22Bestiary_ItemDropConditions%22: %7b
++%0d
+ %0a        %22PirateMap%22: %22Drops in the Hardmode Ocean%22,
++%0d
+ %0a%09%09%22IsChristmas%22: %22Drops during Christmas%22,
++%0d
+ %0a%09%09%22NotExpert%22: %22%22,
++%0d
+ %0a%09%09%22NotMasterMode%22: %22%22,
++%0d
+ %0a%09%09%22PlayerNeedsHealing%22: %22Drops when the player is hurt%22,
++%0d
+ %0a%09%09%22LegacyHack_IsBossAndExpert%22: %22Drops in Expert Mode%22,
++%0d
+ %0a%09%09%22LegacyHack_IsBossAndNotExpert%22: %22%22,
++%0d
+ %0a%09%09%22IsExpert%22: %22This is an Expert Mode drop rate%22,
++%0d
+ %0a%09%09%22IsMasterMode%22: %22This is a Master Mode drop rate%22,
++%0d
+ %0a%09%09%22Is10thAnniverary%22: %22This is an Anniversary Seed drop rate%22,
++%0d
+ %0a%09%09%22IsRemixSeed%22: %22This is a Remix Seed drop rate%22,
++%0d
+ %0a%09%09%22IsDontStarve%22: %22This is a Don't Starve Seed drop rate%22,
++%0d
+ %0a%09%09%22IsCrimson%22: %22Drops in the Crimson%22,
++%0d
+ %0a%09%09%22IsCorruption%22: %22Drops in the Corruption%22,
++%0d
+ %0a%09%09%22IsCrimsonAndNotExpert%22: %22%22,
++%0d
+ %0a%09%09%22IsCorruptionAndNotExpert%22: %22%22,
++%0d
+ %0a%09%09%22HalloweenWeapons%22: %22Drops during Halloween season%22,
++%0d
+ %0a%09%09%22SoulOfNight%22: %22Drops in Underground Crimson or Corruption%22,
++%0d
+ %0a%09%09%22SoulOfLight%22: %22Drops in Underground Hallow%22,
++%0d
+ %0a%09%09%22NotFromStatue%22: %22%22,
++%0d
+ %0a%09%09%22HalloweenGoodieBagDrop%22: %22Drops in early gameplay during Halloween%22,
++%0d
+ %0a%09%09%22XmasPresentDrop%22: %22Drops in early gameplay during Christmas%22,
++%0d
+ %0a%09%09%22LivingFlames%22: %22Drops in Hardmode Underworld%22,
++%0d
+ %0a%09%09%22NamedNPC%22: %22Drops from uniquely named NPCs%22,
++%0d
+ %0a%09%09%22HallowKeyCondition%22: %22Drops in the Hardmode Hallow%22,
++%0d
+ %0a%09%09%22JungleKeyCondition%22: %22Drops in the Hardmode Jungle%22,
++%0d
+ %0a%09%09%22CorruptKeyCondition%22: %22Drops in the Hardmode Corruption%22,
++%0d
+ %0a%09%09%22CrimsonKeyCondition%22: %22Drops in the Hardmode Crimson%22,
++%0d
+ %0a%09%09%22FrozenKeyCondition%22: %22Drops in the Hardmode Snow%22,
++%0d
+ %0a%09%09%22DesertKeyCondition%22: %22Drops in the Hardmode Desert%22,
++%0d
+ %0a%09%09%22BeatAnyMechBoss%22: %22Drops after defeating any Mech Boss%22,
++%0d
+ %0a%09%09%22YoyoCascade%22: %22Drops after defeating Skeletron but before Hardmode%22,
++%0d
+ %0a%09%09%22YoyosAmarok%22: %22Drops in Hardmode%22,
++%0d
+ %0a%09%09%22YoyosYelets%22: %22Drops after defeating any Mech Boss%22,
++%0d
+ %0a%09%09%22YoyosKraken%22: %22Drops after defeating Plantera%22,
++%0d
+ %0a%09%09%22YoyosHelFire%22: %22Drops in Hardmode%22,
++%0d
+ %0a%09%09%22KOCannon%22: %22Drops during a Hardmode Bloodmoon%22,
++%0d
+ %0a%09%09%22IsItAHappyWindyDay%22: %22Drops on Windy Days%22,
++%0d
+ %0a%09%09%22EmpressOfLightOnlyTookDamageWhileEnrag
+@@ -70240,193 +70240,196 @@
+ of Light is only attacked during daytime%22,
++%0d
+ %0a%09%09%22WaveBasedDrop%22: %22Drop rate varies by Wave%22,
++%0d
+ %0a%09%09%22PastWaveBasedDrop%22: %22Only drops when in or above Wave %7b0%7d%22
++%0d
+ %0a    %7d,%0d%0a%09%22Bestiary_BiomeText%22: %7b%0d%0a%09%09%22biom
+@@ -152866,84 +152866,85 @@
+ to the glowing depths of a Shimmer pond.%22,
++%0d
+ %0a%09%09%22npc_ShimmerSlime%22: %22After a quick swim

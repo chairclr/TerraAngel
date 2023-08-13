@@ -55,71 +55,83 @@
  ecent();%0d%0a%09%09UILinksInitializer.Load();%0d%0a%09%09
 -Chroma = new ChromaEngine();%0d%0a%09%09ChromaPainter = new ChromaHotkeyPainter();%0d%0a%09%09ChromaPainter.CollectBoundKeys();%0d%0a%09%09
  CacheSupportedDisplaySizes();%0d%0a%09%09if (autoJ
-@@ -271039,113 +271039,84 @@
+@@ -269323,115 +269323,197 @@
+ rotected override void LoadContent()%0d%0a%09%7b%0d%0a
++        base.Content.RootDirectory = TerraAngel.PathService.ContentFolder;%0d%0a
+ %09%09SoundEngine.Initialize();%0d%0a
+-%09%09
++        
+ if (base.Services.Get%3cIAssetRepository%3e() 
+@@ -269739,86 +269739,92 @@
+ Target2D(base.GraphicsDevice, 200, 150);%0d%0a
+-%09%09
++        
+ ShaderContentManager = new ContentManager(
+@@ -271127,113 +271127,84 @@
  plashAssets(asyncLoadForSounds: true);%0d%0a%09%09
 -ChromaInitializer.Load();%0d%0a%09%09
  _gameContentLoadProcess = LoadContent_Defe
-@@ -402872,166 +402872,84 @@
+@@ -402960,166 +402960,84 @@
  TotalGameTime.TotalSeconds %25 3600.0);%0d%0a%09%09%09
 -ChromaInitializer.UpdateEvents();%0d%0a%09%09%09Chroma.Update(GlobalTimeWrappedHourly);%0d%0a%09%09%09
  return;%0d%0a%09%09%7d%0d%0a%09%09PartySky.MultipleSkyWorkar
-@@ -405247,166 +405247,84 @@
+@@ -405335,166 +405335,84 @@
  ate_AutoSave();%0d%0a%09%09if (!dedServ)%0d%0a%09%09%7b%0d%0a%09%09%09
 -ChromaInitializer.UpdateEvents();%0d%0a%09%09%09Chroma.Update(GlobalTimeWrappedHourly);%0d%0a%09%09%09
  if (superFast)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09base.IsFixedTime
-@@ -409971,259 +409971,420 @@
+@@ -410059,259 +410059,420 @@
  ctive;%0d%0a%09%09%09if (Platform.IsWindows)%0d%0a%09%09%09%7b%0d%0a
 -%09%09%09%09Form form = Control.FromHandle(base.Window.Handle) as Form;%0d%0a%09%09%09%09bool num3 = form.WindowState == FormWindowState.Minimized;%0d%0a%09%09%09%09bool flag = Form.ActiveForm == form;%0d%0a%09%09%09%09
 +                SDL2.SDL.SDL_WindowFlags flags = (SDL2.SDL.SDL_WindowFlags)SDL2.SDL.SDL_GetWindowFlags(Window.Handle);%0d%0a%0d%0a                bool num3 = (uint)(flags & SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_MINIMIZED) == 1;%0d%0a                bool flag = (uint)(flags & SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_INPUT_FOCUS) == 1;%0d%0a%0d%0a                
  hasFocus %7c= flag;%0d%0a%09%09%09%09if (num3)%0d%0a%09%09%09%09%7b%0d%0a%09
-@@ -413746,143 +413746,84 @@
+@@ -413834,143 +413834,84 @@
  teInWorld(_worldUpdateTimeTester);%0d%0a%09%09%7d%0d%0a%09
 -%09if (netMode != 2)%0d%0a%09%09%7b%0d%0a%09%09%09ChromaPainter.Update();%0d%0a%09%09%7d%0d%0a%09
  %7d%0d%0a%0d%0a%09internal static void UpdateCreativeG
-@@ -778301,99 +778301,98 @@
+@@ -778389,99 +778389,98 @@
   0.1f * ((float)Math.PI * 2f)), position: 
 +-
  Vector3.
 -Forward
 +UnitZ
  );%0d%0a%09%09%09%09%09num10 += Utils.GetLerpValue(-1f, 
-@@ -952726,85 +952726,94 @@
+@@ -952814,85 +952814,94 @@
  *= 0.8f;%0d%0a%09%09%09%09%09%09Vector2 position7 = Vector
 -2
 +Extensions
  .SmoothStep(center2, value41, num220);%0d%0a%09%09
-@@ -1166618,139 +1166618,142 @@
+@@ -1166706,139 +1166706,142 @@
   compareSpot))%0d%0a%09%09%7b%0d%0a%09%09%09return 0;%0d%0a%09%09%7d%0d%0a%09%09
 -Matrix matrix = 
  Matrix.Invert(GameViewMatrix.ZoomMatrix
 +, out Matrix matrix
  );%0d%0a%09%09Vector2 position = ReverseGravitySup
-@@ -1168795,139 +1168795,142 @@
+@@ -1168883,139 +1168883,142 @@
   compareSpot))%0d%0a%09%09%7b%0d%0a%09%09%09return 0;%0d%0a%09%09%7d%0d%0a%09%09
 -Matrix matrix = 
  Matrix.Invert(GameViewMatrix.ZoomMatrix
 +, out Matrix matrix
  );%0d%0a%09%09Vector2 position = ReverseGravitySup
-@@ -1518602,131 +1518602,84 @@
+@@ -1518690,131 +1518690,84 @@
  atic void TryDisposingEverything()%0d%0a%09%7b%0d%0a%09%09
 -ChromaInitializer.DisableAllDeviceGroups();%0d%0a%09%09
  CaptureManager.Instance.Dispose();%0d%0a%09%09audi
-@@ -1632791,95 +1632791,84 @@
+@@ -1632879,95 +1632879,84 @@
  AsBorderless(ref int width, ref int height
 -, Form form
  )%0d%0a%09%7b%0d%0a%09%09if (screenBorderless && !graphics
-@@ -1632930,213 +1632930,174 @@
+@@ -1633018,213 +1633018,174 @@
  %09%7b%0d%0a%09%09%09screenBorderlessPendingResizes--;%0d%0a
 -%09%09%09System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).Bounds;%0d%0a%09%09%09width = bounds.Width;%0d%0a%09%09%09height = bounds.H
 +            SDL2.SDL.SDL_GetWindowSize(Main.instance.Window.Handle, out width, out h
  eight
 +)
  ;%0d%0a%09%09%09TryPickingDefaultUIScale(height);%0d%0a%09
-@@ -1633119,93 +1633119,84 @@
+@@ -1633207,93 +1633207,84 @@
  ate static void ApplyBorderlessResolution(
 -Form form
  )%0d%0a%09%7b%0d%0a%09%09if (screenBorderlessPendingResize
-@@ -1633212,508 +1633212,796 @@
+@@ -1633300,508 +1633300,796 @@
  %09%7b%0d%0a%09%09%09screenBorderlessPendingResizes--;%0d%0a
 -%09%09%09System.Drawing.Rectangle bounds = Screen.FromPoint(form.Location).B
 +            SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect b
@@ -138,7 +150,7 @@
 -%09%09%09form.FormBorderStyle = FormBorderStyle.None;%0d%0a%09%09%09form.Width = bounds.Width;%0d%0a%09%09%09form.Height = bounds.Height;%0d%0a%09%09%7d%0d%0a%09%7d%0d%0a%0d%0a%09private static void SetBorderlessFormStyle(Form form)%0d%0a%09%7b%0d%0a%09%09form.Location = new System.Drawing.Point(0, 0);%0d%0a%09%09form.FormBorderStyle = FormBorderStyle.None
 +            SDL2.SDL.SDL_SetWindowSize(Main.instance.Window.Handle, bounds.w, bounds.h);%0d%0a        %7d%0d%0a%09%7d%0d%0a%0d%0a%09private static void SetBorderlessFormStyle()%0d%0a%09%7b%0d%0a        SDL2.SDL.SDL_GetDisplayBounds(SDL2.SDL.SDL_GetWindowDisplayIndex(Main.instance.Window.Handle), out SDL2.SDL.SDL_Rect bounds);%0d%0a        SDL2.SDL.SDL_SetWindowPosition(Main.instance.Window.Handle, bounds.x, bounds.y);%0d%0a        SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE)
  ;%0d%0a%09%7d%0d%0a%0d%0a%09public static void OpenCharacter
-@@ -2069378,535 +2069378,555 @@
+@@ -2069466,535 +2069466,555 @@
  ol fullscreen)%0d%0a%09%7b%0d%0a%09%09bool flag = false;%0d%0a
 -%09%09Form form = null;%0d%0a%09%09if (Platform.IsWindows)%0d%0a%09%09%7b%0d%0a%09%09%09form = (Form)Control.FromHandle(
 +        SDL2.SDL.SDL_WindowFlags flags = (SDL2.SDL.SDL_WindowFlags)SDL2.SDL.SDL_GetWindowFlags(Main.
@@ -164,16 +176,16 @@
 -form.FormBorderStyle == FormBorderStyle.None;%0d%0a%09%09%7d%0d%0a%09%09else%0d%0a%09%09%7b%0d%0a%09%09%09screenMaximized = false;%0d%0a%09%09%7d
 +(uint)(flags & SDL2.SDL.SDL_WindowFlags.SDL_WINDOW_BORDERLESS) == 1;
  %0d%0a%09%09bool flag2 = false;%0d%0a%09%09int num3;%0d%0a%09%09in
-@@ -2070254,116 +2070254,163 @@
+@@ -2070342,116 +2070342,163 @@
  %0d%0a%09%09%09%7d%0d%0a%09%09%09if (Platform.IsWindows)%0d%0a%09%09%09%7b%0d%0a
 -%09%09%09%09form.MinimumSize = new Size(
 +                SDL2.SDL.SDL_SetWindowMinimumSize(Main.instance.Window.Handle, 
  0, 0);%0d%0a%09%09%09%09if (!fullscreen && !flag3)%0d%0a%09%09
-@@ -2070433,90 +2070433,84 @@
+@@ -2070521,90 +2070521,84 @@
  playModeAsBorderless(ref width, ref height
 -, form
  );%0d%0a%09%09%09%09%7d%0d%0a%09%09%09%7d%0d%0a%09%09%09if (width %3e maxScreenW
-@@ -2071508,146 +2071508,205 @@
+@@ -2071596,146 +2071596,205 @@
  2.One;%0d%0a%09%09%09if (Platform.IsWindows)%0d%0a%09%09%09%7b%0d%0a
 -%09%09%09%09form.MinimumSize = new Size(
 +                SDL2.SDL.SDL_SetWindowMinimumSize(Main.instance.Window.Handle, 
@@ -181,7 +193,7 @@
 -%09%09%09%09
 +                
  if (flag)%0d%0a%09%09%09%09%7b%0d%0a%09%09%09%09%09width = displayWidt
-@@ -2072143,328 +2072143,338 @@
+@@ -2072231,328 +2072231,338 @@
  IsWindows && !fullscreen && !flag2)%0d%0a%09%09%7b%0d%0a
 -%09%09%09if (form.ClientSize.Width
 +            SDL2.SDL.SDL_GetWindowSize(Main.instance.Window.Handle, out int w, out int h);%0d%0a%09%09%09if (w
@@ -195,7 +207,7 @@
 -form.ClientSize.Height
 +h
  ;%0d%0a%09%09%09%09flag2 = true;%0d%0a%09%09%09%7d%0d%0a%09%09%7d%0d%0a%09%09width &
-@@ -2073529,274 +2073529,539 @@
+@@ -2073617,274 +2073617,539 @@
  s)%0d%0a%09%09%09%09%7b%0d%0a%09%09%09%09%09ApplyBorderlessResolution(
 -form);%0d%0a%09%09%09%09%09form.FormBorderStyle = FormBorderStyle.None;%0d%0a%09%09%09%09%7d%0d%0a%09%09%09%09else%0d%0a%09%09%09%09%7b%0d%0a%09%09%09%09%09form.FormBorderStyle = FormBorderStyle.Sizable;%0d%0a%09%09%09%09%7d%0d%0a%09%09%09%09form.SendToBack();%0d%0a%09%09%09%09form.BringToFront(
 +);%0d%0a                    SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_FALSE);%0d%0a%09%09%09%09%7d%0d%0a%09%09%09%09else%0d%0a%09%09%09%09%7b%0d%0a                    SDL2.SDL.SDL_SetWindowBordered(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);%0d%0a                    SDL2.SDL.SDL_SetWindowResizable(Main.instance.Window.Handle, SDL2.SDL.SDL_bool.SDL_TRUE);%0d%0a                %7d%0d%0a                SDL2.SDL.SDL_SetWindowInputFocus(Main.instance.Window.Handle

@@ -5,12 +5,41 @@
 -System.Windows.Forms
 +Microsoft.Xna.Framework
  ;%0d%0ausing ReLogic.IO;%0d%0ausing ReLogic.OS;%0d%0au
-@@ -4488,248 +4488,1725 @@
+@@ -470,125 +470,125 @@
+ s Program%0d%0a%7b%0d%0a%09public static bool IsXna = 
+-tru
++fals
+ e;%0d%0a%0d%0a%09public static bool IsFna = 
+-fals
++tru
+ e;%0d%0a%0d%0a%09public static bool IsMono = Type.Ge
+@@ -4488,86 +4488,1620 @@
  tring%5b%5d args, bool monoArgs = false)%0d%0a%09%7b%0d%0a
--%09%09Thread.CurrentThread.Name = %22Main Thread%22;%0d%0a%09%09if (monoArgs)%0d%0a%09%09%7b%0d%0a%09%09%09args = Utils.ConvertMonoArgsToDotNet(args);%0d%0a%09%09%7d%0d%0a%09%09if (IsFna)%0d%0a%09%09%7b%0d%0a%09%09%09TrySettingFNAToOpenGL
-+        static nint RuntimeResolver(string x, Assembly y, DllImportSearchPath? z)%0d%0a        %7b%0d%0a            StringBuilder iHateNativeLibraries = new StringBuilder();%0d%0a%0d%0a            string extension = %22%22;%0d%0a%0d%0a            if (OperatingSystem.IsWindows())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22win%22);%0d%0a%0d%0a                extension = %22.dll%22;%0d%0a            %7d%0d%0a            else if (OperatingSystem.IsLinux())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22linux%22);%0d%0a%0d%0a                extension = %22.so%22;%0d%0a            %7d%0d%0a            else if (OperatingSystem.IsMacOS())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22osx%22);%0d%0a%0d%0a                extension = %22.dylib%22;%0d%0a            %7d%0d%0a%0d%0a            if (Environment.Is64BitProcess)%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22-x64%22);%0d%0a            %7d%0d%0a            else%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22-x86%22);%0d%0a            %7d%0d%0a%0d%0a%0d%0a            string path = Path.Combine(Environment.CurrentDirectory, %22runtimes%22, iHateNativeLibraries.ToString(), %22native%22, $%22%7bx%7d%7bextension%7d%22);%0d%0a%0d%0a            if (File.Exists(path))%0d%0a            %7b%0d%0a                return NativeLibrary.Load(path);%0d%0a            %7d%0d%0a%0d%0a            return 0;%0d%0a        %7d%0d%0a%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Game).Assembly, RuntimeResolver);%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Main).Assembly, RuntimeResolver);%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Steamworks.SteamAPI).Assembly, RuntimeResolver);%0d%0a%0d%0a        Thread.CurrentThread.Name = %22Main Thread%22;%0d%0a%09%09if (monoArgs)%0d%0a%09%09%7b%0d%0a%09%09%09args = Utils.ConvertMonoArgsToDotNet
- (args);%0d%0a%09%09%7d%0d%0a%09%09LaunchParameters = Utils.P
-@@ -8132,119 +8132,202 @@
+-%09%09
++        static nint RuntimeResolver(string x, Assembly y, DllImportSearchPath? z)%0d%0a        %7b%0d%0a            StringBuilder iHateNativeLibraries = new StringBuilder();%0d%0a%0d%0a            string extension = %22%22;%0d%0a%0d%0a            if (OperatingSystem.IsWindows())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22win%22);%0d%0a%0d%0a                extension = %22.dll%22;%0d%0a            %7d%0d%0a            else if (OperatingSystem.IsLinux())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22linux%22);%0d%0a%0d%0a                extension = %22.so%22;%0d%0a            %7d%0d%0a            else if (OperatingSystem.IsMacOS())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22osx%22);%0d%0a%0d%0a                extension = %22.dylib%22;%0d%0a            %7d%0d%0a%0d%0a            if (Environment.Is64BitProcess)%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22-x64%22);%0d%0a            %7d%0d%0a            else%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22-x86%22);%0d%0a            %7d%0d%0a%0d%0a%0d%0a            string path = Path.Combine(Environment.CurrentDirectory, %22runtimes%22, iHateNativeLibraries.ToString(), %22native%22, $%22%7bx%7d%7bextension%7d%22);%0d%0a%0d%0a            if (File.Exists(path))%0d%0a            %7b%0d%0a                return NativeLibrary.Load(path);%0d%0a            %7d%0d%0a%0d%0a            return 0;%0d%0a        %7d%0d%0a%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Game).Assembly, RuntimeResolver);%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Main).Assembly, RuntimeResolver);%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Steamworks.SteamAPI).Assembly, RuntimeResolver);%0d%0a%0d%0a        
+ Thread.CurrentThread.Name = %22Main Thread%22;
+@@ -6145,141 +6145,84 @@
+ ls.ConvertMonoArgsToDotNet(args);%0d%0a%09%09%7d%0d%0a%09%09
+-if (IsFna)%0d%0a%09%09%7b%0d%0a%09%09%09TrySettingFNAToOpenGL(args);%0d%0a%09%09%7d%0d%0a%09%09
+ LaunchParameters = Utils.ParseArguements(a
+@@ -6788,96 +6788,116 @@
+ %7d;%0d%0a%09%09%7d%0d%0a%09%09using Main main = new Main();%0d%0a
++#if !DEBUG%0d%0a
+ %09%09try%0d%0a%09%09%7b%0d%0a
++#endif%0d%0a
+ %09%09%09Lang.InitializeLegacyLocalization();%0d%0a%09
+@@ -7048,154 +7048,192 @@
+ %09%09%09main.DedServ();%0d%0a%09%09%09%7d%0d%0a%09%09%09main.Run();%0d%0a
+-%09%09%7d%0d%0a%09%09
++#if !DEBUG%0d%0a        %7d%0d%0a        
+ catch (Exception e)%0d%0a%09%09%7b%0d%0a%09%09%09DisplayException(e);%0d%0a%09%09%7d%0d%0a
+-%09
++#endif%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void TrySettingFNAToOpenGL(
+@@ -8190,119 +8190,202 @@
  erverCrash%22), DateTime.Now, text);%0d%0a%09%09%09%7d%0d%0a
 -%09%09%09MessageBox.Show(text
 +%0d%0a            SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR
