@@ -61,7 +61,7 @@ internal class SDKUtility
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "dotnet",
-                    Arguments = $"publish {projectPath} --ucr --nologo -v d -p:PublishSingleFile=true -o {outputDir}",
+                    Arguments = $"publish {projectPath} --ucr --nologo -p:PublishSingleFile=true --no-self-contained -o {outputDir}",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
@@ -69,7 +69,6 @@ internal class SDKUtility
             };
 
             process.Start();
-
 
             string? line;
             while ((line = process.StandardOutput.ReadLine()) is not null)

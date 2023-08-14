@@ -204,14 +204,25 @@ internal class Program
                             PatchOutputPath = patchOutputDir
                         });
 
+                        string buildDir = Path.Combine(tempDir, "build");
+
                         Console.WriteLine("Building TerraAngel");
+                        Console.WriteLine("This could take a while... (usually less than 30 seconds)");
 
-                        bool buildSucceeded = SDKUtility.PublishProject(Path.Combine(patchOutputDir, "Terraria", "Terraria.csproj"), Path.Combine(tempDir, "build"));
+                        Stopwatch sw = Stopwatch.StartNew();
 
-                        if (buildSucceeded)
+                        bool buildSucceeded = SDKUtility.PublishProject(Path.Combine(patchOutputDir, "Terraria", "Terraria.csproj"), buildDir);
+
+                        sw.Stop();
+
+                        if (!buildSucceeded)
                         {
-                            throw new NotImplementedException();
+                            return;
                         }
+
+                        Console.WriteLine($"Build succeeded in {sw.Elapsed.TotalSeconds}s");
+
+                        Console.WriteLine($"Your build is located in: {buildDir}");
                     }
                     validResult = true;
                     break;
