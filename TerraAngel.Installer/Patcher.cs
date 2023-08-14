@@ -44,7 +44,7 @@ internal class Patcher
                 {
                     workActions.Add(() =>
                     {
-                        List<Patch> patches = dmp.patch_fromText(File.ReadAllText(path.FullPath));
+                        List<Patch> patches = dmp.patch_fromText(File.ReadAllText(path.FullPath).ReplaceLineEndings("\n"));
 
                         object[] rawPatchOutput = dmp.patch_apply(patches, File.ReadAllText(sourcePath));
 
