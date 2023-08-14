@@ -39,7 +39,7 @@ public static class PathService
 
             if (TryGetTerrariaInstall(out string? foundSteamPath))
             {
-                foundSteamPath = Path.Combine(foundSteamPath!, "Content");
+                foundSteamPath = Path.Combine(Path.GetDirectoryName(foundSteamPath)!, "Content");
                 if (Directory.Exists(foundSteamPath))
                 {
                     return foundSteamPath;
