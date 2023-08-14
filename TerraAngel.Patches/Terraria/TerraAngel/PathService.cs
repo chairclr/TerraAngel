@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using Terraria;
 using Gameloop.Vdf;
 using Gameloop.Vdf.Linq;
+using Microsoft.Win32;
+using Terraria;
 
 namespace TerraAngel;
 
