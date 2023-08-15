@@ -223,6 +223,9 @@ internal class Program
                         Console.WriteLine($"Build succeeded in {sw.Elapsed.TotalSeconds}s");
 
                         Console.WriteLine($"Your build is located in: {buildDir}");
+
+                        Console.WriteLine("Press enter to exit");
+                        Console.ReadLine();
                     }
                     validResult = true;
                     break;
