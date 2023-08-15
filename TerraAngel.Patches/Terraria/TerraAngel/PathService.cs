@@ -21,6 +21,8 @@ public static class PathService
 
     public static string TerrariaPath => File.Exists(TerrariaAssemblyPath) ? Path.GetDirectoryName(TerrariaAssemblyPath)! : Environment.CurrentDirectory;
 
+    public static string PluginRootFolder => throw new NotImplementedException();
+
     public static string ContentFolder
     {
         get
