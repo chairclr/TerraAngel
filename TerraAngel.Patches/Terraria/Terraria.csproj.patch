@@ -1,9 +1,10 @@
-@@ -1,525 +1,467 @@
+@@ -1,525 +1,469 @@
  %3cProject Sdk=%22Microsoft.NET.Sdk
 -.WindowsDesktop
- %22%3e%0d%0a  %3cPropertyGroup%3e%0d%0a    %3cAssemblyName%3eTerraria%3c/AssemblyName%3e%0d%0a
--    %3cGenerateAssemblyInfo%3eFalse%3c/GenerateAssemblyInfo%3e%0d%0a    %3cOutputType%3eWinExe%3c/OutputType%3e%0d%0a    %3cUseWindowsForms%3eTrue%3c/UseWindowsForms%3e%0d%0a
-     %3cTargetFramework%3enet
+ %22%3e%0d%0a  %3cPropertyGroup%3e%0d%0a    %3cAssemblyName%3eTerra
+-ria%3c/AssemblyName%3e%0d%0a    %3cGenerateAssemblyInfo%3eFalse%3c/GenerateAssemblyInfo%3e%0d%0a    %3cOutputType%3eWinExe%3c/OutputType%3e%0d%0a    %3cUseWindowsForms%3eTrue%3c/UseWindowsForms
++Angel%3c/AssemblyName
+ %3e%0d%0a    %3cTargetFramework%3enet
 -4
 +8.
  0%3c/TargetFramework%3e%0d%0a    %3cPlatformTarget%3e
@@ -19,7 +20,7 @@
    %3c/PropertyGroup%3e%0d%0a
 +  %0d%0a
    %3cPropertyGroup%3e%0d%0a    %3cApplicationIcon%3eap
-@@ -555,21411 +555,902 @@
+@@ -557,21411 +557,902 @@
     %3cRootNamespace /%3e%0d%0a  %3c/PropertyGroup%3e%0d%0a
 +  %0d%0a
    %3cItemGroup%3e%0d%0a    %3c
