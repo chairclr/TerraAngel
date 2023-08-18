@@ -44,7 +44,6 @@ internal class Program
 
     private static void Main(string[] args)
     {
-
         if (args.Length == 0)
         {
             List<string> sdks = SDKUtility.GetDotnetSDKList();
@@ -54,6 +53,14 @@ internal class Program
                 Console.WriteLine("TerraAngel requires the .NET 8 SDK");
                 Console.WriteLine("Install the .NET 8 SDK here -> https://dotnet.microsoft.com/en-us/download/dotnet/8.0");
                 Console.WriteLine("Restart your computer after you do this, and re-run the installer");
+
+                return;
+            }
+
+            if (!CheckPermission())
+            {
+                Console.WriteLine("Insufficient permissions");
+                Console.WriteLine("Please run the installer as Administrator or Super-User");
 
                 return;
             }
@@ -175,57 +182,75 @@ internal class Program
                 case "sure":
                 case "yeah":
                     {
-                        Console.WriteLine($"Setting up temporary files");
-
-                        string tempDir = Path.Combine(Path.GetTempPath(), "TerraAngel");
-
-                        if (Directory.Exists(tempDir))
+                        if (TryBuild(release, latestReleaseVersion, out string? buildDir))
                         {
-                            Directory.Delete(tempDir, true);
+                            string defaultIntsallDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "TerraAngel");
+
+                            if (!Directory.Exists(defaultIntsallDirectory))
+                            {
+                                Directory.CreateDirectory(defaultIntsallDirectory);
+                            }
+
+                            foreach (LocalPath path in DirectoryUtility.EnumerateFiles(buildDir))
+                            {
+                                File.Copy(path.FullPath, Path.Combine(defaultIntsallDirectory, path.RelativePath), true);
+                            }
+
+                            string terraAngelFilePath = Path.Combine(defaultIntsallDirectory, "TerraAngel.exe");
+
+                            // Incase the assembly isn't named correctly
+                            if (!File.Exists(terraAngelFilePath))
+                            {
+                                terraAngelFilePath = Path.Combine(defaultIntsallDirectory, "Terraria.exe");
+                            }
+
+                            if (!File.Exists(terraAngelFilePath))
+                            {
+                                Console.Write("Could not find TerraAngel executable in build dir, uh oh?");
+                            }
+
+                            // Create some shortcuts on Windows for fun
+                            if (OperatingSystem.IsWindows())
+                            {
+                                string startMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs", "TerraAngel.lnk");
+                                string desktopPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "TerraAngel.lnk");
+
+                                string[] shortcutLines = new string[]
+                                {
+                                    "[InternetShortcut]",
+                                    $"URL=file:///{terraAngelFilePath}",
+                                    "IconIndex=0",
+                                    $"IconFile={terraAngelFilePath}"
+                                };
+
+                                try
+                                {
+
+                                    if (File.Exists(startMenuPath))
+                                    {
+                                        File.Delete(startMenuPath);
+                                    }
+
+                                    if (File.Exists(desktopPath))
+                                    {
+                                        File.Delete(desktopPath);
+                                    }
+
+                                    File.WriteAllLines(startMenuPath, shortcutLines);
+
+                                    File.WriteAllLines(desktopPath, shortcutLines);
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Failed to create shortcuts to application");
+                                }
+                            }
+
+                            Console.WriteLine("Install successful");
+                            Console.WriteLine($"TerraAngel v{latestReleaseVersion} installed in {defaultIntsallDirectory}");
+                            Console.Write("Press enter to exit...");
+                            Console.ReadLine();
                         }
-
-                        Directory.CreateDirectory(tempDir);
-
-                        string releaseDir = DownloadRelease(release, latestReleaseVersion);
-
-                        string decompDir = Path.Combine(tempDir, "decomp");
-
-                        string patchOutputDir = Path.Combine(tempDir, "src");
-
-                        Console.WriteLine("Setting up TerraAngel source");
-
-                        RunSetup(new SetupSettings()
-                        {
-                            Decompile = true,
-                            DecompilationOutputDirectory = decompDir,
-                            Patch = true,
-                            PatchDiffPath = Path.Combine(releaseDir, "TerraAngel.Patches"),
-                            PatchSourcePath = decompDir,
-                            PatchOutputPath = patchOutputDir
-                        });
-
-                        string buildDir = Path.Combine(tempDir, "build");
-
-                        Console.WriteLine("Building TerraAngel");
-                        Console.WriteLine("This could take a while... (usually less than 30 seconds)");
-
-                        Stopwatch sw = Stopwatch.StartNew();
-
-                        bool buildSucceeded = SDKUtility.PublishProject(Path.Combine(patchOutputDir, "Terraria", "Terraria.csproj"), buildDir);
-
-                        sw.Stop();
-
-                        if (!buildSucceeded)
-                        {
-                            return;
-                        }
-
-                        Console.WriteLine($"Build succeeded in {sw.Elapsed.TotalSeconds}s");
-
-                        Console.WriteLine($"Your build is located in: {buildDir}");
-
-                        Console.WriteLine("Press enter to exit");
-                        Console.ReadLine();
                     }
                     validResult = true;
                     break;
@@ -262,7 +287,22 @@ internal class Program
                 case "sure":
                 case "yeah":
                     {
-                        throw new NotImplementedException();
+                        if (TryBuild(release, latestReleaseVersion, out string? buildDir))
+                        {
+                            if (!Directory.Exists(previousInstall.InstallationRoot))
+                            {
+                                Directory.CreateDirectory(previousInstall.InstallationRoot);
+                            }
+
+                            foreach (LocalPath path in DirectoryUtility.EnumerateFiles(buildDir))
+                            {
+                                File.Copy(path.FullPath, Path.Combine(previousInstall.InstallationRoot, path.RelativePath), true);
+                            }
+
+                            Console.WriteLine($"Successfully updated TerraAngel to v{latestReleaseVersion}");
+                            Console.Write("Press enter to exit...");
+                            Console.ReadLine();
+                        }
                     }
                     validResult = true;
                     break;
@@ -296,6 +336,62 @@ internal class Program
         return downloadedPath;
     }
 
+    private static bool TryBuild(ReleaseDownloader.ReleaseRoot release, Version latestReleaseVersion, [NotNullWhen(true)] out string? buildDir)
+    {
+        Console.WriteLine($"Setting up temporary files");
+
+        string tempDir = Path.Combine(Path.GetTempPath(), "TerraAngel");
+
+        if (Directory.Exists(tempDir))
+        {
+            Directory.Delete(tempDir, true);
+        }
+
+        Directory.CreateDirectory(tempDir);
+
+        string releaseDir = DownloadRelease(release, latestReleaseVersion);
+
+        string decompDir = Path.Combine(tempDir, "decomp");
+
+        string patchOutputDir = Path.Combine(tempDir, "src");
+
+        Console.WriteLine("Setting up TerraAngel source");
+
+        RunSetup(new SetupSettings()
+        {
+            Decompile = true,
+            DecompilationOutputDirectory = decompDir,
+            Patch = true,
+            PatchDiffPath = Path.Combine(releaseDir, "TerraAngel.Patches"),
+            PatchSourcePath = decompDir,
+            PatchOutputPath = patchOutputDir
+        });
+
+        buildDir = Path.Combine(tempDir, "build");
+
+        Console.WriteLine("Building TerraAngel");
+        Console.WriteLine("This could take a while... (usually less than 30 seconds)");
+
+        Stopwatch sw = Stopwatch.StartNew();
+
+        bool buildSucceeded = SDKUtility.PublishProject(Path.Combine(patchOutputDir, "Terraria", "Terraria.csproj"), buildDir);
+
+        sw.Stop();
+
+        if (!buildSucceeded)
+        {
+            buildDir = null;
+
+            return false;
+        }
+
+        SetCurrentInstallation(new Installation(latestReleaseVersion, buildDir));
+
+        Console.WriteLine($"Build succeeded in {sw.Elapsed.TotalSeconds}s");
+
+        return true;
+    }
+
     private static bool TryGetPreviousInstallation([NotNullWhen(true)] out Installation installation)
     {
         installation = new Installation();
@@ -306,6 +402,7 @@ internal class Program
 
             if (text.Length < 2)
             {
+                Console.WriteLine("Invalid or malformed installation file");
                 return false;
             }
 
@@ -314,9 +411,63 @@ internal class Program
                 installation = new Installation(lastInstalledVersion, text[1]);
                 return true;
             }
+            else
+            {
+                Console.WriteLine("Invalid or malformed installation file");
+            }
         }
 
         return false;
+    }
+
+    private static void SetCurrentInstallation(Installation installation)
+    {
+        string[] text = new string[]
+        {
+            installation.Version.ToString(),
+            installation.InstallationRoot
+        };
+
+        string installFilePath = Path.Combine(PathUtility.TerraAngelDataPath, "INSTALL.txt");
+
+        if (File.Exists(installFilePath))
+        {
+            File.Move(installFilePath, Path.Combine(PathUtility.TerraAngelDataPath, $"INSTALL-{DateTime.UtcNow.Ticks}.txt"));
+        }
+
+        File.WriteAllLines(installFilePath, text);
+    }
+
+    private static bool CheckPermission()
+    {
+        string defaultIntsallDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "TerraAngel");
+        string testFileDir = Path.Combine(defaultIntsallDirectory, ".test");
+
+        try
+        {
+            if (!Directory.Exists(defaultIntsallDirectory))
+            {
+                Directory.CreateDirectory(defaultIntsallDirectory);
+            }
+
+            if (File.Exists(testFileDir))
+            {
+                File.Delete(testFileDir);
+            }
+
+            File.Create(testFileDir);
+
+            if (File.Exists(testFileDir))
+            {
+                File.Delete(testFileDir);
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private readonly record struct Installation(Version Version, string InstallationRoot);
