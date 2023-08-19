@@ -44,6 +44,7 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        Console.ReadLine();
         if (args.Length == 0)
         {
             List<string> sdks = SDKUtility.GetDotnetSDKList();
@@ -193,8 +194,17 @@ internal class Program
 
                             foreach (LocalPath path in DirectoryUtility.EnumerateFiles(buildDir))
                             {
+                                string dirInInstaller = Path.GetDirectoryName(Path.Combine(defaultIntsallDirectory, path.RelativePath))!;
+
+                                if (!Directory.Exists(dirInInstaller))
+                                {
+                                    Directory.CreateDirectory(dirInInstaller);
+                                }
+
                                 File.Copy(path.FullPath, Path.Combine(defaultIntsallDirectory, path.RelativePath), true);
                             }
+
+                            SetCurrentInstallation(new Installation(latestReleaseVersion, buildDir));
 
                             string terraAngelFilePath = Path.Combine(defaultIntsallDirectory, "TerraAngel.exe");
 
@@ -215,17 +225,8 @@ internal class Program
                                 string startMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu), "Programs", "TerraAngel.lnk");
                                 string desktopPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "TerraAngel.lnk");
 
-                                string[] shortcutLines = new string[]
-                                {
-                                    "[InternetShortcut]",
-                                    $"URL=file:///{terraAngelFilePath}",
-                                    "IconIndex=0",
-                                    $"IconFile={terraAngelFilePath}"
-                                };
-
                                 try
                                 {
-
                                     if (File.Exists(startMenuPath))
                                     {
                                         File.Delete(startMenuPath);
@@ -236,13 +237,12 @@ internal class Program
                                         File.Delete(desktopPath);
                                     }
 
-                                    File.WriteAllLines(startMenuPath, shortcutLines);
-
-                                    File.WriteAllLines(desktopPath, shortcutLines);
+                                    WindowsShortcutUtility.CreateShortcut(terraAngelFilePath, defaultIntsallDirectory, startMenuPath);
+                                    WindowsShortcutUtility.CreateShortcut(terraAngelFilePath, defaultIntsallDirectory, desktopPath);
                                 }
                                 catch
                                 {
-                                    Console.WriteLine("Failed to create shortcuts to application");
+                                    Console.WriteLine("Failed to create shortcuts D:");
                                 }
                             }
 
@@ -296,8 +296,17 @@ internal class Program
 
                             foreach (LocalPath path in DirectoryUtility.EnumerateFiles(buildDir))
                             {
+                                string dirInInstaller = Path.GetDirectoryName(Path.Combine(previousInstall.InstallationRoot, path.RelativePath))!;
+
+                                if (!Directory.Exists(dirInInstaller))
+                                {
+                                    Directory.CreateDirectory(dirInInstaller);
+                                }
+
                                 File.Copy(path.FullPath, Path.Combine(previousInstall.InstallationRoot, path.RelativePath), true);
                             }
+
+                            SetCurrentInstallation(new Installation(latestReleaseVersion, buildDir));
 
                             Console.WriteLine($"Successfully updated TerraAngel to v{latestReleaseVersion}");
                             Console.Write("Press enter to exit...");
@@ -385,8 +394,6 @@ internal class Program
             return false;
         }
 
-        SetCurrentInstallation(new Installation(latestReleaseVersion, buildDir));
-
         Console.WriteLine($"Build succeeded in {sw.Elapsed.TotalSeconds}s");
 
         return true;
@@ -455,7 +462,7 @@ internal class Program
                 File.Delete(testFileDir);
             }
 
-            File.Create(testFileDir);
+            File.Create(testFileDir).Dispose();
 
             if (File.Exists(testFileDir))
             {
