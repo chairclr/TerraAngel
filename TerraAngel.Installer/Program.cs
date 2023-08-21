@@ -44,7 +44,6 @@ internal class Program
 
     private static void Main(string[] args)
     {
-        Console.ReadLine();
         if (args.Length == 0)
         {
             List<string> sdks = SDKUtility.GetDotnetSDKList();

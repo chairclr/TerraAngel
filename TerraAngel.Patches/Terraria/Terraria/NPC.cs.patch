@@ -52,3 +52,13 @@
 -2
 +Extensions
  .CatmullRom(vector304 + vector307, vector3
+@@ -2283031,174 +2283031,335 @@
+ %09Main.npc%5bi%5d.netOffset *= 0f;%0d%0a%09%09%7d%0d%0a%09%7d%0d%0a%0d%0a
++    public int MaxHealthForProgressBar = 0;%0d%0a%0d%0a
+ %09public void UpdateNPC(int i)%0d%0a%09%7b%0d%0a%09%09whoAmI = i;%0d%0a%09%09if (!active)%0d%0a%09%09%7b%0d%0a
+-%09%09%09
++            
+ return;%0d%0a%09%09%7d%0d%0a
+-%09%09
++%0d%0a        MaxHealthForProgressBar = Math.Max(Math.Max(life, lifeMax), MaxHealthForProgressBar);%0d%0a%0d%0a        
+ if (offSetDelayTime %3e 0)%0d%0a%09%09%7b%0d%0a%09%09%09netOffse

@@ -1,0 +1,13 @@
+@@ -1,42 +1,57 @@
++using System;%0d%0a
+ using Microsoft.Xna.Framework;%0d%0ausing Micr
+@@ -322,84 +322,140 @@
+ atch spriteBatch, float lifePercent)%0d%0a%09%7b%0d%0a
++        lifePercent = Math.Clamp(lifePercent, 0f, 1f);%0d%0a
+ %09%09Rectangle rectangle = Utils.CenteredRect
+@@ -1522,104 +1522,124 @@
+ olor = Color.White * 0.2f;%0d%0a%09%09float num = 
++Math.Clamp(
+ lifeAmount / lifeMax
++, 0f, 1f)
+ ;%0d%0a%09%09int num2 = (int)((float)p.X * num);%0d%0a

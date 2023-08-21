@@ -1,0 +1,10 @@
+@@ -536,91 +536,107 @@
+ e == 126) ? 125 : 126);%0d%0a%09%09int num2 = nPC.
+-lifeMax
++MaxHealthForProgressBar
+ ;%0d%0a%09%09int num3 = nPC.life;%0d%0a%09%09for (int i = 
+@@ -716,91 +716,107 @@
+ nPC2.type == num)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09num2 += nPC2.
+-lifeMax
++MaxHealthForProgressBar
+ ;%0d%0a%09%09%09%09num3 += nPC2.life;%0d%0a%09%09%09%09break;%0d%0a%09%09%09

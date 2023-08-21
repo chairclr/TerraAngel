@@ -1,0 +1,16 @@
+@@ -1,42 +1,57 @@
++using System;%0d%0a
+ using Microsoft.Xna.Framework;%0d%0ausing Micr
+@@ -769,141 +769,85 @@
+ C.GetMatchingSpawnParams());%0d%0a%09%09int num = 
+-_creeperForReference.lifeMax * brainOfCthuluCreepersCount
++0
+ ;%0d%0a%09%09float num2 = 0f;%0d%0a%09%09for (int i = 0; i
+@@ -959,162 +959,241 @@
+ pe)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09num2 += (float)nPC2.life;%0d%0a
+-%09%09%09
++                num += nPC2.MaxHealthForProgressBar;%0d%0a            
+ %7d%0d%0a%09%09%7d%0d%0a%09%09float current = (float)nPC.life + num2;%0d%0a%09%09int num3 = nPC.
+-lifeMax
++MaxHealthForProgressBar
+  + num;%0d%0a%09%09_cache.SetLife(current, num3);%0d
