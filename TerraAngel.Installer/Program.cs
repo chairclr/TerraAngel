@@ -147,7 +147,7 @@ internal class Program
 
             if (TryGetPreviousInstallation(out Installation previousInstall))
             {
-                Console.WriteLine($"Found previous installation: v{previousInstall}");
+                Console.WriteLine($"Found previous installation: v{previousInstall.Version}");
 
                 if (latestReleaseVersion > previousInstall.Version)
                 {
@@ -203,7 +203,7 @@ internal class Program
                                 File.Copy(path.FullPath, Path.Combine(defaultIntsallDirectory, path.RelativePath), true);
                             }
 
-                            SetCurrentInstallation(new Installation(latestReleaseVersion, buildDir));
+                            SetCurrentInstallation(new Installation(latestReleaseVersion, defaultIntsallDirectory));
 
                             string terraAngelFilePath = Path.Combine(defaultIntsallDirectory, "TerraAngel.exe");
 
@@ -305,7 +305,7 @@ internal class Program
                                 File.Copy(path.FullPath, Path.Combine(previousInstall.InstallationRoot, path.RelativePath), true);
                             }
 
-                            SetCurrentInstallation(new Installation(latestReleaseVersion, buildDir));
+                            SetCurrentInstallation(new Installation(latestReleaseVersion, previousInstall.InstallationRoot));
 
                             Console.WriteLine($"Successfully updated TerraAngel to v{latestReleaseVersion}");
                             Console.Write("Press enter to exit...");
@@ -404,7 +404,7 @@ internal class Program
 
         if (File.Exists(Path.Combine(PathUtility.TerraAngelDataPath, "INSTALL.txt")))
         {
-            string[] text = File.ReadAllLines(Path.Combine(PathUtility.TerraAngelDataPath, "VERSION.txt"));
+            string[] text = File.ReadAllLines(Path.Combine(PathUtility.TerraAngelDataPath, "INSTALL.txt"));
 
             if (text.Length < 2)
             {
