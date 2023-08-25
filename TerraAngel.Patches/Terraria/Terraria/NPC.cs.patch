@@ -1,0 +1,64 @@
+@@ -457,117 +457,84 @@
+ sing Terraria.GameContent.ItemDropRules;%0d%0a
+-using Terraria.GameContent.RGB;%0d%0a
+ using Terraria.GameContent.Tile_Entities;%0d
+@@ -28466,86 +28466,112 @@
+ %7b%0d%0a%09%09%09highestTierBossOrEvent = 398;%0d%0a%09%09%7d%0d%0a
+-%09%09
++        // TODO: FIXME%0d%0a%09%09//
+ CommonConditions.Boss.HighestTierBossOrEve
+@@ -764858,85 +764858,94 @@
+ r182.Normalize();%0d%0a%09%09%09%09%09%09velocity = Vector
+-2
++Extensions
+ .SmoothStep(velocity, vector182 * Math.Min
+@@ -765560,85 +765560,94 @@
+ ;%0d%0a%09%09%09%09%09%7d%0d%0a%09%09%09%09%09Vector2 vector184 = Vector
+-2
++Extensions
+ .SmoothStep(vector179, vector179 + vector1
+@@ -767066,85 +767066,94 @@
+ %7d%0d%0a%09%09%09%09%09%7d%0d%0a%09%09%09%09%09Vector2 vector187 = Vector
+-2
++Extensions
+ .SmoothStep(vector179, vector179 + vector1
+@@ -767613,85 +767613,94 @@
+ r190.Normalize();%0d%0a%09%09%09%09%09%09velocity = Vector
+-2
++Extensions
+ .SmoothStep(velocity, vector190 * Math.Min
+@@ -773336,85 +773336,94 @@
+ 200.Normalize();%0d%0a%09%09%09%09%09%09%09velocity = Vector
+-2
++Extensions
+ .SmoothStep(velocity, vector200 * Math.Min
+@@ -774039,85 +774039,94 @@
+ %0a%09%09%09%09%09%09%7d%0d%0a%09%09%09%09%09%09Vector2 vector202 = Vector
+-2
++Extensions
+ .SmoothStep(vector197, vector197 + vector1
+@@ -775321,85 +775321,94 @@
+ %0a%09%09%09%09%09%09%7d%0d%0a%09%09%09%09%09%09Vector2 vector205 = Vector
+-2
++Extensions
+ .SmoothStep(vector197, vector197 + vector1
+@@ -907181,85 +907181,94 @@
+ %09%09%09%09%09%09%09%7b%0d%0a%09%09%09%09%09%09%09%09Vector2 value13 = Vector
+-2
++Extensions
+ .CatmullRom(vector304 + vector307, vector3
+@@ -907306,85 +907306,94 @@
+ um1569);%0d%0a%09%09%09%09%09%09%09%09Vector2 value14 = Vector
+-2
++Extensions
+ .CatmullRom(vector304 + vector307, vector3
+@@ -2283031,174 +2283031,335 @@
+ %09Main.npc%5bi%5d.netOffset *= 0f;%0d%0a%09%09%7d%0d%0a%09%7d%0d%0a%0d%0a
++    public int MaxHealthForProgressBar = 0;%0d%0a%0d%0a
+ %09public void UpdateNPC(int i)%0d%0a%09%7b%0d%0a%09%09whoAmI = i;%0d%0a%09%09if (!active)%0d%0a%09%09%7b%0d%0a
+-%09%09%09
++            
+ return;%0d%0a%09%09%7d%0d%0a
+-%09%09
++%0d%0a        MaxHealthForProgressBar = Math.Max(Math.Max(life, lifeMax), MaxHealthForProgressBar);%0d%0a%0d%0a        
+ if (offSetDelayTime %3e 0)%0d%0a%09%09%7b%0d%0a%09%09%09netOffse

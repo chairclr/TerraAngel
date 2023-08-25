@@ -1,0 +1,19 @@
+@@ -6,84 +6,107 @@
+  System;%0d%0ausing ReLogic.Localization.IME;%0d
++%0ausing ReLogic.OS.FNA;%0d
+ %0a%0d%0anamespace ReLogic.OS.OSX;%0d%0a%0d%0ainternal c
+@@ -192,84 +192,87 @@
+ X)%0d%0a%09%7b%0d%0a%09%09RegisterService((IClipboard)new 
++FNA
+ Clipboard());%0d%0a%09%09RegisterService((IPathSer
+@@ -301,97 +301,93 @@
+ );%0d%0a%09%09RegisterService((IWindowService)new 
++FNA
+ Window
+-Service
+ ());%0d%0a%09%09RegisterService((IImeService)new U
+@@ -494,60 +494,60 @@
+ %0d%0a%09%7b%0d%0a%09%09RegisterService((IImeService)new F
+-na
++NA
+ Ime());%0d%0a%09%7d%0d%0a%7d%0d%0a

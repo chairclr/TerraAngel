@@ -1,0 +1,9 @@
+@@ -50321,139 +50321,255 @@
+ ng ReadEmbeddedResource(string path)%0d%0a%09%7b%0d%0a
++        if (!path.StartsWith(%22EmbeddedResources.%22))%0d%0a        %7b%0d%0a            path = $%22EmbeddedResources.%7bpath%7d%22;%0d%0a        %7d%0d%0a%0d%0a
+ %09%09using Stream stream = 
+-Assembly.GetExecuting
++typeof(Main).
+ Assembly
+-()
+ .GetManifestResourceStream(path);%0d%0a%09%09using

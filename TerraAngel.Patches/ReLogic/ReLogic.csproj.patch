@@ -1,0 +1,41 @@
+@@ -1,549 +1,464 @@
+ %3cProject Sdk=%22Microsoft.NET.Sdk
+-.WindowsDesktop
+ %22%3e%0d%0a  %3cPropertyGroup%3e%0d%0a    %3cAssemblyName%3eReLogic%3c/AssemblyName%3e%0d%0a
+-    %3cGenerateAssemblyInfo%3eFalse%3c/GenerateAssemblyInfo%3e%0d%0a    %3cUseWindowsForms%3eTrue%3c/UseWindowsForms%3e%0d%0a
+     %3cTargetFramework%3enet
+-4
++8.
+ 0%3c/TargetFramework%3e%0d%0a    %3cPlatformTarget%3e
+-x86
++AnyCPU
+ %3c/PlatformTarget%3e%0d%0a
+-  %3c/PropertyGroup%3e%0d%0a  %3cPropertyGroup%3e%0d%0a
+     %3cLangVersion%3e
+-11.0
++latest
+ %3c/LangVersion%3e%0d%0a    %3cAllowUnsafeBlocks%3eTrue%3c/AllowUnsafeBlocks%3e%0d%0a
++    %3cGenerateAssemblyInfo%3eFalse%3c/GenerateAssemblyInfo%3e%0d%0a
+   %3c/PropertyGroup%3e%0d%0a
++  %0d%0a
+   %3cPropertyGroup%3e%0d%0a    %3cRootNamespace /%3e%0d%0a  %3c/PropertyGroup%3e%0d%0a
++  %0d%0a
+   %3cItemGroup%3e%0d%0a    %3cNone Remove=%22EmbeddedR
+@@ -638,769 +638,304 @@
+ ework.RuntimeProfile%22 /%3e%0d%0a  %3c/ItemGroup%3e%0d%0a
++  %0d%0a
+   %3cItemGroup%3e%0d%0a    %3c
++Package
+ Reference Include=%22
+-System.Core%22 /%3e%0d%0a    %3cReference Include=%22Microsoft.Xna.Framework
++DotNetZip%22 Version=%221.16.0
+ %22 /%3e%0d%0a    %3c
++Package
+ Reference Include=%22Newtonsoft.Json%22
+-%3e%0d%0a      %3cHintPath%3eTerraria.Libraries.JSON.NET.Newtonsoft.Json.dll%3c/HintPath%3e%0d%0a    %3c/Reference%3e%0d%0a    %3cReference Include=%22SteelSeriesEngineWrapper%22%3e%0d%0a      %3cHintPath%3e..%5c..%5c..%5c..%5c..%5c..%5c..%5c..%5cProgram Files (x86)%5cSteam%5csteamapps%5ccommon%5cTerraria%5cSteelSeriesEngineWrapper.dll%3c/HintPath%3e%0d%0a    %3c/Reference%3e
++ Version=%2213.0.3%22 /%3e%0d%0a  %3c/ItemGroup%3e%0d%0a  
+ %0d%0a  
+- 
+- %3cReference Include=%22Microsoft.Xna.Framework.Game%22 /%3e%0d%0a    %3cReference Include=%22Microsoft.Xna.Framework.Graphics%22 /%3e%0d%0a    %3cReference Include=%22Ionic.Zip.CF%22%3e%0d%0a      %3cHintPath%3eTerraria.Libraries.DotNetZip.Ionic.Zip.CF.dll%3c/HintPath%3e%0d%0a    %3c/Reference
++%3cItemGroup%3e%0d%0a    %3cReference Include=%22..%5cLibraries%5cFNA.dll%22 /
+ %3e%0d%0a  %3c/ItemGroup%3e%0d%0a%3c/Project%3e

@@ -1,0 +1,10 @@
+@@ -805,119 +805,85 @@
+ Params());%0d%0a%09%09int num3 = 0;%0d%0a%09%09int num4 = 
+-_segmentForReference.lifeMax * num2
++0
+ ;%0d%0a%09%09for (int i = 0; i %3c 200; i++)%0d%0a%09%09%7b%0d%0a%09
+@@ -964,87 +964,151 @@
+ ype %3c= 15)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09num3 += nPC2.life;%0d%0a
+-%09%09%09
++                num4 += nPC2.MaxHealthForProgressBar;%0d%0a            
+ %7d%0d%0a%09%09%7d%0d%0a%09%09int num5 = num3;%0d%0a%09%09int num6 = n

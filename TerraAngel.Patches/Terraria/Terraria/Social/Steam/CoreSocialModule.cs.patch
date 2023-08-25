@@ -1,0 +1,26 @@
+@@ -1,111 +1,82 @@
+ using System;%0d%0ausing System.Threading;%0d%0a
+-using System.Windows.Forms;%0d%0a
+ using ReLogic.OS;%0d%0ausing Steamworks;%0d%0ausin
+@@ -639,240 +639,261 @@
+  Initialize()%0d%0a%09%7b%0d%0a%09%09_instance = this;%0d%0a%09%09
++//
+ if (!Main.dedServ && SteamAPI.RestartAppIfNecessary(new AppId_t(105600u)))%0d%0a%09%09
++//
+ %7b%0d%0a%09%09
++//
+ %09Environment.Exit(1);%0d%0a%09%09
++//
+ %09return;%0d%0a%09%09
++//
+ %7d%0d%0a%09%09if (!SteamAPI.Init())%0d%0a%09%09%7b%0d%0a
+-%09%09%09
++            //
+ MessageBox.Show(Language.GetTextValue(%22Err
+@@ -920,109 +920,159 @@
+ , Language.GetTextValue(%22Error.Error%22));%0d%0a
+-%09%09%09
++            //
+ Environment.Exit(1);%0d%0a
++            return; // TODO: steamapi%0d%0a
+ %09%09%7d%0d%0a%09%09IsSteamValid = true;%0d%0a%09%09Thread thre

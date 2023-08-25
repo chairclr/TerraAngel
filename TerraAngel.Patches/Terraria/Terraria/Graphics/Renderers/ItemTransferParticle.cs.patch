@@ -1,0 +1,5 @@
+@@ -1783,93 +1783,108 @@
+ Remap(fromValue, 0.5f, 0.9f, toMin, 1f);%0d%0a
+-%09%09Vector2
++        VectorExtensions
+ .Hermite(ref StartPosition, ref BezierHelp

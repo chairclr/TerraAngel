@@ -1,0 +1,4 @@
+@@ -1080,647 +1080,76 @@
+ te static void Main(string%5b%5d args)%0d%0a%09%7b%0d%0a%09%09
+-AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs sargs)%0d%0a%09%09%7b%0d%0a%09%09%09string resourceName = new AssemblyName(sargs.Name).Name + %22.dll%22;%0d%0a%09%09%09string text = Array.Find(typeof(Program).Assembly.GetManifestResourceNames(), (string element) =%3e element.EndsWith(resourceName));%0d%0a%09%09%09if (text == null)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09return null;%0d%0a%09%09%09%7d%0d%0a%09%09%09using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(text);%0d%0a%09%09%09byte%5b%5d array = new byte%5bstream.Length%5d;%0d%0a%09%09%09stream.Read(array, 0, array.Length);%0d%0a%09%09%09return Assembly.Load(array);%0d%0a%09%09%7d;%0d%0a%09%09
+ Program.LaunchGame(args);%0d%0a%09%7d%0d%0a%7d%0d%0a

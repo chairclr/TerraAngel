@@ -1,0 +1,361 @@
+@@ -120,155 +120,197 @@
+ %0d%0ausing System.Runtime.CompilerServices;%0d%0a
++using System.Runtime.InteropServices;%0d%0a
+ using System.Text;%0d%0ausing System.Threading;%0d%0ausing 
+-System.Windows.Forms
++Microsoft.Xna.Framework
+ ;%0d%0ausing ReLogic.IO;%0d%0ausing ReLogic.OS;%0d%0au
+@@ -442,269 +442,284 @@
+ raria;%0d%0a%0d%0apublic static class Program%0d%0a%7b%0d%0a
+-%09
++    
+ public static bool IsXna = 
+-tru
++fals
+ e;%0d%0a%0d%0a
+-%09
++    
+ public static bool IsFna = 
+-fals
++tru
+ e;%0d%0a%0d%0a
+-%09
++    
+ public static bool IsMono = Type.GetType(%22Mono.Runtime%22) != null;%0d%0a%0d%0a
+-%09
++    
+ public const bool IsDebug = false;%0d%0a%0d%0a
+-%09
++    
+ public static Dictionary%3cstring, string%3e L
+@@ -739,903 +739,1089 @@
+ rs = new Dictionary%3cstring, string%3e();%0d%0a%0d%0a
+-%09
++    
+ public static string SavePath;%0d%0a%0d%0a
+-%09
++    
+ public const string TerrariaSaveFolderPath = %22Terraria%22;%0d%0a%0d%0a
+-%09
++    
+ private static int ThingsToLoad;%0d%0a%0d%0a
+-%09
++    
+ private static int ThingsLoaded;%0d%0a%0d%0a
+-%09
++    
+ public static bool LoadedEverything;%0d%0a%0d%0a
+-%09
++    
+ public static IntPtr JitForcedMethodCache;%0d%0a%0d%0a
+-%09
++    
+ public static float LoadedPercentage%0d%0a
+-%09%7b%0d%0a%09%09get%0d%0a%09%09%7b%0d%0a%09%09%09if (ThingsToLoad == 0)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09return 1f;%0d%0a%09%09%09%7d%0d%0a%09%09%09
++    %7b%0d%0a        get%0d%0a        %7b%0d%0a            if (ThingsToLoad == 0)%0d%0a            %7b%0d%0a                return 1f;%0d%0a            %7d%0d%0a            
+ return (float)ThingsLoaded / (float)ThingsToLoad;%0d%0a
+-%09%09%7d%0d%0a%09
++        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ public static void StartForceLoad()%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ if (!Main.SkipAssemblyLoad)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ Thread thread = new Thread(ForceLoadThread);%0d%0a
+-%09%09%09
++            
+ thread.IsBackground = true;%0d%0a
+-%09%09%09
++            
+ thread.Start();%0d%0a
+-%09%09%7d%0d%0a%09%09else%0d%0a%09%09%7b%0d%0a%09%09%09
++        %7d%0d%0a        else%0d%0a        %7b%0d%0a            
+ LoadedEverything = true;%0d%0a
+-%09%09%7d%0d%0a%09
++        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ public static void ForceLoadThread(object threadContext)%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ ForceLoadAssembly(Assembly.GetExecutingAssembly(), initializeStaticMembers: true);%0d%0a
+ %09%09LoadedEverything = true;%0d%0a%09%7d%0d%0a%0d%0a%09private
+@@ -1744,261 +1744,303 @@
+ embly(), initializeStaticMembers: true);%0d%0a
+-%09%09
++        
+ LoadedEverything = true;%0d%0a
+-%09
++    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void ForceJITOnAssembly(Assembly assembly)%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ Type%5b%5d types = assembly.GetTypes();%0d%0a
+-%09%09
++        
+ foreach (Type type in types)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ MethodInfo%5b%5d array = (IsMono ? type.GetMet
+@@ -2153,139 +2153,169 @@
+ Flags.Public %7c BindingFlags.NonPublic));%0d%0a
+-%09%09%09
++            
+ foreach (MethodInfo methodInfo in array)%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09
++            %7b%0d%0a                
+ if (!methodInfo.IsAbstract && !methodInfo.
+@@ -2346,590 +2346,842 @@
+ s && methodInfo.GetMethodBody() != null)%0d%0a
+-%09%09%09%09%7b%0d%0a%09%09%09%09%09if (IsMono)%0d%0a%09%09%09%09%09%7b%0d%0a%09%09%09%09%09%09JitForcedMethodCache = methodInfo.MethodHandle.GetFunctionPointer();%0d%0a%09%09%09%09%09%7d%0d%0a%09%09%09%09%09else%0d%0a%09%09%09%09%09%7b%0d%0a%09%09%09%09%09%09RuntimeHelpers.PrepareMethod(methodInfo.MethodHandle);%0d%0a%09%09%09%09%09%7d%0d%0a%09%09%09%09%7d%0d%0a%09%09%09%7d%0d%0a%09%09%09
++                %7b%0d%0a                    if (IsMono)%0d%0a                    %7b%0d%0a                        JitForcedMethodCache = methodInfo.MethodHandle.GetFunctionPointer();%0d%0a                    %7d%0d%0a                    else%0d%0a                    %7b%0d%0a                        RuntimeHelpers.PrepareMethod(methodInfo.MethodHandle);%0d%0a                    %7d%0d%0a                %7d%0d%0a            %7d%0d%0a            
+ ThingsLoaded++;%0d%0a
+-%09%09%7d%0d%0a%09
++        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void ForceStaticInitializers(Assembly assembly)%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ Type%5b%5d types = assembly.GetTypes();%0d%0a
+-%09%09
++        
+ foreach (Type type in types)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ if (!type.IsGenericType)%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09
++            %7b%0d%0a                
+ RuntimeHelpers.RunClassConstructor(type.TypeHandle);%0d%0a
+-%09%09%09%7d%0d%0a%09%09%7d%0d%0a%09
++            %7d%0d%0a        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void ForceLoadAssembly(Asse
+@@ -3192,881 +3192,1085 @@
+  assembly, bool initializeStaticMembers)%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ ThingsToLoad = assembly.GetTypes().Length;%0d%0a
+-%09%09
++        
+ ForceJITOnAssembly(assembly);%0d%0a
+-%09%09
++        
+ if (initializeStaticMembers)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ ForceStaticInitializers(assembly);%0d%0a
+-%09%09%7d%0d%0a%09
++        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void ForceLoadAssembly(string name, bool initializeStaticMembers)%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ Assembly assembly = null;%0d%0a
+-%09%09
++        
+ Assembly%5b%5d assemblies = AppDomain.CurrentDomain.GetAssemblies();%0d%0a
+-%09%09
++        
+ for (int i = 0; i %3c assemblies.Length; i++)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ if (assemblies%5bi%5d.GetName().Name.Equals(name))%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09assembly = assemblies%5bi%5d;%0d%0a%09%09%09%09break;%0d%0a%09%09%09%7d%0d%0a%09%09%7d%0d%0a%09%09if (assembly == null)%0d%0a%09%09%7b%0d%0a%09%09%09
++            %7b%0d%0a                assembly = assemblies%5bi%5d;%0d%0a                break;%0d%0a            %7d%0d%0a        %7d%0d%0a        if (assembly == null)%0d%0a        %7b%0d%0a            
+ assembly = Assembly.Load(name);%0d%0a
+-%09%09%7d%0d%0a%09%09
++        %7d%0d%0a        
+ ForceLoadAssembly(assembly, initializeStaticMembers);%0d%0a
+-%09
++    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void SetupLogging()%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ if (LaunchParameters.ContainsKey(%22-logfile%22))%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ string text = LaunchParameters%5b%22-logfile%22%5d;%0d%0a
+-%09%09%09
++            
+ text = ((text != null && !(text.Trim() == 
+@@ -4387,1145 +4387,2898 @@
+ %7bDateTime.Now:yyyyMMddHHmmssfff%7d.log%22));%0d%0a
+-%09%09%09
++            
+ ConsoleOutputMirror.ToFile(text);%0d%0a
+-%09%09%7d%0d%0a%09%09
++        %7d%0d%0a        
+ CrashWatcher.Inititialize();%0d%0a
+-%09%09
++        
+ CrashWatcher.DumpOnException = LaunchParameters.ContainsKey(%22-minidump%22);%0d%0a
+-%09%09
++        
+ CrashWatcher.LogAllExceptions = LaunchParameters.ContainsKey(%22-logerrors%22);%0d%0a
+-%09%09
++        
+ if (LaunchParameters.ContainsKey(%22-fulldump%22))%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ Console.WriteLine(%22Full Dump logs enabled.%22);%0d%0a
+-%09%09%09
++            
+ CrashWatcher.EnableCrashDumps(CrashDump.Options.WithFullMemory);%0d%0a
+-%09%09%7d%0d%0a%09
++        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void InitializeConsoleOutput()%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ if (Debugger.IsAttached)%0d%0a
+-%09%09%7b%0d%0a%09%09%09return;%0d%0a%09%09%7d%0d%0a%09%09try%0d%0a%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            return;%0d%0a        %7d%0d%0a        try%0d%0a        %7b%0d%0a            
+ Console.OutputEncoding = Encoding.UTF8;%0d%0a
+-%09%09%09
++            
+ if (Platform.IsWindows)%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09
++            %7b%0d%0a                
+ Console.InputEncoding = Encoding.Unicode;%0d%0a
+-%09%09%09%7d%0d%0a%09%09%09else%0d%0a%09%09%09%7b%0d%0a%09%09%09%09Console.InputEncoding = Encoding.UTF8;%0d%0a%09%09%09%7d%0d%0a%09%09%7d%0d%0a%09%09catch%0d%0a%09%09%7b%0d%0a%09%09%7d%0d%0a%09
++            %7d%0d%0a            else%0d%0a            %7b%0d%0a                Console.InputEncoding = Encoding.UTF8;%0d%0a            %7d%0d%0a        %7d%0d%0a        catch%0d%0a        %7b%0d%0a        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ public static void LaunchGame(string%5b%5d args, bool monoArgs = false)%0d%0a
+-%09%7b%0d%0a%09%09Thread.CurrentThread.Name = %22Main Thread%22;%0d%0a%09%09if (monoArgs)%0d%0a%09%09%7b%0d%0a%09%09%09args = Utils.ConvertMonoArgsToDotNet(args);%0d%0a%09%09%7d%0d%0a%09%09if (IsFna)%0d%0a%09%09%7b%0d%0a%09%09%09TrySettingFNAToOpenGL(args);%0d%0a%09%09%7d%0d%0a%09%09
++    %7b%0d%0a        static nint RuntimeResolver(string x, Assembly y, DllImportSearchPath? z)%0d%0a        %7b%0d%0a            StringBuilder iHateNativeLibraries = new StringBuilder();%0d%0a%0d%0a            string extension = %22%22;%0d%0a%0d%0a            if (OperatingSystem.IsWindows())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22win%22);%0d%0a%0d%0a                extension = %22.dll%22;%0d%0a            %7d%0d%0a            else if (OperatingSystem.IsLinux())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22linux%22);%0d%0a%0d%0a                extension = %22.so%22;%0d%0a            %7d%0d%0a            else if (OperatingSystem.IsMacOS())%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22osx%22);%0d%0a%0d%0a                extension = %22.dylib%22;%0d%0a            %7d%0d%0a%0d%0a            if (Environment.Is64BitProcess)%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22-x64%22);%0d%0a            %7d%0d%0a            else%0d%0a            %7b%0d%0a                iHateNativeLibraries.Append(%22-x86%22);%0d%0a            %7d%0d%0a%0d%0a%0d%0a            string path = Path.Combine(Environment.CurrentDirectory, %22runtimes%22, iHateNativeLibraries.ToString(), %22native%22, $%22%7bx%7d%7bextension%7d%22);%0d%0a%0d%0a            if (File.Exists(path))%0d%0a            %7b%0d%0a                return NativeLibrary.Load(path);%0d%0a            %7d%0d%0a%0d%0a            return 0;%0d%0a        %7d%0d%0a%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Game).Assembly, RuntimeResolver);%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Main).Assembly, RuntimeResolver);%0d%0a        NativeLibrary.SetDllImportResolver(typeof(Steamworks.SteamAPI).Assembly, RuntimeResolver);%0d%0a%0d%0a        Thread.CurrentThread.Name = %22Main Thread%22;%0d%0a        if (monoArgs)%0d%0a        %7b%0d%0a            args = Utils.ConvertMonoArgsToDotNet(args);%0d%0a        %7d%0d%0a        
+ LaunchParameters = Utils.ParseArguements(args);%0d%0a
+-%09%09
++        
+ SavePath = (LaunchParameters.ContainsKey(%22
+@@ -7358,1295 +7358,1742 @@
+ hService%3e().GetStoragePath(%22Terraria%22));%0d%0a
+-%09%09
++        
+ ThreadPool.SetMinThreads(8, 8);%0d%0a
+-%09%09
++        
+ InitializeConsoleOutput();%0d%0a
+-%09%09
++        
+ SetupLogging();%0d%0a
+-%09%09
++        
+ Platform.Get%3cIWindowService%3e().SetQuickEditEnabled(enabled: false);%0d%0a
+-%09%09
++        TerraAngel.ClientLoader.Load();%0d%0a        
+ RunGame();%0d%0a
+-%09
++    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ public static void RunGame()%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ LanguageManager.Instance.SetLanguage(GameCulture.DefaultCulture);%0d%0a
+-%09%09
++        
+ if (Platform.IsOSX)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ Main.OnEngineLoad += delegate%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09
++            %7b%0d%0a                
+ Main.instance.IsMouseVisible = false;%0d%0a
+-%09%09%09%7d;%0d%0a%09%09%7d%0d%0a%09%09using Main main = new Main();%0d%0a%09%09try%0d%0a%09%09%7b%0d%0a%09%09%09
++            %7d;%0d%0a        %7d%0d%0a        using Main main = new Main();%0d%0a#if !DEBUG%0d%0a%09%09try%0d%0a%09%09%7b%0d%0a#endif%0d%0a        
+ Lang.InitializeLegacyLocalization();%0d%0a
+-%09%09%09
++        
+ SocialAPI.Initialize();%0d%0a
+-%09%09%09
++        
+ LaunchInitializer.LoadParameters(main);%0d%0a
+-%09%09%09
++        
+ Main.OnEnginePreload += StartForceLoad;%0d%0a
+-%09%09%09
++        
+ if (Main.dedServ)%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09main.DedServ();%0d%0a%09%09%09%7d%0d%0a%09%09%09main.Run();%0d%0a%09%09%7d%0d%0a%09%09
++        %7b%0d%0a            main.DedServ();%0d%0a        %7d%0d%0a        main.Run();%0d%0a#if !DEBUG%0d%0a        %7d%0d%0a        
+ catch (Exception e)%0d%0a%09%09%7b%0d%0a%09%09%09DisplayException(e);%0d%0a%09%09%7d%0d%0a
+-%09
++#endif%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void TrySettingFNAToOpenGL(string%5b%5d args)%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ bool flag = false;%0d%0a
+-%09%09
++        
+ for (int i = 0; i %3c args.Length; i++)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ if (args%5bi%5d.Contains(%22gldevice%22))%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09flag = true;%0d%0a%09%09%09%09break;%0d%0a%09%09%09%7d%0d%0a%09%09%7d%0d%0a%09%09if (!flag)%0d%0a%09%09%7b%0d%0a%09%09%09
++            %7b%0d%0a                flag = true;%0d%0a                break;%0d%0a            %7d%0d%0a        %7d%0d%0a        if (!flag)%0d%0a        %7b%0d%0a            
+ Environment.SetEnvironmentVariable(%22FNA3D_FORCE_DRIVER%22, %22OpenGL%22);%0d%0a
+-%09%09%7d%0d%0a%09
++        %7d%0d%0a    
+ %7d%0d%0a%0d%0a
+-%09
++    
+ private static void DisplayException(Exception e)%0d%0a
+-%09%7b%0d%0a%09%09try%0d%0a%09%09%7b%0d%0a%09%09%09
++    %7b%0d%0a        try%0d%0a        %7b%0d%0a            
+ string text = e.ToString();%0d%0a
+-%09%09%09
++            
+ if (WorldGen.gen)%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09try%0d%0a%09%09%09%09%7b%0d%0a%09%09%09%09%09
++            %7b%0d%0a                try%0d%0a                %7b%0d%0a                    
+ text = $%22Creating world - Seed: %7bMain.Acti
+@@ -9207,125 +9207,191 @@
+ %7d, IsExpert: %7bMain.expertMode%7d%5cn%7btext%7d%22;%0d%0a
+-%09%09%09%09%7d%0d%0a%09%09%09%09catch%0d%0a%09%09%09%09%7b%0d%0a%09%09%09%09%7d%0d%0a%09%09%09%7d%0d%0a%09%09%09
++                %7d%0d%0a                catch%0d%0a                %7b%0d%0a                %7d%0d%0a            %7d%0d%0a            
+ using (StreamWriter streamWriter = new Str
+@@ -9405,323 +9405,407 @@
+ er(%22client-crashlog.txt%22, append: true))%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09
++            %7b%0d%0a                
+ streamWriter.WriteLine(DateTime.Now);%0d%0a
+-%09%09%09%09
++                
+ streamWriter.WriteLine(text);%0d%0a
+-%09%09%09%09
++                
+ streamWriter.WriteLine(%22%22);%0d%0a
+-%09%09%09%7d%0d%0a%09%09%09if (Main.dedServ)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09
++            %7d%0d%0a            if (Main.dedServ)%0d%0a            %7b%0d%0a                
+ Console.WriteLine(Language.GetTextValue(%22Error.ServerCrash%22), DateTime.Now, text);%0d%0a
+ %09%09%09%7d%0d%0a%09%09%09MessageBox.Show(text, %22Terraria: 
+@@ -9728,125 +9728,244 @@
+ rror.ServerCrash%22), DateTime.Now, text);%0d%0a
+-%09%09%09%7d%0d%0a%09%09%09MessageBox.Show(text, %22Terraria: Error%22);%0d%0a%09%09%7d%0d%0a%09%09catch%0d%0a%09%09%7b%0d%0a%09%09%7d%0d%0a%09
++            %7d%0d%0a%0d%0a            SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, %22Terraria: Error%22, text, 0);%0d%0a        %7d%0d%0a        catch%0d%0a        %7b%0d%0a        %7d%0d%0a    
+ %7d%0d%0a%7d%0d%0a

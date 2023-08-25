@@ -1,0 +1,19 @@
+@@ -6,84 +6,107 @@
+  System;%0d%0ausing ReLogic.Localization.IME;%0d
++%0ausing ReLogic.OS.FNA;%0d
+ %0a%0d%0anamespace ReLogic.OS.Linux;%0d%0a%0d%0ainternal
+@@ -200,84 +200,87 @@
+ x)%0d%0a%09%7b%0d%0a%09%09RegisterService((IClipboard)new 
++FNA
+ Clipboard());%0d%0a%09%09RegisterService((IPathSer
+@@ -309,97 +309,93 @@
+ );%0d%0a%09%09RegisterService((IWindowService)new 
++FNA
+ Window
+-Service
+ ());%0d%0a%09%09RegisterService((IImeService)new U
+@@ -502,60 +502,60 @@
+ %0d%0a%09%7b%0d%0a%09%09RegisterService((IImeService)new F
+-na
++NA
+ Ime());%0d%0a%09%7d%0d%0a%7d%0d%0a

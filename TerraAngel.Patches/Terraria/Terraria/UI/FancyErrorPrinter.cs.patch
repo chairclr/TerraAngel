@@ -1,0 +1,9 @@
+@@ -47,113 +47,84 @@
+ c;%0d%0ausing System.IO;%0d%0ausing System.Text;%0d%0a
+-using System.Windows.Forms;%0d%0a
+ using ReLogic.Content;%0d%0ausing ReLogic.OS;%0d
+@@ -4156,144 +4156,182 @@
+ latform.IsWindows && !Main.dedServ)%0d%0a%09%09%7b%0d%0a
+-%09%09%09MessageBox.Show(preparedMessage, %22Error%22, MessageBoxButtons.OK, MessageBoxIcon.Hand
++            SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, %22Error%22, preparedMessage, 0
+ );%0d%0a%09%09%7d%0d%0a%09%7d%0d%0a%7d%0d%0a

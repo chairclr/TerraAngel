@@ -1,0 +1,12 @@
+@@ -735,306 +735,102 @@
+ %0a%09%09%09return false;%0d%0a%09%09%7d%0d%0a%09%09int num = 0;%0d%0a%09%09
+-_referenceDummy.SetDefaults(245, nPC.GetMatchingSpawnParams());%0d%0a%09%09num += _referenceDummy.lifeMax;%0d%0a%09%09_referenceDummy.SetDefaults(246, nPC.GetMatchingSpawnParams());%0d%0a%09%09num += _referenceDummy.lifeMax;%0d%0a%09%09
+ float num2 = 0f;%0d%0a
++
+ %09%09for (int i = 0; i %3c 200; i++)%0d%0a%09%09%7b%0d%0a%09%09%09N
+@@ -878,115 +878,169 @@
+ e && ValidIds.Contains(nPC2.type))%0d%0a%09%09%09%7b%0d%0a
+-
+ %09%09%09%09num2 += (float)nPC2.life;%0d%0a
++                num += nPC2.MaxHealthForProgressBar;%0d%0a
+ %09%09%09%7d%0d%0a%09%09%7d%0d%0a%09%09_cache.SetLife(num2, num);%0d%0a%09

@@ -1,0 +1,18 @@
+@@ -28,173 +28,161 @@
+ .Collections.Generic;%0d%0ausing ReLogic.OS;%0d%0a
++using Steamworks;%0d%0a
+ using Terraria.Social.Base;%0d%0ausing Terraria.Social.Steam;%0d
+-%0ausing Terraria.Social.WeGame;%0d
+ %0a%0d%0anamespace Terraria.Social;%0d%0a%0d%0apublic st
+@@ -1405,143 +1405,84 @@
+ e.Steam:%0d%0a%09%09%09%09LoadSteam();%0d%0a%09%09%09%09break;%0d%0a%09%09
+-%09case SocialMode.WeGame:%0d%0a%09%09%09%09LoadWeGame();%0d%0a%09%09%09%09break;%0d%0a%09%09
+ %7d%0d%0a%09%09foreach (ISocialModule module in _mod
+@@ -2117,84 +2117,160 @@
+ %0d%0a%0d%0a%09private static void LoadSteam()%0d%0a%09%7b%0d%0a
++        if (!SteamAPI.Init())%0d%0a        %7b%0d%0a            return;%0d%0a        %7d%0d%0a%0d%0a
+ %09%09LoadModule%3cTerraria.Social.Steam.CoreSoc
+@@ -2876,668 +2876,48 @@
+ al.Steam.NetClientSocialModule%3e();%0d%0a%09%09%7d%0d%0a%09
+-%09WeGameHelper.WriteDebugString(%22LoadSteam modules%22);%0d%0a%09%7d%0d%0a%0d%0a%09private static void LoadWeGame()%0d%0a%09%7b%0d%0a%09%09LoadModule%3cTerraria.Social.WeGame.CoreSocialModule%3e();%0d%0a%09%09Cloud = LoadModule%3cTerraria.Social.WeGame.CloudSocialModule%3e();%0d%0a%09%09Friends = LoadModule%3cTerraria.Social.WeGame.FriendsSocialModule%3e();%0d%0a%09%09Overlay = LoadModule%3cTerraria.Social.WeGame.OverlaySocialModule%3e();%0d%0a%09%09if (Main.dedServ)%0d%0a%09%09%7b%0d%0a%09%09%09Network = LoadModule%3cTerraria.Social.WeGame.NetServerSocialModule%3e();%0d%0a%09%09%7d%0d%0a%09%09else%0d%0a%09%09%7b%0d%0a%09%09%09Network = LoadModule%3cTerraria.Social.WeGame.NetClientSocialModule%3e();%0d%0a%09%09%7d%0d%0a%09%09WeGameHelper.WriteDebugString(%22LoadWeGame modules%22);%0d%0a%09
+ %7d%0d%0a%7d%0d%0a

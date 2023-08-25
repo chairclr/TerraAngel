@@ -1,0 +1,21 @@
+@@ -123,84 +123,103 @@
+ rk.Audio;%0d%0ausing ReLogic.Content.Sources;%0d
++%0ausing TerraAngel;%0d
+ %0a%0d%0anamespace Terraria.Audio;%0d%0a%0d%0apublic cla
+@@ -2887,259 +2887,355 @@
+ oSystem()%0d%0a%09%7b%0d%0a%09%09Engine = new AudioEngine(
+-%22Content%5c%5c
++Path.Combine(PathService.ContentFolder, %22
+ TerrariaMusic.xgs%22)
++)
+ ;%0d%0a%09%09SoundBank = new SoundBank(Engine, 
+-%22Content%5c%5c
++Path.Combine(PathService.ContentFolder, %22
+ Sound Bank.xsb%22)
++)
+ ;%0d%0a%09%09Engine.Update();%0d%0a%09%09WaveBank = new WaveBank(Engine, 
+-%22Content%5c%5c
++Path.Combine(PathService.ContentFolder, %22
+ Wave Bank.xwb%22
++)
+ , 0, 512);%0d%0a%09%09Engine.Update();%0d%0a%09%09AudioTra

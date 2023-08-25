@@ -1,0 +1,9 @@
+@@ -19,84 +19,121 @@
+ ng System.Diagnostics;%0d%0ausing System.IO;%0d%0a
++using Microsoft.VisualBasic.FileIO;%0d%0a
+ using ReLogic.OS.Base;%0d%0a%0d%0anamespace ReLogi
+@@ -490,97 +490,207 @@
+ e bool MoveToRecycleBin(string path)%0d%0a%09%7b%0d%0a
+-%09%09return NativeMethods.MoveToRecycleBin(path);%0d%0a%09
++        try%0d%0a        %7b%0d%0a            File.Delete(path);%0d%0a        %7d%0d%0a        catch%0d%0a        %7b%0d%0a            return false;%0d%0a        %7d%0d%0a%0d%0a        return true;%0d%0a    
+ %7d%0d%0a%7d%0d%0a

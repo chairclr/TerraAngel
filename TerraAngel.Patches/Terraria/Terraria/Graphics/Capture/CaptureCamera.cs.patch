@@ -1,0 +1,90 @@
+@@ -6736,101 +6736,84 @@
+ rea.Width, captureChunk.ScaledArea.Height,
+- ImageFormat.Png,
+  _activeSettings.OutputName, captureChunk.
+@@ -8072,109 +8072,84 @@
+ vate bool SaveImage(int width, int height,
+- ImageFormat imageFormat,
+  string filename)%0d%0a%09%7b%0d%0a%09%09if (!Utils.TryCre
+@@ -8247,989 +8247,546 @@
+ aratorChar))%0d%0a%09%09%7b%0d%0a%09%09%09return false;%0d%0a%09%09%7d%0d%0a
+-%09%09try%0d%0a%09%09%7b%0d%0a%09%09%09if (!Platform.IsWindows)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09
++        try%0d%0a        %7b%0d%0a            
+ using FileStream stream = File.Create(filename);%0d%0a
+-%09%09%09%09
++            
+ PlatformUtilities.SavePng(stream, width, height, width, height, _outputData);%0d%0a
+-%09%09%09%7d%0d%0a%09%09%09else%0d%0a%09%09%09%7b%0d%0a%09%09%09%09using Bitmap bitmap = new Bitmap(width, height);%0d%0a%09%09%09%09System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, width, height);%0d%0a%09%09%09%09BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppPArgb);%0d%0a%09%09%09%09IntPtr scan = bitmapData.Scan0;%0d%0a%09%09%09%09Marshal.Copy(_outputData, 0, scan, width * height * 4);%0d%0a%09%09%09%09bitmap.UnlockBits(bitmapData);%0d%0a%09%09%09%09bitmap.Save(filename, imageFormat);%0d%0a%09%09%09%09bitmap.Dispose();%0d%0a%09%09%09%7d%0d%0a%09%09%09return true;%0d%0a%09%09%7d%0d%0a%09%09
++            return true;%0d%0a        %7d%0d%0a        
+ catch (Exception value)%0d%0a
+-%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            
+ Console.WriteLine(value);%0d%0a
+-%09%09%09
++            
+ return false;%0d%0a
+-%09%09
++        
+ %7d%0d%0a%09%7d%0d%0a%0d%0a
+-%09
++    
+ private void SaveImage(Texture2D texture, int width, int height,
+- ImageFormat imageFormat,
+  string foldername, string filename)%0d%0a
+-%09%7b%0d%0a%09%09
++    %7b%0d%0a        
+ string text = Main.SavePath + Path.Directo
+@@ -8825,1831 +8825,1043 @@
+ ath.DirectorySeparatorChar + foldername;%0d%0a
+-%09%09
++        
+ string text2 = Path.Combine(text, filename);%0d%0a
+-%09%09
++        
+ if (!Utils.TryCreatingDirectory(text))%0d%0a
+-%09%09%7b%0d%0a%09%09%09return;%0d%0a%09%09%7d%0d%0a%09%09if (!Platform.IsWindows)%0d%0a%09%09%7b%0d%0a%09%09%09
++        %7b%0d%0a            return;%0d%0a        %7d%0d%0a        
+ int elementCount = texture.Width * texture.Height * 4;%0d%0a
+-%09%09%09
++        
+ texture.GetData(_outputData, 0, elementCount);%0d%0a
+-%09%09%09
++        
+ int num = 0;%0d%0a
+-%09%09%09
++        
+ int num2 = 0;%0d%0a
+-%09%09%09
++        
+ for (int i = 0; i %3c height; i++)%0d%0a
+-%09%09%09%7b%0d%0a%09%09%09%09
++        %7b%0d%0a            
+ for (int j = 0; j %3c width; j++)%0d%0a
+-%09%09%09%09%7b%0d%0a%09%09%09%09%09
++            %7b%0d%0a                
+ _outputData%5bnum2%5d = _outputData%5bnum%5d;%0d%0a
+-%09%09%09%09%09
++                
+ _outputData%5bnum2 + 1%5d = _outputData%5bnum + 1%5d;%0d%0a
+-%09%09%09%09%09
++                
+ _outputData%5bnum2 + 2%5d = _outputData%5bnum + 2%5d;%0d%0a
+-%09%09%09%09%09
++                
+ _outputData%5bnum2 + 3%5d = _outputData%5bnum + 3%5d;%0d%0a
+-%09%09%09%09%09num += 4;%0d%0a%09%09%09%09%09num2 += 4;%0d%0a%09%09%09%09%7d%0d%0a%09%09%09%09
++                num += 4;%0d%0a                num2 += 4;%0d%0a            %7d%0d%0a            
+ num += texture.Width - width %3c%3c 2;%0d%0a
+-%09%09%09%7d%0d%0a%09%09%09
++        %7d%0d%0a        
+ using FileStream stream = File.Create(text2);%0d%0a
+-%09%09%09
++        
+ PlatformUtilities.SavePng(stream, width, height, width, height, _outputData);%0d%0a
+-%09%09%09return;%0d%0a%09%09%7d%0d%0a%09%09using Bitmap bitmap = new Bitmap(width, height);%0d%0a%09%09System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, width, height);%0d%0a%09%09int elementCount2 = texture.Width * texture.Height * 4;%0d%0a%09%09texture.GetData(_outputData, 0, elementCount2);%0d%0a%09%09int num3 = 0;%0d%0a%09%09int num4 = 0;%0d%0a%09%09for (int k = 0; k %3c height; k++)%0d%0a%09%09%7b%0d%0a%09%09%09for (int l = 0; l %3c width; l++)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09byte b = _outputData%5bnum3 + 2%5d;%0d%0a%09%09%09%09_outputData%5bnum4 + 2%5d = _outputData%5bnum3%5d;%0d%0a%09%09%09%09_outputData%5bnum4%5d = b;%0d%0a%09%09%09%09_outputData%5bnum4 + 1%5d = _outputData%5bnum3 + 1%5d;%0d%0a%09%09%09%09_outputData%5bnum4 + 3%5d = _outputData%5bnum3 + 3%5d;%0d%0a%09%09%09%09num3 += 4;%0d%0a%09%09%09%09num4 += 4;%0d%0a%09%09%09%7d%0d%0a%09%09%09num3 += texture.Width - width %3c%3c 2;%0d%0a%09%09%7d%0d%0a%09%09BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppPArgb);%0d%0a%09%09IntPtr scan = bitmapData.Scan0;%0d%0a%09%09Marshal.Copy(_outputData, 0, scan, width * height * 4);%0d%0a%09%09bitmap.UnlockBits(bitmapData);%0d%0a%09%09bitmap.Save(text2, imageFormat);%0d%0a%09
++        return;%0d%0a    
+ %7d%0d%0a%0d%0a%09private void FinishCapture()%0d%0a%09%7b%0d%0a%09%09
+@@ -9950,101 +9950,84 @@
+ tImageSize.Width, _outputImageSize.Height,
+- ImageFormat.Png,
+  Main.SavePath + Path.DirectorySeparatorCh

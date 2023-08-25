@@ -1,0 +1,19 @@
+@@ -1242,227 +1242,108 @@
+ CallingThread)%0d%0a%09%09%7b%0d%0a%09%09%09num2 = 1;%0d%0a%09%09%7d%0d%0a%09%09
+-ThreadPriority priority = Thread.CurrentThread.Priority;%0d%0a%09%09Thread.CurrentThread.Priority = ThreadPriority.Highest;%0d%0a%09%09
+ int num3 = num / num2;%0d%0a
++
+ %09%09int num4 = num %25 num2;%0d%0a%09%09CountdownEvent
+@@ -1353,86 +1353,92 @@
+ untdownEvent = new CountdownEvent(num2);%0d%0a
+-%09%09
++        
+ int num5 = toExclusive;%0d%0a%09%09for (int num6 =
+@@ -1819,180 +1819,113 @@
+ kItem(InvokeTask, rangeTask);%0d%0a%09%09%09%7d%0d%0a%09%09%7d%0d%0a
+-%09%09while (
++        
+ countdownEvent.
+-CurrentCount != 0)%0d%0a%09%09%7b%0d%0a%09%09%7d%0d%0a%09%09Thread.CurrentThread.Priority = priority
++Wait()
+ ;%0d%0a%09%7d%0d%0a%0d%0a%09private static void InvokeTask(o

@@ -1,0 +1,17 @@
+@@ -35255,133 +35255,84 @@
+ ghtAlt)%0d%0a%09%09%09%7b%0d%0a%09%09%09%09flag2 = true;%0d%0a%09%09%09%7d%0d%0a%09%09
+-%09Main.ChromaPainter.PressKey(pressedKeys%5bi%5d);%0d%0a%09%09
+ %7d%0d%0a%09%09if (Main.blockKey != Keys.None.ToStri
+@@ -40553,127 +40553,84 @@
+ = newKey;%0d%0a%09%09%09Main.blockInput = false;%0d%0a%09%09
+-%09Main.ChromaPainter.CollectBoundKeys();%0d%0a%09%09
+ %7d%0d%0a%09%09if (CurrentlyRebinding && _listeningI
+@@ -41202,127 +41202,84 @@
+ = newKey;%0d%0a%09%09%09Main.blockInput = false;%0d%0a%09%09
+-%09Main.ChromaPainter.CollectBoundKeys();%0d%0a%09%09
+ %7d%0d%0a%09%09FixDerpedRebinds();%0d%0a%09%09if (PlayerInpu
+@@ -43523,113 +43523,116 @@
+ Main.GameViewMatrix.ZoomMatrix;%0d%0a%09%09%09Matrix
+- matrix = Matrix.Invert(zoomM
++.Invert(zoomMatrix, out Matrix m
+ atrix);%0d%0a%09%09%09Vector2 mouseScreen = Main.Mou

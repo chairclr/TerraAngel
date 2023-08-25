@@ -1,0 +1,7 @@
+@@ -2735,145 +2735,197 @@
+ ormationMatrix = identity * _zoomMatrix;%0d%0a
+-%09%09_normalizedTransformationMatrix = Matrix.Invert(identity)
++        Matrix.Invert(identity, out _normalizedTransformationMatrix);%0d%0a        _normalizedTransformationMatrix
+  *
++=
+  _zoomMatrix * matrix;%0d%0a%09%09_needsRebuild = 
