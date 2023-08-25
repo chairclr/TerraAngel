@@ -16,11 +16,11 @@ public abstract class Plugin
         // Just have PathService.PluginRootFolder as a sanity check
         if (File.Exists(pluginAssemblyPath))
         {
-            PluginDirectory = Path.GetDirectoryName(pluginAssemblyPath) ?? PathService.PluginRootFolder;
+            PluginDirectory = Path.GetDirectoryName(pluginAssemblyPath) ?? PathService.PluginsRootFolder;
         }
         else
         {
-            PluginDirectory = PathService.PluginRootFolder;
+            PluginDirectory = PathService.PluginsRootFolder;
         }
     }
 

@@ -23,7 +23,7 @@ public static class PathService
 
     public static readonly string TerraAngelDataPath;
 
-    public static string PluginRootFolder => Path.Combine(TerraAngelDataPath, "Plugins");
+    public static string PluginsRootFolder => Path.Combine(TerraAngelDataPath, "Plugins");
 
     public static string ContentFolder
     {

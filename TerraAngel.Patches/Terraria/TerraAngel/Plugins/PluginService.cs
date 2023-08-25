@@ -18,15 +18,15 @@ internal class PluginService
 
     public void FindPlugins()
     {
-        if (!Directory.Exists(PathService.PluginRootFolder))
+        if (!Directory.Exists(PathService.PluginsRootFolder))
         {
-            Directory.CreateDirectory(PathService.PluginRootFolder);
+            Directory.CreateDirectory(PathService.PluginsRootFolder);
         }
 
-        foreach (string individualPluginFolder in Directory.EnumerateDirectories(PathService.PluginRootFolder, "*", SearchOption.TopDirectoryOnly))
+        foreach (string individualPluginFolder in Directory.EnumerateDirectories(PathService.PluginsRootFolder, "*", SearchOption.TopDirectoryOnly))
         {
             string potentialPluginMetadataPath = Path.Combine(individualPluginFolder, "plugin.xml");
-            string pluginFolderName = Path.GetRelativePath(PathService.PluginRootFolder, individualPluginFolder);
+            string pluginFolderName = Path.GetRelativePath(PathService.PluginsRootFolder, individualPluginFolder);
 
             // Look for PluginFolder/plugin.xml
             if (!File.Exists(potentialPluginMetadataPath))

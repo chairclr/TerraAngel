@@ -1,0 +1,4 @@
+@@ -206,84 +206,156 @@
+ loat Pixels;%0d%0a%0d%0a%09public float Precent;%0d%0a%0d%0a
++    public float Percent %7b get =%3e Precent; set =%3e Precent = value; %7d%0d%0a%0d%0a
+ %09public StyleDimension(float pixels, float
