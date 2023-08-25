@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReLogic", "temp\src\ReLogic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Terraria Project", "Terraria Project", "{9C8BBD8F-CF2B-443B-B2DF-4FD43566F9E0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{7D2FF208-3A80-4206-A7EE-BC32FB36D009}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{CDAB090C-0733-44E1-8121-139E1C19B576}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDAB090C-0733-44E1-8121-139E1C19B576}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDAB090C-0733-44E1-8121-139E1C19B576}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D2FF208-3A80-4206-A7EE-BC32FB36D009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D2FF208-3A80-4206-A7EE-BC32FB36D009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D2FF208-3A80-4206-A7EE-BC32FB36D009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D2FF208-3A80-4206-A7EE-BC32FB36D009}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

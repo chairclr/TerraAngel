@@ -21,7 +21,9 @@ public static class PathService
 
     public static string TerrariaPath => File.Exists(TerrariaAssemblyPath) ? Path.GetDirectoryName(TerrariaAssemblyPath)! : Environment.CurrentDirectory;
 
-    public static string PluginRootFolder => throw new NotImplementedException();
+    public static readonly string TerraAngelDataPath;
+
+    public static string PluginRootFolder => Path.Combine(TerraAngelDataPath, "Plugins");
 
     public static string ContentFolder
     {
@@ -50,6 +52,13 @@ public static class PathService
 
             throw new FileNotFoundException("Could not find Content folder. Try copying the Content folder from your Terraria install to where the client is.");
         }
+    }
+
+    static PathService()
+    {
+        TerraAngelDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TerraAngel");
+
+        Directory.CreateDirectory(TerraAngelDataPath);
     }
 
     private static bool TryGetTerrariaInstall([NotNullWhen(true)] out string? terrariaInstall)

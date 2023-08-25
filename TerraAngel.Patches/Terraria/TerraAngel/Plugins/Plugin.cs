@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TerraAngel;
+namespace TerraAngel.Plugins;
 
 public abstract class Plugin
 {
